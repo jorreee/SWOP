@@ -1,13 +1,19 @@
 package taskMan;
-
+/**
+ * @Deprecated Use LocalTime, LocalDate and LocalDateTime instead
+ */
+@Deprecated
 public class Time {
-	long time;
+	int time;
 	
-	public Time() {}
+	/**
+	 * @param minutes Create a Time object with the minutes format already supplied
+	 */
+	public Time(int minutes) { this.time = minutes; }
 	
-	public long getTime() { return time; }
+	public int getTime() { return time; }
 	
 	public String toString() { 
 		//TODO
-		return Long.toString(time); }
+		return Integer.toString(time); }
 }

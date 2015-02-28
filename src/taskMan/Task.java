@@ -1,34 +1,101 @@
 package taskMan;
 
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
+
 public class Task {
 	private final String description;
-	private final Time estimatedDuration;
+	private final LocalTime estimatedDuration;
 	private final float acceptableDeviation;
 	private TaskStatus taskStatus;
-	private Time beginTime;
-	private Time endTime;
+	private LocalDateTime beginTime;
+	private LocalDateTime endTime;
 	private final int taskID;
 
-	public Task(int taskID, String taskDescription, Time estimatedDuration,
-			float acceptableDeviation, TaskStatus taskStatus) {
+	public Task(int taskID, String taskDescription, LocalTime estimatedDuration,
+			float acceptableDeviation) {
 		this.taskID = taskID;
 		this.description = taskDescription;
 		this.estimatedDuration = estimatedDuration;
 		this.acceptableDeviation = acceptableDeviation;
+	}
+	
+	/**
+	 * Create task with start and end time given (only with finished or failed tasks)
+	 */
+	public Task(int taskID, String taskDescription, LocalTime estimatedDuration,
+			float acceptableDeviation, TaskStatus taskStatus,
+			LocalDateTime beginTime, LocalDateTime endTime) {
+		this(taskID, taskDescription, estimatedDuration, acceptableDeviation);
+		if(taskStatus != TaskStatus.FAILED || taskStatus != TaskStatus.FINISHED)
+			throw new IllegalArgumentException("Time stamps are only required if a task is finished or failed");
 		this.taskStatus = taskStatus;
+		this.beginTime = beginTime;
+		this.endTime = endTime;
 	}
 	
 	public void changeStatus(String status) {
 		taskStatus = TaskStatus.valueOf(status);
 	}
 	
+	public void updateBeginTime(LocalDateTime beginTime) {
+		this.beginTime = beginTime;
+	}
+	
+	public void updateEndTime(LocalDateTime endTime) {
+		this.endTime = endTime;
+	}
+	
+	/**
+	 * @param currentTime The time with which the start time of the task must be compared with
+	 * @throws IllegalStateException when no start time has yet been documented
+	 * @throws IllegalArgumentException when the start time of the task is after the time given
+	 */
+	public LocalDateTime getTimeElapsed(LocalDateTime currentTime) {
+		if(beginTime == null)
+			throw new IllegalStateException("Project not yet started");
+		if(beginTime.isAfter(currentTime))
+			throw new IllegalArgumentException("Timestamp is in the past");
+		
+		LocalDateTime tempDateTime = LocalDateTime.from( beginTime );
+		long years = tempDateTime.until( currentTime, ChronoUnit.YEARS);
+		tempDateTime = tempDateTime.plusYears( years );
+
+		long months = tempDateTime.until( currentTime, ChronoUnit.MONTHS);
+		tempDateTime = tempDateTime.plusMonths( months );
+
+		long days = tempDateTime.until( currentTime, ChronoUnit.DAYS);
+		tempDateTime = tempDateTime.plusDays( days );
+
+		long hours = tempDateTime.until( currentTime, ChronoUnit.HOURS);
+		tempDateTime = tempDateTime.plusHours( hours );
+
+		long minutes = tempDateTime.until( currentTime, ChronoUnit.MINUTES);
+		tempDateTime = tempDateTime.plusMinutes( minutes );
+
+		long seconds = tempDateTime.until( currentTime, ChronoUnit.SECONDS);
+		tempDateTime = tempDateTime.plusSeconds( seconds );
+		
+		return tempDateTime;
+	}
+	
+	/**
+	 * @return returns time elapsed between the start time and end time
+	 * @throws IllegalStateException whenever the end time is not yet determined
+	 */
+	public LocalDateTime getTimeSpan() {
+		if(endTime == null)
+			throw new IllegalStateException("Project not yet finished");
+		return getTimeElapsed(endTime);
+	}
 	
 	public String getDescription() { return description; }
-	public Time getEstimatedDuration() { return estimatedDuration; }
+	public LocalTime getEstimatedDuration() { return estimatedDuration; }
 	public float getAcceptableDeviation() { return acceptableDeviation;	}
 	public TaskStatus getTaskStatus() {	return taskStatus; }
-	public Time getBeginTime() { return beginTime; }
-	public Time getEndTime() { return endTime; }
+	public LocalDateTime getBeginTime() { return beginTime; }
+	public LocalDateTime getEndTime() { return endTime; }
 	public int getTaskID() { return taskID; }
 	
 }
