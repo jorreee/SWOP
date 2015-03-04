@@ -90,12 +90,10 @@ public class Task {
 		return getTimeElapsed(endTime);
 	}
 	
-	public String getDescription() { return description; }
-	public LocalTime getEstimatedDuration() { return estimatedDuration; }
-	public float getAcceptableDeviation() { return acceptableDeviation;	}
-	public TaskStatus getTaskStatus() {	return taskStatus; }
-	public LocalDateTime getBeginTime() { return beginTime; }
-	public LocalDateTime getEndTime() { return endTime; }
+	public TaskDetails getTaskDetails() {
+		//TODO
+		return null;
+	}
 	public int getTaskID() { return taskID; }
 	
 }
