@@ -3,6 +3,7 @@ package taskMan;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
+@Deprecated
 public class TaskDetails extends Detail {
 	
 	private final String description;
