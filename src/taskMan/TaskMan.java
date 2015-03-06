@@ -4,8 +4,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 
-import com.google.common.collect.ImmutableList;
-
 public class TaskMan {
 	
 	private ArrayList<Project> projectList;
@@ -16,6 +14,7 @@ public class TaskMan {
 		//TODO
 	}
 	
+	/*
 	public ImmutableList<ProjectDetails> getProjectDetails() {
 		ArrayList<ProjectDetails> projectDetails = new ArrayList<ProjectDetails>();
 		for(Project project : projectList)
@@ -26,32 +25,29 @@ public class TaskMan {
 	public TaskDetails getTaskDetails(int projectID, int taskID) {
 		return getProject(projectID).getTaskDetails(taskID); 
 	}
+	*/
 	
 	private Project getProject(int projectID) {
-		//TODO
-		return null;
+		return projectList.get(projectID);
 	}
-	
+		
 	public LocalDateTime getCurrentTime() { return currentTime; }
 	
-	public boolean createProject(/*ARGS*/) {
-		//TODO
-		return true;
+	public boolean createProject(String name, String description, LocalDateTime creationTime, LocalDateTime dueTime) {
+		Project project = new Project(projectList.size(), name, description, creationTime, dueTime);
+		return projectList.add(project);
 	}
 	
-	public boolean updateProject(/*ARGS*/) {
-		//TODO
-		return true;
+	public boolean createTask(int projectID, String description, LocalTime estimatedDuration, float acceptableDeviation) {
+		return getProject(projectID).createTask(description, estimatedDuration, acceptableDeviation);
 	}
 	
-	public boolean createTask(/*ARGS*/) {
-		//TOOO
-		return true;
+	public boolean createFinishedTask(int projectID, String description, LocalTime estimatedDuration, float acceptableDeviation, TaskStatus taskStatus, LocalDateTime startTime, LocalDateTime endTime) {
+		return getProject(projectID).createFinishedTask(description, estimatedDuration, acceptableDeviation, taskStatus, startTime, endTime);
 	}
 	
-	public boolean updateTaskDetails(/*ARGS*/) {
-		//TODO
-		return true;
+	public boolean updateTaskDetails(int projectID, int taskID, LocalDateTime startTime, LocalDateTime endTime, TaskStatus taskStatus) {
+		return getProject(projectID).updateTaskDetails(taskID, startTime, endTime, taskStatus);
 	}
 	
 }

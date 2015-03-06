@@ -35,15 +35,15 @@ public class Task {
 		this.endTime = endTime;
 	}
 	
-	public void changeStatus(String status) {
+	private void changeStatus(String status) {
 		taskStatus = TaskStatus.valueOf(status);
 	}
 	
-	public void updateBeginTime(LocalDateTime beginTime) {
+	private void updateBeginTime(LocalDateTime beginTime) {
 		this.beginTime = beginTime;
 	}
 	
-	public void updateEndTime(LocalDateTime endTime) {
+	private void updateEndTime(LocalDateTime endTime) {
 		this.endTime = endTime;
 	}
 	
@@ -95,5 +95,11 @@ public class Task {
 		return null;
 	}
 	public int getTaskID() { return taskID; }
+
+	public boolean updateTaskDetails(LocalDateTime startTime,
+			LocalDateTime endTime, TaskStatus taskStatus) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 	
 }

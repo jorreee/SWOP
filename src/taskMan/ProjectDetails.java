@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import com.google.common.collect.ImmutableList;
 
+@Deprecated
 public class ProjectDetails extends Detail {
 	
 	private final ImmutableList<Task> taskList;
