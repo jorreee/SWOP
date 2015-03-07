@@ -1,4 +1,4 @@
-package streamtokenizertest;
+package userInterface;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -14,14 +14,6 @@ import java.util.List;
 enum TaskStatus { ONGOING, FINISHED, FAILED }
 
 public class TaskManInitFileChecker extends StreamTokenizer {
-	
-	public static void main(String[] args) throws FileNotFoundException {
-		if (args.length < 1){
-			System.err.println("Error: First command line argument must be filename.");
-		}else{
-			new TaskManInitFileChecker(new FileReader(args[0])).checkFile();
-		}
-	}
 	
 	DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 	
@@ -99,6 +91,17 @@ public class TaskManInitFileChecker extends StreamTokenizer {
 		return list;
 	}
 	
+	private ArrayList<ProjectCreationData> projectDataList = new ArrayList<ProjectCreationData>();
+	private ArrayList<TaskCreationData> taskDataList = new ArrayList<TaskCreationData>();
+	
+	ArrayList<ProjectCreationData> getProjectDataList() {
+		return projectDataList;
+	}
+
+	ArrayList<TaskCreationData> getTaskDataList() {
+		return taskDataList;
+	}
+
 	void checkFile() {
 		slashSlashComments(false);
 		slashStarComments(false);
@@ -114,6 +117,8 @@ public class TaskManInitFileChecker extends StreamTokenizer {
 			String description = expectStringField("description");
 			LocalDateTime creationTime = expectDateField("creationTime");
 			LocalDateTime dueTime = expectDateField("dueTime");
+			// add to project table
+			projectDataList.add(new ProjectCreationData(name, description, creationTime, dueTime));
 		}
 		expectLabel("tasks");
 		while (ttype == '-') {
@@ -139,10 +144,14 @@ public class TaskManInitFileChecker extends StreamTokenizer {
 				nextToken();
 				status = TaskStatus.FAILED;
 			}
+			LocalDateTime startTime = null;
+			LocalDateTime endTime = null;
 			if (status != TaskStatus.ONGOING) {
-				LocalDateTime startTime = expectDateField("startTime");
-				LocalDateTime endTime = expectDateField("endTime");
+				startTime = expectDateField("startTime");
+				endTime = expectDateField("endTime");
 			}
+			// add to task table
+			taskDataList.add(new TaskCreationData(project, description, estimatedDuration, acceptableDeviation, alternativeFor, prerequisiteTasks, status, startTime, endTime));
 		}
 		if (ttype != TT_EOF)
 			error("End of file or '-' expected");

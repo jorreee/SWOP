@@ -1,0 +1,3 @@
+TaskMan iteration 1
+h				Display all commands with a short description
+exit				Closes the application
