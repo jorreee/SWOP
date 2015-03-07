@@ -39,6 +39,14 @@ public class Task {
 		taskStatus = TaskStatus.valueOf(status);
 	}
 	
+	public boolean isFinished() {
+		return (taskStatus == TaskStatus.FINISHED);
+	}
+	
+	public TaskStatus getTaskStatus() {
+		return taskStatus;
+	}
+	
 	private void updateBeginTime(LocalDateTime beginTime) {
 		this.beginTime = beginTime;
 	}
@@ -90,10 +98,6 @@ public class Task {
 		return getTimeElapsed(endTime);
 	}
 	
-	public TaskDetails getTaskDetails() {
-		//TODO
-		return null;
-	}
 	public int getTaskID() { return taskID; }
 
 	public boolean updateTaskDetails(LocalDateTime startTime,
