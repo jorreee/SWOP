@@ -13,6 +13,7 @@ public class Task {
 	private LocalDateTime endTime;
 	private final int taskID;
 
+	//TODO status niet INIT
 	public Task(int taskID, String taskDescription, LocalTime estimatedDuration,
 			float acceptableDeviation) {
 		this.taskID = taskID;

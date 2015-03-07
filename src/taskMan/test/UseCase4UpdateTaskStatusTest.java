@@ -5,7 +5,7 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
-public class ProjectTest {
+public class UseCase4UpdateTaskStatusTest {
 	
 	@Before
 	public final void initialize() {
