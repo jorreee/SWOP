@@ -11,21 +11,8 @@ public class TaskMan {
 	//private Project currentProject;
 	
 	public void advanceTime(LocalTime time) {
-		//TODO
+		currentTime = currentTime.plusHours(time.getHour()).plusMinutes(time.getMinute());
 	}
-	
-	/*
-	public ImmutableList<ProjectDetails> getProjectDetails() {
-		ArrayList<ProjectDetails> projectDetails = new ArrayList<ProjectDetails>();
-		for(Project project : projectList)
-			projectDetails.add(project.getProjectDetails());
-		return ImmutableList.copyOf(projectDetails);
-	}
-	
-	public TaskDetails getTaskDetails(int projectID, int taskID) {
-		return getProject(projectID).getTaskDetails(taskID); 
-	}
-	*/
 	
 	private Project getProject(int projectID) {
 		return projectList.get(projectID);
@@ -49,5 +36,30 @@ public class TaskMan {
 	public boolean updateTaskDetails(int projectID, int taskID, LocalDateTime startTime, LocalDateTime endTime, TaskStatus taskStatus) {
 		return getProject(projectID).updateTaskDetails(taskID, startTime, endTime, taskStatus);
 	}
+	
+	public String getProjectName(int projectID) {
+		return getProject(projectID).getProjectName();
+	}
+	
+	public String getProjectDescription(int projectID) {
+		return getProject(projectID).getProjectDescription();
+	}
+	
+	public LocalDateTime getProjectCreationTime(int projectID) {
+		return getProject(projectID).getProjectCreationTime();
+	}
+	
+	public LocalDateTime getProjectDueTime(int projectID) {
+		return getProject(projectID).getProjectDueTime();
+	}
+	
+	public LocalDateTime getProjectEndTime(int projectID) {
+		return getProject(projectID).getProjectEndTime();
+	}
+	
+	public ProjectStatus getProjectStatus(int projectID) {
+		return getProject(projectID).getProjectStatus();
+	}
+	
 	
 }

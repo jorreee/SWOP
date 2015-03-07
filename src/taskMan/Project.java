@@ -13,7 +13,7 @@ public class Project {
 	private final LocalDateTime creationTime;
 	private final LocalDateTime dueTime;
 	private LocalDateTime endTime;
-	private HashMap<Task,Task[]> taskAlternatives;
+	private HashMap<Task,Task> taskAlternatives;
 	private ProjectStatus projectStatus;
 	private final int projectID;
 	
@@ -41,14 +41,35 @@ public class Project {
 		return true;
 	}
 	
-	private boolean hasAlternatives(Project project) {
-		return taskAlternatives.containsKey(project);
+	private boolean hasFinishedAlternative(Task task) {
+		if(task == null)
+			return false;
+		return taskAlternatives.get(task).isFinished() || hasFinishedAlternative(taskAlternatives.get(task));
 	}
-	
+		
 	public int getProjectID() {
 		return projectID;
 	}
 	
+	/**
+	 * This method will adjust the status of the project, depending on its tasks.
+	 * If the project has at least one task and all of those tasks are finished (or failed with a finished alternative),
+	 * the project itself will be considered finished.
+	 */
+	private void recalcultateProjectStatus() {
+		for(Task task : taskList) {
+			TaskStatus status = task.getTaskStatus();
+			if( status == TaskStatus.AVAILABLE || status == TaskStatus.UNAVAILABLE)
+				return;
+			if( status == TaskStatus.FAILED) {
+				if(!hasFinishedAlternative(task))
+					return;
+			}
+		}
+		this.projectStatus = ProjectStatus.FINISHED;
+	}
+	
+	/*
 	public ProjectDetails getProjectDetails() {
 		//TODO
 		return null;
@@ -57,16 +78,21 @@ public class Project {
 	public TaskDetails getTaskDetails(int taskID) {
 		//TODO
 		return getTask(taskID).getTaskDetails();
-	}
+	}*/
 	
 	private Task getTask(int taskID) {
-		//TODO
-		return null;
+		return taskList.get(taskID);
 	}
 	
 	public boolean updateTaskDetails(int taskID, LocalDateTime startTime, LocalDateTime endTime, TaskStatus taskStatus) {
 		return getTask(taskID).updateTaskDetails(startTime, endTime, taskStatus);
 	}
-	
+
+	public String getProjectName() { return projectName; }
+	public String getProjectDescription() {	return description;	}
+	public LocalDateTime getProjectCreationTime() { return creationTime; }
+	public LocalDateTime getProjectDueTime() { return dueTime; }
+	public LocalDateTime getProjectEndTime() { return endTime; }
+	public ProjectStatus getProjectStatus() { return projectStatus;	}
 	
 }
