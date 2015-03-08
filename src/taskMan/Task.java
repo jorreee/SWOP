@@ -13,6 +13,7 @@ public class Task {
 	private LocalDateTime endTime;
 	private final int taskID;
 
+	//TODO status niet INIT
 	public Task(int taskID, String taskDescription, LocalTime estimatedDuration,
 			float acceptableDeviation) {
 		this.taskID = taskID;
@@ -37,6 +38,14 @@ public class Task {
 	
 	private void changeStatus(String status) {
 		taskStatus = TaskStatus.valueOf(status);
+	}
+	
+	public boolean isFinished() {
+		return (taskStatus == TaskStatus.FINISHED);
+	}
+	
+	public TaskStatus getTaskStatus() {
+		return taskStatus;
 	}
 	
 	private void updateBeginTime(LocalDateTime beginTime) {
@@ -90,10 +99,6 @@ public class Task {
 		return getTimeElapsed(endTime);
 	}
 	
-	public TaskDetails getTaskDetails() {
-		//TODO
-		return null;
-	}
 	public int getTaskID() { return taskID; }
 
 	public boolean updateTaskDetails(LocalDateTime startTime,
