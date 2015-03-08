@@ -26,12 +26,13 @@ public class Task {
 	 * Create task with start and end time given (only with finished or failed tasks)
 	 */
 	public Task(int taskID, String taskDescription, LocalTime estimatedDuration,
-			float acceptableDeviation, TaskStatus taskStatus,
+			float acceptableDeviation, String taskStatus,
 			LocalDateTime beginTime, LocalDateTime endTime) {
 		this(taskID, taskDescription, estimatedDuration, acceptableDeviation);
-		if(taskStatus != TaskStatus.FAILED || taskStatus != TaskStatus.FINISHED)
-			throw new IllegalArgumentException("Time stamps are only required if a task is finished or failed");
-		this.taskStatus = taskStatus;
+//		if(taskStatus != TaskStatus.FAILED || taskStatus != TaskStatus.FINISHED)
+//			throw new IllegalArgumentException("Time stamps are only required if a task is finished or failed");
+//		PARSE STRING NAAR JUISTE TASKSTATUS
+		this.taskStatus = TaskStatus.AVAILABLE;
 		this.beginTime = beginTime;
 		this.endTime = endTime;
 	}
