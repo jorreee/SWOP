@@ -2,11 +2,12 @@ package userInterface;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.HashMap;
 import java.util.List;
 
 public interface IFacade {
 
-	public void advanceTime(LocalTime time);
+	public void advanceTime(LocalDateTime time);
 	
 	public LocalDateTime getCurrentTime();
 	
@@ -27,5 +28,7 @@ public interface IFacade {
 	public LocalDateTime getProjectEndTime(int projectID);
 	
 	public String getProjectStatus(int projectID);
+
+	public HashMap<Integer, List<Integer>> getAvailableTasks();
 	
 }
