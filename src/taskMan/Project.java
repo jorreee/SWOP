@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class Project {
 	
@@ -26,19 +27,11 @@ public class Project {
 		this.projectID = projectID;
 	}
 
-	public boolean createTask(String description, LocalTime estimatedDuration, float acceptableDeviation) {
-		Task newTask = new Task(taskList.size(), description, estimatedDuration, acceptableDeviation);
+	public boolean createTask(String description, LocalTime estimatedDuration, float acceptableDeviation, String taskStatus, Integer alternativeFor, List<Integer> prerequisiteTasks, LocalDateTime startTime, LocalDateTime endTime) {
+		// TODO Check for nulls and use correct constructor
+		Task newTask = new Task(taskList.size(), description, estimatedDuration, acceptableDeviation, taskStatus, startTime, endTime);
+		//TODO put alternative and prerequisite in lists
 		return taskList.add(newTask);
-	}
-	
-	public boolean createFinishedTask(String description, LocalTime estimatedDuration, float acceptableDeviation, TaskStatus taskStatus, LocalDateTime startTime, LocalDateTime endTime) {
-		//TODO
-		return true;
-	}
-	
-	public boolean createAlternativeTask(/*ARGS*/) {
-		//TODO
-		return true;
 	}
 	
 	private boolean hasFinishedAlternative(Task task) {

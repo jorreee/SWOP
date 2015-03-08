@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.time.LocalTime;
 import java.util.ArrayList;
 
 import taskMan.Facade;
@@ -33,7 +34,11 @@ public class Main {
 			facade.createProject(pcd.getName(), pcd.getDescription(), pcd.getCreationTime(), pcd.getDueTime());
 		}
 		for(TaskCreationData tcd : taskData) {
-			facade.createTask(tcd.getProject(), tcd.getDescription(), tcd.getEstimatedDuration(), tcd.getAcceptableDeviation());
+			facade.createTask(tcd.getProject(), tcd.getDescription(),
+					LocalTime.of(0, tcd.getEstimatedDuration()),
+					tcd.getAcceptableDeviation(), tcd.getStatus().name(),
+					tcd.getAlternativeFor(), tcd.getPrerequisiteTasks(),
+					tcd.getStartTime(), tcd.getEndTime());
 		}
 		
 		// Start accepting user input

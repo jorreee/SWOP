@@ -3,6 +3,7 @@ package taskMan;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.List;
 
 public class TaskMan {
 	
@@ -25,12 +26,8 @@ public class TaskMan {
 		return projectList.add(project);
 	}
 	
-	public boolean createTask(int projectID, String description, LocalTime estimatedDuration, float acceptableDeviation) {
-		return getProject(projectID).createTask(description, estimatedDuration, acceptableDeviation);
-	}
-	
-	public boolean createFinishedTask(int projectID, String description, LocalTime estimatedDuration, float acceptableDeviation, TaskStatus taskStatus, LocalDateTime startTime, LocalDateTime endTime) {
-		return getProject(projectID).createFinishedTask(description, estimatedDuration, acceptableDeviation, taskStatus, startTime, endTime);
+	public boolean createTask(int projectID, String description, LocalTime estimatedDuration, int acceptableDeviation, String taskStatus, Integer alternativeFor, List<Integer> prerequisiteTasks, LocalDateTime startTime, LocalDateTime endTime) {
+		return getProject(projectID).createTask(description, estimatedDuration, acceptableDeviation, taskStatus, alternativeFor, prerequisiteTasks, startTime, endTime);
 	}
 	
 	public boolean updateTaskDetails(int projectID, int taskID, LocalDateTime startTime, LocalDateTime endTime, TaskStatus taskStatus) {
