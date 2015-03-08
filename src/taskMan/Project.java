@@ -27,7 +27,7 @@ public class Project {
 		this.projectID = projectID;
 	}
 
-	public boolean createTask(String description, LocalTime estimatedDuration, float acceptableDeviation, String taskStatus, Integer alternativeFor, List<Integer> prerequisiteTasks, LocalDateTime startTime, LocalDateTime endTime) {
+	public boolean createTask(String description, LocalTime estimatedDuration, float acceptableDeviation, TaskStatus taskStatus, Integer alternativeFor, List<Integer> prerequisiteTasks, LocalDateTime startTime, LocalDateTime endTime) {
 		// TODO Check for nulls and use correct constructor
 		Task newTask = new Task(taskList.size(), description, estimatedDuration, acceptableDeviation, taskStatus, startTime, endTime);
 		//TODO put alternative and prerequisite in lists
