@@ -1,12 +1,17 @@
 package userInterface.requests;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import userInterface.IFacade;
+
 public class HelpRequest extends Request {
 	
+	public HelpRequest(IFacade facade) {
+		super(facade);
+	}
+
 	@Override
 	public String execute() {
 		try {

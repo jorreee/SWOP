@@ -102,7 +102,7 @@ public class Task {
 	public int getTaskID() { return taskID; }
 
 	public boolean updateTaskDetails(LocalDateTime startTime,
-			LocalDateTime endTime, TaskStatus taskStatus) {
+			LocalDateTime endTime, String taskStatus) {
 		// TODO Auto-generated method stub
 		return false;
 	}

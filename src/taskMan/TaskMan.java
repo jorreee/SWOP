@@ -30,7 +30,7 @@ public class TaskMan {
 		return getProject(projectID).createTask(description, estimatedDuration, acceptableDeviation, taskStatus, alternativeFor, prerequisiteTasks, startTime, endTime);
 	}
 	
-	public boolean updateTaskDetails(int projectID, int taskID, LocalDateTime startTime, LocalDateTime endTime, TaskStatus taskStatus) {
+	public boolean updateTaskDetails(int projectID, int taskID, LocalDateTime startTime, LocalDateTime endTime, String taskStatus) {
 		return getProject(projectID).updateTaskDetails(taskID, startTime, endTime, taskStatus);
 	}
 	
@@ -54,7 +54,7 @@ public class TaskMan {
 		return getProject(projectID).getProjectEndTime();
 	}
 	
-	public ProjectStatus getProjectStatus(int projectID) {
+	public String getProjectStatus(int projectID) {
 		return getProject(projectID).getProjectStatus();
 	}
 	

@@ -77,7 +77,7 @@ public class Project {
 		return taskList.get(taskID);
 	}
 	
-	public boolean updateTaskDetails(int taskID, LocalDateTime startTime, LocalDateTime endTime, TaskStatus taskStatus) {
+	public boolean updateTaskDetails(int taskID, LocalDateTime startTime, LocalDateTime endTime, String taskStatus) {
 		return getTask(taskID).updateTaskDetails(startTime, endTime, taskStatus);
 	}
 
@@ -86,6 +86,6 @@ public class Project {
 	public LocalDateTime getProjectCreationTime() { return creationTime; }
 	public LocalDateTime getProjectDueTime() { return dueTime; }
 	public LocalDateTime getProjectEndTime() { return endTime; }
-	public ProjectStatus getProjectStatus() { return projectStatus;	}
+	public String getProjectStatus() { return projectStatus.name();	}
 	
 }

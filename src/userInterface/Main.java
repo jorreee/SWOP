@@ -1,7 +1,6 @@
 package userInterface;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -27,7 +26,7 @@ public class Main {
 		ArrayList<TaskCreationData> taskData = fileChecker.getTaskDataList();
 		
 		// Get facade
-		Facade facade = new Facade();
+		IFacade facade = new Facade();
 		
 		// Initialize system through a facade
 		for(ProjectCreationData pcd : projectData) {
@@ -43,9 +42,9 @@ public class Main {
 		
 		// Start accepting user input
 		BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
-		InputParser inParser = new InputParser();
+		InputParser inParser = new InputParser(facade, input);
 		while(true) {
-			// Ask user of input
+			// Ask user for input
 			System.out.println("TaskMan instruction? (h for help)");
 			// Parse user input
 			Request request = inParser.parse(input.readLine());
