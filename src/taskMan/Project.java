@@ -6,10 +6,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import com.google.common.collect.ImmutableList;
+
 
 //TODO voorspellen of task op tijd afgehandled kan worden
 //TODO methode om te weten hoeveel uw project te laat is
 //TODO werken met taskID ipv task objecten.
+//TODO isontime boolean, getDelay int 
 
 public class Project {
 	
@@ -308,6 +311,7 @@ public class Project {
 		return this.taskList;
 	}
 	
+	
 	/**
 	 * Returns the number of known Tasks.
 	 * 
@@ -315,6 +319,19 @@ public class Project {
 	 */
 	public int getNumberOfTasks(){
 		return this.taskList.size()-1;
+	}
+	
+	/**
+	 * Returns a immutable list of the Task ID's of the project.
+	 * 
+	 * @return	an immutable list of the task ID's.
+	 */
+	public ImmutableList<Integer> getTaskIDs(){
+		List<Integer> id = new ArrayList<>();
+		for(Task task: this.taskList){
+			id.add(task.getTaskID());
+		}
+		return new ImmutableList.Builder<Integer>().addAll(id).build();
 	}
 	
 	/**
@@ -353,7 +370,7 @@ public class Project {
 			return false;
 		return this.taskAlternatives.containsKey(taskID);
 	}
-	
+	//TODO
 	/**
 	 * Add an alternative Task to the list of alternatives of the given Task.
 	 * 
