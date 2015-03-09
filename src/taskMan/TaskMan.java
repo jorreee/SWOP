@@ -11,8 +11,8 @@ import java.util.List;
 //TODO Update Task Details: start en endtime moeten in het verleden liggen
 public class TaskMan {
 	
-	private ArrayList<Project> projectList;
-	private LocalDateTime currentTime;
+	private ArrayList<Project> projectList = new ArrayList<>();
+	private LocalDateTime currentTime = LocalDateTime.now();
 	//private Project currentProject;
 	
 	public boolean advanceTimeTo(LocalDateTime time) {
@@ -107,5 +107,66 @@ public class TaskMan {
 	public List<Integer> getAvailableTasks(int projectID) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	public int getProjectAmount() {
+		return projectList.size();
+	}
+
+	public boolean isOnTime(int projectID) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public int getTaskAmount(int projectID) {
+		return projectList.get(projectID).getTaskAmount();
+	}
+
+	public String getTaskDescription(int projectID, int taskID) {
+		return projectList.get(projectID).getTaskDescription(taskID);
+	}
+
+	public boolean hasTaskStarted(int projectID, int taskID) {
+		return projectList.get(projectID).hasTaskStarted(taskID);
+	}
+
+	public LocalDateTime getTaskStartTime(int projectID, int taskID) {
+		return projectList.get(projectID).getTaskStartTime(taskID);
+	}
+
+	public int getEstimatedTaskDuration(int projectID, int taskID) {
+		return projectList.get(projectID).getEstimatedTaskDuration(taskID);
+	}
+
+	public int getAcceptableTaskDeviation(int projectID, int taskID) {
+		return projectList.get(projectID).getAcceptableTaskDeviation(taskID);
+	}
+
+	public boolean hasTaskEnded(int projectID, int taskID) {
+		return projectList.get(projectID).hasTaskEnded(taskID);
+	}
+
+	public LocalDateTime getTaskEndTime(int projectID, int taskID) {
+		return projectList.get(projectID).getTaskEndTime(taskID);
+	}
+
+	public String getTaskStatus(int projectID, int taskID) {
+		return projectList.get(projectID).getTaskStatus(taskID);
+	}
+
+	public boolean hasTaskPrerequisites(int projectID, int taskID) {
+		return projectList.get(projectID).hasPrerequisites(taskID);
+	}
+
+	public List<Integer> getTaskPrerequisitesFor(int projectID, int taskID) {
+		return projectList.get(projectID).getPrerequisites(taskID);
+	}
+
+	public boolean hasTaskAlternative(int projectID, int taskID) {
+		return projectList.get(projectID).hasAlternative(taskID);
+	}
+
+	public int getTaskAlternativeTo(int projectID, int taskID) {
+		return projectList.get(projectID).getAlternative(taskID);
 	}
 }
