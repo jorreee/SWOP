@@ -25,8 +25,12 @@ public class Facade implements IFacade {
 	}
 	
 	
-	public boolean createTask(int projectID, String description, LocalTime estimatedDuration, int acceptableDeviation, String taskStatus, Integer alternativeFor, List<Integer> prerequisiteTasks, LocalDateTime startTime, LocalDateTime endTime) {
+	public boolean createTask(int projectID, String description, int estimatedDuration, int acceptableDeviation, String taskStatus, Integer alternativeFor, List<Integer> prerequisiteTasks, LocalDateTime startTime, LocalDateTime endTime) {
 		return taskMan.createTask(projectID, description, estimatedDuration, acceptableDeviation, taskStatus, alternativeFor, prerequisiteTasks, startTime, endTime);	}
+	
+	public boolean createTask(int projectID, String description, int estimatedDuration, int acceptableDeviation, Integer alternativeFor, List<Integer> prerequisiteTasks) {
+		return taskMan.createTask(projectID, description, estimatedDuration, acceptableDeviation, alternativeFor, prerequisiteTasks);
+	}
 	
 	public boolean updateTaskDetails(int projectID, int taskID, LocalDateTime startTime, LocalDateTime endTime, String taskStatus) {
 		return taskMan.updateTaskDetails(projectID, taskID, startTime, endTime, taskStatus);
@@ -74,24 +78,6 @@ public class Facade implements IFacade {
 		return null;
 	}
 
-	
-
-	@Override
-	public boolean createTask(int projectID, String description,
-			int estimatedDuration, int acceptableDeviation, String taskStatus,
-			Integer alternativeFor, List<Integer> prerequisiteTasks,
-			LocalDateTime startTime, LocalDateTime endTime) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean createTask(int projectID, String description,
-			int estimatedDuration, int acceptableDeviation,
-			Integer alternativeFor, List<Integer> prerequisiteTasks) {
-		// TODO Auto-generated method stub
-		return false;
-	}
 
 	@Override
 	public int getProjectAmount() {
@@ -106,8 +92,8 @@ public class Facade implements IFacade {
 	}
 
 	@Override
-	public int getDelay(int projectID) {
-		// TODO Auto-generated method stub
+	public int getProjectDelay(int projectID) {
+	//	return taskMan.
 		return 0;
 	}
 

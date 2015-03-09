@@ -17,12 +17,16 @@ public class ShowProjectsRequest extends Request {
 			System.out.println("Current time: " + facade.getCurrentTime().toString());
 			int projectAmount = facade.getProjectAmount();
 			String onTime = new String();
+			int delay;
 			for(int i = 0 ; i < projectAmount ; i++) {
+				delay = 0;
 				if(facade.isOnTime(i)) {
 					onTime = "on time";
 				} else {
 					onTime = "over time";
+					delay = facade.getProjectDelay(i);
 				}
+				StringBuilder projectHeader = new StringBuilder();
 				System.out.println("- Project " + i + " "
 						+ facade.getProjectName(i) + ": "
 						+ facade.getProjectStatus(i) + ", " + onTime + " (Due "
