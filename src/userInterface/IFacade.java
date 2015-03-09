@@ -11,10 +11,10 @@ public interface IFacade {
 	
 	public LocalDateTime getCurrentTime();
 	
-	public boolean createProject(String name, String description, LocalDateTime creationTime, LocalDateTime dueTime);
+	public boolean createProject(String name, String description, LocalDateTime dueTime);
 	
-	public boolean createTask(int projectID, String description, LocalTime estimatedDuration, int acceptableDeviation, String taskStatus, Integer alternativeFor, List<Integer> prerequisiteTasks, LocalDateTime startTime, LocalDateTime endTime);
-	public boolean createTask(int projectID, String description, LocalTime estimatedDuration, int acceptableDeviation, Integer alternativeFor, List<Integer> prerequisiteTasks);
+	public boolean createTask(int projectID, String description, int estimatedDuration, int acceptableDeviation, String taskStatus, Integer alternativeFor, List<Integer> prerequisiteTasks, LocalDateTime startTime, LocalDateTime endTime);
+	public boolean createTask(int projectID, String description, int estimatedDuration, int acceptableDeviation, Integer alternativeFor, List<Integer> prerequisiteTasks);
 	
 	public boolean updateTaskDetails(int projectID, int taskID, LocalDateTime startTime, LocalDateTime endTime, String taskStatus);
 	

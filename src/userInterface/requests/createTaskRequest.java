@@ -1,9 +1,7 @@
 package userInterface.requests;
 
 import java.io.BufferedReader;
-import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import userInterface.IFacade;
 
@@ -39,7 +37,7 @@ public class CreateTaskRequest extends Request {
 					prereqList.add(Integer.parseInt(prereq));
 				}
 				
-				boolean success = facade.createTask(Integer.parseInt(input[0]), input[1], LocalTime.of(0,Integer.parseInt(input[2])), Integer.parseInt(input[3]), Integer.parseInt(input[4]), prereqList);
+				boolean success = facade.createTask(Integer.parseInt(input[0]), input[1], Integer.parseInt(input[2]), Integer.parseInt(input[3]), Integer.parseInt(input[4]), prereqList);
 
 				// Invalid details
 				if(success) {

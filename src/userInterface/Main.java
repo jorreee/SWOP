@@ -34,7 +34,7 @@ public class Main {
 		}
 		for(TaskCreationData tcd : taskData) {
 			facade.createTask(tcd.getProject(), tcd.getDescription(),
-					LocalTime.of(0, tcd.getEstimatedDuration()),
+					tcd.getEstimatedDuration(),
 					tcd.getAcceptableDeviation(), tcd.getStatus().name(),
 					tcd.getAlternativeFor(), tcd.getPrerequisiteTasks(),
 					tcd.getStartTime(), tcd.getEndTime());
