@@ -6,6 +6,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import com.google.common.collect.ImmutableList;
+
+
+//TODO voorspellen of task op tijd afgehandled kan worden
+//TODO methode om te weten hoeveel uw project te laat is
+//TODO werken met taskID ipv task objecten.
+//TODO isontime boolean, getDelay int 
+
 public class Project {
 	
 	private ArrayList<Task> taskList;
@@ -14,7 +22,7 @@ public class Project {
 	private final LocalDateTime creationTime;
 	private final LocalDateTime dueTime;
 	private LocalDateTime endTime;
-	private HashMap<Task,ArrayList<Task>> taskAlternatives;
+	private HashMap<Integer,Integer> taskAlternatives;
 	private HashMap<Task,ArrayList<Task>> taskPrerequisites;
 	private ProjectStatus projectStatus;
 	private final int projectID;
@@ -144,35 +152,25 @@ public class Project {
 	 * 			The Task to check.
 	 * @return	True if and only the given Task has finished alternatives.
 	 */
-	private boolean hasFinishedAlternative(Task task) {
-		if(task == null)
+	private boolean hasFinishedAlternative(Integer task) {
+		if(!isValidTaskID(task))
 			return false;
-		ArrayList<Task> alternatives = this.getAlternatives(task);
-		boolean result = false;
-		int i = 0;
-		while(!result){
-			result = alternatives.get(i).isFinished();
-			i++;
-			if(i>=alternatives.size())
-				return result;
-		}
-		return result;
-		//return taskAlternatives.get(task).isFinished() || hasFinishedAlternative(taskAlternatives.get(task));
+		return getTask(taskAlternatives.get(task)).isFinished() || hasFinishedAlternative(taskAlternatives.get(task));
 		
 	}
 	
 	//TODO finish this
-	private void updateTaskStatus(Task task){
-		if(!task.isFinished()){
-			for(Task pre:getPrerequisites(task)){
-				if(!pre.isFinished()){
-					task.setTaskStatus(TaskStatus.UNAVAILABLE);
-					return;
-				}
-			}
-			task.setTaskStatus(TaskStatus.AVAILABLE);
-		}
-	}
+//	private void updateTaskStatus(Task task){
+//		if(!task.isFinished()){
+//			for(Task pre:getPrerequisites(task)){
+//				if(!pre.isFinished()){
+//					task.setTaskStatus(TaskStatus.UNAVAILABLE);
+//					return;
+//				}
+//			}
+//			task.setTaskStatus(TaskStatus.AVAILABLE);
+//		}
+//	}
 	
 	/**
 	 * This method will adjust the status of the project, depending on its tasks.
@@ -185,7 +183,7 @@ public class Project {
 			if( status == TaskStatus.AVAILABLE || status == TaskStatus.UNAVAILABLE)
 				return;
 			if( status == TaskStatus.FAILED) {
-				if(!hasFinishedAlternative(task))
+				if(!hasFinishedAlternative(task.getTaskID()))
 					return;
 			}
 		}
@@ -235,7 +233,7 @@ public class Project {
 	 * 			False if the ID isn't a valid one ore the
 	 * 			update isn't valid.
 	 */
-	public boolean updateTaskDetails(int taskID, LocalDateTime startTime, LocalDateTime endTime, TaskStatus taskStatus) {
+	public boolean updateTaskDetails(int taskID, LocalDateTime startTime, LocalDateTime endTime, String taskStatus) {
 		if(isValidTaskID(taskID)){
 			return getTask(taskID).updateTaskDetails(startTime, endTime, taskStatus);
 		}
@@ -300,8 +298,8 @@ public class Project {
 	 * 
 	 * @return	The status of this Project.
 	 */
-	public ProjectStatus getProjectStatus() { 
-		return projectStatus;	
+	public String getProjectStatus() { 
+		return "projectStatus";	
 	}
 	
 	/**
@@ -313,6 +311,7 @@ public class Project {
 		return this.taskList;
 	}
 	
+	
 	/**
 	 * Returns the number of known Tasks.
 	 * 
@@ -323,11 +322,24 @@ public class Project {
 	}
 	
 	/**
+	 * Returns a immutable list of the Task ID's of the project.
+	 * 
+	 * @return	an immutable list of the task ID's.
+	 */
+	public ImmutableList<Integer> getTaskIDs(){
+		List<Integer> id = new ArrayList<>();
+		for(Task task: this.taskList){
+			id.add(task.getTaskID());
+		}
+		return new ImmutableList.Builder<Integer>().addAll(id).build();
+	}
+	
+	/**
 	 * Returns the list of Task alternatives.
 	 * 
 	 * @return	A list of Tasks with their alternatives.
 	 */
-	public HashMap<Task, ArrayList<Task>> getAllAlternatives(){
+	public HashMap<Integer, Integer> getAllAlternatives(){
 		return this.taskAlternatives;
 	}
 	
@@ -337,11 +349,11 @@ public class Project {
 	 * @param 	task
 	 * 			The Task with the alternatives.
 	 * @return	A list of the alternatives for the Task if any.
-	 *			Null otherwise.
+	 *			-1 otherwise.
 	 */
-	public ArrayList<Task> getAlternatives(Task task) {
-		if(!hasAlternatives(task)){
-			return null;
+	public int getAlternative(Integer task) throws IllegalArgumentException{
+		if(!hasAlternative(task)){
+			return -1;
 		}
 		return this.taskAlternatives.get(task);
 	}
@@ -353,12 +365,12 @@ public class Project {
 	 * 			The Task to check.
 	 * @return	True if and only the given Task has alternatives.
 	 */
-	private boolean hasAlternatives(Task task){
-		if(task == null)
+	private boolean hasAlternative(Integer taskID){
+		if(!isValidTaskID(taskID))
 			return false;
-		return this.taskAlternatives.containsKey(task);
+		return this.taskAlternatives.containsKey(taskID);
 	}
-	
+	//TODO
 	/**
 	 * Add an alternative Task to the list of alternatives of the given Task.
 	 * 
@@ -368,18 +380,17 @@ public class Project {
 	 * 			The new alternative.
 	 * @return	True if and only if the addition was successful.
 	 */
-	private boolean addAlternative(Task task, Task alternative){
-		isValidAlternative(task, alternative);
-		if(hasAlternatives(task)){
-			ArrayList<Task> alt=getAlternatives(task);
-			alt.add(alternative);
-			taskAlternatives.put(task, alt);
+	private boolean addAlternative(int task, int alternative){
+		if(isValidAlternative(task, alternative))
+			return false;
+		if(!this.getTask(task).isFailed())
+			return false;
+		else{
+			
+			this.taskAlternatives.put(task, alternative);
 			return true;
 		}
-		ArrayList<Task> newAlt = new ArrayList<Task>();
-		newAlt.add(alternative);
-		taskAlternatives.put(task, newAlt);
-		return true;
+		
 	}
 	
 	/**
@@ -391,12 +402,8 @@ public class Project {
 	 * 			The alternative to check.
 	 * @return	True if and only the alternative is valid one.
 	 */
-	private boolean isValidAlternative(Task task,Task alt){
-		if(task==null||alt==null)
-			return false;
-		if(!task.equals(alt))
-			return true;
-		return false;
+	private boolean isValidAlternative(int task,int alt){
+		return task!=alt;
 	}
 	
 	/**

@@ -7,11 +7,8 @@ import userInterface.IFacade;
 
 public class AdvanceTimeRequest extends Request {
 
-	private BufferedReader inputReader;
-
 	public AdvanceTimeRequest(IFacade facade, BufferedReader inputReader) {
-		super(facade);
-		this.inputReader = inputReader;
+		super(facade, inputReader);
 	}
 
 	@Override
@@ -29,12 +26,14 @@ public class AdvanceTimeRequest extends Request {
 
 				// Parse timestamp
 				LocalDateTime time = LocalDateTime.parse(input);
-
+				
+				// Advance time
+				boolean success = facade.advanceTimeTo(time);
+				
 				// Invalid timestamp
-				if(currentTime.isAfter(time)) {
-					System.out.println("Invalid time, you can only specify a later date. Please try again");
+				if(!success) {
+					System.out.println("Invalid time");
 				} else {// Correct timestamp
-					facade.advanceTime(time);
 					return "Time advanced to " + time.toString();
 				}
 				// Use Case ends

@@ -26,7 +26,7 @@ public class Main {
 		ArrayList<TaskCreationData> taskData = fileChecker.getTaskDataList();
 		
 		// Get facade
-		IFacade facade = new Facade();
+		Facade facade = new Facade();
 		
 		// Initialize system through a facade
 		for(ProjectCreationData pcd : projectData) {
@@ -34,7 +34,7 @@ public class Main {
 		}
 		for(TaskCreationData tcd : taskData) {
 			facade.createTask(tcd.getProject(), tcd.getDescription(),
-					LocalTime.of(0, tcd.getEstimatedDuration()),
+					tcd.getEstimatedDuration(),
 					tcd.getAcceptableDeviation(), tcd.getStatus().name(),
 					tcd.getAlternativeFor(), tcd.getPrerequisiteTasks(),
 					tcd.getStartTime(), tcd.getEndTime());
