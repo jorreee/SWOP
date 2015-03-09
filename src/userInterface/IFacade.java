@@ -7,13 +7,14 @@ import java.util.List;
 
 public interface IFacade {
 
-	public void advanceTime(LocalDateTime time);
+	public boolean advanceTime(LocalDateTime time);
 	
 	public LocalDateTime getCurrentTime();
 	
 	public boolean createProject(String name, String description, LocalDateTime creationTime, LocalDateTime dueTime);
 	
 	public boolean createTask(int projectID, String description, LocalTime estimatedDuration, int acceptableDeviation, String taskStatus, Integer alternativeFor, List<Integer> prerequisiteTasks, LocalDateTime startTime, LocalDateTime endTime);
+	public boolean createTask(int projectID, String description, LocalTime estimatedDuration, int acceptableDeviation, Integer alternativeFor, List<Integer> prerequisiteTasks);
 	
 	public boolean updateTaskDetails(int projectID, int taskID, LocalDateTime startTime, LocalDateTime endTime, String taskStatus);
 	
@@ -31,5 +32,7 @@ public interface IFacade {
 
 	public HashMap<Integer, List<Integer>> getAvailableTasks();
 	public List<Integer> getAvailableTasks(int projectID);
+
+
 	
 }

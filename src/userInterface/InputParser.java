@@ -3,6 +3,7 @@ package userInterface;
 import java.io.BufferedReader;
 
 import userInterface.requests.AdvanceTimeRequest;
+import userInterface.requests.CreateTaskRequest;
 import userInterface.requests.ExitRequest;
 import userInterface.requests.HelpRequest;
 import userInterface.requests.Request;
@@ -28,6 +29,8 @@ public class InputParser {
 		case "advance"	: return new AdvanceTimeRequest(facade, inputReader);
 		case "update"	: if(input[1].toLowerCase().equals("task"))
 							return new UpdateTaskStatusRequest(facade, inputReader);
+		case "create"	: if(input[1].toLowerCase().equals("task"))
+							return new CreateTaskRequest(facade, inputReader);
 		}
 		return null;
 	}

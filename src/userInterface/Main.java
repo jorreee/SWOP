@@ -26,7 +26,7 @@ public class Main {
 		ArrayList<TaskCreationData> taskData = fileChecker.getTaskDataList();
 		
 		// Get facade
-		IFacade facade = new Facade();
+		Facade facade = new Facade();
 		
 		// Initialize system through a facade
 		for(ProjectCreationData pcd : projectData) {
