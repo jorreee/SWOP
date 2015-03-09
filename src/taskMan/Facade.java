@@ -2,6 +2,7 @@ package taskMan;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.HashMap;
 import java.util.List;
 
 import userInterface.IFacade;
@@ -48,6 +49,24 @@ public class Facade implements IFacade {
 	
 	public String getProjectStatus(int projectID) {
 		return taskMan.getProjectStatus(projectID);
+	}
+
+	@Override
+	public void advanceTime(LocalDateTime time) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public HashMap<Integer, List<Integer>> getAvailableTasks() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Integer> getAvailableTasks(int projectID) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

@@ -4,6 +4,13 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 
+
+//TODO task moeten dependencies hebben, dependencies moeten fullfiled zijn voor available anders unavailable
+//TODO enkel alternative voor task die failed is, alt pakt timespan en dependencies over
+//TODO timespan via 2 constructors, via extra parameters. Extra tijd variable moet private zijn(get and set)
+//TODO Finished 
+//TODO
+//TODO voor delay van task nu - begintime van Task
 public class Task {
 	private final String description;
 	private final LocalTime estimatedDuration;
@@ -176,6 +183,7 @@ public class Task {
 		return endTime;
 	}
 
+	//TODO slechts eenmaal setten anders null idem voor begin
 	/**
 	 * Sets the end time of Task.
 	 * 
@@ -253,11 +261,11 @@ public class Task {
 	 * @return	True if and only if the updates succeeds.
 	 */
 	public boolean updateTaskDetails(LocalDateTime startTime,
-			LocalDateTime endTime, TaskStatus taskStatus) {
+			LocalDateTime endTime, String taskStatus) {
 		try{
 			this.setBeginTime(startTime);
 			this.setEndTime(endTime);
-			this.setTaskStatus(taskStatus);
+			//this.setTaskStatus(taskStatus);
 		}catch(Exception e){
 			return false;
 		}

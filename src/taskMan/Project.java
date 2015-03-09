@@ -6,6 +6,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+
+//TODO voorspellen of task op tijd afgehandled kan worden
+//TODO methode om te weten hoeveel uw project te laat is
+
 public class Project {
 	
 	private ArrayList<Task> taskList;
@@ -235,7 +239,7 @@ public class Project {
 	 * 			False if the ID isn't a valid one ore the
 	 * 			update isn't valid.
 	 */
-	public boolean updateTaskDetails(int taskID, LocalDateTime startTime, LocalDateTime endTime, TaskStatus taskStatus) {
+	public boolean updateTaskDetails(int taskID, LocalDateTime startTime, LocalDateTime endTime, String taskStatus) {
 		if(isValidTaskID(taskID)){
 			return getTask(taskID).updateTaskDetails(startTime, endTime, taskStatus);
 		}
@@ -300,8 +304,8 @@ public class Project {
 	 * 
 	 * @return	The status of this Project.
 	 */
-	public ProjectStatus getProjectStatus() { 
-		return projectStatus;	
+	public String getProjectStatus() { 
+		return "projectStatus";	
 	}
 	
 	/**
