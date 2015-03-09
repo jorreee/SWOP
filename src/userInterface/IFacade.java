@@ -1,7 +1,6 @@
 package userInterface;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.List;
 
@@ -20,6 +19,7 @@ public interface IFacade {
 	public boolean updateTaskDetails(int projectID, int taskID, LocalDateTime startTime, LocalDateTime endTime, String taskStatus);
 	
 	public int getProjectAmount();
+	public int getTaskAmount(int projectID);	
 	
 	public String getProjectName(int projectID);
 	
@@ -28,17 +28,43 @@ public interface IFacade {
 	public int getProjectDelay(int projectID);
 	
 	public String getProjectDescription(int projectID);
+	public String getTaskDescription(int projectID, int taskID);
 	
 	public LocalDateTime getProjectCreationTime(int projectID);
+	public boolean hasTaskStarted(int projectID, int taskID);
+	public LocalDateTime getTaskStartTime(int projectID, int taskID);
 	
 	public LocalDateTime getProjectDueTime(int projectID);
+	public int getEstimatedTaskDuration(int projectID, int taskID);	
+	public int getAcceptableTaskDeviation(int projectID, int taskID);
 	
 	public LocalDateTime getProjectEndTime(int projectID);
+	public boolean hasTaskEnded(int projectID, int taskID);
+	public LocalDateTime getTaskEndTime(int projectID, int taskID);
 	
 	public String getProjectStatus(int projectID);
+	public String getTaskStatus(int projectID, int taskID);
 
 	public HashMap<Integer, List<Integer>> getAvailableTasks();
 	public List<Integer> getAvailableTasks(int projectID);
+
+	public boolean hasTaskPrerequisites(int projectID, int taskID);
+	public List<Integer> getTaskPrerequisitesFor(int projectID, int taskID);
+
+	public boolean hasTaskAlternative(int projectID, int taskID);
+	public int getTaskAlternativeTo(int projectID, int taskID);
+
+
+
+
+
+	
+
+
+
+
+
+
 
 
 	
