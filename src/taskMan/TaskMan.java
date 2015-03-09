@@ -34,6 +34,11 @@ public class TaskMan {
 		return projectList.add(project);
 	}
 	
+	public boolean createProject(String name, String description, LocalDateTime dueTime) {
+		Project project = new Project(projectList.size(), name, description, currentTime, dueTime);
+		return projectList.add(project);
+	}
+	
 	public boolean createTask(int projectID, String description, LocalTime estimatedDuration, int acceptableDeviation, String taskStatus, Integer alternativeFor, List<Integer> prerequisiteTasks, LocalDateTime startTime, LocalDateTime endTime) {
 		return getProject(projectID).createTask(description, estimatedDuration, acceptableDeviation, taskStatus, alternativeFor, prerequisiteTasks, startTime, endTime);
 	}
