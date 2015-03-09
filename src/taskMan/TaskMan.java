@@ -13,7 +13,7 @@ public class TaskMan {
 	private LocalDateTime currentTime;
 	//private Project currentProject;
 	
-	public void advanceTime(LocalTime time) {
+	public void advanceTime(LocalDateTime time) {
 		currentTime = currentTime.plusHours(time.getHour()).plusMinutes(time.getMinute());
 	}
 	

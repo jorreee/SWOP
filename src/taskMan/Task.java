@@ -11,6 +11,8 @@ import java.time.temporal.ChronoUnit;
 //TODO Finished 
 //TODO
 //TODO voor delay van task nu - begintime van Task
+//TODO float wordt int
+//TODO estimateddur int
 public class Task {
 	private final String description;
 	private final LocalTime estimatedDuration;
@@ -94,6 +96,15 @@ public class Task {
 		return (taskStatus == TaskStatus.FINISHED);
 	}
 	
+	/**
+	 * Checks whether the the project is failed.
+	 * 
+	 * @return	True if and only the project is failed.
+	 */
+	public boolean isFailed(){
+		return (taskStatus ==TaskStatus.FAILED);
+	}
+	
 //	private void updateBeginTime(LocalDateTime beginTime) {
 //		this.beginTime = beginTime;
 //	}
@@ -169,9 +180,16 @@ public class Task {
 	 * 
 	 * @param 	beginTime
 	 * 			The new start time for the Task.
+	 * @throws	IllegalArgumentException
+	 * 			If the new begin time is null or the old begin time is already set. 
 	 */
-	public void setBeginTime(LocalDateTime beginTime) {
-		this.beginTime = beginTime;
+	public void setBeginTime(LocalDateTime beginTime) throws IllegalArgumentException{
+		if(beginTime==null)
+			throw new IllegalArgumentException("The new beginTime is null");
+		if(this.beginTime!=null)
+			throw new IllegalArgumentException("The begintime is already set");
+		else
+			this.beginTime = beginTime;
 	}
 
 	/**
@@ -183,15 +201,21 @@ public class Task {
 		return endTime;
 	}
 
-	//TODO slechts eenmaal setten anders null idem voor begin
 	/**
 	 * Sets the end time of Task.
 	 * 
 	 * @param 	endTime
 	 * 			The new end time of the Task.
+	 * @throws	IllegalArgumentException
+	 * 			If the new end time is null or the old end time is already set. 
 	 */
-	public void setEndTime(LocalDateTime endTime) {
-		this.endTime = endTime;
+	public void setEndTime(LocalDateTime endTime) throws IllegalArgumentException {
+		if(endTime==null)
+			throw new IllegalArgumentException("The new endTime is null");
+		if(this.endTime!=null)
+			throw new IllegalArgumentException("The endtime is already set");
+		else
+			this.endTime = endTime;
 	}
 
 	/**
@@ -226,9 +250,15 @@ public class Task {
 	 * 
 	 * @param 	taskStatus
 	 * 			The new status of this Task.
+	 * @throws	IllegalArgumentException
+	 * 			If the status isn't a valid one.
 	 */
-	public void setTaskStatus(TaskStatus taskStatus) {
-		this.taskStatus = taskStatus;
+	public void setTaskStatus(String taskStatus) throws IllegalArgumentException{
+		try{
+			this.taskStatus = TaskStatus.valueOf(taskStatus);
+		}catch(Exception e){
+			throw new IllegalArgumentException("Invalid status");
+		}
 	}
 	
 	/**
@@ -265,7 +295,7 @@ public class Task {
 		try{
 			this.setBeginTime(startTime);
 			this.setEndTime(endTime);
-			//this.setTaskStatus(taskStatus);
+			this.setTaskStatus(taskStatus);
 		}catch(Exception e){
 			return false;
 		}

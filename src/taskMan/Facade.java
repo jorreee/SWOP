@@ -10,9 +10,6 @@ import userInterface.IFacade;
 public class Facade implements IFacade {
 	private TaskMan taskMan = new TaskMan();
 	
-	public void advanceTime(LocalTime time) {
-		taskMan.advanceTime(time);;
-	}
 	
 	public LocalDateTime getCurrentTime() { return taskMan.getCurrentTime(); }
 	
