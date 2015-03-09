@@ -1,6 +1,7 @@
 package userInterface.requests;
 
 import java.io.BufferedReader;
+import java.util.List;
 
 import userInterface.IFacade;
 
@@ -34,7 +35,7 @@ public class ShowProjectsRequest extends Request {
 				int projectID = Integer.parseInt(input);
 
 				// Show overview of project details including list of tasks and their status
-				String onTime = new String();
+				String onTime = new String(); // build project details
 				int delay;	
 
 				delay = 0;
@@ -55,7 +56,8 @@ public class ShowProjectsRequest extends Request {
 					projectHeader.append("(" + delay + " working minutes short)");
 				}
 				projectHeader.append(")");
-
+				
+				System.out.println(projectHeader.toString());
 				System.out.println("\"" + facade.getProjectDescription(projectID) + "\""); // PRINT SELECTED PROJECT HEADER
 
 				int taskAmount = facade.getTaskAmount(projectID);
@@ -75,29 +77,30 @@ public class ShowProjectsRequest extends Request {
 				int taskID = Integer.parseInt(input);
 
 				// Show overview of task details
-				String onTime = new String();
-				int delay;	
-
-				delay = 0;
-				if(facade.isOnTime(projectID)) {
-					onTime = "on time";
-				} else {
-					onTime = "over time";
-					delay = facade.getProjectDelay(projectID);
+				StringBuilder taskHeader = new StringBuilder(); // Build task details
+				taskHeader.append("  * Task " + taskID + " "
+						+ facade.getTaskStatus(projectID, taskID) + ": "
+						+ facade.getTaskDescription(projectID, taskID) + ", "
+						+ facade.getEstimatedTaskDuration(projectID, taskID) + " minutes, "
+						+ facade.getAcceptableTaskDeviation(projectID, taskID) + "% margin");
+				
+				if(facade.hasTaskPrerequisites(projectID, taskID)) {
+					List<Integer> prereqs = facade.getTaskPrerequisitesFor(projectID, taskID);
+					taskHeader.append(", depends on");
+					for(int i = 0 ; i < prereqs.size() ; i++) {
+						if(i == 0)
+							taskHeader.append(" task " + prereqs.get(i));
+						if(i < prereqs.size() - 1)
+							taskHeader.append(" and ");
+					}
 				}
-
-				StringBuilder projectHeader = new StringBuilder();
-				projectHeader.append("- Project " + projectID + " "
-						+ facade.getProjectName(projectID) + ": "
-						+ facade.getProjectStatus(projectID) + ", " + onTime + " (Due "
-						+ facade.getProjectDueTime(projectID).toLocalDate().toString());
-
-				if(delay > 0) {
-					projectHeader.append("(" + delay + " working minutes short)");
-				}
-				projectHeader.append(")");
-
-				System.out.println("\"" + facade.getProjectDescription(projectID) + "\""); // PRINT SELECTED TASK HEADER
+				if(facade.hasTaskAlternative(projectID, taskID))
+					taskHeader.append(", alternative to task " + facade.getTaskAlternativeTo(projectID, taskID));
+				if(facade.hasTaskStarted(projectID, taskID))
+					taskHeader.append(", started " + facade.getTaskStartTime(projectID, taskID).toString());
+				if(facade.hasTaskEnded(projectID, taskID))
+					taskHeader.append(", finished " + facade.getTaskEndTime(projectID, taskID).toString());
+				System.out.println(taskHeader.toString()); // PRINT SELECTED TASK HEADER
 				
 			} catch(Exception e) {
 				System.out.println("Invalid input");
