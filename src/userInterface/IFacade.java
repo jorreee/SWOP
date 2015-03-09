@@ -7,17 +7,24 @@ import java.util.List;
 
 public interface IFacade {
 
-	public void advanceTime(LocalDateTime time);
+	public boolean advanceTimeTo(LocalDateTime time);
 	
 	public LocalDateTime getCurrentTime();
 	
-	public boolean createProject(String name, String description, LocalDateTime creationTime, LocalDateTime dueTime);
+	public boolean createProject(String name, String description, LocalDateTime dueTime);
 	
-	public boolean createTask(int projectID, String description, LocalTime estimatedDuration, int acceptableDeviation, String taskStatus, Integer alternativeFor, List<Integer> prerequisiteTasks, LocalDateTime startTime, LocalDateTime endTime);
+	public boolean createTask(int projectID, String description, int estimatedDuration, int acceptableDeviation, String taskStatus, Integer alternativeFor, List<Integer> prerequisiteTasks, LocalDateTime startTime, LocalDateTime endTime);
+	public boolean createTask(int projectID, String description, int estimatedDuration, int acceptableDeviation, Integer alternativeFor, List<Integer> prerequisiteTasks);
 	
 	public boolean updateTaskDetails(int projectID, int taskID, LocalDateTime startTime, LocalDateTime endTime, String taskStatus);
 	
+	public int getProjectAmount();
+	
 	public String getProjectName(int projectID);
+	
+	public boolean isOnTime(int projectID);
+	
+	public int getDelay(int projectID);
 	
 	public String getProjectDescription(int projectID);
 	
@@ -31,5 +38,7 @@ public interface IFacade {
 
 	public HashMap<Integer, List<Integer>> getAvailableTasks();
 	public List<Integer> getAvailableTasks(int projectID);
+
+
 	
 }

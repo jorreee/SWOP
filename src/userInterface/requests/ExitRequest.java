@@ -1,11 +1,13 @@
 package userInterface.requests;
 
+import java.io.BufferedReader;
+
 import userInterface.IFacade;
 
 public class ExitRequest extends Request {
 
-	public ExitRequest(IFacade facade) {
-		super(facade);
+	public ExitRequest(IFacade facade, BufferedReader inputReader) {
+		super(facade, inputReader);
 	}
 
 	@Override

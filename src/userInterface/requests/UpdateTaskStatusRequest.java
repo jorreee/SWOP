@@ -10,11 +10,8 @@ import userInterface.IFacade;
 
 public class UpdateTaskStatusRequest extends Request {
 
-	BufferedReader inputReader;
-
 	public UpdateTaskStatusRequest(IFacade facade, BufferedReader inputReader) {
-		super(facade);
-		this.inputReader = inputReader;
+		super(facade, inputReader);
 	}
 
 	@Override
