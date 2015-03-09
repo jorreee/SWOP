@@ -30,5 +30,6 @@ public interface IFacade {
 	public String getProjectStatus(int projectID);
 
 	public HashMap<Integer, List<Integer>> getAvailableTasks();
+	public List<Integer> getAvailableTasks(int projectID);
 	
 }
