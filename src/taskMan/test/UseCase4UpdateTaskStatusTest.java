@@ -21,7 +21,7 @@ public class UseCase4UpdateTaskStatusTest {
 			task11StartDateVeryBad1 = LocalDateTime.of(2015,2,1,8,0),
 			task11EndDateVeryBad1 = task11EndDateGood,
 			task11StartDateVeryBad2 = task11StartDateGood,
-			task11EndDateVeryBad2 = LocalDateTime.of(2015,2,9,17,0),
+			task11EndDateVeryBad2 = LocalDateTime.of(2015,2,9,17,0);
 	private final int task11EstDur = 8*60,
 			task12EstDur = 16*60,
 			task13EstDur = 8*60,
@@ -58,7 +58,7 @@ public class UseCase4UpdateTaskStatusTest {
 		task14Dependencies.add(Integer.valueOf(2));
 		taskMan.createTask(1, "Document code", task14EstDur, task14Dev, null, task14Dependencies);		// TASK 4
 		
-		taskMan.advanceTime(workDate); // Omdat task updates enkel in het verleden kunnen bestaan
+		taskMan.advanceTimeTo(workDate); // Omdat task updates enkel in het verleden kunnen bestaan
 	}
 
 	@Test
@@ -108,7 +108,7 @@ public class UseCase4UpdateTaskStatusTest {
 		// Step 1 is implicit
 		// Step 2 and 3 are handled in UI
 		// Step 4 and 5
-		taskMan.updateTaskDetails(1, 1, task11StartDateVeryBad1, task11EndDateVeryBad1, TaskStatus.FINISHED);		//Start date van task is VOOR project start date
+		taskMan.updateTaskDetails(1, 1, task11StartDateVeryBad1, task11EndDateVeryBad1, "finished");		//Start date van task is VOOR project start date
 		// Step 6
 		assertTrue(taskMan.getTaskStatus(1,1).equals("available"));
 		assertTrue(taskMan.getTaskStatus(1,2).equals("unavailable"));
@@ -122,7 +122,7 @@ public class UseCase4UpdateTaskStatusTest {
 		// Step 1 is implicit
 		// Step 2 and 3 are handled in UI
 		// Step 4 and 5
-		taskMan.updateTaskDetails(1, 1, task11StartDateVeryBad2, task11EndDateVeryBad2, TaskStatus.FINISHED);		//End date van task is NA current time
+		taskMan.updateTaskDetails(1, 1, task11StartDateVeryBad2, task11EndDateVeryBad2, "finished");		//End date van task is NA current time
 		// Step 6
 		assertTrue(taskMan.getTaskStatus(1,1).equals("available"));
 		assertTrue(taskMan.getTaskStatus(1,2).equals("unavailable"));

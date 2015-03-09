@@ -64,7 +64,7 @@ public class UseCase5AdvanceTimeTest {
 	public void SuccesCaseNoChangesTest() {
 		// Step 1 and 2 are implicit
 		// Step 3 assumption: the user inputs CORRECT data
-		taskMan.advanceTime(newDateNoChanges);
+		taskMan.advanceTimeTo(newDateNoChanges);
 		assertEquals(taskMan.getCurrentTime(),newDateNoChanges);
 		// Step 4
 		assertTrue(taskMan.getTaskStatus(1,1).equals("available"));
@@ -78,7 +78,7 @@ public class UseCase5AdvanceTimeTest {
 	public void SuccesCaseWithChangesTest() {
 		// Step 1 and 2 are implicit
 		// Step 3 assumption: the user inputs CORRECT data
-		taskMan.advanceTime(newDateWithChanges);
+		taskMan.advanceTimeTo(newDateWithChanges);
 		assertEquals(taskMan.getCurrentTime(),newDateWithChanges);
 		// Step 4
 		assertTrue(taskMan.getTaskStatus(1,1).equals("available"));
@@ -93,7 +93,7 @@ public class UseCase5AdvanceTimeTest {
 	public void flow3aTest() {
 		// Step 1 and 2 are implicit
 		// Step 3 assumption: the user inputs NO data
-		taskMan.advanceTime(newDateVeryBad1);
+		taskMan.advanceTimeTo(newDateVeryBad1);
 		assertEquals(taskMan.getCurrentTime(),startDate);
 		// Step 4
 		assertTrue(taskMan.getTaskStatus(1,1).equals("available"));
@@ -108,7 +108,7 @@ public class UseCase5AdvanceTimeTest {
 	public void flow4aTest() {
 		// Step 1 and 2 are implicit
 		// Step 3 assumption: the user inputs INVALID data
-		taskMan.advanceTime(newDateVeryBad2);
+		taskMan.advanceTimeTo(newDateVeryBad2);
 		assertEquals(taskMan.getCurrentTime(),startDate);
 		// Step 4
 		assertTrue(taskMan.getTaskStatus(1,1).equals("available"));
@@ -119,7 +119,7 @@ public class UseCase5AdvanceTimeTest {
 		
 		 //-----------------------------------------------------------
 		
-		taskMan.advanceTime(newDateVeryBad3);
+		taskMan.advanceTimeTo(newDateVeryBad3);
 		assertEquals(taskMan.getCurrentTime(),startDate);
 		// Step 4
 		assertTrue(taskMan.getTaskStatus(1,1).equals("available"));
