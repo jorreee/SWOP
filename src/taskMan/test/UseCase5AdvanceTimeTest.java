@@ -21,7 +21,7 @@ public class UseCase5AdvanceTimeTest {
 			newDateVeryBad2 = LocalDateTime.of(2015, 2, 8, 0, 0),
 			newDateVeryBad3 = startDate,
 			project1StartDate = startDate,
-			project1DueDate = LocalDateTime.of(2015, 2, 15, 23, 59);
+			project1DueDate = LocalDateTime.of(2015, 2, 13, 23, 59);
 	private final int task11EstDur = 8*60,
 			task12EstDur = 16*60,
 			task13EstDur = 8*60,
@@ -71,7 +71,7 @@ public class UseCase5AdvanceTimeTest {
 		assertTrue(taskMan.getTaskStatus(1,2).equals("unavailable"));
 		assertTrue(taskMan.getTaskStatus(1,3).equals("unavailable"));
 		assertTrue(taskMan.getTaskStatus(1,4).equals("unavailable"));
-		assertTrue(taskMan.projectCanFinishOnTime(1));
+		assertEquals(taskMan.getProjectDelay(1),0);
 	}
 
 	@Test
@@ -85,7 +85,7 @@ public class UseCase5AdvanceTimeTest {
 		assertTrue(taskMan.getTaskStatus(1,2).equals("unavailable"));
 		assertTrue(taskMan.getTaskStatus(1,3).equals("unavailable"));
 		assertTrue(taskMan.getTaskStatus(1,4).equals("unavailable"));
-		assertFalse(taskMan.projectCanFinishOnTime(1));
+		assertTrue(taskMan.getProjectDelay(1) > 0); 					//CHANGED
 		// Step 4
 	}
 
@@ -100,7 +100,7 @@ public class UseCase5AdvanceTimeTest {
 		assertTrue(taskMan.getTaskStatus(1,2).equals("unavailable"));
 		assertTrue(taskMan.getTaskStatus(1,3).equals("unavailable"));
 		assertTrue(taskMan.getTaskStatus(1,4).equals("unavailable"));
-		assertTrue(taskMan.projectCanFinishOnTime(1));
+		assertEquals(taskMan.getProjectDelay(1),0);
 		// Step 4
 	}
 
@@ -115,7 +115,9 @@ public class UseCase5AdvanceTimeTest {
 		assertTrue(taskMan.getTaskStatus(1,2).equals("unavailable"));
 		assertTrue(taskMan.getTaskStatus(1,3).equals("unavailable"));
 		assertTrue(taskMan.getTaskStatus(1,4).equals("unavailable"));
-		assertTrue(taskMan.projectCanFinishOnTime(1));
+		assertEquals(taskMan.getProjectDelay(1),0);
+		
+		 //-----------------------------------------------------------
 		
 		taskMan.advanceTime(newDateVeryBad3);
 		assertEquals(taskMan.getCurrentTime(),startDate);
@@ -124,7 +126,7 @@ public class UseCase5AdvanceTimeTest {
 		assertTrue(taskMan.getTaskStatus(1,2).equals("unavailable"));
 		assertTrue(taskMan.getTaskStatus(1,3).equals("unavailable"));
 		assertTrue(taskMan.getTaskStatus(1,4).equals("unavailable"));
-		assertTrue(taskMan.projectCanFinishOnTime(1));
+		assertEquals(taskMan.getProjectDelay(1),0);
 	}
 
 }
