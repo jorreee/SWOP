@@ -20,7 +20,8 @@ public class UseCase3CreateTaskTest {
 					  newTaskDur = 5*60;
 	private final int task11Dev = 0,
 					  newTaskDev = 10;
-	private final ArrayList<Integer> newTaskDependencies = new ArrayList();
+	private final ArrayList<Integer> task11Dependencies = new ArrayList(),
+									 newTaskDependencies = new ArrayList();
 
 	/**
 	 * DEFAULT TASKMAN TESTER
