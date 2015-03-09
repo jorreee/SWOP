@@ -11,6 +11,7 @@ public interface IFacade {
 	
 	public LocalDateTime getCurrentTime();
 	
+	public boolean createProject(String name, String description, LocalDateTime creationTime, LocalDateTime dueTime);
 	public boolean createProject(String name, String description, LocalDateTime dueTime);
 	
 	public boolean createTask(int projectID, String description, int estimatedDuration, int acceptableDeviation, String taskStatus, Integer alternativeFor, List<Integer> prerequisiteTasks, LocalDateTime startTime, LocalDateTime endTime);
@@ -24,7 +25,7 @@ public interface IFacade {
 	
 	public boolean isOnTime(int projectID);
 	
-	public int getDelay(int projectID);
+	public int getProjectDelay(int projectID);
 	
 	public String getProjectDescription(int projectID);
 	
