@@ -66,14 +66,12 @@ public class UseCase5AdvanceTimeTest {
 		// Step 3 assumption: the user inputs CORRECT data
 		taskMan.advanceTime(newDateNoChanges);
 		assertEquals(taskMan.getCurrentTime(),newDateNoChanges);
+		// Step 4
 		assertTrue(taskMan.getTaskStatus(1,1).equals("available"));
 		assertTrue(taskMan.getTaskStatus(1,2).equals("unavailable"));
 		assertTrue(taskMan.getTaskStatus(1,3).equals("unavailable"));
 		assertTrue(taskMan.getTaskStatus(1,4).equals("unavailable"));
 		assertTrue(taskMan.projectCanFinishOnTime(1));
-		//TODO nog dingen controleren?	
-		// Step 4
-		//TODO step 4
 	}
 
 	@Test
@@ -82,6 +80,7 @@ public class UseCase5AdvanceTimeTest {
 		// Step 3 assumption: the user inputs CORRECT data
 		taskMan.advanceTime(newDateWithChanges);
 		assertEquals(taskMan.getCurrentTime(),newDateWithChanges);
+		// Step 4
 		assertTrue(taskMan.getTaskStatus(1,1).equals("available"));
 		assertTrue(taskMan.getTaskStatus(1,2).equals("unavailable"));
 		assertTrue(taskMan.getTaskStatus(1,3).equals("unavailable"));
@@ -96,6 +95,7 @@ public class UseCase5AdvanceTimeTest {
 		// Step 3 assumption: the user inputs NO data
 		taskMan.advanceTime(newDateVeryBad1);
 		assertEquals(taskMan.getCurrentTime(),startDate);
+		// Step 4
 		assertTrue(taskMan.getTaskStatus(1,1).equals("available"));
 		assertTrue(taskMan.getTaskStatus(1,2).equals("unavailable"));
 		assertTrue(taskMan.getTaskStatus(1,3).equals("unavailable"));
@@ -110,6 +110,7 @@ public class UseCase5AdvanceTimeTest {
 		// Step 3 assumption: the user inputs INVALID data
 		taskMan.advanceTime(newDateVeryBad2);
 		assertEquals(taskMan.getCurrentTime(),startDate);
+		// Step 4
 		assertTrue(taskMan.getTaskStatus(1,1).equals("available"));
 		assertTrue(taskMan.getTaskStatus(1,2).equals("unavailable"));
 		assertTrue(taskMan.getTaskStatus(1,3).equals("unavailable"));
@@ -118,6 +119,7 @@ public class UseCase5AdvanceTimeTest {
 		
 		taskMan.advanceTime(newDateVeryBad3);
 		assertEquals(taskMan.getCurrentTime(),startDate);
+		// Step 4
 		assertTrue(taskMan.getTaskStatus(1,1).equals("available"));
 		assertTrue(taskMan.getTaskStatus(1,2).equals("unavailable"));
 		assertTrue(taskMan.getTaskStatus(1,3).equals("unavailable"));
