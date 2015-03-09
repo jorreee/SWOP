@@ -20,13 +20,31 @@ public class UseCase5AdvanceTimeTest {
 	private final int hoursIncBad4 = 240, minutesIncBad4 = 40; //TODO: meer invalid stamps?
 	private final int hoursIncBad5 = 240, minutesIncBad5 = 40;
 	private final int hoursIncBad6 = 240, minutesIncBad6 = 40;
-	private LocalDateTime startDate = LocalDateTime.of(2015, 2, 10, 0, 0); // 10 februari 2015, middernacht
-	private LocalDateTime supposedToBeNewDate = LocalDateTime.of(2014, 1, 1, hoursIncGood, minutesIncGood);
+	private final LocalDateTime startDate = LocalDateTime.of(2015, 2, 9, 0, 0),
+								project1StartDate = startDate,
+								project1DueDate = LocalDateTime.of(2015, 2, 15, 23, 59),
+								project2StartDate = LocalDateTime.of(2015, 2, 11, 0, 0),
+								project2DueDate = LocalDateTime.of(2015, 2, 11, 0, 0);
+	private final LocalTime task11EstDur = LocalTime.of(4, 30),
+							task12EstDur = LocalTime.of(15,0),
+							task13EstDur = LocalTime.of(1, 45),
+							task21EstDur = LocalTime.of(6, 0),
+							task22EstDur = LocalTime.of(120, 30),
+							task23EstDur = LocalTime.of(2, 0);
+	private final LocalDateTime newDate = LocalDateTime.of(2015, 2, 9, hoursIncGood, minutesIncGood);
 	
+	/**
+	 * DEFAULT TASKMAN TESTER
+	 * - project 1 START 10 feb DUE 15 feb (midnight)
+	 * 		task 1
+	 */
 	@Before
 	public final void initialize() {
-		taskMan = new TaskMan(startDate); 
-		//TODO: taskman met tijd laten INIT
+		taskMan = new TaskMan(startDate);
+		taskMan.createProject("Test1", "testing 1", project1StartDate, project1DueDate);
+		taskMan.createProject("Test2", "testing 2", project2StartDate, project2DueDate);
+		taskMan.createTask(1, "P1 Task 1", task11EstDur, acceptableDeviation, taskStatus, alternativeFor, prerequisiteTasks, startTime, endTime)
+		
 	}
 	
 	@Test
