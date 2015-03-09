@@ -2,12 +2,13 @@ package taskMan;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 //TODO Still not done
-//TODO 
+//TODO Update Task Details: start en endtime moeten in het verleden liggen
 public class TaskMan {
 	
 	private ArrayList<Project> projectList;
@@ -39,8 +40,12 @@ public class TaskMan {
 		return projectList.add(project);
 	}
 	
-	public boolean createTask(int projectID, String description, LocalTime estimatedDuration, int acceptableDeviation, String taskStatus, Integer alternativeFor, List<Integer> prerequisiteTasks, LocalDateTime startTime, LocalDateTime endTime) {
+	public boolean createTask(int projectID, String description, int estimatedDuration, int acceptableDeviation, String taskStatus, Integer alternativeFor, List<Integer> prerequisiteTasks, LocalDateTime startTime, LocalDateTime endTime) {
 		return getProject(projectID).createTask(description, estimatedDuration, acceptableDeviation, taskStatus, alternativeFor, prerequisiteTasks, startTime, endTime);
+	}
+	
+	public boolean createTask(int projectID, String description, int estimatedDuration, int acceptableDeviation, Integer alternativeFor, List<Integer> prerequisiteTasks) {
+		return getProject(projectID).createTask(int projectID, String description, int estimatedDuration, int acceptableDeviation, Integer alternativeFor, List<Integer> prerequisiteTasks);
 	}
 	
 	public boolean updateTaskDetails(int projectID, int taskID, LocalDateTime startTime, LocalDateTime endTime, String taskStatus) {
@@ -69,6 +74,29 @@ public class TaskMan {
 	
 	public String getProjectStatus(int projectID) {
 		return getProject(projectID).getProjectStatus();
+	}
+	
+	//TODO als er geen delay is, geef 0 terug
+	public int getProjectDelay(int projectID){
+//		LocalDateTime dueTime = getProjectDueTime(projectID);
+//		LocalDateTime delay = currentTime.
+//	    LocalDateTime tempDateTime = LocalDateTime.from( beginTime );
+//		long years = tempDateTime.until( currentTime, ChronoUnit.YEARS);
+//		tempDateTime = tempDateTime.plusYears( years );
+//
+//		long months = tempDateTime.until( currentTime, ChronoUnit.MONTHS);
+//		tempDateTime = tempDateTime.plusMonths( months );
+//
+//		long days = tempDateTime.until( currentTime, ChronoUnit.DAYS);
+//		tempDateTime = tempDateTime.plusDays( days );
+//
+//		long hours = tempDateTime.until( currentTime, ChronoUnit.HOURS);
+//		tempDateTime = tempDateTime.plusHours( hours );
+//
+//		long minutes = tempDateTime.until( currentTime, ChronoUnit.MINUTES);
+//		tempDateTime = tempDateTime.plusMinutes( minutes );
+		return 0;
+
 	}
 	
 	public HashMap<Integer, List<Integer>> getAvailableTasks() {
