@@ -1,3 +1,7 @@
+*.vpp~1
+*.vpp~2
+*.vpp~3
+*.vpp~4
 *.class
 *.project
 *.classpath
