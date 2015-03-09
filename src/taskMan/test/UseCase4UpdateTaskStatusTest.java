@@ -37,7 +37,7 @@ public class UseCase4UpdateTaskStatusTest {
 
 	/**
 	 * DEFAULT TASKMAN TESTER
-	 * - project 1 START 9 feb DUE 15 feb (midnight)
+	 * - project 1 START 9 feb DUE 13 feb (midnight)
 	 * 		task 1			
 	 * 		task 2 <- 1
 	 * 		task 3 <- 2
