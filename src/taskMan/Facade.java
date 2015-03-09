@@ -24,38 +24,46 @@ public class Facade implements IFacade {
 		return taskMan.createProject(name, description, dueTime);
 	}
 	
-	
+	@Override
 	public boolean createTask(int projectID, String description, int estimatedDuration, int acceptableDeviation, String taskStatus, Integer alternativeFor, List<Integer> prerequisiteTasks, LocalDateTime startTime, LocalDateTime endTime) {
 		return taskMan.createTask(projectID, description, estimatedDuration, acceptableDeviation, taskStatus, alternativeFor, prerequisiteTasks, startTime, endTime);	}
 	
+	@Override
 	public boolean createTask(int projectID, String description, int estimatedDuration, int acceptableDeviation, Integer alternativeFor, List<Integer> prerequisiteTasks) {
 		return taskMan.createTask(projectID, description, estimatedDuration, acceptableDeviation, alternativeFor, prerequisiteTasks);
 	}
 	
+	@Override
 	public boolean updateTaskDetails(int projectID, int taskID, LocalDateTime startTime, LocalDateTime endTime, String taskStatus) {
 		return taskMan.updateTaskDetails(projectID, taskID, startTime, endTime, taskStatus);
 	}
 	
+	@Override
 	public String getProjectName(int projectID) {
 		return taskMan.getProjectName(projectID);
 	}
 	
+	@Override
 	public String getProjectDescription(int projectID) {
 		return taskMan.getProjectDescription(projectID);
 	}
 	
+	@Override
 	public LocalDateTime getProjectCreationTime(int projectID) {
 		return taskMan.getProjectCreationTime(projectID);
 	}
 	
+	@Override
 	public LocalDateTime getProjectDueTime(int projectID) {
 		return taskMan.getProjectDueTime(projectID);
 	}
 	
+	@Override
 	public LocalDateTime getProjectEndTime(int projectID) {
 		return taskMan.getProjectEndTime(projectID);
 	}
 	
+	@Override
 	public String getProjectStatus(int projectID) {
 		return taskMan.getProjectStatus(projectID);
 	}
@@ -68,33 +76,93 @@ public class Facade implements IFacade {
 
 	@Override
 	public HashMap<Integer, List<Integer>> getAvailableTasks() {
-		// TODO Auto-generated method stub
-		return null;
+		return taskMan.getAvailableTasks();
 	}
 
 	@Override
 	public List<Integer> getAvailableTasks(int projectID) {
-		// TODO Auto-generated method stub
-		return null;
+		return taskMan.getAvailableTasks(projectID);
 	}
 
 
 	@Override
 	public int getProjectAmount() {
-		// TODO Auto-generated method stub
-		return 0;
+		return taskMan.getProjectAmount();
 	}
 
 	@Override
 	public boolean isOnTime(int projectID) {
-		// TODO Auto-generated method stub
-		return false;
+		return taskMan.isOnTime(projectID);
 	}
 
 	@Override
 	public int getProjectDelay(int projectID) {
-	//	return taskMan.
-		return 0;
+		return taskMan.getProjectDelay(projectID);
+	}
+
+	@Override
+	public int getTaskAmount(int projectID) {
+		return taskMan.getTaskAmount(projectID);
+	}
+
+	@Override
+	public String getTaskDescription(int projectID, int taskID) {
+		return taskMan.getTaskDescription(projectID, taskID);
+	}
+
+	@Override
+	public boolean hasTaskStarted(int projectID, int taskID) {
+		return taskMan.hasTaskStarted(projectID, taskID);
+	}
+
+	@Override
+	public LocalDateTime getTaskStartTime(int projectID, int taskID) {
+		return taskMan.getTaskStartTime(projectID, taskID);
+	}
+
+	@Override
+	public int getEstimatedTaskDuration(int projectID, int taskID) {
+		return taskMan.getEstimatedTaskDuration(projectID, taskID);
+	}
+
+	@Override
+	public int getAcceptableTaskDeviation(int projectID, int taskID) {
+		return taskMan.getAcceptableTaskDeviation(projectID, taskID);
+	}
+
+	@Override
+	public boolean hasTaskEnded(int projectID, int taskID) {
+		return taskMan.hasTaskEnded(projectID, taskID);
+	}
+
+	@Override
+	public LocalDateTime getTaskEndTime(int projectID, int taskID) {
+		return taskMan.getTaskEndTime(projectID, taskID);
+	}
+
+	@Override
+	public String getTaskStatus(int projectID, int taskID) {
+		return taskMan.getTaskStatus(projectID, taskID);
+	}
+
+	@Override
+	public boolean hasTaskPrerequisites(int projectID, int taskID) {
+		return taskMan.hasTaskPrerequisites(projectID, taskID);
+	}
+
+	@Override
+	public List<Integer> getTaskPrerequisitesFor(int projectID, int taskID) {
+		return taskMan.getTaskPrerequisitesFor(projectID, taskID);
+	}
+
+	@Override
+	public boolean hasTaskAlternative(int projectID, int taskID) {
+		return taskMan.hasTaskAlternative(projectID, taskID);
+	}
+
+	@Override
+	public int getTaskAlternativeTo(int projectID, int taskID) {
+		return taskMan.getTaskAlternativeTo(projectID, taskID);
 	}
 
 }
