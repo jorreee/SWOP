@@ -8,6 +8,7 @@ import userInterface.requests.CreateTaskRequest;
 import userInterface.requests.ExitRequest;
 import userInterface.requests.HelpRequest;
 import userInterface.requests.Request;
+import userInterface.requests.ShowProjectsRequest;
 import userInterface.requests.UpdateTaskStatusRequest;
 
 public class InputParser {
@@ -25,8 +26,8 @@ public class InputParser {
 		
 		// Switch on first word
 		switch(input[0].toLowerCase()) {
-		case "h"		: return new HelpRequest(facade);
-		case "exit"		: return new ExitRequest(facade);
+		case "h"		: return new HelpRequest(facade, inputReader);
+		case "exit"		: return new ExitRequest(facade, inputReader);
 		case "advance"	: return new AdvanceTimeRequest(facade, inputReader);
 		case "update"	: if(input[1].toLowerCase().equals("task"))
 							return new UpdateTaskStatusRequest(facade, inputReader);
@@ -34,6 +35,7 @@ public class InputParser {
 							return new CreateTaskRequest(facade, inputReader);
 						  if(input[1].toLowerCase().equals("project"))
 							return new CreateProjectRequest(facade, inputReader);
+		case "show"		: return new ShowProjectsRequest(facade, inputReader);
 		}
 		return null;
 	}

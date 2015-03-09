@@ -7,11 +7,8 @@ import userInterface.IFacade;
 
 public class CreateProjectRequest extends Request {
 	
-	BufferedReader inputReader;
-	
 	public CreateProjectRequest(IFacade facade, BufferedReader inputReader) {
-		super(facade);
-		this.inputReader = inputReader;
+		super(facade, inputReader);
 	}
 
 	@Override

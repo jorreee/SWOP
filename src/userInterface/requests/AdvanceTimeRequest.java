@@ -7,11 +7,8 @@ import userInterface.IFacade;
 
 public class AdvanceTimeRequest extends Request {
 
-	private BufferedReader inputReader;
-
 	public AdvanceTimeRequest(IFacade facade, BufferedReader inputReader) {
-		super(facade);
-		this.inputReader = inputReader;
+		super(facade, inputReader);
 	}
 
 	@Override
@@ -31,7 +28,7 @@ public class AdvanceTimeRequest extends Request {
 				LocalDateTime time = LocalDateTime.parse(input);
 				
 				// Advance time
-				boolean success = facade.advanceTime(time);
+				boolean success = facade.advanceTimeTo(time);
 				
 				// Invalid timestamp
 				if(!success) {

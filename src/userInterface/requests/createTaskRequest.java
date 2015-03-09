@@ -7,11 +7,8 @@ import userInterface.IFacade;
 
 public class CreateTaskRequest extends Request {
 
-	private BufferedReader inputReader;
-
 	public CreateTaskRequest(IFacade facade, BufferedReader inputReader) {
-		super(facade);
-		this.inputReader = inputReader;
+		super(facade, inputReader);
 	}
 
 	@Override

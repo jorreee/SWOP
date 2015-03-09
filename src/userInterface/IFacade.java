@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface IFacade {
 
-	public boolean advanceTime(LocalDateTime time);
+	public boolean advanceTimeTo(LocalDateTime time);
 	
 	public LocalDateTime getCurrentTime();
 	
@@ -18,7 +18,13 @@ public interface IFacade {
 	
 	public boolean updateTaskDetails(int projectID, int taskID, LocalDateTime startTime, LocalDateTime endTime, String taskStatus);
 	
+	public int getProjectAmount();
+	
 	public String getProjectName(int projectID);
+	
+	public boolean isOnTime(int projectID);
+	
+	public int getDelay(int projectID);
 	
 	public String getProjectDescription(int projectID);
 	
