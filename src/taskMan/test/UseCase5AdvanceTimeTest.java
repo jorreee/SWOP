@@ -50,7 +50,7 @@ public class UseCase5AdvanceTimeTest {
 		taskMan.createProject("Test1", "testing 1", project1StartDate, project1DueDate);
 
 		
-		taskMan.createTask(1, "Design system", task11EstDur, task11Dev, null, null);					// TASK 1
+		taskMan.createTask(1, "Design system", task11EstDur, task11Dev, null, task11Dependencies);		// TASK 1
 		task12Dependencies.add(Integer.valueOf(1));
 		taskMan.createTask(1, "Implement Native", task12EstDur, task12Dev, null, task12Dependencies);	// TASK 2
 		task13Dependencies.add(Integer.valueOf(2));
