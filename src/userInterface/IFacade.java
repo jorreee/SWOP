@@ -20,6 +20,7 @@ public interface IFacade {
 	public boolean updateTaskDetails(int projectID, int taskID, LocalDateTime startTime, LocalDateTime endTime, String taskStatus);
 	
 	public int getProjectAmount();
+	public int getTaskAmount(int projectID);	
 	
 	public String getProjectName(int projectID);
 	
@@ -36,9 +37,12 @@ public interface IFacade {
 	public LocalDateTime getProjectEndTime(int projectID);
 	
 	public String getProjectStatus(int projectID);
+	public String getTaskStatus(int projectID, int taskID);
 
 	public HashMap<Integer, List<Integer>> getAvailableTasks();
 	public List<Integer> getAvailableTasks(int projectID);
+
+
 
 
 	
