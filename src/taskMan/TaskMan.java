@@ -3,6 +3,7 @@ package taskMan;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 //TODO Still not done
@@ -13,8 +14,13 @@ public class TaskMan {
 	private LocalDateTime currentTime;
 	//private Project currentProject;
 	
-	public void advanceTime(LocalDateTime time) {
-		currentTime = currentTime.plusHours(time.getHour()).plusMinutes(time.getMinute());
+	public boolean advanceTimeTo(LocalDateTime time) {
+		if (time.isAfter(currentTime)) {
+			currentTime = time;
+			return true;
+		}
+		else return false;
+		
 	}
 	
 	private Project getProject(int projectID) {
@@ -60,5 +66,13 @@ public class TaskMan {
 		return getProject(projectID).getProjectStatus();
 	}
 	
+	public HashMap<Integer, List<Integer>> getAvailableTasks() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
+	public List<Integer> getAvailableTasks(int projectID) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

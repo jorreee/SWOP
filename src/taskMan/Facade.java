@@ -49,8 +49,8 @@ public class Facade implements IFacade {
 	}
 
 	@Override
-	public void advanceTime(LocalDateTime time) {
-		// TODO Auto-generated method stub
+	public boolean advanceTimeTo(LocalDateTime time) {
+		return taskMan.advanceTimeTo(time);
 		
 	}
 
