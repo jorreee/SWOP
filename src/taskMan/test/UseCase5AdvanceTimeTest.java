@@ -14,81 +14,115 @@ import taskMan.TaskMan;
 public class UseCase5AdvanceTimeTest {
 
 	private TaskMan taskMan;
-	private final LocalDateTime startDate = LocalDateTime.of(2015, 2, 9, 0, 0),
-			newDateGood = LocalDateTime.of(2015, 2, 15, 16, 0),
-			newDateVeryBad1 = LocalDateTime.of(2015, 2, 8, 0, 0),
-			newDateVeryBad2 = null,
+	private final LocalDateTime startDate = LocalDateTime.of(2015, 2, 9, 8, 0),
+			newDateNoChanges = LocalDateTime.of(2015, 2, 9, 10, 0),
+			newDateWithChanges = LocalDateTime.of(2015, 3, 9, 10, 0),
+			newDateVeryBad1 = null,
+			newDateVeryBad2 = LocalDateTime.of(2015, 2, 8, 0, 0),
+			newDateVeryBad3 = startDate,
 			project1StartDate = startDate,
-			project1DueDate = LocalDateTime.of(2015, 2, 15, 23, 59),
-			project2StartDate = LocalDateTime.of(2015, 2, 11, 0, 0),
-			project2DueDate = LocalDateTime.of(2015, 2, 11, 0, 0);
-	private final int task11EstDur = 4*60 + 30,
-			task12EstDur = 15*60,
-			task13EstDur = 105,
-			task21EstDur = 360,
-			task22EstDur = 120*60 + 30,
-			task23EstDur = 120;
-	private final int task11Dev = 10,
+			project1DueDate = LocalDateTime.of(2015, 2, 15, 23, 59);
+	private final int task11EstDur = 8*60,
+			task12EstDur = 16*60,
+			task13EstDur = 8*60,
+			task14EstDur = 8*60;
+	private final int task11Dev = 0,
 			task12Dev = 50,
 			task13Dev = 0,
-			task21Dev = 0,
-			task22Dev = 1,
-			task23Dev = 100;
-	private final ArrayList<Integer> task13Dependencies = new ArrayList();
-	private final ArrayList<Integer> task23Dependencies = new ArrayList();
+			task14Dev = 0;
+	private final ArrayList<Integer> task11Dependencies = new ArrayList(),
+									 task12Dependencies = new ArrayList(),
+									 task13Dependencies = new ArrayList(),
+									 task14Dependencies = new ArrayList();
 
 	/**
 	 * DEFAULT TASKMAN TESTER
 	 * - project 1 START 10 feb DUE 15 feb (midnight)
-	 * 		task 1
+	 * 		task 1			
+	 * 		task 2 <- 1
+	 * 		task 3 <- 2
+	 * 		task 4 <- 2
 	 */
 	@Before
 	public final void initialize() {
 		taskMan = new TaskMan(startDate);
 
 		taskMan.createProject("Test1", "testing 1", project1StartDate, project1DueDate);
-		taskMan.createProject("Test2", "testing 2", project2StartDate, project2DueDate);
 
-		task13Dependencies.add(Integer.valueOf(1));
-		taskMan.createTask(1, "P1 Task 1", task11EstDur, task11Dev, null, null);
-		taskMan.createTask(1, "P1 Task 2", task12EstDur, task12Dev, null, null);
-		taskMan.createTask(1, "P1 Task 3", task13EstDur, task13Dev, null, task13Dependencies);
-		//
-		task13Dependencies.add(Integer.valueOf(1),Integer.valueOf(2));
-		taskMan.createTask(1, "P2 Task 1", task21EstDur, task21Dev, null, null);
-		taskMan.createTask(1, "P2 Task 2", task22EstDur, task22Dev, null, null);
-		taskMan.createTask(1, "P2 Task 3", task23EstDur, task23Dev, null, task23Dependencies);
+		
+		taskMan.createTask(1, "Design system", task11EstDur, task11Dev, null, null);					// TASK 1
+		task12Dependencies.add(Integer.valueOf(1));
+		taskMan.createTask(1, "Implement Native", task12EstDur, task12Dev, null, task12Dependencies);	// TASK 2
+		task13Dependencies.add(Integer.valueOf(2));
+		taskMan.createTask(1, "Test code", task13EstDur, task13Dev, null, task13Dependencies);			// TASK 3
+		task14Dependencies.add(Integer.valueOf(2));
+		taskMan.createTask(1, "Document code", task14EstDur, task14Dev, null, task14Dependencies);		// TASK 4
 
 	}
 
 	@Test
-	public void SuccesCaseTest() {
+	public void SuccesCaseNoChangesTest() {
 		// Step 1 and 2 are implicit
 		// Step 3 assumption: the user inputs CORRECT data
-		taskMan.advanceTime(newDateGood);
-		assertEquals(taskMan.getCurrentTime(),newDateGood);	
+		taskMan.advanceTime(newDateNoChanges);
+		assertEquals(taskMan.getCurrentTime(),newDateNoChanges);
+		assertTrue(taskMan.getTaskStatus(1,1).equals("available"));
+		assertTrue(taskMan.getTaskStatus(1,2).equals("unavailable"));
+		assertTrue(taskMan.getTaskStatus(1,3).equals("unavailable"));
+		assertTrue(taskMan.getTaskStatus(1,4).equals("unavailable"));
+		assertTrue(taskMan.projectCanFinishOnTime(1));
+		//TODO nog dingen controleren?	
 		// Step 4
-		// TODO: test step 4
+		//TODO step 4
+	}
+
+	@Test
+	public void SuccesCaseWithChangesTest() {
+		// Step 1 and 2 are implicit
+		// Step 3 assumption: the user inputs CORRECT data
+		taskMan.advanceTime(newDateWithChanges);
+		assertEquals(taskMan.getCurrentTime(),newDateWithChanges);
+		assertTrue(taskMan.getTaskStatus(1,1).equals("available"));
+		assertTrue(taskMan.getTaskStatus(1,2).equals("unavailable"));
+		assertTrue(taskMan.getTaskStatus(1,3).equals("unavailable"));
+		assertTrue(taskMan.getTaskStatus(1,4).equals("unavailable"));
+		assertFalse(taskMan.projectCanFinishOnTime(1));
+		// Step 4
 	}
 
 	@Test
 	public void flow3aTest() {
 		// Step 1 and 2 are implicit
 		// Step 3 assumption: the user inputs NO data
-		LocalTime inc = null;
-		taskMan.advanceTime(inc);
+		taskMan.advanceTime(newDateVeryBad1);
 		assertEquals(taskMan.getCurrentTime(),startDate);
+		assertTrue(taskMan.getTaskStatus(1,1).equals("available"));
+		assertTrue(taskMan.getTaskStatus(1,2).equals("unavailable"));
+		assertTrue(taskMan.getTaskStatus(1,3).equals("unavailable"));
+		assertTrue(taskMan.getTaskStatus(1,4).equals("unavailable"));
+		assertTrue(taskMan.projectCanFinishOnTime(1));
+		// Step 4
 	}
 
 	@Test
 	public void flow4aTest() {
 		// Step 1 and 2 are implicit
 		// Step 3 assumption: the user inputs INVALID data
-		taskMan.advanceTime(newDateVeryBad1);
-		assertEquals(taskMan.getCurrentTime(),startDate);
-
 		taskMan.advanceTime(newDateVeryBad2);
 		assertEquals(taskMan.getCurrentTime(),startDate);
+		assertTrue(taskMan.getTaskStatus(1,1).equals("available"));
+		assertTrue(taskMan.getTaskStatus(1,2).equals("unavailable"));
+		assertTrue(taskMan.getTaskStatus(1,3).equals("unavailable"));
+		assertTrue(taskMan.getTaskStatus(1,4).equals("unavailable"));
+		assertTrue(taskMan.projectCanFinishOnTime(1));
+		
+		taskMan.advanceTime(newDateVeryBad3);
+		assertEquals(taskMan.getCurrentTime(),startDate);
+		assertTrue(taskMan.getTaskStatus(1,1).equals("available"));
+		assertTrue(taskMan.getTaskStatus(1,2).equals("unavailable"));
+		assertTrue(taskMan.getTaskStatus(1,3).equals("unavailable"));
+		assertTrue(taskMan.getTaskStatus(1,4).equals("unavailable"));
+		assertTrue(taskMan.projectCanFinishOnTime(1));
 	}
 
 }
