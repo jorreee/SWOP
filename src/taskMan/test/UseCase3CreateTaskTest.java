@@ -19,9 +19,9 @@ public class UseCase3CreateTaskTest {
 			workDate = LocalDateTime.of(2015, 2, 9, 16, 0),
 			altTaskEndDate = LocalDateTime.of(2015, 2, 9, 10, 0);
 	private final int task11EstDur = 8*60,
-					  newTaskDur = 5*60;
+			newTaskDur = 5*60;
 	private final int task11Dev = 0,
-					  newTaskDev = 10;
+			newTaskDev = 10;
 	private final ArrayList<Integer> task11Dependencies = new ArrayList(),
 									 newTaskDependencies = new ArrayList<Integer>();
 
@@ -37,7 +37,7 @@ public class UseCase3CreateTaskTest {
 		taskMan.createProject("Test1", "testing 1", project1StartDate, project1DueDate);
 
 		taskMan.advanceTimeTo(workDate);
-//		
+//
 //		taskMan.createTask(1, "Design system", task11EstDur, task11Dev, null, task11Dependencies);		// TASK 1
 //		task12Dependencies.add(Integer.valueOf(1));
 //		taskMan.createTask(1, "Implement Native", task12EstDur, task12Dev, null, task12Dependencies);	// TASK 2
@@ -47,8 +47,6 @@ public class UseCase3CreateTaskTest {
 //		taskMan.createTask(1, "Document code", task14EstDur, task14Dev, null, task14Dependencies);		// TASK 4
 
 	}
-	
-	//TODO als ……N alt task voor task X slaagt, vervallen de andere ALT voor X dan?
 
 	@Test
 	public void SuccesCaseTest() {
@@ -61,84 +59,98 @@ public class UseCase3CreateTaskTest {
 		assertEquals(taskMan.getTaskAcceptedDeviation(1,1),newTaskDev);
 		List<Integer> alts = taskMan.getTaskAlternatives(1,1);
 		assertTrue(alts.size() == 0);
-		List<Integer> deps = taskMan.getTaskDependencies(1,1);				//TODO moet dit kunnen worden opgevraagd?
+		List<Integer> deps = taskMan.getTaskDependencies(1,1);				//TODO wat moet er kunnen worden opgevraagd?
 		assertTrue(deps.size() == 1 && deps.contains(Integer.valueOf(1)));
 		String status = taskMan.getTaskStatus(1,1);
 		assertTrue(status.equals("available"));
 	}
-	
-	//TODO Alt testen
+
 	@Test
 	public void SuccesCaseALTTest() {
 
 		// Er is al een task aanwezig in het project
 		taskMan.createTask(1, "Design system", task11EstDur, task11Dev, null, task11Dependencies);
 		taskMan.updateTaskDetails(1, 1, startDate, altTaskEndDate, "failed");
-		
+
 		// Step 1 and 2 are implicit
 		// Step 3
+		newTaskDependencies.add(Integer.valueOf(1));
 		taskMan.createTask(1, "A new TASK", newTaskDur, newTaskDev, Integer.valueOf(1), newTaskDependencies);
 		// Step 4
-		assertTrue(taskMan.getTaskDescription(1,1).equals("A new TASK"));
-		assertEquals(taskMan.getTaskEstimatedDuration(1,1),newTaskDur);
-		assertEquals(taskMan.getTaskAcceptedDeviation(1,1),newTaskDev);
-		List<Integer> alts = taskMan.getTaskAlternatives(1,1);
-		assertTrue(alts.size() == 0);
-		List<Integer> deps = taskMan.getTaskDependencies(1,1);
-		assertTrue(deps.size() == 1 && deps.contains(Integer.valueOf(1)));
-		String status = taskMan.getTaskStatus(1,1);
+		assertTrue(taskMan.getTaskDescription(1,2).equals("A new TASK"));
+		List<Integer> alts = taskMan.getTaskAlternatives(1,2);
+		assertTrue(alts.size() == 1 && deps.contains(Integer.valueOf(1)));
+		List<Integer> deps = taskMan.getTaskDependencies(1,2);
+		assertTrue(deps.size() == 0);
+		String status = taskMan.getTaskStatus(1,2);
 		assertTrue(status.equals("available"));
 	}
-	
-	//TODO Dep testen
+
 	@Test
 	public void SuccesCasDepTest() {
+
+		// Er is al een task aanwezig in het project
+		taskMan.createTask(1, "Design system", task11EstDur, task11Dev, null, task11Dependencies);
+
 		// Step 1 and 2 are implicit
 		// Step 3
+		newTaskDependencies.add(Integer.valueOf(1));
 		taskMan.createTask(1, "A new TASK", newTaskDur, newTaskDev, null, newTaskDependencies);
 		// Step 4
 		assertTrue(taskMan.getTaskDescription(1,1).equals("A new TASK"));
-		assertEquals(taskMan.getTaskEstimatedDuration(1,1),newTaskDur);
-		assertEquals(taskMan.getTaskAcceptedDeviation(1,1),newTaskDev);
 		List<Integer> alts = taskMan.getTaskAlternatives(1,1);
 		assertTrue(alts.size() == 0);
 		List<Integer> deps = taskMan.getTaskDependencies(1,1);
 		assertTrue(deps.size() == 1 && deps.contains(Integer.valueOf(1)));
 		String status = taskMan.getTaskStatus(1,1);
-		assertTrue(status.equals("available"));
+		assertTrue(status.equals("unavailable"));
 	}
-	
+
 	@Test
 	public void flow3aTest() {
 		// De UI zal geen request doorsturen als de user geen volledig formulier invult.
 		assertTrue(taskMan.getProjectNumberOfTasks(1) == 0); //TODO Moet dit kunnen worden opgevraagd?
 	}
-	
-	//TODO Onbestaande Alt testen + not finished Alt testen
+
+	//TODO Onbestaande Alt testen + not finished Alt testen + double Alt
 	@Test
 	public void flow4aUnknownAltTest() {
+		// Step 1 and 2 are implicit
+		// Step 3
+		newTaskDependencies.add(Integer.valueOf(1));
+		taskMan.createTask(1, "A new TASK", newTaskDur, newTaskDev, null, newTaskDependencies);
+		// Step 4
+		
+		//--------------------------------------------------------------------------------------
+		
+		// Step 1 and 2 are implicit
+		// Step 3
+		newTaskDependencies.remove(1);
+		newTaskDependencies.add(Integer.valueOf(5));
+		taskMan.createTask(1, "A new TASK", newTaskDur, newTaskDev, null, newTaskDependencies);
+		// Step 4
 		
 	}
-	
+
 	@Test
 	public void flow4aBadAltTest() {
-		
+
 	}
-	
+
 	@Test
 	public void flow4aUnknownDepTest() {
-		
+
 	}
-	
+
 	//TODO FINISHED project of bad reference resten
 	@Test
 	public void flow4aUnknownProjectTest() {
-		
+
 	}
-	
+
 	@Test
 	public void flow4aBadProjectTest() {
-		
+
 	}
 
 }
