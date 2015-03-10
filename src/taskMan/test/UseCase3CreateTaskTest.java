@@ -52,17 +52,14 @@ public class UseCase3CreateTaskTest {
 	public void SuccesCaseTest() {
 		// Step 1 and 2 are implicit
 		// Step 3
-		taskMan.createTask(1, "A new TASK", newTaskDur, newTaskDev, null, newTaskDependencies, LocalDateTime());
+		taskMan.createTask(1, "A new TASK", newTaskDur, newTaskDev, null, newTaskDependencies);
 		// Step 4
 		assertTrue(taskMan.getTaskDescription(1,1).equals("A new TASK"));
-		assertEquals(taskMan.getTaskEstimatedDuration(1,1),newTaskDur);
-		assertEquals(taskMan.getTaskAcceptedDeviation(1,1),newTaskDev);
-		List<Integer> alts = taskMan.getTaskAlternatives(1,1);
-		assertTrue(alts.size() == 0);
-		List<Integer> deps = taskMan.getTaskDependencies(1,1);				//TODO wat moet er kunnen worden opgevraagd?
-		assertTrue(deps.size() == 1 && deps.contains(Integer.valueOf(1)));
-		String status = taskMan.getTaskStatus(1,1);
-		assertTrue(status.equals("available"));
+		assertEquals(taskMan.getEstimatedTaskDuration(1,1),newTaskDur);
+		assertEquals(taskMan.getAcceptableTaskDeviation(1,1),newTaskDev);
+		assertFalse(taskMan.hasTaskAlternative(1, 1));
+		assertFalse(taskMan.hasTaskPrerequisites(1, 1));
+		assertEquals(taskMan.getAvailableTasks(1).size(),1);
 	}
 
 	@Test
@@ -120,6 +117,7 @@ public class UseCase3CreateTaskTest {
 		newTaskDependencies.add(Integer.valueOf(1));
 		taskMan.createTask(1, "A new TASK", newTaskDur, newTaskDev, null, newTaskDependencies);
 		// Step 4
+		assertEquals(taskMan.getTaskAmount(1),0);
 		
 		//--------------------------------------------------------------------------------------
 		
@@ -129,6 +127,7 @@ public class UseCase3CreateTaskTest {
 		newTaskDependencies.add(Integer.valueOf(5));
 		taskMan.createTask(1, "A new TASK", newTaskDur, newTaskDev, null, newTaskDependencies);
 		// Step 4
+		assertEquals(taskMan.getTaskAmount(1),0);
 		
 	}
 
