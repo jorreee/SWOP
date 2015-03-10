@@ -105,6 +105,32 @@ public class Task {
 		return (taskStatus ==TaskStatus.FAILED);
 	}
 	
+	/**
+	 * Checks whether the Task has started.
+	 * 
+	 * @return	True if the Task has started.
+	 * 			False otherwise.
+	 */
+	public boolean hasStarted(){
+		if(this.getBeginTime()==null)
+			return false;
+		else
+			return true;
+	}
+	
+	/**
+	 * checks whether the Task has ended.
+	 * 
+	 * @return	True if the Task has ended.
+	 * 			False otherwise.
+	 */
+	public boolean hasEnded(){
+		if(this.getEndTime()==null)
+			return false;
+		else
+			return true;
+	}
+	
 //	private void updateBeginTime(LocalDateTime beginTime) {
 //		this.beginTime = beginTime;
 //	}
@@ -266,8 +292,37 @@ public class Task {
 	 * 
 	 * @return	The current status of the Task.
 	 */
-	public TaskStatus getTaskStatus() {
+	private TaskStatus getTaskStatus() {
 		return taskStatus;
+	}
+	
+	/**
+	 * Returns the status of the Task as a String.
+	 * 
+	 * @return	The status of the Task as a String.
+	 */
+	public String getStatus(){
+		TaskStatus stat = this.getTaskStatus();
+		String status ="";
+		switch(stat){
+			case FAILED:
+				status = "FAILED";
+				break;
+			case FINISHED:
+				status = "FINISHED";
+				break;
+			case AVAILABLE:
+				status = "AVAILABLE";
+				break;
+			case UNAVAILABLE:
+				status = "UNAVAILABLE";
+				break;
+			default:
+				status ="ERROR";
+				break;
+		}
+		return status;
+				
 	}
 
 	/**

@@ -23,7 +23,7 @@ public class Project {
 	private final LocalDateTime dueTime;
 	private LocalDateTime endTime;
 	private HashMap<Integer,Integer> taskAlternatives;
-	private HashMap<Task,ArrayList<Task>> taskPrerequisites;
+	private HashMap<Integer,List<Integer>> taskPrerequisites;
 	private ProjectStatus projectStatus;
 	private final int projectID;
 	
@@ -97,13 +97,7 @@ public class Project {
 		}
 		if(!addAlternative(alternativeFor, newTask.getTaskID()))
 			return false;
-		ArrayList<Task> pre = null;
-		try{
-			pre = getTaskByIDs(prerequisiteTasks);
-		}catch (IllegalArgumentException e){
-			return false;
-		}
-		if(!addPrerequisite(newTask, pre))
+		if(!addPrerequisite(newTask.getTaskID(), prerequisiteTasks))
 			return false;
 		return taskList.add(newTask);
 	}
@@ -131,16 +125,16 @@ public class Project {
 //			return false;
 		if(!isValidTaskID(alternativeFor))
 			return false;
-		ArrayList<Task> pre = null;
-		try{
-			pre = getTaskByIDs(prerequisiteTasks);
-		}catch (IllegalArgumentException e){
-			return false;
-		}
+//		ArrayList<Task> pre = null;
+//		try{
+//			pre = getTaskByIDs(prerequisiteTasks);
+//		}catch (IllegalArgumentException e){
+//			return false;
+//		}
 		Task task = new Task(taskList.size(),description,estimatedDuration,acceptableDeviation);
 		if(!addAlternative(alternativeFor, task.getTaskID()))
 			return false;
-		if(!addPrerequisite(task, pre))
+		if(!addPrerequisite(task.getTaskID(), prerequisiteTasks))
 			return false;
 		return taskList.add(task);
 	}
@@ -172,23 +166,23 @@ public class Project {
 //		}
 //	}
 	
-	/**
-	 * This method will adjust the status of the project, depending on its tasks.
-	 * If the project has at least one task and all of those tasks are finished (or failed with a finished alternative),
-	 * the project itself will be considered finished.
-	 */
-	private void recalcultateProjectStatus() {
-		for(Task task : taskList) {
-			TaskStatus status = task.getTaskStatus();
-			if( status == TaskStatus.AVAILABLE || status == TaskStatus.UNAVAILABLE)
-				return;
-			if( status == TaskStatus.FAILED) {
-				if(!hasFinishedAlternative(task.getTaskID()))
-					return;
-			}
-		}
-		this.projectStatus = ProjectStatus.FINISHED;
-	}
+//	/**
+//	 * This method will adjust the status of the project, depending on its tasks.
+//	 * If the project has at least one task and all of those tasks are finished (or failed with a finished alternative),
+//	 * the project itself will be considered finished.
+//	 */
+//	private void recalcultateProjectStatus() {
+//		for(Task task : taskList) {
+//			TaskStatus status = task.getTaskStatus();
+//			if( status == TaskStatus.AVAILABLE || status == TaskStatus.UNAVAILABLE)
+//				return;
+//			if( status == TaskStatus.FAILED) {
+//				if(!hasFinishedAlternative(task.getTaskID()))
+//					return;
+//			}
+//		}
+//		this.projectStatus = ProjectStatus.FINISHED;
+//	}
 	
 	/**
 	 * Returns a Task of the Project.
@@ -212,7 +206,7 @@ public class Project {
 	 * @return	True if and only the TaskID is a valid one.
 	 */
 	private boolean isValidTaskID(int taskID){
-		if(taskID<=this.getNumberOfTasks()){
+		if(taskID<=this.getTaskAmount()){
 			return true;
 		}
 		return false;
@@ -311,16 +305,6 @@ public class Project {
 		return this.taskList;
 	}
 	
-	
-	/**
-	 * Returns the number of known Tasks.
-	 * 
-	 * @return The number of known Tasks.
-	 */
-	public int getNumberOfTasks(){
-		return this.taskList.size()-1;
-	}
-	
 	/**
 	 * Returns a immutable list of the Task ID's of the project.
 	 * 
@@ -407,28 +391,6 @@ public class Project {
 	}
 	
 	/**
-	 * Returns the prerequisites of all the Tasks.
-	 *  
-	 * @return	A list of prerequisites of all the Tasks.
-	 */
-	public HashMap<Task, ArrayList<Task>> getTaskPrerequisites() {
-		return taskPrerequisites;
-	}
-	
-	/**
-	 * Checks whether the given Task has prerequisites.
-	 * 
-	 * @param 	task
-	 * 			The Task to check.
-	 * @return	True if and only the given Task has prerequisites.
-	 */
-	private boolean hasPrerequisites(Task task){
-		if(task == null)
-			return false;
-		return this.taskPrerequisites.containsKey(task);
-	}
-	
-	/**
 	 * Adds new prerequisites for the given Task.
 	 * 
 	 * @param 	task
@@ -437,37 +399,22 @@ public class Project {
 	 * 			The new prerequisites.
 	 * @return	True if and only the addition was successful.
 	 */
-	private boolean addPrerequisite(Task task, ArrayList<Task> pre){
-		if(task==null||pre==null)
+	private boolean addPrerequisite(int taskID, List<Integer> pre){
+		if(!isValidTaskID(taskID)||pre==null)
 			return false;
-		if(hasPrerequisites(task)){
-			for(Task newPre: pre){
-				if(!isValidPrerequisite(task, newPre))
+		if(hasPrerequisites(taskID)){
+			for(int newPre: pre){
+				if(!isValidPrerequisite(taskID, newPre))
 					return false;
 			}
-			ArrayList<Task> preOld = getPrerequisites(task);
+			List<Integer> preOld = getPrerequisites(taskID);
 			pre.addAll(preOld);
-			taskPrerequisites.put(task, pre);
+			taskPrerequisites.put(taskID, pre);
 			return true;
 		}
-		taskPrerequisites.put(task, pre);
+		taskPrerequisites.put(taskID, pre);
 		return true;
 	}
-	
-	/**
-	 * Returns the prerequisites of the given Task if any.
-	 * 
-	 * @param 	task
-	 * 			The Task with the prerequisites.
-	 * @return	The list of the prerequisites if any.
-	 * 			Null otherwise.
-	 */
-	public ArrayList<Task> getPrerequisites(Task task){
-		if(!hasPrerequisites(task))
-			return null;
-		return taskPrerequisites.get(task);
-	}
-	
 	
 	/**
 	 * Checks whether the given prerequisites is a valid one for the give Task.
@@ -478,12 +425,13 @@ public class Project {
 	 * 			The prerequisite to check.
 	 * @return	True if and only the prerequisite is a valid one.
 	 */
-	private boolean isValidPrerequisite(Task task, Task pre){
-		if(pre==null||task==null)
+	private boolean isValidPrerequisite(int task, int pre){
+//		if(pre==null||task==null)
+//			return false;
+		if(task == pre)
 			return false;
-		if(!task.equals(pre))
+		else
 			return true;
-		return false;
 	}
 	/**
 	 * Returns the Tasks belonging to the given ID's.
@@ -505,59 +453,157 @@ public class Project {
 		return tasks;
 	}
 
+	/**
+	 * Returns the number of Tasks in the project.
+	 * 
+	 * @return	The number of Tasks in the project.
+	 */
 	public int getTaskAmount() {
-		// TODO Auto-generated method stub
-		return 0;
+		return this.taskList.size()-1;
 	}
 
+	/**
+	 * Return the description of the Task belonging to the given ID.
+	 * 
+	 * @param 	taskID
+	 * 			The ID of the Task
+	 * @return	The description of the given Task.
+	 * 			Null if the given ID isn't a valid one.
+	 */
 	public String getTaskDescription(int taskID) {
-		// TODO Auto-generated method stub
-		return null;
+		if(!isValidTaskID(taskID))
+			return null;
+		return getTask(taskID).getDescription();
 	}
 
+	/**
+	 * Checks whether the Task belonging to the given ID has started.
+	 * 
+	 * @param 	taskID
+	 * 			The ID of the Task to check.
+	 * @return	True is the Task has started.
+	 * 			False otherwise or if the ID isn't a valid one.
+	 */
 	public boolean hasTaskStarted(int taskID) {
-		// TODO Auto-generated method stub
-		return false;
+		if(!isValidTaskID(taskID))
+			return false;
+		return getTask(taskID).hasStarted();
 	}
 
+	/**
+	 * Return the start time of the Task belonging to the given ID.
+	 * 
+	 * @param 	taskID
+	 * 			The ID of the Task.
+	 * @return	The start time of the Task.
+	 * 			Null if the Task hasn't started or the ID isn't a valid one.
+	 */
 	public LocalDateTime getTaskStartTime(int taskID) {
-		// TODO Auto-generated method stub
-		return null;
+		if(!isValidTaskID(taskID))
+			return null;
+		if(!hasTaskStarted(taskID))
+			return null;
+		return getTask(taskID).getBeginTime();
 	}
 
+	/**
+	 * Returns the estimated duration of the Task belonging to the given ID.
+	 * 
+	 * @param 	taskID
+	 * 			The ID of the Task.
+	 * @return	The estimated duration of the Task.
+	 * 			-1 if the ID isn't a valid one.
+	 */
 	public int getEstimatedTaskDuration(int taskID) {
-		// TODO Auto-generated method stub
-		return 0;
+		if(!isValidTaskID(taskID))
+			return -1;
+		return getTask(taskID).getEstimatedDuration();
 	}
 
+	/**
+	 * Returns the estimated deviation of the Task belonging to the given ID.
+	 * 
+	 * @param 	taskID
+	 * 			The ID of the task.
+	 * @return	The acceptable deviation of the Task.
+	 * 			-1 if the ID isn't a valid one.
+	 */
 	public int getAcceptableTaskDeviation(int taskID) {
-		// TODO Auto-generated method stub
-		return 0;
+		if(!isValidTaskID(taskID))
+			return -1;
+		return getTask(taskID).getAcceptableDeviation();
 	}
 
+	/**
+	 * Checks whether the Task belonging to the given ID has ended.
+	 * 
+	 * @param 	taskID
+	 * 			The ID of the Task.
+	 * @return	True if the Task has ended.
+	 * 			False if the ID isn't a valid one or the Task has ended.
+	 */
 	public boolean hasTaskEnded(int taskID) {
-		// TODO Auto-generated method stub
-		return false;
+		if(!isValidTaskID(taskID))
+			return false;
+		return getTask(taskID).hasEnded();
 	}
 
+	/**
+	 * Return the end time of the Task belonging to the given ID.
+	 * 
+	 * @param 	taskID
+	 * 			The ID of the given Task.
+	 * @return	The end time of the Task.
+	 * 			Null if the Task hasn't ended or the ID isn't a valid one.
+	 */
 	public LocalDateTime getTaskEndTime(int taskID) {
-		// TODO Auto-generated method stub
-		return null;
+		if(!isValidTaskID(taskID))
+			return null;
+		if(!hasTaskEnded(taskID))
+			return null;
+		return getTask(taskID).getEndTime();
 	}
 
+	/**
+	 * Returns the status of the Task belonging to the given ID.
+	 * 
+	 * @param 	taskID
+	 * 			The ID of the Task.
+	 * @return	The status of the Task.
+	 * 			Null if the ID isn't a valid one.
+	 */
 	public String getTaskStatus(int taskID) {
-		// TODO Auto-generated method stub
-		return null;
+		if(!isValidTaskID(taskID))
+			return null;
+		return getTask(taskID).getStatus();
 	}
 
+	/**
+	 * Checks whether the given Task belonging to the given ID has prerequisites.
+	 * 
+	 * @param 	taskID
+	 * 			The ID of the task.
+	 * @return	True if the given Task has prerequisites.
+	 * 			False otherwise or the ID isn't a valid one.
+	 */
 	public boolean hasPrerequisites(int taskID) {
-		// TODO Auto-generated method stub
-		return false;
+		if(!isValidTaskID(taskID))
+			return false;
+		return this.taskPrerequisites.containsKey(taskID);
 	}
 
+	/**
+	 * Returns the prerequisites of the Task belonging to the given ID if any.
+	 * 
+	 * @param 	taskID
+	 * 			The ID of the Task.
+	 * @return	The list of the prerequisites if any.
+	 * 			Null otherwise.
+	 */
 	public List<Integer> getPrerequisites(int taskID) {
-		// TODO Auto-generated method stub
-		return null;
+		if(!isValidTaskID(taskID))
+			return null;
+		return this.taskPrerequisites.get(taskID);
 	}
 	
 }
