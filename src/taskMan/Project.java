@@ -72,13 +72,13 @@ public class Project {
 	 * @return	True if and only the creation of a Task with a status
 	 * 			of failed or finished was successful.
 	 */
-	public boolean createTask(String description, LocalTime estimatedDuration, 
-			float acceptableDeviation, String taskStatus, int alternativeFor, 
+	public boolean createTask(String description, int estimatedDuration, 
+			int acceptableDeviation, String taskStatus, int alternativeFor, 
 			List<Integer> prerequisiteTasks, LocalDateTime startTime, LocalDateTime endTime) {
 		if(description==null)
 			return false;
-		if(estimatedDuration==null)
-			return false;
+//		if(estimatedDuration==null)
+//			return false;
 		if(startTime==null)
 			return false;
 		if(endTime==null)
@@ -95,7 +95,7 @@ public class Project {
 		}catch(IllegalArgumentException e){
 			return false;
 		}
-		if(!addAlternative(getTask(alternativeFor), newTask))
+		if(!addAlternative(alternativeFor, newTask.getTaskID()))
 			return false;
 		ArrayList<Task> pre = null;
 		try{
@@ -123,12 +123,12 @@ public class Project {
 	 * 			The prerequisites Tasks for this Task.
 	 * @return	True if the creation of a new Task was successful.
 	 */
-	public boolean createTask(String description, LocalTime estimatedDuration, 
-			float acceptableDeviation,int alternativeFor, List<Integer> prerequisiteTasks){
+	public boolean createTask(String description, int estimatedDuration, 
+			int acceptableDeviation,int alternativeFor, List<Integer> prerequisiteTasks){
 		if(description==null)
 			return false;
-		if(estimatedDuration==null)
-			return false;
+//		if(estimatedDuration==null)
+//			return false;
 		if(!isValidTaskID(alternativeFor))
 			return false;
 		ArrayList<Task> pre = null;
@@ -138,7 +138,7 @@ public class Project {
 			return false;
 		}
 		Task task = new Task(taskList.size(),description,estimatedDuration,acceptableDeviation);
-		if(!addAlternative(getTask(alternativeFor), task))
+		if(!addAlternative(alternativeFor, task.getTaskID()))
 			return false;
 		if(!addPrerequisite(task, pre))
 			return false;
@@ -365,7 +365,7 @@ public class Project {
 	 * 			The Task to check.
 	 * @return	True if and only the given Task has alternatives.
 	 */
-	private boolean hasAlternative(Integer taskID){
+	public boolean hasAlternative(Integer taskID){
 		if(!isValidTaskID(taskID))
 			return false;
 		return this.taskAlternatives.containsKey(taskID);
@@ -503,6 +503,61 @@ public class Project {
 			tasks.add(this.taskList.get(id));
 		}
 		return tasks;
+	}
+
+	public int getTaskAmount() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public String getTaskDescription(int taskID) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public boolean hasTaskStarted(int taskID) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public LocalDateTime getTaskStartTime(int taskID) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public int getEstimatedTaskDuration(int taskID) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public int getAcceptableTaskDeviation(int taskID) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public boolean hasTaskEnded(int taskID) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public LocalDateTime getTaskEndTime(int taskID) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getTaskStatus(int taskID) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public boolean hasPrerequisites(int taskID) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public List<Integer> getPrerequisites(int taskID) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

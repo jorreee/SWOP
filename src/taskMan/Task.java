@@ -15,8 +15,8 @@ import java.time.temporal.ChronoUnit;
 //TODO estimateddur int
 public class Task {
 	private final String description;
-	private final LocalTime estimatedDuration;
-	private final float acceptableDeviation;
+	private final int estimatedDuration;
+	private final int acceptableDeviation;
 	private TaskStatus taskStatus;
 	private LocalDateTime beginTime;
 	private LocalDateTime endTime;
@@ -34,8 +34,8 @@ public class Task {
 	 * @param 	acceptableDeviation
 	 * 			The acceptable deviation of the new Task.
 	 */
-	public Task(int taskID, String taskDescription, LocalTime estimatedDuration,
-			float acceptableDeviation) {
+	public Task(int taskID, String taskDescription, int estimatedDuration,
+			int acceptableDeviation) {
 		this.taskID = taskID;
 		this.description = taskDescription;
 		this.estimatedDuration = estimatedDuration;
@@ -60,8 +60,8 @@ public class Task {
 	 * @param 	endTime
 	 * 			The endtime of the new Task.
 	 */
-	public Task(int taskID, String taskDescription, LocalTime estimatedDuration,
-			float acceptableDeviation, TaskStatus taskStatus,
+	public Task(int taskID, String taskDescription, int estimatedDuration,
+			int acceptableDeviation, TaskStatus taskStatus,
 			LocalDateTime beginTime, LocalDateTime endTime) throws IllegalArgumentException {
 		this(taskID, taskDescription, estimatedDuration, acceptableDeviation);
 		if(taskStatus != TaskStatus.FAILED || taskStatus != TaskStatus.FINISHED)
@@ -232,7 +232,7 @@ public class Task {
 	 * 
 	 * @return	The estimated duration of the Task.
 	 */
-	public LocalTime getEstimatedDuration() {
+	public int getEstimatedDuration() {
 		return estimatedDuration;
 	}
 
@@ -241,7 +241,7 @@ public class Task {
 	 * 
 	 * @return	The accepatble deviation of the Task.
 	 */
-	public float getAcceptableDeviation() {
+	public int getAcceptableDeviation() {
 		return acceptableDeviation;
 	}
 
