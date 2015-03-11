@@ -33,10 +33,6 @@ public class Facade implements IFacade {
 		return taskMan.createTask(projectID, description, estimatedDuration, acceptableDeviation, alternativeFor, prerequisiteTasks);
 	}
 	
-//	@Override
-//	public boolean updateTaskDetails(int projectID, int taskID, LocalDateTime startTime, LocalDateTime endTime, String taskStatus) {
-//		return taskMan.updateTaskDetails(projectID, taskID, startTime, endTime, taskStatus);
-//	}
 	
 	@Override
 	public String getProjectName(int projectID) {
