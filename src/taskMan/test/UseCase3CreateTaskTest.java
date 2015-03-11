@@ -16,6 +16,8 @@ public class UseCase3CreateTaskTest {
 	private final LocalDateTime startDate = LocalDateTime.of(2015, 2, 9, 8, 0),
 			project0StartDate = startDate,
 			project0DueDate = LocalDateTime.of(2015, 2, 13, 23, 59),
+			task00StartDateGood = startDate,
+			task00EndDateGood = LocalDateTime.of(2015,2,9,15,0),
 			workDate = LocalDateTime.of(2015, 2, 9, 16, 0),
 			altTaskEndDate = LocalDateTime.of(2015, 2, 9, 10, 0);
 	private final int task00EstDur = 8*60,
@@ -37,9 +39,9 @@ public class UseCase3CreateTaskTest {
 	public final void initialize() {
 		taskMan = new TaskMan(startDate);
 
-		taskMan.createProject("Test1", "testing 1", project0StartDate, project0DueDate);
+		assertTrue(taskMan.createProject("Test1", "testing 1", project0StartDate, project0DueDate));
 
-		taskMan.advanceTimeTo(workDate);
+		assertTrue(taskMan.advanceTimeTo(workDate));
 //
 //		taskMan.createTask(1, "Design system", task11EstDur, task11Dev, null, task11Dependencies);		// TASK 1
 //		task12Dependencies.add(Integer.valueOf(1));
@@ -55,7 +57,7 @@ public class UseCase3CreateTaskTest {
 	public void SuccesCaseTest() {
 		// Step 1 and 2 are implicit
 		// Step 3
-		taskMan.createTask(0, "A new TASK", newTaskDur, newTaskDev, -1, newTaskDependencies);
+		assertTrue(taskMan.createTask(0, "A new TASK", newTaskDur, newTaskDev, -1, newTaskDependencies));
 		// Step 4
 		assertTrue(taskMan.getTaskDescription(0,1).equals("A new TASK"));
 		assertEquals(taskMan.getEstimatedTaskDuration(0,1),newTaskDur);
@@ -71,13 +73,13 @@ public class UseCase3CreateTaskTest {
 	public void SuccesCaseALTTest() {
 
 		// Er is al een FAILED task aanwezig in het project
-		taskMan.createTask(0, "Design system", task00EstDur, task00Dev, -1, task00Dependencies);
-		taskMan.updateTaskDetails(0, 0, startDate, altTaskEndDate, "failed");
+		assertTrue(taskMan.createTask(0, "Design system", task00EstDur, task00Dev, -1, task00Dependencies));
+		assertTrue(taskMan.updateTaskDetails(0, 0, startDate, altTaskEndDate, "failed"));
 		
 		
 		// Step 1 and 2 are implicit
 		// Step 3
-		taskMan.createTask(0, "A new TASK", newTaskDur, newTaskDev, 0, newTaskDependencies);
+		assertTrue(taskMan.createTask(0, "A new TASK", newTaskDur, newTaskDev, 0, newTaskDependencies));
 		// Step 4
 		assertTrue(taskMan.getTaskDescription(0,1).equals("A new TASK"));
 		assertEquals(taskMan.getEstimatedTaskDuration(0,1),newTaskDur);
@@ -93,15 +95,15 @@ public class UseCase3CreateTaskTest {
 	}
 
 	@Test
-	public void SuccesCasDepTest() {
+	public void SuccesCaseDepTest() {
 
 		// Er is al een task aanwezig in het project
-		taskMan.createTask(0, "Design system", task00EstDur, task00Dev, -1, task00Dependencies);
+		assertTrue(taskMan.createTask(0, "Design system", task00EstDur, task00Dev, -1, task00Dependencies));
 
 		// Step 1 and 2 are implicit
 		// Step 3
 		newTaskDependencies.add(Integer.valueOf(0));
-		taskMan.createTask(0, "A new TASK", newTaskDur, newTaskDev, -1, newTaskDependencies);
+		assertTrue(taskMan.createTask(0, "A new TASK", newTaskDur, newTaskDev, -1, newTaskDependencies));
 		// Step 4
 		assertTrue(taskMan.getTaskDescription(0,1).equals("A new TASK"));
 		assertEquals(taskMan.getEstimatedTaskDuration(0,1),newTaskDur);
@@ -120,9 +122,9 @@ public class UseCase3CreateTaskTest {
 	public void SuccesCaseFailedDepNoAltTest() {
 
 		// Er is al een FAILED task aanwezig in het project
-		taskMan.createTask(0, "Design system", task00EstDur, task00Dev, -1, task00Dependencies);
+		assertTrue(taskMan.createTask(0, "Design system", task00EstDur, task00Dev, -1, task00Dependencies));
 		assertEquals(taskMan.getTaskStatus(0, 0),"available");
-		taskMan.updateTaskDetails(0, 0, startDate, altTaskEndDate, "failed");
+		assertTrue(taskMan.updateTaskDetails(0, 0, startDate, altTaskEndDate, "failed"));
 		assertEquals(taskMan.getTaskStatus(0, 0),"failed");
 		
 		// Task kan FAILED task ZONDER ALT als dep nemen !!!!!!!!!!!!!!
@@ -130,10 +132,32 @@ public class UseCase3CreateTaskTest {
 		// Step 1 and 2 are implicit
 		// Step 3
 		newTaskDependencies.add(Integer.valueOf(0));
-		taskMan.createTask(0, "A new TASK", newTaskDur, newTaskDev, -1, newTaskDependencies);
+		assertTrue(taskMan.createTask(0, "A new TASK", newTaskDur, newTaskDev, -1, newTaskDependencies));
 		// Step 4
-		assertTrue(taskMan.hasTaskPrerequisites(0, 0));
+		assertTrue(taskMan.hasTaskPrerequisites(0, 1));
+		assertEquals(taskMan.getTaskPrerequisitesFor(0, 1),0);
 		assertEquals(taskMan.getTaskAmount(0),2);
+	}
+	
+	@Test
+	public void SuccesCaseFailedDepWithAltTest() {
+
+		// Er is al een FAILED task MET ALT aanwezig in het project
+		assertTrue(taskMan.createTask(0, "Design system", task00EstDur, task00Dev, -1, task00Dependencies));
+		assertEquals(taskMan.getTaskStatus(0, 0),"available");
+		assertTrue(taskMan.updateTaskDetails(0, 0, startDate, altTaskEndDate, "failed"));
+		assertEquals(taskMan.getTaskStatus(0, 0),"failed");
+		assertTrue(taskMan.createTask(0, "Implement Native", task01EstDur, task01Dev, 0, task01Dependencies));
+		assertEquals(taskMan.getTaskStatus(0, 1),"available");
+
+		// Step 1 and 2 are implicit
+		// Step 3
+		newTaskDependencies.add(Integer.valueOf(0));
+		assertTrue(taskMan.createTask(0, "A new TASK", newTaskDur, newTaskDev, -1, newTaskDependencies));
+		// Step 4
+		assertTrue(taskMan.hasTaskPrerequisites(0, 2));
+		assertEquals(taskMan.getTaskPrerequisitesFor(0, 2),1);				// NIET 0 !!!!!
+		assertEquals(taskMan.getTaskAmount(0),3);
 	}
 
 	@Test
@@ -150,7 +174,7 @@ public class UseCase3CreateTaskTest {
 		
 		// Step 1 and 2 are implicit
 		// Step 3
-		taskMan.createTask(0, "A new TASK", newTaskDur, newTaskDev, 0, newTaskDependencies);
+		assertFalse(taskMan.createTask(0, "A new TASK", newTaskDur, newTaskDev, 0, newTaskDependencies));
 		// Step 4
 		assertEquals(taskMan.getTaskAmount(0),0);
 		
@@ -159,7 +183,7 @@ public class UseCase3CreateTaskTest {
 		
 		// Step 1 and 2 are implicit
 		// Step 3
-		taskMan.createTask(0, "A new TASK", newTaskDur, newTaskDev, 5, newTaskDependencies);
+		assertFalse(taskMan.createTask(0, "A new TASK", newTaskDur, newTaskDev, 5, newTaskDependencies));
 		// Step 4
 		assertEquals(taskMan.getTaskAmount(0),0);
 		
@@ -169,17 +193,17 @@ public class UseCase3CreateTaskTest {
 	public void flow4aBadAltTest() {
 		
 		// Er is al een AVAILABLE en UNAVAILABLE task aanwezig in het project
-		taskMan.createTask(0, "Design system", task00EstDur, task00Dev, -1, task00Dependencies);
+		assertTrue(taskMan.createTask(0, "Design system", task00EstDur, task00Dev, -1, task00Dependencies));
 		assertEquals(taskMan.getTaskStatus(0, 0),"available");
 		task01Dependencies.add(Integer.valueOf(0));
-		taskMan.createTask(0, "Implement Native", task01EstDur, task01Dev, -1, task01Dependencies);
+		assertTrue(taskMan.createTask(0, "Implement Native", task01EstDur, task01Dev, -1, task01Dependencies));
 		assertEquals(taskMan.getTaskStatus(0, 1),"unavailable");
 		
 		// AVAILABLE task kan geen ALT nemen
 		
 		// Step 1 and 2 are implicit
 		// Step 3
-		taskMan.createTask(0, "A new TASK", newTaskDur, newTaskDev, 0, newTaskDependencies);
+		assertFalse(taskMan.createTask(0, "A new TASK", newTaskDur, newTaskDev, 0, newTaskDependencies));
 		// Step 4
 		assertFalse(taskMan.hasTaskAlternative(0, 0));
 		assertFalse(taskMan.hasTaskPrerequisites(0, 0));
@@ -190,7 +214,7 @@ public class UseCase3CreateTaskTest {
 		
 		// Step 1 and 2 are implicit
 		// Step 3
-		taskMan.createTask(0, "A new TASK", newTaskDur, newTaskDev, 1, newTaskDependencies);
+		assertFalse(taskMan.createTask(0, "A new TASK", newTaskDur, newTaskDev, 1, newTaskDependencies));
 		// Step 4
 		assertFalse(taskMan.hasTaskAlternative(0, 1));
 		assertFalse(taskMan.hasTaskPrerequisites(0, 1));
@@ -199,11 +223,11 @@ public class UseCase3CreateTaskTest {
 		//----------------------------------------------------------------------------------------
 		// FINISHED task kan geen ALT nemen
 		
-		taskMan.updateTaskDetails(0, 0, startDate, altTaskEndDate, "finished");
+		assertTrue(taskMan.updateTaskDetails(0, 0, startDate, altTaskEndDate, "finished"));
 		
 		// Step 1 and 2 are implicit
 		// Step 3
-		taskMan.createTask(0, "A new TASK", newTaskDur, newTaskDev, 0, newTaskDependencies);
+		assertFalse(taskMan.createTask(0, "A new TASK", newTaskDur, newTaskDev, 0, newTaskDependencies));
 		// Step 4
 		assertFalse(taskMan.hasTaskAlternative(0, 0));
 		assertFalse(taskMan.hasTaskPrerequisites(0, 0));
@@ -219,7 +243,7 @@ public class UseCase3CreateTaskTest {
 		newTaskDependencies.add(Integer.valueOf(0));
 		// Step 1 and 2 are implicit
 		// Step 3
-		taskMan.createTask(0, "A new TASK", newTaskDur, newTaskDev, -1, newTaskDependencies);
+		assertFalse(taskMan.createTask(0, "A new TASK", newTaskDur, newTaskDev, -1, newTaskDependencies));
 		// Step 4
 		assertEquals(taskMan.getTaskAmount(0),0);
 		
@@ -230,20 +254,79 @@ public class UseCase3CreateTaskTest {
 		newTaskDependencies.add(Integer.valueOf(5));
 		// Step 1 and 2 are implicit
 		// Step 3
-		taskMan.createTask(0, "A new TASK", newTaskDur, newTaskDev, -1, newTaskDependencies);
+		assertFalse(taskMan.createTask(0, "A new TASK", newTaskDur, newTaskDev, -1, newTaskDependencies));
 		// Step 4
 		assertEquals(taskMan.getTaskAmount(0),0);
 		
+	}
+	
+	@Test
+	public void flow4aBadDepTest() {
+
+		// Er is al een FAILED task aanwezig in het project
+		assertTrue(taskMan.createTask(0, "Design system", task00EstDur, task00Dev, -1, task00Dependencies));
+		assertEquals(taskMan.getTaskStatus(0, 0),"available");
+		assertTrue(taskMan.updateTaskDetails(0, 0, startDate, altTaskEndDate, "failed"));
+		assertEquals(taskMan.getTaskStatus(0, 0),"failed");
+		
+		// Task kan geen PreReq zijn voor zijn ALT
+
+		// Step 1 and 2 are implicit
+		// Step 3
+		newTaskDependencies.add(Integer.valueOf(0));
+		assertFalse(taskMan.createTask(0, "A new TASK", newTaskDur, newTaskDev, 0, newTaskDependencies));
+		// Step 4
+		assertFalse(taskMan.hasTaskAlternative(0, 0));
+		assertFalse(taskMan.hasTaskPrerequisites(0, 0));
+		assertEquals(taskMan.getTaskAmount(0),1);
 	}
 
 	//TODO FINISHED project of bad reference resten
 	@Test
 	public void flow4aUnknownProjectTest() {
 
+		assertTrue(taskMan.createTask(0, "Design system", task00EstDur, task00Dev, -1, task00Dependencies));
+		assertEquals(taskMan.getTaskStatus(0, 0),"available");
+
+		// Step 1 and 2 are implicit
+		// Step 3
+		assertFalse(taskMan.createTask(5, "A new TASK", newTaskDur, newTaskDev, -1, newTaskDependencies));
+		// Step 4
+		assertEquals(taskMan.getProjectAmount(),1);		
+		
+		//-------------------------------------------------------------------------------------------------
+
+		// Step 1 and 2 are implicit
+		// Step 3
+		assertFalse(taskMan.createTask(5, "A new TASK", newTaskDur, newTaskDev, 0, newTaskDependencies));
+		// Step 4
+		assertEquals(taskMan.getProjectAmount(),1);		
+		
+		//-------------------------------------------------------------------------------------------------
+
+		// Step 1 and 2 are implicit
+		// Step 3
+		newTaskDependencies.add(Integer.valueOf(0));
+		assertFalse(taskMan.createTask(5, "A new TASK", newTaskDur, newTaskDev, -1, newTaskDependencies));
+		// Step 4
+		assertEquals(taskMan.getProjectAmount(),1);	
+		assertEquals(taskMan.getTaskAmount(0),1);
+		
 	}
 
 	@Test
 	public void flow4aBadProjectTest() {
+		
+		assertTrue(taskMan.createTask(0, "Design system", task00EstDur, task00Dev, -1, task00Dependencies));
+		assertEquals(taskMan.getTaskStatus(0, 0),"available");
+		assertTrue(taskMan.updateTaskDetails(0, 0, task00StartDateGood, task00EndDateGood, "finished"));
+		
+		// Step 1 and 2 are implicit
+		// Step 3
+		assertFalse(taskMan.createTask(5, "A new TASK", newTaskDur, newTaskDev, -1, newTaskDependencies));
+		// Step 4
+		assertEquals(taskMan.getProjectAmount(),1);
+		assertEquals(taskMan.getTaskAmount(0),1);
 
 	}
 
