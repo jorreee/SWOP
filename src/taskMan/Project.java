@@ -116,6 +116,7 @@ public class Project {
 		}catch(IllegalArgumentException e){
 			return false;
 		}
+		if(prerequisiteTasks.contains(alternativeFor)) return false;
 		if(isValidAlternative(alternativeFor, newTask.getTaskID()) && !addAlternative(alternativeFor, newTask.getTaskID()))
 			return false;
 		if(!isValidPrerequisites(newTask.getTaskID(), prerequisiteTasks)){
@@ -414,7 +415,14 @@ public class Project {
 		if(!isValidPrerequisites(taskID, pre)){
 			return false;
 		}
+		for (int prereq : pre) {
+			if (getTask(prereq).isFailed() && hasAlternative(prereq)){
+				pre.remove(prereq);
+				pre.add(getAlternative(prereq));
+			}
+		}
 		if(hasPrerequisites(taskID)){
+			
 			List<Integer> preOld = getPrerequisites(taskID);
 			pre.addAll(preOld);
 			taskPrerequisites.put(taskID, pre);
