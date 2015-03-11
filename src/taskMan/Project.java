@@ -489,7 +489,11 @@ public class Project {
 		return this.taskList.size();
 	}
 	
-	//TODO doc
+	/**
+	 * Returns a list of the id's of the available tasks of the project
+	 * 
+	 * @return	a list of the availabke tasks' id's
+	 */
 	public List<Integer> getAvailableTasks() {
 		ArrayList<Integer> availableTasks = new ArrayList<Integer>();
 		for(Task task : taskList) {
@@ -559,7 +563,13 @@ public class Project {
 		return getTask(taskID).getEstimatedDuration().getSpanMinutes();
 	}
 	
-	//TODO doc
+	/**
+	 * Returns whether a given estimated duration is a valid estimated task duration
+	 * @param 	estimatedDuration
+	 * 			the estimated duration
+	 * @return	True if the estimated duration is valid,
+	 * 			False if the estimated duration is not valid
+	 */
 	private boolean isValidEstimatedTaskDuration(int estimatedDuration) {
 		return estimatedDuration > 0;
 	}
