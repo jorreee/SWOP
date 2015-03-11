@@ -15,6 +15,17 @@ import com.google.common.collect.ImmutableList;
 //TODO werken met taskID ipv task objecten.
 //TODO isontime boolean, getDelay int 
 
+/**
+ * The project class used by TaskMan. A project will always have a unique
+ * identifier, a name, a description, a creation time, a due time, a status and
+ * a list containing all tasks assigned to this project. A project will also
+ * know if a task is another one's alternative or if a task depends on a series
+ * of other tasks.
+ * A project can be either ongoing or finished.
+ * 
+ * @author Tim Van Den Broecke, Joran Van de Woestijne, Vincent Van Gestel and
+ *         Eli Vangrieken
+ */
 public class Project {
 	
 	private ArrayList<Task> taskList = new ArrayList<Task>();
@@ -49,7 +60,7 @@ public class Project {
 		this.creationTime = creationTime;
 		this.dueTime = dueTime;
 		this.projectID = projectID;
-		recalcultateProjectStatus();
+		this.projectStatus = ProjectStatus.ONGOING;
 		
 	}
 
@@ -174,18 +185,16 @@ public class Project {
 	 * the project itself will be considered finished.
 	 */
 	private void recalcultateProjectStatus() {
-//		for(Task task : taskList) {
-//			TaskStatus status = task.getTaskStatus();
-//			if( status == TaskStatus.AVAILABLE || status == TaskStatus.UNAVAILABLE)
-//				return;
-//			if( status == TaskStatus.FAILED) {
-//				if(!hasFinishedAlternative(task.getTaskID()))
-//					return;
-//			}
-//		}
-//		this.projectStatus = ProjectStatus.FINISHED;
-		// TODO Dees
-		this.projectStatus = ProjectStatus.ONGOING;
+		for(Task task : taskList) {
+			String status = task.getTaskStatusName();
+			if( status.equals("AVAILABLE") || status.equals("UNAVAILABLE"))
+				return;
+			if( status.equals("FAILED")) {
+				if(!hasFinishedAlternative(task.getTaskID()))
+					return;
+			}
+		}
+		this.projectStatus = ProjectStatus.FINISHED;
 	}
 	
 	/**
