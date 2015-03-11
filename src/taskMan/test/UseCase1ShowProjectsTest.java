@@ -14,20 +14,20 @@ public class UseCase1ShowProjectsTest {
 
 	private TaskMan taskMan;
 	private final LocalDateTime startDate = LocalDateTime.of(2015, 2, 9, 8, 0),
-			project0StartDate = startDate,
-			project0DueDate = LocalDateTime.of(2015, 2, 13, 23, 59);
-	private final int task00EstDur = 8*60,
-			task01EstDur = 16*60,
-			task02EstDur = 8*60,
-			task03EstDur = 8*60;
+			workdate1 = LocalDateTime.of(2015, 2, 11, 16, 0),
+			workdate2 = LocalDateTime.of(2015, 2, 12, 16, 0),
+			workdate3 = LocalDateTime.of(2015, 2, 13, 16, 0),
+			workdate4 = LocalDateTime.of(2015, 2, 15, 16, 0),
+			project0DueDate = LocalDateTime.of(2015, 2, 13, 23, 59),
+			project1DueDate = LocalDateTime.of(2015, 2, 21, 23, 59),
+			project2DueDate = LocalDateTime.of(2015, 2, 15, 23, 59),
+			project3DueDate = LocalDateTime.of(2015, 2, 21, 23, 59);
+	private final int task00EstDur = 60,
+			task20EstDur = 35;
 	private final int task00Dev = 0,
-			task01Dev = 50,
-			task02Dev = 0,
-			task03Dev = 0;
+			task20Dev = 50; // Moet nog steeds delayed project geven!
 	private final ArrayList<Integer> task00Dependencies = new ArrayList(),
-			task01Dependencies = new ArrayList(),
-			task02Dependencies = new ArrayList(),
-			task03Dependencies = new ArrayList();
+			task02Dependencies = new ArrayList();
 
 	/**
 	 * DEFAULT TASKMAN TESTER
@@ -41,7 +41,7 @@ public class UseCase1ShowProjectsTest {
 	public final void initialize() {
 		taskMan = new TaskMan(startDate);
 
-		taskMan.createProject("Test1", "testing 1", project0StartDate, project0DueDate);
+		taskMan.createProject("Test1", "testing 1", project0DueDate);
 
 
 		taskMan.createTask(0, "Design system", task00EstDur, task00Dev, -1, task00Dependencies);		// TASK 1

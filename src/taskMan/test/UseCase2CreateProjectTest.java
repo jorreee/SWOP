@@ -69,7 +69,7 @@ public class UseCase2CreateProjectTest {
 		assertTrue(taskMan.createProject("Test1", "testing 1", project0StartDateGood, project0DueDateGood));
 		// Stap 4
 		assertTrue(taskMan.getProjectName(0).equals("Test1"));
-		assertTrue(taskMan.getProjectDescription(0).equals("tesing 1"));
+		assertTrue(taskMan.getProjectDescription(0).equals("testing 1"));
 		assertEquals(taskMan.getAvailableTasks(0).size(),0);
 		assertEquals(taskMan.getProjectDueTime(0),project0DueDateGood);
 		assertTrue(taskMan.getProjectStatus(0).equals("ongoing"));
@@ -106,7 +106,7 @@ public class UseCase2CreateProjectTest {
 	public void flow4aNoTimeTest() {
 		// Stap 1 en 2 zijn impliciet
 		// Stap 3
-		assertFalse(taskMan.createProject("Test1", "testing 1", project0StartDateVeryBad, project0DueDateVeryBad2));
+		assertFalse(taskMan.createProject("Test1", "testing 1", project0StartDateGood, project0DueDateVeryBad2));
 		// Stap 4
 		assertEquals(taskMan.getProjectAmount(),0);
 	}

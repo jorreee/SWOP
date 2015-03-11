@@ -54,7 +54,7 @@ public class UseCase4UpdateTaskStatusTest {
 	public final void initialize() {
 		taskMan = new TaskMan(startDate);
 
-		assertTrue(taskMan.createProject("Test1", "testing 1", project0StartDate, project0DueDate));
+		assertTrue(taskMan.createProject("Test1", "testing 1", project0DueDate));
 
 		
 		assertTrue(taskMan.createTask(0, "Design system", task00EstDur, task00Dev, -1, task00Dependencies));		// TASK 1

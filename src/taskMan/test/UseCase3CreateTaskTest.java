@@ -43,7 +43,7 @@ public class UseCase3CreateTaskTest {
 	public final void initialize() {
 		taskMan = new TaskMan(startDate);
 
-		assertTrue(taskMan.createProject("Test1", "testing 1", project0StartDate, project0DueDate));
+		assertTrue(taskMan.createProject("Test1", "testing 1", project0DueDate));
 
 		assertTrue(taskMan.advanceTimeTo(workDate));
 //
