@@ -159,7 +159,7 @@ public class Project {
 		if(!task.isFinished()){
 			for(Integer preID : getPrerequisites(task.getTaskID())){
 				if(!getTask(preID).isFinished()){
-					task.setUnvailable();
+					task.setUnavailable();
 					return;
 				}
 			}
