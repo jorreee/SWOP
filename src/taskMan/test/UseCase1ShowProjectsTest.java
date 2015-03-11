@@ -14,11 +14,6 @@ public class UseCase1ShowProjectsTest {
 
 	private TaskMan taskMan;
 	private final LocalDateTime startDate = LocalDateTime.of(2015, 2, 9, 8, 0),
-			newDateNoChanges = LocalDateTime.of(2015, 2, 9, 10, 0),
-			newDateWithChanges = LocalDateTime.of(2015, 3, 9, 10, 0),
-			newDateVeryBad1 = null,
-			newDateVeryBad2 = LocalDateTime.of(2015, 2, 8, 0, 0),
-			newDateVeryBad3 = startDate,
 			project0StartDate = startDate,
 			project0DueDate = LocalDateTime.of(2015, 2, 13, 23, 59);
 	private final int task00EstDur = 8*60,
