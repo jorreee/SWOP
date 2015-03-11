@@ -57,6 +57,8 @@ public class Project {
 	 */
 	public Project(int projectID, String projectName, String description,
 			LocalDateTime creationTime, LocalDateTime dueTime) throws IllegalArgumentException{
+		if(dueTime==null || creationTime==null)
+			throw new IllegalArgumentException("One of the arguments is null");
 		if(dueTime.isBefore(creationTime))
 			throw new IllegalArgumentException("Duetime comes before the creationTime");
 		this.projectName = projectName;
