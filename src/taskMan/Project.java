@@ -293,7 +293,17 @@ public class Project {
 	 * @return	The status of this Project.
 	 */
 	public String getProjectStatus() { 
-		return "projectStatus";	
+		ProjectStatus stat = this.projectStatus;
+		String status = "";
+		switch(stat){
+			case FINISHED:
+				status = "FINISHED";
+				break;
+			case ONGOING:
+				status = "ONGOING";
+				break;
+		}
+		return status;
 	}
 	
 	/**
@@ -354,7 +364,7 @@ public class Project {
 			return false;
 		return this.taskAlternatives.containsKey(taskID);
 	}
-	//TODO
+	
 	/**
 	 * Add an alternative Task to the list of alternatives of the given Task.
 	 * 
@@ -604,6 +614,40 @@ public class Project {
 		if(!isValidTaskID(taskID))
 			return null;
 		return this.taskPrerequisites.get(taskID);
+	}
+	
+	/**
+	 * Returns whether the project is on time;
+	 * 
+	 * @param 	current
+	 * 			The current time to compare with.
+	 * @return
+	 */
+	public boolean isOnTime(LocalDateTime current){
+		if(endTime == null){
+			if(current.isAfter(dueTime))
+				return false;
+			else
+				return true;
+		}
+		else{
+			return endTime.isBefore(dueTime);
+		}
+	}
+	
+	//TODO
+	/**
+	 * Returns the delay of the project if any.
+	 * 
+	 * @param 	current
+	 * 			The current time to check with.
+	 * @return	The delay of the project
+	 */
+	public int getDelay(LocalDateTime current){
+		if(!isOnTime(current))
+			return -1;
+		else
+			return 1;
 	}
 	
 }
