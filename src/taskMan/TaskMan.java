@@ -50,6 +50,8 @@ public class TaskMan {
 	 * 			False if the time parameter is earlier than the current time.
 	 */
 	public boolean advanceTimeTo(LocalDateTime time) {
+		if(time == null)
+			return false;
 		if (time.isAfter(currentTime)) {
 			currentTime = time;
 			return true;
