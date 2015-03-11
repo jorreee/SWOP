@@ -14,15 +14,15 @@ public class UseCase3CreateTaskTest {
 
 	private TaskMan taskMan;
 	private final LocalDateTime startDate = LocalDateTime.of(2015, 2, 9, 8, 0),
-			project1StartDate = startDate,
-			project1DueDate = LocalDateTime.of(2015, 2, 13, 23, 59),
+			project0StartDate = startDate,
+			project0DueDate = LocalDateTime.of(2015, 2, 13, 23, 59),
 			workDate = LocalDateTime.of(2015, 2, 9, 16, 0),
 			altTaskEndDate = LocalDateTime.of(2015, 2, 9, 10, 0);
-	private final int task11EstDur = 8*60,
+	private final int task00EstDur = 8*60,
 			newTaskDur = 5*60;
-	private final int task11Dev = 0,
+	private final int task00Dev = 0,
 			newTaskDev = 10;
-	private final ArrayList<Integer> task11Dependencies = new ArrayList(),
+	private final ArrayList<Integer> task00Dependencies = new ArrayList<Integer>(),
 									 newTaskDependencies = new ArrayList<Integer>();
 
 	/**
@@ -34,7 +34,7 @@ public class UseCase3CreateTaskTest {
 	public final void initialize() {
 		taskMan = new TaskMan(startDate);
 
-		taskMan.createProject("Test1", "testing 1", project1StartDate, project1DueDate);
+		taskMan.createProject("Test1", "testing 1", project0StartDate, project0DueDate);
 
 		taskMan.advanceTimeTo(workDate);
 //
@@ -52,34 +52,31 @@ public class UseCase3CreateTaskTest {
 	public void SuccesCaseTest() {
 		// Step 1 and 2 are implicit
 		// Step 3
-		taskMan.createTask(1, "A new TASK", newTaskDur, newTaskDev, null, newTaskDependencies);
+		taskMan.createTask(0, "A new TASK", newTaskDur, newTaskDev, -1, newTaskDependencies);
 		// Step 4
-		assertTrue(taskMan.getTaskDescription(1,1).equals("A new TASK"));
-		assertEquals(taskMan.getEstimatedTaskDuration(1,1),newTaskDur);
-		assertEquals(taskMan.getAcceptableTaskDeviation(1,1),newTaskDev);
-		assertFalse(taskMan.hasTaskAlternative(1, 1));
-		assertFalse(taskMan.hasTaskPrerequisites(1, 1));
-		assertEquals(taskMan.getAvailableTasks(1).size(),1);
+		assertTrue(taskMan.getTaskDescription(0,0).equals("A new TASK"));
+		assertEquals(taskMan.getEstimatedTaskDuration(0,0),newTaskDur);
+		assertEquals(taskMan.getAcceptableTaskDeviation(0,0),newTaskDev);
+		assertFalse(taskMan.hasTaskAlternative(0, 0));
+		assertFalse(taskMan.hasTaskPrerequisites(0, 0));
+		assertEquals(taskMan.getAvailableTasks(0).size(),1);
 	}
 
 	@Test
 	public void SuccesCaseALTTest() {
 
 		// Er is al een task aanwezig in het project
-		taskMan.createTask(1, "Design system", task11EstDur, task11Dev, null, task11Dependencies);
-		taskMan.updateTaskDetails(1, 1, startDate, altTaskEndDate, "failed");
+		taskMan.createTask(0, "Design system", task00EstDur, task00Dev, -1, task00Dependencies);
+		taskMan.updateTaskDetails(0, 0, startDate, altTaskEndDate, "failed");
 
 		// Step 1 and 2 are implicit
 		// Step 3
-		newTaskDependencies.add(Integer.valueOf(1));
-		taskMan.createTask(1, "A new TASK", newTaskDur, newTaskDev, Integer.valueOf(1), newTaskDependencies);
+		newTaskDependencies.add(Integer.valueOf(0));
+		taskMan.createTask(0, "A new TASK", newTaskDur, newTaskDev, Integer.valueOf(0), newTaskDependencies);
 		// Step 4
-		assertTrue(taskMan.getTaskDescription(1,2).equals("A new TASK"));
-		List<Integer> alts = taskMan.getTaskAlternatives(1,2);
-		assertTrue(alts.size() == 1 && deps.contains(Integer.valueOf(1)));
-		List<Integer> deps = taskMan.getTaskDependencies(1,2);
-		assertTrue(deps.size() == 0);
-		String status = taskMan.getTaskStatus(1,2);
+		assertTrue(taskMan.getTaskDescription(0,1).equals("A new TASK"));
+		assertEquals(taskMan.getTaskAlternativeTo(0, 0),0);//TODO dependencies
+		String status = taskMan.getTaskStatus(0,1);
 		assertTrue(status.equals("available"));
 	}
 
@@ -87,26 +84,26 @@ public class UseCase3CreateTaskTest {
 	public void SuccesCasDepTest() {
 
 		// Er is al een task aanwezig in het project
-		taskMan.createTask(1, "Design system", task11EstDur, task11Dev, null, task11Dependencies);
+		taskMan.createTask(0, "Design system", task00EstDur, task00Dev, -1, task00Dependencies);
 
 		// Step 1 and 2 are implicit
 		// Step 3
 		newTaskDependencies.add(Integer.valueOf(1));
-		taskMan.createTask(1, "A new TASK", newTaskDur, newTaskDev, null, newTaskDependencies);
+		taskMan.createTask(0, "A new TASK", newTaskDur, newTaskDev, -1, newTaskDependencies);
 		// Step 4
-		assertTrue(taskMan.getTaskDescription(1,1).equals("A new TASK"));
-		List<Integer> alts = taskMan.getTaskAlternatives(1,1);
+		assertTrue(taskMan.getTaskDescription(0,0).equals("A new TASK"));
+		List<Integer> alts = taskMan.getTaskAlternatives(0,0);
 		assertTrue(alts.size() == 0);
-		List<Integer> deps = taskMan.getTaskDependencies(1,1);
-		assertTrue(deps.size() == 1 && deps.contains(Integer.valueOf(1)));
-		String status = taskMan.getTaskStatus(1,1);
+		List<Integer> deps = taskMan.getTaskDependencies(0,0);
+		assertTrue(deps.size() == 1 && deps.contains(Integer.valueOf(0)));
+		String status = taskMan.getTaskStatus(0,0);
 		assertTrue(status.equals("unavailable"));
 	}
 
 	@Test
 	public void flow3aTest() {
 		// De UI zal geen request doorsturen als de user geen volledig formulier invult.
-		assertTrue(taskMan.getProjectNumberOfTasks(1) == 0); //TODO Moet dit kunnen worden opgevraagd?
+		assertTrue(taskMan.getTaskAmount(0) == 0);
 	}
 
 	//TODO Onbestaande Alt testen + not finished Alt testen + double Alt
@@ -114,20 +111,20 @@ public class UseCase3CreateTaskTest {
 	public void flow4aUnknownAltTest() {
 		// Step 1 and 2 are implicit
 		// Step 3
-		newTaskDependencies.add(Integer.valueOf(1));
-		taskMan.createTask(1, "A new TASK", newTaskDur, newTaskDev, null, newTaskDependencies);
+		newTaskDependencies.add(Integer.valueOf(0));
+		taskMan.createTask(0, "A new TASK", newTaskDur, newTaskDev, -1, newTaskDependencies);
 		// Step 4
-		assertEquals(taskMan.getTaskAmount(1),0);
+		assertEquals(taskMan.getTaskAmount(0),0);
 		
 		//--------------------------------------------------------------------------------------
 		
 		// Step 1 and 2 are implicit
 		// Step 3
-		newTaskDependencies.remove(1);
+		newTaskDependencies.remove(0);
 		newTaskDependencies.add(Integer.valueOf(5));
-		taskMan.createTask(1, "A new TASK", newTaskDur, newTaskDev, null, newTaskDependencies);
+		taskMan.createTask(0, "A new TASK", newTaskDur, newTaskDev, -1, newTaskDependencies);
 		// Step 4
-		assertEquals(taskMan.getTaskAmount(1),0);
+		assertEquals(taskMan.getTaskAmount(0),0);
 		
 	}
 

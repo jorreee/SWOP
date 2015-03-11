@@ -19,20 +19,20 @@ public class UseCase2CreateProjectTest {
 			newDateVeryBad1 = null,
 			newDateVeryBad2 = LocalDateTime.of(2015, 2, 8, 0, 0),
 			newDateVeryBad3 = startDate,
-			project1StartDate = startDate,
-			project1DueDate = LocalDateTime.of(2015, 2, 13, 23, 59);
-	private final int task11EstDur = 8*60,
-			task12EstDur = 16*60,
-			task13EstDur = 8*60,
-			task14EstDur = 8*60;
-	private final int task11Dev = 0,
-			task12Dev = 50,
-			task13Dev = 0,
-			task14Dev = 0;
-	private final ArrayList<Integer> task11Dependencies = new ArrayList(),
-									 task12Dependencies = new ArrayList(),
-									 task13Dependencies = new ArrayList(),
-									 task14Dependencies = new ArrayList();
+			project0StartDate = startDate,
+			project0DueDate = LocalDateTime.of(2015, 2, 13, 23, 59);
+	private final int task00EstDur = 8*60,
+			task01EstDur = 16*60,
+			task02EstDur = 8*60,
+			task03EstDur = 8*60;
+	private final int task00Dev = 0,
+			task01Dev = 50,
+			task02Dev = 0,
+			task03Dev = 0;
+	private final ArrayList<Integer> task00Dependencies = new ArrayList(),
+			task01Dependencies = new ArrayList(),
+			task02Dependencies = new ArrayList(),
+			task03Dependencies = new ArrayList();
 
 	/**
 	 * DEFAULT TASKMAN TESTER
@@ -46,16 +46,16 @@ public class UseCase2CreateProjectTest {
 	public final void initialize() {
 		taskMan = new TaskMan(startDate);
 
-		taskMan.createProject("Test1", "testing 1", project1StartDate, project1DueDate);
+		taskMan.createProject("Test1", "testing 1", project0StartDate, project0DueDate);
 
-		
-		taskMan.createTask(1, "Design system", task11EstDur, task11Dev, null, task11Dependencies);		// TASK 1
-		task12Dependencies.add(Integer.valueOf(1));
-		taskMan.createTask(1, "Implement Native", task12EstDur, task12Dev, null, task12Dependencies);	// TASK 2
-		task13Dependencies.add(Integer.valueOf(2));
-		taskMan.createTask(1, "Test code", task13EstDur, task13Dev, null, task13Dependencies);			// TASK 3
-		task14Dependencies.add(Integer.valueOf(2));
-		taskMan.createTask(1, "Document code", task14EstDur, task14Dev, null, task14Dependencies);		// TASK 4
+
+		taskMan.createTask(0, "Design system", task00EstDur, task00Dev, -1, task00Dependencies);		// TASK 1
+		task01Dependencies.add(Integer.valueOf(1));
+		taskMan.createTask(0, "Implement Native", task01EstDur, task01Dev, -1, task01Dependencies);	// TASK 2
+		task02Dependencies.add(Integer.valueOf(2));
+		taskMan.createTask(0, "Test code", task02EstDur, task02Dev, -1, task02Dependencies);			// TASK 3
+		task03Dependencies.add(Integer.valueOf(2));
+		taskMan.createTask(0, "Document code", task03EstDur, task03Dev, -1, task03Dependencies);		// TASK 4
 
 	}
 
