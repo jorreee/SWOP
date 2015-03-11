@@ -132,11 +132,11 @@ public class Project {
 	 */
 	public boolean createTask(String description, int estimatedDuration, 
 			int acceptableDeviation,int alternativeFor, List<Integer> prerequisiteTasks){
-		if(description==null)
+		if(description==null) // A task must have a description
 			return false;
-//		if(estimatedDuration==null)
-//			return false;
-		if(!isValidTaskID(alternativeFor))
+		if(!isValidEstimatedTaskDuration(estimatedDuration)) // A task must have a valid estimated duration
+			return false;
+		if(!isValidTaskID(alternativeFor) && alternativeFor != -1)
 			return false;
 //		ArrayList<Task> pre = null;
 //		try{
@@ -145,7 +145,7 @@ public class Project {
 //			return false;
 //		}
 		Task task = new Task(taskList.size(),description,estimatedDuration,acceptableDeviation);
-		if(!addAlternative(alternativeFor, task.getTaskID()))
+		if(isValidAlternative(alternativeFor, task.getTaskID()) && !addAlternative(alternativeFor, task.getTaskID()))
 			return false;
 		if(!addPrerequisite(task.getTaskID(), prerequisiteTasks))
 			return false;

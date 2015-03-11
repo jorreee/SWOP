@@ -313,16 +313,16 @@ public class Task {
 		String status ="";
 		switch(stat){
 			case FAILED:
-				status = "FAILED";
+				status = "failed";
 				break;
 			case FINISHED:
-				status = "FINISHED";
+				status = "finished";
 				break;
 			case AVAILABLE:
-				status = "AVAILABLE";
+				status = "available";
 				break;
 			case UNAVAILABLE:
-				status = "UNAVAILABLE";
+				status = "unavailable";
 				break;
 			default:
 				status ="ERROR";
