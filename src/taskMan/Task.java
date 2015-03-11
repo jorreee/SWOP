@@ -1,8 +1,6 @@
 package taskMan;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.temporal.ChronoUnit;
 
 import taskMan.util.TimeSpan;
 
@@ -171,30 +169,13 @@ public class Task {
 	 * @throws IllegalStateException when no start time has yet been documented
 	 * @throws IllegalArgumentException when the start time of the task is after the time given
 	 */
-	public int[] getTimeElapsed(LocalDateTime currentTime) {
+	public TimeSpan getTimeElapsed(LocalDateTime currentTime) {
 		if(beginTime == null)
 			throw new IllegalStateException("Project not yet started");
 		if(beginTime.isAfter(currentTime))
 			throw new IllegalArgumentException("Timestamp is in the past");
 		
-		beginTime = beginTime.minusYears(extraTime[0]).minusMonths(extraTime[1]).minusDays(extraTime[2]).minusHours(extraTime[3]).minusMinutes(extraTime[4]);
-		LocalDateTime tempDateTime = LocalDateTime.from( beginTime );
-		long years = tempDateTime.until( currentTime, ChronoUnit.YEARS);
-		tempDateTime = tempDateTime.plusYears( years );
-
-		long months = tempDateTime.until( currentTime, ChronoUnit.MONTHS);
-		tempDateTime = tempDateTime.plusMonths( months );
-
-		long days = tempDateTime.until( currentTime, ChronoUnit.DAYS);
-		tempDateTime = tempDateTime.plusDays( days );
-
-		long hours = tempDateTime.until( currentTime, ChronoUnit.HOURS);
-		tempDateTime = tempDateTime.plusHours( hours );
-
-		long minutes = tempDateTime.until( currentTime, ChronoUnit.MINUTES);
-		tempDateTime = tempDateTime.plusMinutes( minutes );
-		
-		return new int[] {(int) years, (int) months, (int) days, (int) hours, (int) minutes } ;
+		return new TimeSpan(beginTime, currentTime).add(extraTime) ;
 	}
 	
 	/**
@@ -204,7 +185,7 @@ public class Task {
 	 * @return returns time elapsed between the start time and end time
 	 * @throws IllegalStateException whenever the end time is not yet determined
 	 */
-	public int[] getTimeSpan() {
+	public TimeSpan getTimeSpan() {
 		if(endTime == null)
 			throw new IllegalStateException("Project not yet finished");
 		return getTimeElapsed(endTime);
