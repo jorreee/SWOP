@@ -111,6 +111,7 @@ public class Project {
 			return false;
 		if(!addPrerequisite(newTask.getTaskID(), prerequisiteTasks))
 			return false;
+		updateTaskStatus(newTask);
 		boolean success = taskList.add(newTask);
 		if(success) {
 			recalculateProjectStatus();
@@ -152,18 +153,17 @@ public class Project {
 		
 	}
 	
-	//TODO finish this
-//	private void updateTaskStatus(Task task){
-//		if(!task.isFinished()){
-//			for(Task pre:getPrerequisites(task)){
-//				if(!pre.isFinished()){
-//					task.setTaskStatus(TaskStatus.UNAVAILABLE);
-//					return;
-//				}
-//			}
-//			task.setTaskStatus(TaskStatus.AVAILABLE);
-//		}
-//	}
+	private void updateTaskStatus(Task task){
+		if(!task.isFinished()){
+			for(Integer preID : getPrerequisites(task.getTaskID())){
+				if(!getTask(preID).isFinished()){
+					task.setUnvailable();
+					return;
+				}
+			}
+			task.setAvailable();
+		}
+	}
 	
 	/**
 	 * This method will adjust the status of the project, depending on its tasks.
