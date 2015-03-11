@@ -127,7 +127,7 @@ public class UseCase4UpdateTaskStatusTest {
 		assertTrue(taskMan.setTaskFinished(0, 0, task00StartDateGood, task00EndDateGood));
 		// Step 6
 		assertTrue(taskMan.getTaskStatus(0,0).equals("finished"));
-		assertTrue(taskMan.getTaskStatus(0,1).equals("unavailable"));
+		assertTrue(taskMan.getTaskStatus(0,1).equals("available"));
 		assertTrue(taskMan.getTaskStatus(0,2).equals("unavailable"));
 		assertTrue(taskMan.getProjectStatus(0).equals("ongoing"));
 		assertTrue(taskMan.getTaskStatus(0, 3).equals("unavailable"));
@@ -135,7 +135,7 @@ public class UseCase4UpdateTaskStatusTest {
 		assertTrue(taskMan.setTaskFinished(0, 1, task01StartDateGood, task01EndDateGood));
 		assertTrue(taskMan.getTaskStatus(0,0).equals("finished"));
 		assertTrue(taskMan.getTaskStatus(0,1).equals("finished"));
-		assertTrue(taskMan.getTaskStatus(0,2).equals("unavailable"));
+		assertTrue(taskMan.getTaskStatus(0,2).equals("available"));
 		assertTrue(taskMan.getProjectStatus(0).equals("ongoing"));
 		assertTrue(taskMan.getTaskStatus(0, 3).equals("available"));
 		
@@ -154,7 +154,7 @@ public class UseCase4UpdateTaskStatusTest {
 		assertTrue(taskMan.setTaskFinished(0, 0, task00StartDateGood, task00EndDateGood));
 		// Step 6
 		assertTrue(taskMan.getTaskStatus(0,0).equals("finished"));
-		assertTrue(taskMan.getTaskStatus(0,1).equals("unavailable"));
+		assertTrue(taskMan.getTaskStatus(0,1).equals("available"));
 		assertTrue(taskMan.getTaskStatus(0,2).equals("unavailable"));
 		assertTrue(taskMan.getProjectStatus(0).equals("ongoing"));
 		assertTrue(taskMan.getTaskStatus(0, 3).equals("unavailable"));
@@ -181,7 +181,7 @@ public class UseCase4UpdateTaskStatusTest {
 		assertTrue(taskMan.setTaskFinished(0, 0, task00StartDateGood, task00EndDateGood));
 		// Step 6
 		assertTrue(taskMan.getTaskStatus(0,0).equals("finished"));
-		assertTrue(taskMan.getTaskStatus(0,1).equals("unavailable"));
+		assertTrue(taskMan.getTaskStatus(0,1).equals("available"));
 		assertTrue(taskMan.getTaskStatus(0,2).equals("unavailable"));
 		assertTrue(taskMan.getProjectStatus(0).equals("ongoing"));
 		assertTrue(taskMan.getTaskStatus(0, 3).equals("unavailable"));
@@ -197,7 +197,7 @@ public class UseCase4UpdateTaskStatusTest {
 		assertTrue(taskMan.setTaskFinished(0, 4, task02StartDateGood, task02EndDateGood));
 		assertTrue(taskMan.getTaskStatus(0,0).equals("finished"));
 		assertTrue(taskMan.getTaskStatus(0,1).equals("failed"));
-		assertTrue(taskMan.getTaskStatus(0,2).equals("unavailable"));
+		assertTrue(taskMan.getTaskStatus(0,2).equals("available"));
 		assertTrue(taskMan.getTaskStatus(0,4).equals("finished"));
 		assertTrue(taskMan.getProjectStatus(0).equals("ongoing"));
 		
