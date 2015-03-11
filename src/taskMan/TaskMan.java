@@ -15,6 +15,14 @@ public class TaskMan {
 	private LocalDateTime currentTime = LocalDateTime.now();
 	//private Project currentProject;
 	
+	public TaskMan(){
+		
+	}
+	
+	public TaskMan(LocalDateTime time){
+		currentTime = time;
+	}
+	
 	public boolean advanceTimeTo(LocalDateTime time) {
 		if (time.isAfter(currentTime)) {
 			currentTime = time;
