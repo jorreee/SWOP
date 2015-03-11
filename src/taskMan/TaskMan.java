@@ -91,6 +91,8 @@ public class TaskMan {
 	 * 			false if the creation was unsuccessful
 	 */
 	public boolean createProject(String name, String description, LocalDateTime creationTime, LocalDateTime dueTime) {
+		if(creationTime.isBefore(currentTime) || dueTime.isBefore(currentTime))
+			return false;
 		Project project = null;
 		try{
 			 project = new Project(projectList.size(), name, description, creationTime, dueTime);
