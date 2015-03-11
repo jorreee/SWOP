@@ -86,24 +86,7 @@ public class TaskMan {
 	
 	//TODO als er geen delay is, geef 0 terug
 	public int getProjectDelay(int projectID){
-//		LocalDateTime dueTime = getProjectDueTime(projectID);
-//		LocalDateTime delay = currentTime.
-//	    LocalDateTime tempDateTime = LocalDateTime.from( beginTime );
-//		long years = tempDateTime.until( currentTime, ChronoUnit.YEARS);
-//		tempDateTime = tempDateTime.plusYears( years );
-//
-//		long months = tempDateTime.until( currentTime, ChronoUnit.MONTHS);
-//		tempDateTime = tempDateTime.plusMonths( months );
-//
-//		long days = tempDateTime.until( currentTime, ChronoUnit.DAYS);
-//		tempDateTime = tempDateTime.plusDays( days );
-//
-//		long hours = tempDateTime.until( currentTime, ChronoUnit.HOURS);
-//		tempDateTime = tempDateTime.plusHours( hours );
-//
-//		long minutes = tempDateTime.until( currentTime, ChronoUnit.MINUTES);
-//		tempDateTime = tempDateTime.plusMinutes( minutes );
-		return 0;
+		return getProject(projectID).getDelay(currentTime);
 
 	}
 	

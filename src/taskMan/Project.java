@@ -2,6 +2,7 @@ package taskMan;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -648,10 +649,27 @@ public class Project {
 	 * @return	The delay of the project
 	 */
 	public int getDelay(LocalDateTime current){
-		if(!isOnTime(current))
-			return -1;
-		else
-			return 1;
+		LocalDateTime dueTime = getProjectDueTime();
+	    LocalDateTime tempDateTime = LocalDateTime.from( dueTime );
+		long years = tempDateTime.until( current, ChronoUnit.YEARS);
+		tempDateTime = tempDateTime.plusYears( years );
+
+		long months = tempDateTime.until( current, ChronoUnit.MONTHS);
+		tempDateTime = tempDateTime.plusMonths( months );
+
+		long days = tempDateTime.until( current, ChronoUnit.DAYS);
+		tempDateTime = tempDateTime.plusDays( days );
+
+		long hours = tempDateTime.until( current, ChronoUnit.HOURS);
+		tempDateTime = tempDateTime.plusHours( hours );
+
+		long minutes = tempDateTime.until( current, ChronoUnit.MINUTES);
+		tempDateTime = tempDateTime.plusMinutes( minutes );
+		int delay = (int) (minutes + hours * 60 + days * 24 * 60 +  months * 30 * 24 * 60 + years * 52 * 30 * 24 * 60);
+		if (delay < 0){
+			return 0;
+		}
+		else return delay;
 	}
 	
 }
