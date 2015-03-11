@@ -50,11 +50,11 @@ public class UseCase5AdvanceTimeTest {
 
 
 		assertTrue(taskMan.createTask(0, "Design system", task00EstDur, task00Dev, -1, task00Dependencies));		// TASK 1
-		task01Dependencies.add(Integer.valueOf(1));
+		task01Dependencies.add(Integer.valueOf(0));
 		assertTrue(taskMan.createTask(0, "Implement Native", task01EstDur, task01Dev, -1, task01Dependencies));		// TASK 2
-		task02Dependencies.add(Integer.valueOf(2));
+		task02Dependencies.add(Integer.valueOf(1));
 		assertTrue(taskMan.createTask(0, "Test code", task02EstDur, task02Dev, -1, task02Dependencies));			// TASK 3
-		task03Dependencies.add(Integer.valueOf(2));
+		task03Dependencies.add(Integer.valueOf(1));
 		assertTrue(taskMan.createTask(0, "Document code", task03EstDur, task03Dev, -1, task03Dependencies));		// TASK 4
 
 	}

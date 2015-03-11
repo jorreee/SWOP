@@ -27,7 +27,7 @@ import com.google.common.collect.ImmutableList;
  *         Eli Vangrieken
  */
 public class Project {
-	
+
 	private ArrayList<Task> taskList = new ArrayList<Task>();
 	private final String projectName;
 	private final String description;
@@ -38,7 +38,7 @@ public class Project {
 	private HashMap<Integer,List<Integer>> taskPrerequisites = new HashMap<Integer, List<Integer>>();
 	private ProjectStatus projectStatus;
 	private final int projectID;
-	
+
 	/**
 	 * Creates a new Project.
 	 * 
@@ -61,7 +61,7 @@ public class Project {
 		this.dueTime = dueTime;
 		this.projectID = projectID;
 		this.projectStatus = ProjectStatus.ONGOING;
-		
+
 	}
 
 	/**
@@ -102,7 +102,7 @@ public class Project {
 		try{
 			if(status != null)
 				newTask = new Task(taskList.size(), description, estimatedDuration, 
-					acceptableDeviation, status, startTime, endTime);
+						acceptableDeviation, status, startTime, endTime);
 			else
 				newTask = new Task(taskList.size(), description, estimatedDuration, acceptableDeviation);
 		}catch(IllegalArgumentException e){
@@ -119,7 +119,7 @@ public class Project {
 		}
 		return success;
 	}
-	
+
 	/**
 	 * Creates a new Task without a set status.
 	 * 
@@ -139,7 +139,7 @@ public class Project {
 			int acceptableDeviation,int alternativeFor, List<Integer> prerequisiteTasks){
 		return createTask(description, estimatedDuration, acceptableDeviation, null, alternativeFor, prerequisiteTasks, null, null);
 	}
-	
+
 	/**
 	 * Checks whether the given Task has finished alternatives.
 	 * 
@@ -151,21 +151,23 @@ public class Project {
 		if(!isValidTaskID(task))
 			return false;
 		return getTask(taskAlternatives.get(task)).isFinished() || hasFinishedAlternative(taskAlternatives.get(task));
-		
+
 	}
-	
+
 	private void updateTaskStatus(Task task){
 		if(!task.isFinished()){
-			for(Integer preID : getPrerequisites(task.getTaskID())){
-				if(!getTask(preID).isFinished()){
-					task.setUnavailable();
-					return;
+			if(hasPrerequisites(task.getTaskID())) {
+				for(Integer preID : getPrerequisites(task.getTaskID())){
+					if(!getTask(preID).isFinished()){
+						task.setUnavailable();
+						return;
+					}
 				}
 			}
 			task.setAvailable();
 		}
 	}
-	
+
 	/**
 	 * This method will adjust the status of the project, depending on its tasks.
 	 * If the project has at least one task and all of those tasks are finished (or failed with a finished alternative),
@@ -183,7 +185,7 @@ public class Project {
 		}
 		this.projectStatus = ProjectStatus.FINISHED;
 	}
-	
+
 	/**
 	 * Returns a Task of the Project.
 	 * 
@@ -197,7 +199,7 @@ public class Project {
 			return taskList.get(taskID);
 		return null;
 	}
-	
+
 	/**
 	 * Returns whether the given TaskID is a valid TaskID.
 	 * 
@@ -211,7 +213,7 @@ public class Project {
 		}
 		return false;
 	}
-	
+
 
 	/**
 	 * Returns the ID of the Project.
@@ -229,7 +231,7 @@ public class Project {
 	public String getProjectName() { 
 		return projectName; 
 	}
-	
+
 	/**
 	 * Returns the description of this Project.
 	 * 
@@ -238,7 +240,7 @@ public class Project {
 	public String getProjectDescription() {	
 		return description;	
 	}
-	
+
 	/**
 	 * Returns the creation time of this Project.
 	 * 
@@ -247,7 +249,7 @@ public class Project {
 	public LocalDateTime getProjectCreationTime() { 
 		return creationTime; 
 	}
-	
+
 	/**
 	 * Get the due time of this Project.
 	 * 
@@ -256,7 +258,7 @@ public class Project {
 	public LocalDateTime getProjectDueTime() { 
 		return dueTime; 
 	}
-	
+
 	/**
 	 * Returns the end time of this Project.
 	 * 
@@ -265,7 +267,7 @@ public class Project {
 	public LocalDateTime getProjectEndTime() { 
 		return endTime; 
 	}
-	
+
 	/**
 	 * Returns the status of this Project.
 	 * 
@@ -275,16 +277,16 @@ public class Project {
 		ProjectStatus stat = this.projectStatus;
 		String status = "";
 		switch(stat){
-			case FINISHED:
-				status = "FINISHED";
-				break;
-			case ONGOING:
-				status = "ONGOING";
-				break;
+		case FINISHED:
+			status = "FINISHED";
+			break;
+		case ONGOING:
+			status = "ONGOING";
+			break;
 		}
 		return status;
 	}
-	
+
 	/**
 	 * Returns the list containing all known Tasks.
 	 * 
@@ -293,7 +295,7 @@ public class Project {
 	public ArrayList<Task> getTaskList(){
 		return this.taskList;
 	}
-	
+
 	/**
 	 * Returns a immutable list of the Task ID's of the project.
 	 * 
@@ -306,7 +308,7 @@ public class Project {
 		}
 		return new ImmutableList.Builder<Integer>().addAll(id).build();
 	}
-	
+
 	/**
 	 * Returns the list of Task alternatives.
 	 * 
@@ -315,7 +317,7 @@ public class Project {
 	public HashMap<Integer, Integer> getAllAlternatives(){
 		return this.taskAlternatives;
 	}
-	
+
 	/**
 	 * Returns a list of alternatives for the given Task.
 	 * 
@@ -330,7 +332,7 @@ public class Project {
 		}
 		return this.taskAlternatives.get(task);
 	}
-	
+
 	/**
 	 * Checks whether the given Tasks has alternative Tasks.
 	 * 
@@ -343,7 +345,7 @@ public class Project {
 			return false;
 		return this.taskAlternatives.containsKey(taskID);
 	}
-	
+
 	/**
 	 * Add an alternative Task to the list of alternatives of the given Task.
 	 * 
@@ -359,13 +361,13 @@ public class Project {
 		if(!this.getTask(task).isFailed())
 			return false;
 		else{
-			
+
 			this.taskAlternatives.put(task, alternative);
 			return true;
 		}
-		
+
 	}
-	
+
 	/**
 	 * checks whether the given alternative is a valid one for the given Task.
 	 * 
@@ -380,7 +382,7 @@ public class Project {
 			return false;
 		return oldTask!=alt;
 	}
-	
+
 	/**
 	 * Adds new prerequisites for the given Task.
 	 * 
@@ -408,7 +410,7 @@ public class Project {
 		taskPrerequisites.put(taskID, pre);
 		return true;
 	}
-	
+
 	/**
 	 * Checks whether the given prerequisites is a valid one for the give Task.
 	 * 
@@ -419,8 +421,8 @@ public class Project {
 	 * @return	True if and only the prerequisite is a valid one.
 	 */
 	private boolean isValidPrerequisite(int task, int pre){
-//		if(pre==null||task==null)
-//			return false;
+		//		if(pre==null||task==null)
+		//			return false;
 		if(task == pre)
 			return false;
 		else
@@ -454,7 +456,7 @@ public class Project {
 	public int getTaskAmount() {
 		return this.taskList.size();
 	}
-	
+
 	/**
 	 * Returns a list of the id's of the available tasks of the project
 	 * 
@@ -512,8 +514,8 @@ public class Project {
 			return null;
 		return getTask(taskID).getBeginTime();
 	}
-	
-	
+
+
 
 	/**
 	 * Returns the estimated duration of the Task belonging to the given ID.
@@ -528,7 +530,7 @@ public class Project {
 			return -1;
 		return getTask(taskID).getEstimatedDuration().getSpanMinutes();
 	}
-	
+
 	/**
 	 * Returns whether a given estimated duration is a valid estimated task duration
 	 * @param 	estimatedDuration
@@ -625,7 +627,7 @@ public class Project {
 			return null;
 		return this.taskPrerequisites.get(taskID);
 	}
-	
+
 	/**
 	 * Returns whether the project is on time;
 	 * 
@@ -644,7 +646,7 @@ public class Project {
 			return endTime.isBefore(dueTime);
 		}
 	}
-	
+
 	/**
 	 * Returns the delay of the project if any.
 	 * 
@@ -655,13 +657,13 @@ public class Project {
 	public int[] getDelay(LocalDateTime current){
 		if (current.isBefore(dueTime)) {
 			return new int[] { 0,0,0,0,0};		
-			}
+		}
 		else {
-		TimeSpan delay = new TimeSpan(current, dueTime);
-		return delay.getSpan();
+			TimeSpan delay = new TimeSpan(current, dueTime);
+			return delay.getSpan();
 		}
-		}
-	
+	}
+
 	/**
 	 * Sets the task with the given task id to finished
 	 * @param 	taskID
@@ -676,7 +678,7 @@ public class Project {
 	public boolean setTaskFinished(int taskID, LocalDateTime startTime, LocalDateTime endTime) {
 		return getTask(taskID).setTaskFinished(startTime, endTime);
 	}
-	
+
 	/**
 	 * Sets the task with the given task id to failed
 	 * @param 	taskID
