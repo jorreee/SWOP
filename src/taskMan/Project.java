@@ -682,11 +682,9 @@ public class Project {
 		tempDateTime = tempDateTime.plusMinutes( minutes );
 		int delay = (int) (minutes + hours * 60 + days * 24 * 60 +  months * 30 * 24 * 60 + years * 12 * 30 * 24 * 60);
 		if (delay < 0){
-			int[] array = {0,0,0,0,0};
-			return array;
+			return new int[] {0,0,0,0,0};
 		}
-		else { int[] array = {(int) years, (int) months, (int) days, (int) hours, (int) minutes };
-		return array; }
-	}
+		else return new int[] {(int) years, (int) months, (int) days, (int) hours, (int) minutes }; 
+		}
 	
 }

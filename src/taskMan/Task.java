@@ -21,7 +21,7 @@ public class Task {
 	private LocalDateTime beginTime;
 	private LocalDateTime endTime;
 	private final int taskID;
-	private final int extraTime;
+	private final int[] extraTime;
 
 	/**
 	 * Create a new Task.
@@ -38,7 +38,7 @@ public class Task {
 	 * 			The extra time to add to the elapsed time
 	 */
 	public Task(int taskID, String taskDescription, int estimatedDuration,
-			int acceptableDeviation,int extraTime) {
+			int acceptableDeviation,int[] extraTime) {
 		this.taskID = taskID;
 		this.description = taskDescription;
 		this.estimatedDuration = estimatedDuration;
@@ -60,7 +60,11 @@ public class Task {
 	 */
 	public Task(int taskID, String taskDescription, int estimatedDuration,
 			int acceptableDeviation){
-		this(taskID,taskDescription,estimatedDuration,acceptableDeviation,0);
+		this.taskID = taskID;
+		this.description = taskDescription;
+		this.estimatedDuration = estimatedDuration;
+		this.acceptableDeviation = acceptableDeviation;
+		this.extraTime = new int[] { 0, 0 ,0 ,0 ,0 };
 	}
 	
 	/**
@@ -205,12 +209,13 @@ public class Task {
 	 * @throws IllegalStateException when no start time has yet been documented
 	 * @throws IllegalArgumentException when the start time of the task is after the time given
 	 */
-	public LocalDateTime getTimeElapsed(LocalDateTime currentTime) {
+	public int[] getTimeElapsed(LocalDateTime currentTime) {
 		if(beginTime == null)
 			throw new IllegalStateException("Project not yet started");
 		if(beginTime.isAfter(currentTime))
 			throw new IllegalArgumentException("Timestamp is in the past");
 		
+		beginTime = beginTime.minusYears(extraTime[0]).minusMonths(extraTime[1]).minusDays(extraTime[2]).minusHours(extraTime[3]).minusMinutes(extraTime[4]);
 		LocalDateTime tempDateTime = LocalDateTime.from( beginTime );
 		long years = tempDateTime.until( currentTime, ChronoUnit.YEARS);
 		tempDateTime = tempDateTime.plusYears( years );
@@ -226,11 +231,8 @@ public class Task {
 
 		long minutes = tempDateTime.until( currentTime, ChronoUnit.MINUTES);
 		tempDateTime = tempDateTime.plusMinutes( minutes );
-
-		long seconds = tempDateTime.until( currentTime, ChronoUnit.SECONDS);
-		tempDateTime = tempDateTime.plusSeconds( seconds );
 		
-		return tempDateTime;
+		return new int[] {(int) years, (int) months, (int) days, (int) hours, (int) minutes } ;
 	}
 	
 	/**
@@ -240,7 +242,7 @@ public class Task {
 	 * @return returns time elapsed between the start time and end time
 	 * @throws IllegalStateException whenever the end time is not yet determined
 	 */
-	public LocalDateTime getTimeSpan() {
+	public int[] getTimeSpan() {
 		if(endTime == null)
 			throw new IllegalStateException("Project not yet finished");
 		return getTimeElapsed(endTime);
