@@ -16,14 +16,14 @@ import com.google.common.collect.ImmutableList;
 
 public class Project {
 	
-	private ArrayList<Task> taskList;
+	private ArrayList<Task> taskList = new ArrayList<Task>();
 	private final String projectName;
 	private final String description;
 	private final LocalDateTime creationTime;
 	private final LocalDateTime dueTime;
 	private LocalDateTime endTime;
-	private HashMap<Integer,Integer> taskAlternatives;
-	private HashMap<Integer,List<Integer>> taskPrerequisites;
+	private HashMap<Integer,Integer> taskAlternatives = new HashMap<Integer, Integer>();
+	private HashMap<Integer,List<Integer>> taskPrerequisites = new HashMap<Integer, List<Integer>>();
 	private ProjectStatus projectStatus;
 	private final int projectID;
 	
@@ -48,6 +48,8 @@ public class Project {
 		this.creationTime = creationTime;
 		this.dueTime = dueTime;
 		this.projectID = projectID;
+		recalcultateProjectStatus();
+		
 	}
 
 	/**
@@ -73,7 +75,7 @@ public class Project {
 	 * 			of failed or finished was successful.
 	 */
 	public boolean createTask(String description, int estimatedDuration, 
-			int acceptableDeviation, String taskStatus, int alternativeFor, 
+			int acceptableDeviation, String taskStatus, Integer alternativeFor, 
 			List<Integer> prerequisiteTasks, LocalDateTime startTime, LocalDateTime endTime) {
 		if(description==null)
 			return false;
@@ -166,12 +168,12 @@ public class Project {
 //		}
 //	}
 	
-//	/**
-//	 * This method will adjust the status of the project, depending on its tasks.
-//	 * If the project has at least one task and all of those tasks are finished (or failed with a finished alternative),
-//	 * the project itself will be considered finished.
-//	 */
-//	private void recalcultateProjectStatus() {
+	/**
+	 * This method will adjust the status of the project, depending on its tasks.
+	 * If the project has at least one task and all of those tasks are finished (or failed with a finished alternative),
+	 * the project itself will be considered finished.
+	 */
+	private void recalcultateProjectStatus() {
 //		for(Task task : taskList) {
 //			TaskStatus status = task.getTaskStatus();
 //			if( status == TaskStatus.AVAILABLE || status == TaskStatus.UNAVAILABLE)
@@ -182,7 +184,9 @@ public class Project {
 //			}
 //		}
 //		this.projectStatus = ProjectStatus.FINISHED;
-//	}
+		// TODO Dees
+		this.projectStatus = ProjectStatus.ONGOING;
+	}
 	
 	/**
 	 * Returns a Task of the Project.
