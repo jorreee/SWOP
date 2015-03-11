@@ -18,13 +18,13 @@ import java.time.temporal.ChronoUnit;
  */
 public class Task {
 	private final String description;
-	private final int[] estimatedDuration;
+	private final TimeSpan estimatedDuration;
 	private final int acceptableDeviation;
 	private TaskStatus taskStatus;
 	private LocalDateTime beginTime;
 	private LocalDateTime endTime;
 	private final int taskID;
-	private final int[] extraTime;
+	private final TimeSpan extraTime;
 
 	/**
 	 * Create a new Task.
@@ -40,11 +40,11 @@ public class Task {
 	 * @param	extraTime
 	 * 			The extra time to add to the elapsed time
 	 */
-	public Task(int taskID, String taskDescription, int[] estimatedDuration,
-			int acceptableDeviation,int[] extraTime) {
+	public Task(int taskID, String taskDescription, int estimatedDuration,
+			int acceptableDeviation, TimeSpan extraTime) {
 		this.taskID = taskID;
 		this.description = taskDescription;
-		this.estimatedDuration = estimatedDuration;
+		this.estimatedDuration = new TimeSpan(estimatedDuration);
 		this.acceptableDeviation = acceptableDeviation;
 		this.extraTime = extraTime;
 	}
@@ -61,13 +61,13 @@ public class Task {
 	 * @param 	acceptableDeviation
 	 * 			The acceptable deviation of the new Task.
 	 */
-	public Task(int taskID, String taskDescription, int[] estimatedDuration,
+	public Task(int taskID, String taskDescription, int estimatedDuration,
 			int acceptableDeviation){
 		this.taskID = taskID;
 		this.description = taskDescription;
-		this.estimatedDuration = estimatedDuration;
+		this.estimatedDuration = new TimeSpan(estimatedDuration);
 		this.acceptableDeviation = acceptableDeviation;
-		this.extraTime = new int[] { 0, 0 ,0 ,0 ,0 };
+		this.extraTime = new TimeSpan(0);
 	}
 	
 	/**
@@ -88,7 +88,7 @@ public class Task {
 	 * @param 	endTime
 	 * 			The endtime of the new Task.
 	 */
-	public Task(int taskID, String taskDescription, int[] estimatedDuration,
+	public Task(int taskID, String taskDescription, int estimatedDuration,
 			int acceptableDeviation, TaskStatus taskStatus,
 			LocalDateTime beginTime, LocalDateTime endTime) throws IllegalArgumentException {
 		this(taskID, taskDescription, estimatedDuration, acceptableDeviation);
@@ -274,7 +274,7 @@ public class Task {
 	 * 
 	 * @return	The estimated duration of the Task.
 	 */
-	public int[] getEstimatedDuration() {
+	public TimeSpan getEstimatedDuration() {
 		return estimatedDuration;
 	}
 
@@ -310,6 +310,14 @@ public class Task {
 	 */
 	private TaskStatus getTaskStatus() {
 		return taskStatus;
+	}
+	
+	/**
+	 * Returns the name of the current status of the Task
+	 * @return	the name of the current status of the Task
+	 */
+	public String getTaskStatusName() {
+		return getTaskStatus().name();
 	}
 	
 	/**
