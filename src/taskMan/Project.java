@@ -5,7 +5,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import taskMan.util.TimeSpan;
 
 import com.google.common.collect.ImmutableList;
 
@@ -112,7 +111,11 @@ public class Project {
 			return false;
 		if(!addPrerequisite(newTask.getTaskID(), prerequisiteTasks))
 			return false;
-		return taskList.add(newTask);
+		boolean success = taskList.add(newTask);
+		if(success) {
+			recalculateProjectStatus();
+		}
+		return success;
 	}
 	
 	/**
@@ -132,24 +135,7 @@ public class Project {
 	 */
 	public boolean createTask(String description, int estimatedDuration, 
 			int acceptableDeviation,int alternativeFor, List<Integer> prerequisiteTasks){
-		if(description==null) // A task must have a description
-			return false;
-		if(!isValidEstimatedTaskDuration(estimatedDuration)) // A task must have a valid estimated duration
-			return false;
-		if(!isValidTaskID(alternativeFor) && alternativeFor != -1)
-			return false;
-//		ArrayList<Task> pre = null;
-//		try{
-//			pre = getTaskByIDs(prerequisiteTasks);
-//		}catch (IllegalArgumentException e){
-//			return false;
-//		}
-		Task task = new Task(taskList.size(),description,estimatedDuration,acceptableDeviation);
-		if(isValidAlternative(alternativeFor, task.getTaskID()) && !addAlternative(alternativeFor, task.getTaskID()))
-			return false;
-		if(!addPrerequisite(task.getTaskID(), prerequisiteTasks))
-			return false;
-		return taskList.add(task);
+		return createTask(description, estimatedDuration, acceptableDeviation, null, alternativeFor, prerequisiteTasks, null, null);
 	}
 	
 	/**
@@ -184,7 +170,7 @@ public class Project {
 	 * If the project has at least one task and all of those tasks are finished (or failed with a finished alternative),
 	 * the project itself will be considered finished.
 	 */
-	private void recalcultateProjectStatus() {
+	private void recalculateProjectStatus() {
 		for(Task task : taskList) {
 			String status = task.getTaskStatusName();
 			if( status.equals("AVAILABLE") || status.equals("UNAVAILABLE"))
@@ -242,7 +228,10 @@ public class Project {
 	 */
 	public boolean updateTaskDetails(int taskID, LocalDateTime startTime, LocalDateTime endTime, String taskStatus) {
 		if(isValidTaskID(taskID)){
-			return getTask(taskID).updateTaskDetails(startTime, endTime, taskStatus);
+			boolean success = getTask(taskID).updateTaskDetails(startTime, endTime, taskStatus);
+			if(success)
+				recalculateProjectStatus();
+			return success;
 		}
 		return false;
 	}
