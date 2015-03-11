@@ -37,9 +37,7 @@ public class ShowProjectsRequest extends Request {
 
 				// Show overview of project details including list of tasks and their status
 				String onTime = new String(); // build project details
-				int delay;	
-
-				delay = 0;
+				int[] delay = null;
 				if(facade.isOnTime(projectID)) {
 					onTime = "on time";
 				} else {
@@ -53,8 +51,14 @@ public class ShowProjectsRequest extends Request {
 						+ facade.getProjectStatus(projectID) + ", " + onTime + " (Due "
 						+ facade.getProjectDueTime(projectID).toLocalDate().toString());
 
-				if(delay > 0) {
-					projectHeader.append("(" + delay + " working minutes short)");
+				if(delay != null) {
+					projectHeader.append("(");
+					if(delay[0] != 0) projectHeader.append(delay[0] + " working years "); // years
+					if(delay[1] != 0) projectHeader.append(delay[1] + " working months "); // months
+					if(delay[2] != 0) projectHeader.append(delay[2] + " working days "); // days
+					if(delay[3] != 0) projectHeader.append(delay[3] + " working hours "); // hours
+					if(delay[4] != 0) projectHeader.append(delay[4] + " working minutes "); // minutes
+					projectHeader.append("short)");
 				}
 				projectHeader.append(")");
 				
