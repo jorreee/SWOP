@@ -50,11 +50,11 @@ public class UseCase5AdvanceTimeTest {
 
 
 		assertTrue(taskMan.createTask(0, "Design system", task00EstDur, task00Dev, -1, task00Dependencies));		// TASK 1
-		task01Dependencies.add(Integer.valueOf(1));
+		task01Dependencies.add(Integer.valueOf(0));
 		assertTrue(taskMan.createTask(0, "Implement Native", task01EstDur, task01Dev, -1, task01Dependencies));		// TASK 2
-		task02Dependencies.add(Integer.valueOf(2));
+		task02Dependencies.add(Integer.valueOf(1));
 		assertTrue(taskMan.createTask(0, "Test code", task02EstDur, task02Dev, -1, task02Dependencies));			// TASK 3
-		task03Dependencies.add(Integer.valueOf(2));
+		task03Dependencies.add(Integer.valueOf(1));
 		assertTrue(taskMan.createTask(0, "Document code", task03EstDur, task03Dev, -1, task03Dependencies));		// TASK 4
 
 	}
@@ -70,11 +70,7 @@ public class UseCase5AdvanceTimeTest {
 		assertTrue(taskMan.getTaskStatus(0,1).equals("unavailable"));
 		assertTrue(taskMan.getTaskStatus(0,2).equals("unavailable"));
 		assertTrue(taskMan.getTaskStatus(0,3).equals("unavailable"));
-		int[] delay = taskMan.getProjectDelay(0);
-		int del = 0;
-		for(int i = 0; i<delay.length;i++)
-			del += delay[i];
-		assertEquals(del,0);
+		assertTrue(taskMan.isOnTime(0));
 	}
 
 	@Test
@@ -88,11 +84,7 @@ public class UseCase5AdvanceTimeTest {
 		assertTrue(taskMan.getTaskStatus(0,1).equals("unavailable"));
 		assertTrue(taskMan.getTaskStatus(0,2).equals("unavailable"));
 		assertTrue(taskMan.getTaskStatus(0,3).equals("unavailable"));
-		int[] delay = taskMan.getProjectDelay(0);
-		int del = 0;
-		for(int i = 0; i<delay.length;i++)
-			del += delay[i];
-		assertTrue(del > 0);
+		assertFalse(taskMan.isOnTime(0));
 	}
 
 	@Test
@@ -106,11 +98,7 @@ public class UseCase5AdvanceTimeTest {
 		assertTrue(taskMan.getTaskStatus(0,1).equals("unavailable"));
 		assertTrue(taskMan.getTaskStatus(0,2).equals("unavailable"));
 		assertTrue(taskMan.getTaskStatus(0,3).equals("unavailable"));
-		int[] delay = taskMan.getProjectDelay(0);
-		int del = 0;
-		for(int i = 0; i<delay.length;i++)
-			del += delay[i];
-		assertEquals(del,0);
+		assertTrue(taskMan.isOnTime(0));
 	}
 
 	@Test
@@ -124,7 +112,7 @@ public class UseCase5AdvanceTimeTest {
 		assertTrue(taskMan.getTaskStatus(0,1).equals("unavailable"));
 		assertTrue(taskMan.getTaskStatus(0,2).equals("unavailable"));
 		assertTrue(taskMan.getTaskStatus(0,3).equals("unavailable"));
-		assertEquals(taskMan.getProjectDelay(0),0);
+		assertTrue(taskMan.isOnTime(0));
 
 		//-----------------------------------------------------------
 
@@ -135,11 +123,7 @@ public class UseCase5AdvanceTimeTest {
 		assertTrue(taskMan.getTaskStatus(0,1).equals("unavailable"));
 		assertTrue(taskMan.getTaskStatus(0,2).equals("unavailable"));
 		assertTrue(taskMan.getTaskStatus(0,3).equals("unavailable"));
-		int[] delay = taskMan.getProjectDelay(0);
-		int del = 0;
-		for(int i = 0; i<delay.length;i++)
-			del += delay[i];
-		assertEquals(del,0);
+		assertTrue(taskMan.isOnTime(0));
 	}
 
 }

@@ -19,25 +19,26 @@ public class UseCase4UpdateTaskStatusTest {
 			workDate = LocalDateTime.of(2015, 2, 9, 16, 0),
 			task00StartDateGood = startDate,
 			task00EndDateGood = LocalDateTime.of(2015,2,9,10,0),
+			task01StartDateGood = LocalDateTime.of(2015, 2, 9, 10, 10),
+			task01EndDateGood = LocalDateTime.of(2015, 2, 9, 12, 0),
+			task02StartDateGood = LocalDateTime.of(2015, 2, 9, 12, 10),
+			task02EndDateGood = LocalDateTime.of(2015, 2, 9, 14, 0),
 			task00StartDateVeryBad1 = LocalDateTime.of(2015,2,1,8,0),
 			task00EndDateVeryBad1 = task00EndDateGood,
 			task00StartDateVeryBad2 = task00StartDateGood,
 			task00EndDateVeryBad2 = LocalDateTime.of(2015,2,9,17,0),
 			newTaskEndDateGood = LocalDateTime.of(2015, 2, 9, 11, 0);
-	private final int task00EstDur = 8*60,
-			task01EstDur = 16*60,
-			task02EstDur = 8*60,
-			task03EstDur = 8*60,
+	private final int task00EstDur = 60,
+			task01EstDur = 60,
+			task02EstDur = 60,
 			newTaskDur = 60;
 	private final int task00Dev = 0,
 			task01Dev = 50,
 			task02Dev = 0,
-			task03Dev = 0,
 			newTaskDev = 10;
 	private final ArrayList<Integer> task00Dependencies = new ArrayList<Integer>(),
 									 task01Dependencies = new ArrayList<Integer>(),
 									 task02Dependencies = new ArrayList<Integer>(),
-									 task03Dependencies = new ArrayList<Integer>(),
 									 newTaskDependencies = new ArrayList<Integer>();
 
 	/**
@@ -60,27 +61,23 @@ public class UseCase4UpdateTaskStatusTest {
 		assertTrue(taskMan.createTask(0, "Implement Native", task01EstDur, task01Dev, -1, task01Dependencies));	// TASK 2
 		task02Dependencies.add(Integer.valueOf(2));
 		assertTrue(taskMan.createTask(0, "Test code", task02EstDur, task02Dev, -1, task02Dependencies));			// TASK 3
-		task03Dependencies.add(Integer.valueOf(2));
-		assertTrue(taskMan.createTask(0, "Document code", task03EstDur, task03Dev, -1, task03Dependencies));		// TASK 4
 		
 		assertTrue(taskMan.advanceTimeTo(workDate)); // Omdat task updates enkel in het verleden kunnen bestaan
 	}
 	
-	//TODO Testen op aanapssing wanneer ALT wordt vervuld
-	
 	@Test
 	public void succesCaseALTFINISHEDTest() {
-		assertTrue(taskMan.updateTaskDetails(0, 0, task00StartDateGood, task00EndDateGood, "failed"));
+		assertTrue(taskMan.setTaskFailed(0, 0, task00StartDateGood, task00EndDateGood));
 		assertTrue(taskMan.createTask(0, "A new TASK", newTaskDur, newTaskDev, 0, newTaskDependencies));
 
 		// Step 1 is implicit
 		// Step 2 and 3 are handled in UI
 		// Step 4 and 5
-		assertTrue(taskMan.updateTaskDetails(0, 4, startDate, newTaskEndDateGood, "finished"));
+		assertTrue(taskMan.setTaskFinished(0, 4, startDate, newTaskEndDateGood));
 		// Step 6
 		assertTrue(taskMan.getTaskStatus(0,0).equals("failed"));
 		assertTrue(taskMan.getTaskStatus(0,2).equals("unavailable"));
-		assertTrue(taskMan.getTaskStatus(0,3).equals("unavailable"));
+		assertTrue(taskMan.getProjectStatus(0).equals("ongoing"));
 		
 		assertTrue(taskMan.getTaskStatus(0,4).equals("finished"));
 		assertTrue(taskMan.getTaskStatus(0,1).equals("available"));			// 
@@ -92,12 +89,12 @@ public class UseCase4UpdateTaskStatusTest {
 		// Step 1 is implicit
 		// Step 2 and 3 are handled in UI
 		// Step 4 and 5
-		assertTrue(taskMan.updateTaskDetails(0, 0, task00StartDateGood, task00EndDateGood, "finished"));
+		assertTrue(taskMan.setTaskFinished(0, 0, task00StartDateGood, task00EndDateGood));
 		// Step 6
 		assertTrue(taskMan.getTaskStatus(0,0).equals("finished"));
 		assertTrue(taskMan.getTaskStatus(0,1).equals("available"));
 		assertTrue(taskMan.getTaskStatus(0,2).equals("unavailable"));
-		assertTrue(taskMan.getTaskStatus(0,3).equals("unavailable"));
+		assertTrue(taskMan.getProjectStatus(0).equals("ongoing"));
 		
 	}
 
@@ -106,12 +103,12 @@ public class UseCase4UpdateTaskStatusTest {
 		// Step 1 is implicit
 		// Step 2 and 3 are handled in UI
 		// Step 4 and 5
-		assertTrue(taskMan.updateTaskDetails(0, 0, task00StartDateGood, task00EndDateGood, "failed"));
+		assertTrue(taskMan.setTaskFinished(0, 0, task00StartDateGood, task00EndDateGood));
 		// Step 6
 		assertTrue(taskMan.getTaskStatus(0,0).equals("failed"));
 		assertTrue(taskMan.getTaskStatus(0,1).equals("unavailable"));
 		assertTrue(taskMan.getTaskStatus(0,2).equals("unavailable"));
-		assertTrue(taskMan.getTaskStatus(0,3).equals("unavailable"));
+		assertTrue(taskMan.getProjectStatus(0).equals("ongoing"));
 		
 	}
 
@@ -120,12 +117,12 @@ public class UseCase4UpdateTaskStatusTest {
 		// Step 1 is implicit
 		// Step 2 and 3 are handled in UI
 		// Step 4 and 5
-		assertFalse(taskMan.updateTaskDetails(0, 0, null, null, null));
+		assertFalse(taskMan.setTaskFailed(0, 0, null, null, null));
 		// Step 6
 		assertTrue(taskMan.getTaskStatus(0,0).equals("available"));
 		assertTrue(taskMan.getTaskStatus(0,1).equals("unavailable"));
 		assertTrue(taskMan.getTaskStatus(0,2).equals("unavailable"));
-		assertTrue(taskMan.getTaskStatus(0,3).equals("unavailable"));
+		assertTrue(taskMan.getProjectStatus(0).equals("ongoing"));
 		
 	}
 
@@ -134,12 +131,12 @@ public class UseCase4UpdateTaskStatusTest {
 		// Step 1 is implicit
 		// Step 2 and 3 are handled in UI
 		// Step 4 and 5
-		assertFalse(taskMan.updateTaskDetails(0, 0, task00StartDateVeryBad1, task00EndDateVeryBad1, "finished"));		//Start date van task is VOOR project start date
+		assertFalse(taskMan.setTaskFinished(0, 0, task00StartDateVeryBad1, task00EndDateVeryBad1));		//Start date van task is VOOR project start date
 		// Step 6
 		assertTrue(taskMan.getTaskStatus(0,0).equals("available"));
 		assertTrue(taskMan.getTaskStatus(0,1).equals("unavailable"));
 		assertTrue(taskMan.getTaskStatus(0,2).equals("unavailable"));
-		assertTrue(taskMan.getTaskStatus(0,3).equals("unavailable"));
+		assertTrue(taskMan.getProjectStatus(0).equals("ongoing"));
 		
 	}
 
@@ -148,35 +145,12 @@ public class UseCase4UpdateTaskStatusTest {
 		// Step 1 is implicit
 		// Step 2 and 3 are handled in UI
 		// Step 4 and 5
-		assertFalse(taskMan.updateTaskDetails(0, 0, task00StartDateVeryBad2, task00EndDateVeryBad2, "finished"));		//End date van task is NA current time
+		assertFalse(taskMan.setTaskFinished(0, 0, task00StartDateVeryBad2, task00EndDateVeryBad2));		//End date van task is NA current time
 		// Step 6
 		assertTrue(taskMan.getTaskStatus(0,0).equals("available"));
 		assertTrue(taskMan.getTaskStatus(0,1).equals("unavailable"));
 		assertTrue(taskMan.getTaskStatus(0,2).equals("unavailable"));
-		assertTrue(taskMan.getTaskStatus(0,3).equals("unavailable"));
-		
-	}
-
-	@Test
-	public void flow6aBadStatusAVAILABLEtoANYTHINGTest() {
-		// Step 1 is implicit
-		// Step 2 and 3 are handled in UI
-		// Step 4 and 5
-		assertFalse(taskMan.updateTaskDetails(0, 0, task00StartDateGood, task00EndDateGood, "unavailable"));
-		// Step 6
-		assertTrue(taskMan.getTaskStatus(0,0).equals("available"));
-		assertTrue(taskMan.getTaskStatus(0,1).equals("unavailable"));
-		assertTrue(taskMan.getTaskStatus(0,2).equals("unavailable"));
-		assertTrue(taskMan.getTaskStatus(0,3).equals("unavailable"));
-		
-		//--------------------------------------------------------------------------------------------------
-		
-		assertFalse(taskMan.updateTaskDetails(0, 0, task00StartDateGood, task00EndDateGood, "available"));
-		// Step 6
-		assertTrue(taskMan.getTaskStatus(0,0).equals("available"));
-		assertTrue(taskMan.getTaskStatus(0,1).equals("unavailable"));
-		assertTrue(taskMan.getTaskStatus(0,2).equals("unavailable"));
-		assertTrue(taskMan.getTaskStatus(0,3).equals("unavailable"));
+		assertTrue(taskMan.getProjectStatus(0).equals("ongoing"));
 		
 	}
 
@@ -185,119 +159,96 @@ public class UseCase4UpdateTaskStatusTest {
 		// Step 1 is implicit
 		// Step 2 and 3 are handled in UI
 		// Step 4 and 5
-		assertFalse(taskMan.updateTaskDetails(0, 1, task00StartDateGood, task00EndDateGood, "finished"));
+		assertFalse(taskMan.setTaskFinished(0, 1, task00StartDateGood, task00EndDateGood));
 		// Step 6
 		assertTrue(taskMan.getTaskStatus(0,0).equals("available"));
 		assertTrue(taskMan.getTaskStatus(0,1).equals("unavailable"));
 		assertTrue(taskMan.getTaskStatus(0,2).equals("unavailable"));
-		assertTrue(taskMan.getTaskStatus(0,3).equals("unavailable"));
+		assertTrue(taskMan.getProjectStatus(0).equals("ongoing"));
 		
 		//----------------------------------------------------------------------------------
 		
-		assertFalse(taskMan.updateTaskDetails(0, 1, task00StartDateGood, task00EndDateGood, "failed"));
+		assertFalse(taskMan.setTaskFailed(0, 1, task00StartDateGood, task00EndDateGood));
 		// Step 6
 		assertTrue(taskMan.getTaskStatus(0,0).equals("available"));
 		assertTrue(taskMan.getTaskStatus(0,1).equals("unavailable"));
 		assertTrue(taskMan.getTaskStatus(0,2).equals("unavailable"));
-		assertTrue(taskMan.getTaskStatus(0,3).equals("unavailable"));
-		
-		//----------------------------------------------------------------------------------
-		
-		assertFalse(taskMan.updateTaskDetails(0, 1, task00StartDateGood, task00EndDateGood, "available"));
-		// Step 6
-		assertTrue(taskMan.getTaskStatus(0,0).equals("available"));
-		assertTrue(taskMan.getTaskStatus(0,1).equals("unavailable"));
-		assertTrue(taskMan.getTaskStatus(0,2).equals("unavailable"));
-		assertTrue(taskMan.getTaskStatus(0,3).equals("unavailable"));
-		
-		//----------------------------------------------------------------------------------
-		
-		assertFalse(taskMan.updateTaskDetails(0, 1, task00StartDateGood, task00EndDateGood, "unavailable"));
-		// Step 6
-		assertTrue(taskMan.getTaskStatus(0,0).equals("available"));
-		assertTrue(taskMan.getTaskStatus(0,1).equals("unavailable"));
-		assertTrue(taskMan.getTaskStatus(0,2).equals("unavailable"));
-		assertTrue(taskMan.getTaskStatus(0,3).equals("unavailable"));
+		assertTrue(taskMan.getProjectStatus(0).equals("ongoing"));
 		
 	}
 	
 	@Test 
 	public void flow6aBadStatusFAILEDtoANYTHINGTest() {
 
-		assertTrue(taskMan.updateTaskDetails(0, 0, task00StartDateGood, task00EndDateGood, "failed"));
+		assertTrue(taskMan.setTaskFailed(0, 0, task00StartDateGood, task00EndDateGood));
 		
 		// Step 1 is implicit
 		// Step 2 and 3 are handled in UI
 		// Step 4 and 5
-		assertFalse(taskMan.updateTaskDetails(0, 0, task00StartDateGood, task00EndDateGood, "finished"));
+		assertFalse(taskMan.setTaskFinished(0, 0, task00StartDateGood, task00EndDateGood));
 		// Step 6
 		assertTrue(taskMan.getTaskStatus(0,0).equals("failed"));
 		assertTrue(taskMan.getTaskStatus(0,1).equals("unavailable"));
 		assertTrue(taskMan.getTaskStatus(0,2).equals("unavailable"));
-		assertTrue(taskMan.getTaskStatus(0,3).equals("unavailable"));
+		assertTrue(taskMan.getProjectStatus(0).equals("ongoing"));
 		
-		//----------------------------------------------------------------------------------
+		//---------------------------------------------------------------------------------
 		
-		assertFalse(taskMan.updateTaskDetails(0, 0, task00StartDateGood, task00EndDateGood, "available"));
+		// Step 1 is implicit
+		// Step 2 and 3 are handled in UI
+		// Step 4 and 5
+		assertFalse(taskMan.setTaskFailed(0, 0, task00StartDateGood, task00EndDateGood));
 		// Step 6
 		assertTrue(taskMan.getTaskStatus(0,0).equals("failed"));
 		assertTrue(taskMan.getTaskStatus(0,1).equals("unavailable"));
 		assertTrue(taskMan.getTaskStatus(0,2).equals("unavailable"));
-		assertTrue(taskMan.getTaskStatus(0,3).equals("unavailable"));
-		
-		//----------------------------------------------------------------------------------
-		
-		assertFalse(taskMan.updateTaskDetails(0, 0, task00StartDateGood, task00EndDateGood, "unavailable"));
-		// Step 6
-		assertTrue(taskMan.getTaskStatus(0,0).equals("failed"));
-		assertTrue(taskMan.getTaskStatus(0,1).equals("unavailable"));
-		assertTrue(taskMan.getTaskStatus(0,2).equals("unavailable"));
-		assertTrue(taskMan.getTaskStatus(0,3).equals("unavailable"));
-		
+		assertTrue(taskMan.getProjectStatus(0).equals("ongoing"));
 	}
 	
 	@Test 
 	public void flow6aBadStatusFINISHEDtoANYTHINGTest() {
 
-		assertTrue(taskMan.updateTaskDetails(0, 1, task00StartDateGood, task00EndDateGood, "finished"));
+		assertTrue(taskMan.setTaskFinished(0, 0, task00StartDateGood, task00EndDateGood));
 		
 		// Step 1 is implicit
 		// Step 2 and 3 are handled in UI
 		// Step 4 and 5
-		assertFalse(taskMan.updateTaskDetails(0, 0, task00StartDateGood, task00EndDateGood, "finished"));
+		assertFalse(taskMan.setTaskFinished(0, 0, task00StartDateGood, task00EndDateGood));
 		// Step 6
 		assertTrue(taskMan.getTaskStatus(0,0).equals("finished"));
 		assertTrue(taskMan.getTaskStatus(0,1).equals("available"));
 		assertTrue(taskMan.getTaskStatus(0,2).equals("unavailable"));
-		assertTrue(taskMan.getTaskStatus(0,3).equals("unavailable"));
+		assertTrue(taskMan.getProjectStatus(0).equals("ongoing"));
 		
 		//----------------------------------------------------------------------------------
 		
-		assertFalse(taskMan.updateTaskDetails(0, 0, task00StartDateGood, task00EndDateGood, "available"));
+		assertFalse(taskMan.setTaskFailed(0, 0, task00StartDateGood, task00EndDateGood));
 		// Step 6
 		assertTrue(taskMan.getTaskStatus(0,0).equals("finished"));
 		assertTrue(taskMan.getTaskStatus(0,1).equals("available"));
 		assertTrue(taskMan.getTaskStatus(0,2).equals("unavailable"));
-		assertTrue(taskMan.getTaskStatus(0,3).equals("unavailable"));
-		
-		//----------------------------------------------------------------------------------
-		
-		assertFalse(taskMan.updateTaskDetails(0, 0, task00StartDateGood, task00EndDateGood, "unavailable"));
-		// Step 6
-		assertTrue(taskMan.getTaskStatus(0,0).equals("finished"));
-		assertTrue(taskMan.getTaskStatus(0,1).equals("available"));
-		assertTrue(taskMan.getTaskStatus(0,2).equals("unavailable"));
-		assertTrue(taskMan.getTaskStatus(0,3).equals("unavailable"));
-		
-		//----------------------------------------------------------------------------------
-		
-		assertFalse(taskMan.updateTaskDetails(0, 0, task00StartDateGood, task00EndDateGood, "failed"));
-		// Step 6
-		assertTrue(taskMan.getTaskStatus(0,0).equals("finished"));
-		assertTrue(taskMan.getTaskStatus(0,1).equals("available"));
-		assertTrue(taskMan.getTaskStatus(0,2).equals("unavailable"));
-		assertTrue(taskMan.getTaskStatus(0,3).equals("unavailable"));
+		assertTrue(taskMan.getProjectStatus(0).equals("ongoing"));
 		
 	}
+	
+	@Test
+	public void SuccesCaseProjectFINISHEDTest() {
+
+		assertTrue(taskMan.setTaskFinished(0, 0, task00StartDateGood, task00EndDateGood));
+		assertTrue(taskMan.setTaskFinished(0, 1, task01StartDateGood, task01EndDateGood));
+		
+		// Step 1 is implicit
+		// Step 2 and 3 are handled in UI
+		// Step 4 and 5
+		assertTrue(taskMan.setTaskFinished(0, 2, task02StartDateGood, task02EndDateGood));
+		// Step 6
+		assertTrue(taskMan.getTaskStatus(0,0).equals("finished"));
+		assertTrue(taskMan.getTaskStatus(0,1).equals("finished"));
+		assertTrue(taskMan.getTaskStatus(0,2).equals("finished"));
+		assertTrue(taskMan.getProjectStatus(0).equals("finished"));
+		
+	}
+	
+	
 
 }
