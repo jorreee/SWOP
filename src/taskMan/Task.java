@@ -48,7 +48,7 @@ public class Task {
 		this.acceptableDeviation = acceptableDeviation;
 		this.extraTime = extraTime;
 	}
-	
+
 	/**
 	 Create a new Task without an added extra time.
 	 * 
@@ -69,7 +69,7 @@ public class Task {
 		this.acceptableDeviation = acceptableDeviation;
 		this.extraTime = new TimeSpan(0);
 	}
-	
+
 	/**
 	 * Create a new Task with start and end time given (only with finished or failed tasks).
 	 * 
@@ -98,7 +98,7 @@ public class Task {
 		this.beginTime = beginTime;
 		this.endTime = endTime;
 	}
-	
+
 	/**
 	 * Checks whether the Task is finished.
 	 * 
@@ -107,7 +107,7 @@ public class Task {
 	public boolean isFinished() {
 		return (taskStatus == TaskStatus.FINISHED);
 	}
-	
+
 	/**
 	 * Checks whether the the Task has failed.
 	 * 
@@ -116,7 +116,7 @@ public class Task {
 	public boolean isFailed(){
 		return (taskStatus ==TaskStatus.FAILED);
 	}
-	
+
 	/**
 	 * Checks whether the Task is available.
 	 * 
@@ -125,7 +125,7 @@ public class Task {
 	public boolean isAvailable(){
 		return (taskStatus == TaskStatus.AVAILABLE);
 	}
-	
+
 	/**
 	 * Checks whether the Task is unavailable.
 	 * 
@@ -134,7 +134,7 @@ public class Task {
 	public boolean isUnavailable(){
 		return (taskStatus == TaskStatus.UNAVAILABLE);
 	}
-	
+
 	/**
 	 * Checks whether the Task has started.
 	 * 
@@ -147,7 +147,7 @@ public class Task {
 		else
 			return true;
 	}
-	
+
 	/**
 	 * checks whether the Task has ended.
 	 * 
@@ -160,7 +160,7 @@ public class Task {
 		else
 			return true;
 	}
-	
+
 	/**
 	 * This method compares the start time of the project with a given time and calculates the
 	 * elapsed time.
@@ -174,10 +174,10 @@ public class Task {
 			throw new IllegalStateException("Project not yet started");
 		if(beginTime.isAfter(currentTime))
 			throw new IllegalArgumentException("Timestamp is in the past");
-		
+
 		return new TimeSpan(beginTime, currentTime).add(extraTime) ;
 	}
-	
+
 	/**
 	 * This method returns the time elapsed since the start of the project and 
 	 * the end of the project. 
@@ -190,7 +190,7 @@ public class Task {
 			throw new IllegalStateException("Project not yet finished");
 		return getTimeElapsed(endTime);
 	}
-	
+
 	/**
 	 * Returns the start time of the Task.
 	 * 
@@ -285,7 +285,7 @@ public class Task {
 			throw new IllegalArgumentException("Invalid status");
 		}
 	}
-	
+
 	/**
 	 * Set the status of this Task on finished.
 	 * 
@@ -298,7 +298,7 @@ public class Task {
 		this.taskStatus = TaskStatus.FINISHED;
 		return true;
 	}
-	
+
 	/**
 	 * Set the status of this Task on failed.
 	 * 
@@ -311,7 +311,7 @@ public class Task {
 		this.taskStatus = TaskStatus.FAILED;
 		return true;
 	}
-	
+
 	/**
 	 * Set the status of this Task on available.
 	 * 
@@ -324,7 +324,7 @@ public class Task {
 		this.taskStatus = TaskStatus.AVAILABLE;
 		return true;
 	}
-	
+
 	/**
 	 * Set the status of this Task on unavailable.
 	 * 
@@ -337,7 +337,7 @@ public class Task {
 		this.taskStatus = TaskStatus.UNAVAILABLE;
 		return true;
 	}
-	
+
 	/**
 	 * Returns the current status of the Task.
 	 * 
@@ -346,7 +346,7 @@ public class Task {
 	private TaskStatus getTaskStatus() {
 		return taskStatus;
 	}
-	
+
 	/**
 	 * Returns the name of the current status of the Task
 	 * @return	the name of the current status of the Task
@@ -354,7 +354,7 @@ public class Task {
 	public String getTaskStatusName() {
 		return getTaskStatus().name();
 	}
-	
+
 	/**
 	 * Returns the status of the Task as a String.
 	 * 
@@ -364,24 +364,24 @@ public class Task {
 		TaskStatus stat = this.getTaskStatus();
 		String status ="";
 		switch(stat){
-			case FAILED:
-				status = "failed";
-				break;
-			case FINISHED:
-				status = "finished";
-				break;
-			case AVAILABLE:
-				status = "available";
-				break;
-			case UNAVAILABLE:
-				status = "unavailable";
-				break;
-			default:
-				status ="ERROR";
-				break;
+		case FAILED:
+			status = "failed";
+			break;
+		case FINISHED:
+			status = "finished";
+			break;
+		case AVAILABLE:
+			status = "available";
+			break;
+		case UNAVAILABLE:
+			status = "unavailable";
+			break;
+		default:
+			status ="ERROR";
+			break;
 		}
 		return status;
-				
+
 	}
 
 	/**
@@ -394,28 +394,72 @@ public class Task {
 	}
 
 	/**
-	 * Updates the details of this Task.
+	 * End the task in a Finished state
 	 * 
 	 * @param 	startTime
 	 * 			The new startTime of the Task.
 	 * @param 	endTime
 	 * 			The new end time of the Task.
-	 * @param 	taskStatus
-	 * 			The new Status of the Task.
 	 * @return	True if and only if the updates succeeds.
 	 */
-	public boolean updateTaskDetails(LocalDateTime startTime,
-			LocalDateTime endTime, String taskStatus) {
-		try{
+	public boolean setTaskFinished(LocalDateTime startTime,
+			LocalDateTime endTime) {
+		return setTaskStatus(startTime,endTime,TaskStatus.FINISHED);
+	}
+
+	/**
+	 * End the task in a Failed state
+	 * 
+	 * @param 	startTime
+	 * 			The new startTime of the Task.
+	 * @param 	endTime
+	 * 			The new end time of the Task.
+	 * @return	True if and only if the updates succeeds.
+	 */
+	public boolean setTaskFailed(LocalDateTime startTime,
+			LocalDateTime endTime) {
+		return setTaskStatus(startTime,endTime,TaskStatus.FAILED);
+	}
+
+	/**
+	 * End the task in an endstate
+	 * 
+	 * @param 	startTime
+	 * 			The new startTime of the Task.
+	 * @param 	endTime
+	 * 			The new end time of the Task.
+	 * @param	status
+	 * 			The new status of the Task.
+	 * @return	True if and only if the updates succeeds.
+	 */
+	private boolean setTaskStatus(LocalDateTime startTime,
+			LocalDateTime endTime, TaskStatus status) {
+		if(isValidTimeStamps(startTime, endTime)) {
 			this.setBeginTime(startTime);
 			this.setEndTime(endTime);
-			this.setTaskStatus(taskStatus);
-		}catch(Exception e){
-			return false;
+			taskStatus = status;
+			return true;
 		}
-		return true;
+		return false;
 	}
 	
+	/**
+	 * Checks whether the given timestamps are valid
+	 * 
+	 * @param 	startTime
+	 * 			The new startTime of the Task.
+	 * @param 	endTime
+	 * 			The new end time of the Task.
+	 * @return	True if and only if the timestamps are valid.
+	 */
+	private boolean isValidTimeStamps(LocalDateTime startTime, LocalDateTime endTime) {
+		if(startTime == null || endTime == null)
+			return false;
+		if(endTime.isBefore(startTime))
+			return false;
+		return true;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -437,6 +481,6 @@ public class Task {
 			return false;
 		return true;
 	}
-	
-	
+
+
 }
