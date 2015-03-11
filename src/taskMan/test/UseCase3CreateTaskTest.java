@@ -92,7 +92,7 @@ public class UseCase3CreateTaskTest {
 		assertFalse(taskMan.hasTaskAlternative(0, 1));
 		assertFalse(taskMan.hasTaskPrerequisites(0, 1));
 		assertTrue(taskMan.getTaskStatus(0, 1).equals("available"));
-		assertEquals(taskMan.getAvailableTasks(0).size(),2);
+		assertEquals(taskMan.getAvailableTasks(0).size(),1);
 		
 	}
 

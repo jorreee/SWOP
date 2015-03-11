@@ -39,7 +39,8 @@ public class UseCase4UpdateTaskStatusTest {
 	private final ArrayList<Integer> task00Dependencies = new ArrayList<Integer>(),
 									 task01Dependencies = new ArrayList<Integer>(),
 									 task02Dependencies = new ArrayList<Integer>(),
-									 newTaskDependencies = new ArrayList<Integer>();
+									 newTaskDependencies = new ArrayList<Integer>(),
+									 newTask2Dependencies = new ArrayList<Integer>();
 
 	/**
 	 * DEFAULT TASKMAN TESTER
@@ -58,7 +59,7 @@ public class UseCase4UpdateTaskStatusTest {
 		
 		assertTrue(taskMan.createTask(0, "Design system", task00EstDur, task00Dev, -1, task00Dependencies));		// TASK 1
 		task01Dependencies.add(Integer.valueOf(1));
-		assertTrue(taskMan.createTask(0, "Implement Native", task01EstDur, task01Dev, -1, task01Dependencies));	// TASK 2
+		assertTrue(taskMan.createTask(0, "Implement Native", task01EstDur, task01Dev, -1, task01Dependencies));		// TASK 2
 		task02Dependencies.add(Integer.valueOf(2));
 		assertTrue(taskMan.createTask(0, "Test code", task02EstDur, task02Dev, -1, task02Dependencies));			// TASK 3
 		
@@ -73,13 +74,13 @@ public class UseCase4UpdateTaskStatusTest {
 		// Step 1 is implicit
 		// Step 2 and 3 are handled in UI
 		// Step 4 and 5
-		assertTrue(taskMan.setTaskFinished(0, 4, startDate, newTaskEndDateGood));
+		assertTrue(taskMan.setTaskFinished(0, 3, startDate, newTaskEndDateGood));
 		// Step 6
 		assertTrue(taskMan.getTaskStatus(0,0).equals("failed"));
 		assertTrue(taskMan.getTaskStatus(0,2).equals("unavailable"));
 		assertTrue(taskMan.getProjectStatus(0).equals("ongoing"));
 		
-		assertTrue(taskMan.getTaskStatus(0,4).equals("finished"));
+		assertTrue(taskMan.getTaskStatus(0,3).equals("finished"));
 		assertTrue(taskMan.getTaskStatus(0,1).equals("available"));			// 
 		
 	}
@@ -109,6 +110,97 @@ public class UseCase4UpdateTaskStatusTest {
 		assertTrue(taskMan.getTaskStatus(0,1).equals("unavailable"));
 		assertTrue(taskMan.getTaskStatus(0,2).equals("unavailable"));
 		assertTrue(taskMan.getProjectStatus(0).equals("ongoing"));
+		
+	}
+	
+	@Test
+	public void succesCaseMultiplePrereqTest() {
+
+		newTaskDependencies.add(Integer.valueOf(0));
+		newTaskDependencies.add(Integer.valueOf(1));
+		assertTrue(taskMan.createTask(0, "Test1", newTaskDur, newTaskDev, -1, newTaskDependencies));
+		
+		// Step 1 is implicit
+		// Step 2 and 3 are handled in UI
+		// Step 4 and 5
+		assertTrue(taskMan.setTaskFinished(0, 0, task00StartDateGood, task00EndDateGood));
+		// Step 6
+		assertTrue(taskMan.getTaskStatus(0,0).equals("finished"));
+		assertTrue(taskMan.getTaskStatus(0,1).equals("unavailable"));
+		assertTrue(taskMan.getTaskStatus(0,2).equals("unavailable"));
+		assertTrue(taskMan.getProjectStatus(0).equals("ongoing"));
+		assertTrue(taskMan.getTaskStatus(0, 3).equals("unavailable"));
+		
+		assertTrue(taskMan.setTaskFinished(0, 1, task01StartDateGood, task01EndDateGood));
+		assertTrue(taskMan.getTaskStatus(0,0).equals("finished"));
+		assertTrue(taskMan.getTaskStatus(0,1).equals("finished"));
+		assertTrue(taskMan.getTaskStatus(0,2).equals("unavailable"));
+		assertTrue(taskMan.getProjectStatus(0).equals("ongoing"));
+		assertTrue(taskMan.getTaskStatus(0, 3).equals("available"));
+		
+	}
+	
+	@Test
+	public void flow6aMultiplePrereqFAILEDTest() {
+
+		newTaskDependencies.add(Integer.valueOf(0));
+		newTaskDependencies.add(Integer.valueOf(1));
+		assertTrue(taskMan.createTask(0, "Test1", newTaskDur, newTaskDev, -1, newTaskDependencies));
+		
+		// Step 1 is implicit
+		// Step 2 and 3 are handled in UI
+		// Step 4 and 5
+		assertTrue(taskMan.setTaskFinished(0, 0, task00StartDateGood, task00EndDateGood));
+		// Step 6
+		assertTrue(taskMan.getTaskStatus(0,0).equals("finished"));
+		assertTrue(taskMan.getTaskStatus(0,1).equals("unavailable"));
+		assertTrue(taskMan.getTaskStatus(0,2).equals("unavailable"));
+		assertTrue(taskMan.getProjectStatus(0).equals("ongoing"));
+		assertTrue(taskMan.getTaskStatus(0, 3).equals("unavailable"));
+		
+		assertTrue(taskMan.setTaskFailed(0, 1, task01StartDateGood, task01EndDateGood));
+		assertTrue(taskMan.getTaskStatus(0,0).equals("finished"));
+		assertTrue(taskMan.getTaskStatus(0,1).equals("failed"));
+		assertTrue(taskMan.getTaskStatus(0,2).equals("unavailable"));
+		assertTrue(taskMan.getProjectStatus(0).equals("ongoing"));
+		assertTrue(taskMan.getTaskStatus(0, 3).equals("unavailable"));
+		
+	}
+	
+	@Test
+	public void succesCaseMultiplePrereqFAILEDALTTest() {
+
+		newTaskDependencies.add(Integer.valueOf(0));
+		newTaskDependencies.add(Integer.valueOf(1));
+		assertTrue(taskMan.createTask(0, "Test1", newTaskDur, newTaskDev, -1, newTaskDependencies));
+		
+		// Step 1 is implicit
+		// Step 2 and 3 are handled in UI
+		// Step 4 and 5
+		assertTrue(taskMan.setTaskFinished(0, 0, task00StartDateGood, task00EndDateGood));
+		// Step 6
+		assertTrue(taskMan.getTaskStatus(0,0).equals("finished"));
+		assertTrue(taskMan.getTaskStatus(0,1).equals("unavailable"));
+		assertTrue(taskMan.getTaskStatus(0,2).equals("unavailable"));
+		assertTrue(taskMan.getProjectStatus(0).equals("ongoing"));
+		assertTrue(taskMan.getTaskStatus(0, 3).equals("unavailable"));
+		
+		assertTrue(taskMan.setTaskFailed(0, 1, task01StartDateGood, task01EndDateGood));
+		assertTrue(taskMan.getTaskStatus(0,0).equals("finished"));
+		assertTrue(taskMan.getTaskStatus(0,1).equals("failed"));
+		assertTrue(taskMan.getTaskStatus(0,2).equals("unavailable"));
+		assertTrue(taskMan.getProjectStatus(0).equals("ongoing"));
+		assertTrue(taskMan.getTaskStatus(0, 3).equals("unavailable"));
+		
+		assertTrue(taskMan.createTask(0, "Test2", newTaskDur, newTaskDev, 1, newTask2Dependencies));
+		assertTrue(taskMan.setTaskFinished(0, 4, task02StartDateGood, task02EndDateGood));
+		assertTrue(taskMan.getTaskStatus(0,0).equals("finished"));
+		assertTrue(taskMan.getTaskStatus(0,1).equals("failed"));
+		assertTrue(taskMan.getTaskStatus(0,2).equals("unavailable"));
+		assertTrue(taskMan.getTaskStatus(0,4).equals("finished"));
+		assertTrue(taskMan.getProjectStatus(0).equals("ongoing"));
+		
+		assertTrue(taskMan.getTaskStatus(0, 3).equals("available"));
 		
 	}
 

@@ -84,7 +84,6 @@ public class UseCase2CreateProjectTest {
 		assertEquals(taskMan.getProjectAmount(),0);
 	}
 
-	//TODO te vroeg, due VOOR start, due == start,
 	@Test
 	public void flow4aTooEarlyTest() {
 		// Stap 1 en 2 zijn impliciet
