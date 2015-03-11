@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import taskMan.util.TimeSpan;
+
 import com.google.common.collect.ImmutableList;
 
 
@@ -676,27 +678,13 @@ public class Project {
 	 * @return	The delay of the project
 	 */
 	public int[] getDelay(LocalDateTime current){
-		LocalDateTime dueTime = getProjectDueTime();
-	    LocalDateTime tempDateTime = LocalDateTime.from( dueTime );
-		long years = tempDateTime.until( current, ChronoUnit.YEARS);
-		tempDateTime = tempDateTime.plusYears( years );
-
-		long months = tempDateTime.until( current, ChronoUnit.MONTHS);
-		tempDateTime = tempDateTime.plusMonths( months );
-
-		long days = tempDateTime.until( current, ChronoUnit.DAYS);
-		tempDateTime = tempDateTime.plusDays( days );
-
-		long hours = tempDateTime.until( current, ChronoUnit.HOURS);
-		tempDateTime = tempDateTime.plusHours( hours );
-
-		long minutes = tempDateTime.until( current, ChronoUnit.MINUTES);
-		tempDateTime = tempDateTime.plusMinutes( minutes );
-		int delay = (int) (minutes + hours * 60 + days * 24 * 60 +  months * 30 * 24 * 60 + years * 12 * 30 * 24 * 60);
-		if (delay < 0){
-			return new int[] {0,0,0,0,0};
+		if (current.isBefore(dueTime)) {
+			return new int[] { 0,0,0,0,0};		
+			}
+		else {
+		TimeSpan delay = new TimeSpan(current, dueTime);
+		return delay.getSpan();
 		}
-		else return new int[] {(int) years, (int) months, (int) days, (int) hours, (int) minutes }; 
 		}
 	
 }
