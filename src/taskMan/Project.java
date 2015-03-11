@@ -52,9 +52,17 @@ public class Project {
 	 * 			The creation time of the new Project.
 	 * @param 	dueTime
 	 * 			The due time of the new Project.
+	 * @throws	IllegalArgumentException
+	 * 			Throws exception when the dueTime comes before the creationTime.
 	 */
 	public Project(int projectID, String projectName, String description,
-			LocalDateTime creationTime, LocalDateTime dueTime) {
+			LocalDateTime creationTime, LocalDateTime dueTime) throws IllegalArgumentException{
+		if(dueTime==null || creationTime==null)
+			throw new IllegalArgumentException("One of the arguments is null");
+		if(dueTime.isBefore(creationTime))
+			throw new IllegalArgumentException("Duetime comes before the creationTime");
+		if(dueTime.equals(creationTime))
+			throw new IllegalArgumentException("No time difference");
 		this.projectName = projectName;
 		this.description = description;
 		this.creationTime = creationTime;
@@ -110,7 +118,10 @@ public class Project {
 		}
 		if(isValidAlternative(alternativeFor, newTask.getTaskID()) && !addAlternative(alternativeFor, newTask.getTaskID()))
 			return false;
-		if(!addPrerequisite(newTask.getTaskID(), prerequisiteTasks))
+		if(!isValidPrerequisites(newTask.getTaskID(), prerequisiteTasks)){
+			return false;
+		}
+		if(!addPrerequisites(newTask.getTaskID(), prerequisiteTasks))
 			return false;
 		updateTaskStatus(newTask);
 		boolean success = taskList.add(newTask);
@@ -150,15 +161,21 @@ public class Project {
 	private boolean hasFinishedAlternative(Integer task) {
 		if(!isValidTaskID(task))
 			return false;
+		if(taskAlternatives.get(task) == null)
+			return false;
 		return getTask(taskAlternatives.get(task)).isFinished() || hasFinishedAlternative(taskAlternatives.get(task));
 
 	}
 
 	private void updateTaskStatus(Task task){
-		if(!task.isFinished()){
+		if(!task.hasEnded()){
 			if(hasPrerequisites(task.getTaskID())) {
 				for(Integer preID : getPrerequisites(task.getTaskID())){
-					if(!getTask(preID).isFinished()){
+					if(!(getTask(preID).isFinished() || getTask(preID).isFailed())){
+						task.setUnavailable();
+						return;
+					}
+					if(getTask(preID).isFailed() && (!hasAlternative(preID) || !hasFinishedAlternative(preID))) {
 						task.setUnavailable();
 						return;
 					}
@@ -278,10 +295,10 @@ public class Project {
 		String status = "";
 		switch(stat){
 		case FINISHED:
-			status = "FINISHED";
+			status = "finished";
 			break;
 		case ONGOING:
-			status = "ONGOING";
+			status = "ongoing";
 			break;
 		}
 		return status;
@@ -392,41 +409,41 @@ public class Project {
 	 * 			The new prerequisites.
 	 * @return	True if and only the addition was successful.
 	 */
-	private boolean addPrerequisite(int taskID, List<Integer> pre){
-		if(pre.isEmpty())
-			return true;
-		if(!isValidTaskID(taskID)||pre==null)
+	private boolean addPrerequisites(int taskID, List<Integer> pre){
+		if (pre.isEmpty()) return true;
+		if(!isValidPrerequisites(taskID, pre)){
 			return false;
+		}
 		if(hasPrerequisites(taskID)){
-			for(int newPre: pre){
-				if(!isValidPrerequisite(taskID, newPre))
-					return false;
-			}
 			List<Integer> preOld = getPrerequisites(taskID);
 			pre.addAll(preOld);
 			taskPrerequisites.put(taskID, pre);
 			return true;
 		}
-		taskPrerequisites.put(taskID, pre);
-		return true;
-	}
+		else { taskPrerequisites.put(taskID, pre);
+			return true; }
+}
 
 	/**
-	 * Checks whether the given prerequisites is a valid one for the give Task.
+	 * Checks whether the given prerequisites are valid for the given Task.
 	 * 
 	 * @param 	task
 	 * 			The given Task.
 	 * @param 	pre
-	 * 			The prerequisite to check.
-	 * @return	True if and only the prerequisite is a valid one.
+	 * 			The prerequisites to check.
+	 * @return	True if and only the prerequisites are a valid.
 	 */
-	private boolean isValidPrerequisite(int task, int pre){
-		//		if(pre==null||task==null)
-		//			return false;
-		if(task == pre)
-			return false;
-		else
-			return true;
+	private boolean isValidPrerequisites(int task, List<Integer> pre){
+		if (pre == null) return false;
+		if (!isValidTaskID(task)) return false;
+		else if (pre.isEmpty()) return true;
+		else if(pre.contains(task)) return false;
+		for (int prereq : pre){
+			if (!isValidTaskID(prereq)){
+				return false;
+			}
+		}
+		return true;
 	}
 	/**
 	 * Returns the Tasks belonging to the given ID's.
@@ -465,7 +482,7 @@ public class Project {
 	public List<Integer> getAvailableTasks() {
 		ArrayList<Integer> availableTasks = new ArrayList<Integer>();
 		for(Task task : taskList) {
-			if(task.getStatus().equals("AVAILABLE"))
+			if(task.getStatus().equals("available"))
 				availableTasks.add(task.getTaskID());
 		}
 		return availableTasks;
@@ -676,7 +693,16 @@ public class Project {
 	 * 			False if it was unsuccessful
 	 */
 	public boolean setTaskFinished(int taskID, LocalDateTime startTime, LocalDateTime endTime) {
-		return getTask(taskID).setTaskFinished(startTime, endTime);
+		if(startTime == null || startTime.isBefore(creationTime))
+			return false;
+		boolean success = getTask(taskID).setTaskFinished(startTime, endTime);
+		if(success) {
+			for(Task task : taskList)
+				updateTaskStatus(task);
+			recalculateProjectStatus();
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -691,6 +717,14 @@ public class Project {
 	 * 			False if it was unsuccessful
 	 */
 	public boolean setTaskFailed(int taskID, LocalDateTime startTime, LocalDateTime endTime) {
-		return getTask(taskID).setTaskFailed(startTime, endTime);
+		if(startTime == null || startTime.isBefore(creationTime))
+			return false;
+		boolean success = getTask(taskID).setTaskFailed(startTime, endTime);
+		if(success) {
+			for(Task task : taskList)
+				updateTaskStatus(task);
+			return true;
+		}
+		return false;
 	}
 }

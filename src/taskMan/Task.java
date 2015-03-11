@@ -434,6 +434,8 @@ public class Task {
 	 */
 	private boolean setTaskStatus(LocalDateTime startTime,
 			LocalDateTime endTime, TaskStatus status) {
+		if(hasEnded() || isUnavailable())
+			return false;
 		if(isValidTimeStamps(startTime, endTime)) {
 			this.setBeginTime(startTime);
 			this.setEndTime(endTime);

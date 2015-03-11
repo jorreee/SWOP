@@ -91,7 +91,14 @@ public class TaskMan {
 	 * 			false if the creation was unsuccessful
 	 */
 	public boolean createProject(String name, String description, LocalDateTime creationTime, LocalDateTime dueTime) {
-		Project project = new Project(projectList.size(), name, description, creationTime, dueTime);
+		if(creationTime.isBefore(currentTime) || dueTime.isBefore(currentTime))
+			return false;
+		Project project = null;
+		try{
+			 project = new Project(projectList.size(), name, description, creationTime, dueTime);
+		}catch(IllegalArgumentException e){
+			return false;
+		}
 		return projectList.add(project);
 	}
 	
@@ -153,6 +160,9 @@ public class TaskMan {
 	 * @return	True if the creation of a new Task was successful.
 	 */
 	public boolean createTask(int projectID, String description, int estimatedDuration, int acceptableDeviation, Integer alternativeFor, List<Integer> prerequisiteTasks) {
+		if (projectID >= projectList.size()){
+			return false;
+		}
 		return getProject(projectID).createTask(description,estimatedDuration, acceptableDeviation, alternativeFor, prerequisiteTasks);
 	}
 	
@@ -440,6 +450,8 @@ public class TaskMan {
 	 * 			False if it was unsuccessful
 	 */
 	public boolean setTaskFinished(int projectID, int taskID, LocalDateTime startTime, LocalDateTime endTime) {
+		if(endTime == null || endTime.isAfter(currentTime))
+			return false;
 		return projectList.get(projectID).setTaskFinished(taskID,startTime,endTime);
 	}
 	
@@ -457,6 +469,8 @@ public class TaskMan {
 	 * 			False if it was unsuccessful
 	 */
 	public boolean setTaskFailed(int projectID, int taskID, LocalDateTime startTime, LocalDateTime endTime) {
+		if(endTime == null || endTime.isAfter(currentTime))
+			return false;
 		return projectList.get(projectID).setTaskFailed(taskID,startTime, endTime);
 	}
 }
