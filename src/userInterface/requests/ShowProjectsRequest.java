@@ -25,6 +25,7 @@ public class ShowProjectsRequest extends Request {
 				}
 
 				// Ask user for project selection
+				System.out.println("Select a project to view more details (type quit to exit)");
 				String input = inputReader.readLine();
 
 				// User quits
@@ -67,6 +68,7 @@ public class ShowProjectsRequest extends Request {
 				}
 
 				// Ask user for task selection
+				System.out.println("Select a task to view more details (type quit to exit)");
 				input = inputReader.readLine();
 
 				// User quits

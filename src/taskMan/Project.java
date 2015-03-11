@@ -82,7 +82,7 @@ public class Project {
 			return false;
 		if(!isValidEstimatedTaskDuration(estimatedDuration)) // A task must have a valid estimated duration
 			return false;
-		if(!isValidTaskID(alternativeFor))
+		if(alternativeFor >= 0 && !isValidTaskID(alternativeFor))
 			return false;
 		TaskStatus status = null;
 		if(taskStatus != null)
@@ -92,6 +92,8 @@ public class Project {
 			if(status != null)
 				newTask = new Task(taskList.size(), description, estimatedDuration, 
 					acceptableDeviation, status, startTime, endTime);
+			else
+				newTask = new Task(taskList.size(), description, estimatedDuration, acceptableDeviation);
 		}catch(IllegalArgumentException e){
 			return false;
 		}
@@ -679,7 +681,7 @@ public class Project {
 
 		long minutes = tempDateTime.until( current, ChronoUnit.MINUTES);
 		tempDateTime = tempDateTime.plusMinutes( minutes );
-		int delay = (int) (minutes + hours * 60 + days * 24 * 60 +  months * 30 * 24 * 60 + years * 52 * 30 * 24 * 60);
+		int delay = (int) (minutes + hours * 60 + days * 24 * 60 +  months * 30 * 24 * 60 + years * 12 * 30 * 24 * 60);
 		if (delay < 0){
 			return 0;
 		}

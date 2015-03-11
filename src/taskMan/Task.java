@@ -85,7 +85,7 @@ public class Task {
 			int acceptableDeviation, TaskStatus taskStatus,
 			LocalDateTime beginTime, LocalDateTime endTime) throws IllegalArgumentException {
 		this(taskID, taskDescription, estimatedDuration, acceptableDeviation);
-		if(taskStatus != TaskStatus.FAILED || taskStatus != TaskStatus.FINISHED)
+		if(taskStatus != TaskStatus.FAILED && taskStatus != TaskStatus.FINISHED)
 			throw new IllegalArgumentException("Time stamps are only required if a task is finished or failed");
 		this.taskStatus = taskStatus;
 		this.beginTime = beginTime;

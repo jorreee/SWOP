@@ -32,9 +32,13 @@ public class Main {
 			facade.createProject(pcd.getName(), pcd.getDescription(), pcd.getCreationTime(), pcd.getDueTime());
 		}
 		for(TaskCreationData tcd : taskData) {
+			TaskStatus status = tcd.getStatus();
+			String statusString = null;
+			if(status != null)
+				statusString = status.name();
 			facade.createTask(tcd.getProject(), tcd.getDescription(),
 					tcd.getEstimatedDuration(),
-					tcd.getAcceptableDeviation(), tcd.getStatus().name(),
+					tcd.getAcceptableDeviation(), statusString,
 					tcd.getAlternativeFor(), tcd.getPrerequisiteTasks(),
 					tcd.getStartTime(), tcd.getEndTime());
 		}

@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-enum TaskStatus { ONGOING, FINISHED, FAILED }
+enum TaskStatus { FINISHED, FAILED }
 
 public class TaskManInitFileChecker extends StreamTokenizer {
 	
@@ -134,7 +134,7 @@ public class TaskManInitFileChecker extends StreamTokenizer {
 			if (ttype == '[')
 				prerequisiteTasks = expectIntList();
 			expectLabel("status");
-			TaskStatus status = TaskStatus.ONGOING;
+			TaskStatus status = null;
 			if (isWord("finished")) {
 				nextToken();
 				status = TaskStatus.FINISHED;
@@ -144,7 +144,7 @@ public class TaskManInitFileChecker extends StreamTokenizer {
 			}
 			LocalDateTime startTime = null;
 			LocalDateTime endTime = null;
-			if (status != TaskStatus.ONGOING) {
+			if (status != null) {
 				startTime = expectDateField("startTime");
 				endTime = expectDateField("endTime");
 			}
