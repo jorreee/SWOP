@@ -153,6 +153,9 @@ public class TaskMan {
 	 * @return	True if the creation of a new Task was successful.
 	 */
 	public boolean createTask(int projectID, String description, int estimatedDuration, int acceptableDeviation, Integer alternativeFor, List<Integer> prerequisiteTasks) {
+		if (projectID >= projectList.size()){
+			return false;
+		}
 		return getProject(projectID).createTask(description,estimatedDuration, acceptableDeviation, alternativeFor, prerequisiteTasks);
 	}
 	
