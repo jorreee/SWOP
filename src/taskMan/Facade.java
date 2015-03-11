@@ -96,7 +96,7 @@ public class Facade implements IFacade {
 	}
 
 	@Override
-	public int getProjectDelay(int projectID) {
+	public int[] getProjectDelay(int projectID) {
 		return taskMan.getProjectDelay(projectID);
 	}
 

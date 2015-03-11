@@ -656,7 +656,6 @@ public class Project {
 		}
 	}
 	
-	//TODO
 	/**
 	 * Returns the delay of the project if any.
 	 * 
@@ -664,7 +663,7 @@ public class Project {
 	 * 			The current time to check with.
 	 * @return	The delay of the project
 	 */
-	public int getDelay(LocalDateTime current){
+	public int[] getDelay(LocalDateTime current){
 		LocalDateTime dueTime = getProjectDueTime();
 	    LocalDateTime tempDateTime = LocalDateTime.from( dueTime );
 		long years = tempDateTime.until( current, ChronoUnit.YEARS);
@@ -683,9 +682,11 @@ public class Project {
 		tempDateTime = tempDateTime.plusMinutes( minutes );
 		int delay = (int) (minutes + hours * 60 + days * 24 * 60 +  months * 30 * 24 * 60 + years * 12 * 30 * 24 * 60);
 		if (delay < 0){
-			return 0;
+			int[] array = {0,0,0,0,0};
+			return array;
 		}
-		else return delay;
+		else { int[] array = {(int) years, (int) months, (int) days, (int) hours, (int) minutes };
+		return array; }
 	}
 	
 }
