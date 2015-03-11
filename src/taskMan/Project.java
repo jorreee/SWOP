@@ -76,24 +76,21 @@ public class Project {
 	 * 			of failed or finished was successful.
 	 */
 	public boolean createTask(String description, int estimatedDuration, 
-			int acceptableDeviation, String taskStatus, Integer alternativeFor, 
+			int acceptableDeviation, String taskStatus, int alternativeFor, 
 			List<Integer> prerequisiteTasks, LocalDateTime startTime, LocalDateTime endTime) {
-		if(description==null)
+		if(description==null) // A task must have a description
 			return false;
-//		if(estimatedDuration==null)
-//			return false;
-		if(startTime==null)
-			return false;
-		if(endTime==null)
-			return false;
-		if(taskStatus==null)
+		if(!isValidEstimatedTaskDuration(estimatedDuration)) // A task must have a valid estimated duration
 			return false;
 		if(!isValidTaskID(alternativeFor))
 			return false;
-		TaskStatus status = TaskStatus.valueOf(taskStatus);
+		TaskStatus status = null;
+		if(taskStatus != null)
+			status = TaskStatus.valueOf(taskStatus);
 		Task newTask = null;
 		try{
-			newTask = new Task(taskList.size(), description, estimatedDuration, 
+			if(status != null)
+				newTask = new Task(taskList.size(), description, estimatedDuration, 
 					acceptableDeviation, status, startTime, endTime);
 		}catch(IllegalArgumentException e){
 			return false;
@@ -476,6 +473,16 @@ public class Project {
 	public int getTaskAmount() {
 		return this.taskList.size()-1;
 	}
+	
+	//TODO doc
+	public List<Integer> getAvailableTasks() {
+		ArrayList<Integer> availableTasks = new ArrayList<Integer>();
+		for(Task task : taskList) {
+			if(task.getStatus().equals("AVAILABLE"))
+				availableTasks.add(task.getTaskID());
+		}
+		return availableTasks;
+	}
 
 	/**
 	 * Return the description of the Task belonging to the given ID.
@@ -520,6 +527,8 @@ public class Project {
 			return null;
 		return getTask(taskID).getBeginTime();
 	}
+	
+	
 
 	/**
 	 * Returns the estimated duration of the Task belonging to the given ID.
@@ -533,6 +542,11 @@ public class Project {
 		if(!isValidTaskID(taskID))
 			return -1;
 		return getTask(taskID).getEstimatedDuration();
+	}
+	
+	//TODO doc
+	private boolean isValidEstimatedTaskDuration(int estimatedDuration) {
+		return estimatedDuration > 0;
 	}
 
 	/**
