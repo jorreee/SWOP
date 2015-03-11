@@ -165,10 +165,14 @@ public class Project {
 	}
 
 	private void updateTaskStatus(Task task){
-		if(!task.isFinished()){
+		if(!task.hasEnded()){
 			if(hasPrerequisites(task.getTaskID())) {
 				for(Integer preID : getPrerequisites(task.getTaskID())){
 					if(!(getTask(preID).isFinished() || getTask(preID).isFailed())){
+						task.setUnavailable();
+						return;
+					}
+					if(getTask(preID).isFailed() && (!hasAlternative(preID) || !hasFinishedAlternative(preID))) {
 						task.setUnavailable();
 						return;
 					}
