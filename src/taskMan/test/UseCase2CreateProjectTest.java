@@ -21,7 +21,9 @@ public class UseCase2CreateProjectTest {
 			newDateVeryBad3 = startDate,
 			project0StartDateGood = startDate,
 			project0StartDateVeryBad = LocalDateTime.of(2015, 2, 5, 0, 0),
-			project0DueDate = LocalDateTime.of(2015, 2, 13, 23, 59);
+			project0DueDateGood = LocalDateTime.of(2015, 2, 13, 23, 59),
+			project0DueDateVeryBad1 = LocalDateTime.of(2015, 2, 8, 0, 0),
+			project0DueDateVeryBad2 = startDate;
 	private final int task00EstDur = 8*60,
 			task01EstDur = 16*60,
 			task02EstDur = 8*60,
@@ -47,8 +49,8 @@ public class UseCase2CreateProjectTest {
 	public final void initialize() {
 		taskMan = new TaskMan(startDate);
 
-		assertTrue(taskMan.createProject("Test1", "testing 1", project0StartDateGood, project0DueDate));
-
+//		assertTrue(taskMan.createProject("Test1", "testing 1", project0StartDateGood, project0DueDateGood));
+//
 
 //		assertTrue(taskMan.createTask(0, "Design system", task00EstDur, task00Dev, -1, task00Dependencies));		// TASK 1
 //		task01Dependencies.add(Integer.valueOf(1));
@@ -64,12 +66,12 @@ public class UseCase2CreateProjectTest {
 	public void SuccesCaseTest() {
 		// Stap 1 en 2 zijn impliciet
 		// Stap 3
-		assertTrue(taskMan.createProject("Test1", "testing 1", project0StartDateGood, project0DueDate));
+		assertTrue(taskMan.createProject("Test1", "testing 1", project0StartDateGood, project0DueDateGood));
 		// Stap 4
 		assertTrue(taskMan.getProjectName(0).equals("Test1"));
 		assertTrue(taskMan.getProjectDescription(0).equals("tesing 1"));
 		assertEquals(taskMan.getAvailableTasks(0).size(),0);
-		assertEquals(taskMan.getProjectDueTime(0),project0DueDate);
+		assertEquals(taskMan.getProjectDueTime(0),project0DueDateGood);
 		assertTrue(taskMan.getProjectStatus(0).equals("ongoing"));
 		assertTrue(taskMan.isOnTime(0));
 		assertEquals(taskMan.getProjectAmount(),1);
@@ -87,7 +89,25 @@ public class UseCase2CreateProjectTest {
 	public void flow4aTooEarlyTest() {
 		// Stap 1 en 2 zijn impliciet
 		// Stap 3
-		assertFalse(taskMan.createProject("Test1", "testing 1", project0StartDateVeryBad, project0DueDate));
+		assertFalse(taskMan.createProject("Test1", "testing 1", project0StartDateVeryBad, project0DueDateGood));
+		// Stap 4
+		assertEquals(taskMan.getProjectAmount(),0);
+	}
+
+	@Test
+	public void flow4aBadDueTest() {
+		// Stap 1 en 2 zijn impliciet
+		// Stap 3
+		assertFalse(taskMan.createProject("Test1", "testing 1", project0StartDateGood, project0DueDateVeryBad1));
+		// Stap 4
+		assertEquals(taskMan.getProjectAmount(),0);
+	}
+
+	@Test
+	public void flow4aNoTimeTest() {
+		// Stap 1 en 2 zijn impliciet
+		// Stap 3
+		assertFalse(taskMan.createProject("Test1", "testing 1", project0StartDateVeryBad, project0DueDateVeryBad2));
 		// Stap 4
 		assertEquals(taskMan.getProjectAmount(),0);
 	}

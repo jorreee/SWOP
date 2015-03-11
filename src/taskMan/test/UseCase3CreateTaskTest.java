@@ -48,11 +48,11 @@ public class UseCase3CreateTaskTest {
 		assertTrue(taskMan.advanceTimeTo(workDate));
 //
 //		taskMan.createTask(1, "Design system", task11EstDur, task11Dev, null, task11Dependencies);		// TASK 1
-//		task12Dependencies.add(Integer.valueOf(1));
+//		task12Dependencies.add(Integer.valueOf(0));
 //		taskMan.createTask(1, "Implement Native", task12EstDur, task12Dev, null, task12Dependencies);	// TASK 2
-//		task13Dependencies.add(Integer.valueOf(2));
+//		task13Dependencies.add(Integer.valueOf(1));
 //		taskMan.createTask(1, "Test code", task13EstDur, task13Dev, null, task13Dependencies);			// TASK 3
-//		task14Dependencies.add(Integer.valueOf(2));
+//		task14Dependencies.add(Integer.valueOf(1));
 //		taskMan.createTask(1, "Document code", task14EstDur, task14Dev, null, task14Dependencies);		// TASK 4
 
 	}
@@ -63,13 +63,11 @@ public class UseCase3CreateTaskTest {
 		// Step 3
 		assertTrue(taskMan.createTask(0, "A new TASK", newTaskDur, newTaskDev, -1, newTaskDependencies));
 		// Step 4
-		assertTrue(taskMan.getTaskDescription(0,1).equals("A new TASK"));
-		assertEquals(taskMan.getEstimatedTaskDuration(0,1),newTaskDur);
-		assertEquals(taskMan.getAcceptableTaskDeviation(0,1),newTaskDev);
+		assertTrue(taskMan.getTaskDescription(0,0).equals("A new TASK"));
+		assertEquals(taskMan.getEstimatedTaskDuration(0,0),newTaskDur);
+		assertEquals(taskMan.getAcceptableTaskDeviation(0,0),newTaskDev);
 		assertFalse(taskMan.hasTaskAlternative(0, 0));
 		assertFalse(taskMan.hasTaskPrerequisites(0, 0));
-		assertFalse(taskMan.hasTaskAlternative(0, 1));
-		assertFalse(taskMan.hasTaskPrerequisites(0, 1));
 		assertEquals(taskMan.getAvailableTasks(0).size(),1);
 	}
 
