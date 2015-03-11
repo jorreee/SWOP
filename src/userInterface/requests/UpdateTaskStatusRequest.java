@@ -85,9 +85,9 @@ public class UpdateTaskStatusRequest extends Request {
 
 					// System updates details
 					if(status.toLowerCase().equals("finished"))
-						success = facade.setTaskFinished(projectID, taskID, LocalDateTime.parse(startTime), LocalDateTime.parse(endTime), status.toLowerCase());
+						success = facade.setTaskFinished(projectID, taskID, LocalDateTime.parse(startTime), LocalDateTime.parse(endTime));
 					if(status.toLowerCase().equals("failed"))
-						success = facade.setTaskFailed(projectID, taskID, LocalDateTime.parse(startTime), LocalDateTime.parse(endTime), status.toLowerCase());
+						success = facade.setTaskFailed(projectID, taskID, LocalDateTime.parse(startTime), LocalDateTime.parse(endTime));
 					// Invalid details
 					if(!success)
 						System.out.println("Invalid input");
