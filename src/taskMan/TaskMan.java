@@ -6,6 +6,12 @@ import java.util.HashMap;
 import java.util.List;
 
 //TODO Still not done
+
+/**
+ * The Main System that keeps track of the list of projects and the current Time.
+ * @author Tim Van den Broecke, Joran Van de Woestijne, Vincent Van Gestel, Eli Vangrieken
+ *
+ */
 public class TaskMan {
 	
 	private ArrayList<Project> projectList;
@@ -148,6 +154,21 @@ public class TaskMan {
 		return getProject(projectID).createTask(description,estimatedDuration, acceptableDeviation, alternativeFor, prerequisiteTasks);
 	}
 	
+	/**
+	 * Updates the details of a given Task.
+	 * 
+	 * @param 	taskID
+	 * 			The ID of the Task.
+	 * @param 	startTime
+	 * 			The new start time of the Task.
+	 * @param 	endTime
+	 * 			The new end time of the Task.
+	 * @param 	taskStatus
+	 * 			The new status of the Task.
+	 * @return	True if the update was successful.
+	 * 			False if the ID isn't a valid one ore the
+	 * 			update isn't valid.
+	 */
 	public boolean updateTaskDetails(int projectID, int taskID, LocalDateTime startTime, LocalDateTime endTime, String taskStatus) {
 		if (startTime.isAfter(currentTime) || endTime.isAfter(currentTime) ){
 			return false;
@@ -155,35 +176,81 @@ public class TaskMan {
 		return getProject(projectID).updateTaskDetails(taskID, startTime, endTime, taskStatus);
 	}
 	
+	/**
+	 * Returns the name of the project with the given ID
+	 * @param 	projectID
+	 * 			The id of the project
+	 * @return	the name of the project
+	 */
 	public String getProjectName(int projectID) {
 		return getProject(projectID).getProjectName();
 	}
 	
+	/**
+	 * Returns the description of the project with the given ID
+	 * @param 	projectID
+	 * 			The id of the project
+	 * @return	the description of the project
+	 */
 	public String getProjectDescription(int projectID) {
 		return getProject(projectID).getProjectDescription();
 	}
 	
+	/**
+	 * Returns the creation time of the project with the given ID
+	 * @param 	projectID
+	 * 			The id of the project
+	 * @return	the creation time of the project
+	 */
 	public LocalDateTime getProjectCreationTime(int projectID) {
 		return getProject(projectID).getProjectCreationTime();
 	}
 	
+	/**
+	 * Returns the due time of the project with the given ID
+	 * @param 	projectID
+	 * 			The id of the project
+	 * @return	the due time of the project
+	 */
 	public LocalDateTime getProjectDueTime(int projectID) {
 		return getProject(projectID).getProjectDueTime();
 	}
 	
+	/**
+	 * Returns the end time of the project with the given ID
+	 * @param 	projectID
+	 * 			The id of the project
+	 * @return	the end time of the project
+	 */
 	public LocalDateTime getProjectEndTime(int projectID) {
 		return getProject(projectID).getProjectEndTime();
 	}
 	
+	/**
+	 * Returns the status of the project with the given ID
+	 * @param 	projectID
+	 * 			the id of the project
+	 * @return	the status of the project
+	 */
 	public String getProjectStatus(int projectID) {
 		return getProject(projectID).getProjectStatus();
 	}
 	
+	/**
+	 * Returns the delay of the project with the given ID
+	 * @param 	projectID
+	 * 			the id of the project
+	 * @return	the delay of the project
+	 */
 	public int[] getProjectDelay(int projectID){
 		return getProject(projectID).getDelay(currentTime);
 
 	}
 	
+	/**
+	 * Returns all available tasks per project
+	 * @return	a mapping of a project id on a list of available task id's
+	 */
 	public HashMap<Integer, List<Integer>> getAvailableTasks() {
 		HashMap<Integer, List<Integer>> hashMap = new HashMap<Integer, List<Integer>>();
 		for (Project proj : projectList){
@@ -192,66 +259,189 @@ public class TaskMan {
 		return hashMap;
 	}
 	
+	/**
+	 * Returns all available tasks for a given project
+	 * @param 	projectID
+	 * 			The id of the project
+	 * @return	The available task id's of the project
+	 */
 	public List<Integer> getAvailableTasks(int projectID) {
 		return getProject(projectID).getAvailableTasks();
 	}
-
+	
+	/**
+	 * Returns the total amount of projects
+	 * @return	the amount of projects
+	 */
 	public int getProjectAmount() {
 		return projectList.size();
 	}
 
+	/**
+	 * Returns whether the project with the given ID is on time or not
+	 * @param 	projectID
+	 * 			the id of the project
+	 * @return	True if the project is on time,
+	 * 			false if the project is not on time
+	 */
 	public boolean isOnTime(int projectID) {
 		return getProject(projectID).isOnTime(currentTime);
 	}
 
+	/**
+	 * Returns the amount of tasks of the project with the given ID
+	 * @param 	projectID
+	 * 			the id of the project
+	 * @return	the amount of tasks of the project
+	 */
 	public int getTaskAmount(int projectID) {
 		return projectList.get(projectID).getTaskAmount();
 	}
 
+	/**
+	 * Returns the description of the task with the given task id belonging to the project with the given project id
+	 * @param 	projectID
+	 * 			the id of the given project
+	 * @param 	taskID
+	 * 			the id of the given task
+	 * @return	the description of the task
+	 */
 	public String getTaskDescription(int projectID, int taskID) {
 		return projectList.get(projectID).getTaskDescription(taskID);
 	}
 
+	/**
+	 * Returns whether the task with the given task id belonging to the project with the given project id has started
+	 * @param 	projectID
+	 * 			the id of the given project
+	 * @param 	taskID
+	 * 			the id of the given task
+	 * @return	True if the task has started,
+	 * 			false if the task hasn't started 
+	 */
 	public boolean hasTaskStarted(int projectID, int taskID) {
 		return projectList.get(projectID).hasTaskStarted(taskID);
 	}
 
+	/**
+	 * Returns the start time of the task with the given task id belonging to the project with the given project id
+	 * @param 	projectID
+	 * 			the id of the given project
+	 * @param 	taskID
+	 * 			the id of the given task
+	 * @return	the start time of the task 
+	 */
 	public LocalDateTime getTaskStartTime(int projectID, int taskID) {
 		return projectList.get(projectID).getTaskStartTime(taskID);
 	}
 
+	/**
+	 * Returns the estimated duration of the task with the given task id belonging to the project with the given project id
+	 * @param 	projectID
+	 * 			the id of the given project
+	 * @param 	taskID
+	 * 			the id of the given task
+	 * @return	the estimated duration of the task 
+	 */
 	public int getEstimatedTaskDuration(int projectID, int taskID) {
 		return projectList.get(projectID).getEstimatedTaskDuration(taskID);
 	}
 
+	/**
+	 * Returns the acceptable deviation of the task with the given task id belonging to the project with the given project id
+	 * @param 	projectID
+	 * 			the id of the given project
+	 * @param 	taskID
+	 * 			the id of the given task
+	 * @return	the acceptable deviation of the task 
+	 */
 	public int getAcceptableTaskDeviation(int projectID, int taskID) {
 		return projectList.get(projectID).getAcceptableTaskDeviation(taskID);
 	}
 
+	/**
+	 * Returns whether the task with the given task id belonging to the project with the given project id has ended
+	 * @param 	projectID
+	 * 			the id of the given project
+	 * @param 	taskID
+	 * 			the id of the given task
+	 * @return	True if the task has ended,
+	 * 			false if the task hasn't ended
+	 */
 	public boolean hasTaskEnded(int projectID, int taskID) {
 		return projectList.get(projectID).hasTaskEnded(taskID);
 	}
 
+	/**
+	 * Returns the end time of the task with the given task id belonging to the project with the given project id
+	 * @param 	projectID
+	 * 			the id of the given project
+	 * @param 	taskID
+	 * 			the id of the given task
+	 * @return	the end time of the task 
+	 */
 	public LocalDateTime getTaskEndTime(int projectID, int taskID) {
 		return projectList.get(projectID).getTaskEndTime(taskID);
 	}
 
+	/**
+	 * Returns the status of the task with the given task id belonging to the project with the given project id
+	 * @param 	projectID
+	 * 			the id of the given project
+	 * @param 	taskID
+	 * 			the id of the given task
+	 * @return	the status of the task 
+	 */
 	public String getTaskStatus(int projectID, int taskID) {
 		return projectList.get(projectID).getTaskStatus(taskID);
 	}
 
+	/**
+	 * Returns whether the task with the given task id belonging to the project with the given project id has prerequisites
+	 * @param 	projectID
+	 * 			the id of the given project
+	 * @param 	taskID
+	 * 			the id of the given task
+	 * @return	True if the task has prerequisites,
+	 * 			false if the task doesn't have prerequisites
+	 */
 	public boolean hasTaskPrerequisites(int projectID, int taskID) {
 		return projectList.get(projectID).hasPrerequisites(taskID);
 	}
 
+	/**
+	 * Returns the prerequisites for the task with the given task id belonging to the project with the given project id
+	 * @param 	projectID
+	 * 			the id of the given project
+	 * @param 	taskID
+	 * 			the id of the given task
+	 * @return	the prerequisites for the task 
+	 */
 	public List<Integer> getTaskPrerequisitesFor(int projectID, int taskID) {
 		return projectList.get(projectID).getPrerequisites(taskID);
 	}
 
+	/**
+	 * Returns whether the task with the given task id belonging to the project with the given project id has alternatives
+	 * @param 	projectID
+	 * 			the id of the given project
+	 * @param 	taskID
+	 * 			the id of the given task
+	 * @return	True if the task has alternatives,
+	 * 			false if the task doesn't have alternatives
+	 */
 	public boolean hasTaskAlternative(int projectID, int taskID) {
 		return projectList.get(projectID).hasAlternative(taskID);
 	}
 
+	/**
+	 * Returns the alternatives for the task with the given task id belonging to the project with the given project id
+	 * @param 	projectID
+	 * 			the id of the given project
+	 * @param 	taskID
+	 * 			the id of the given task
+	 * @return	the alternatives for the task 
+	 */
 	public int getTaskAlternativeTo(int projectID, int taskID) {
 		return projectList.get(projectID).getAlternative(taskID);
 	}
