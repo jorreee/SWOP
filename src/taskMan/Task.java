@@ -9,13 +9,16 @@ import java.time.temporal.ChronoUnit;
 //TODO enkel alternative voor task die failed is, alt pakt timespan en dependencies over
 //TODO timespan via 2 constructors, via extra parameters. Extra tijd variable moet private zijn(get and set)
 //TODO Finished 
-//TODO
 //TODO voor delay van task nu - begintime van Task
-//TODO float wordt int
-//TODO estimateddur int
+/**
+ * The Task object.
+ * 
+ * @author	Tim Van den Broecke, Joran Van de Woestijne, Vincent Van Gestel, Eli Vangrieken
+ *
+ */
 public class Task {
 	private final String description;
-	private final int estimatedDuration;
+	private final int[] estimatedDuration;
 	private final int acceptableDeviation;
 	private TaskStatus taskStatus;
 	private LocalDateTime beginTime;
@@ -37,7 +40,7 @@ public class Task {
 	 * @param	extraTime
 	 * 			The extra time to add to the elapsed time
 	 */
-	public Task(int taskID, String taskDescription, int estimatedDuration,
+	public Task(int taskID, String taskDescription, int[] estimatedDuration,
 			int acceptableDeviation,int[] extraTime) {
 		this.taskID = taskID;
 		this.description = taskDescription;
@@ -58,7 +61,7 @@ public class Task {
 	 * @param 	acceptableDeviation
 	 * 			The acceptable deviation of the new Task.
 	 */
-	public Task(int taskID, String taskDescription, int estimatedDuration,
+	public Task(int taskID, String taskDescription, int[] estimatedDuration,
 			int acceptableDeviation){
 		this.taskID = taskID;
 		this.description = taskDescription;
@@ -85,7 +88,7 @@ public class Task {
 	 * @param 	endTime
 	 * 			The endtime of the new Task.
 	 */
-	public Task(int taskID, String taskDescription, int estimatedDuration,
+	public Task(int taskID, String taskDescription, int[] estimatedDuration,
 			int acceptableDeviation, TaskStatus taskStatus,
 			LocalDateTime beginTime, LocalDateTime endTime) throws IllegalArgumentException {
 		this(taskID, taskDescription, estimatedDuration, acceptableDeviation);
@@ -95,22 +98,6 @@ public class Task {
 		this.beginTime = beginTime;
 		this.endTime = endTime;
 	}
-	
-//	Methode door Tim toegevoegd.
-//	/**
-//	 * Create task with start and end time given (only with finished or failed tasks)
-//	 */
-//	public Task(int taskID, String taskDescription, LocalTime estimatedDuration,
-//			float acceptableDeviation, String taskStatus,
-//			LocalDateTime beginTime, LocalDateTime endTime) {
-//		this(taskID, taskDescription, estimatedDuration, acceptableDeviation);
-////		if(taskStatus != TaskStatus.FAILED || taskStatus != TaskStatus.FINISHED)
-////			throw new IllegalArgumentException("Time stamps are only required if a task is finished or failed");
-////		PARSE STRING NAAR JUISTE TASKSTATUS
-//		this.taskStatus = TaskStatus.AVAILABLE;
-//		this.beginTime = beginTime;
-//		this.endTime = endTime;
-//	}
 	
 	/**
 	 * Checks whether the Task is finished.
@@ -173,33 +160,6 @@ public class Task {
 		else
 			return true;
 	}
-	
-//	/**
-//	 * Set the extra time of the Task.
-//	 * 
-//	 * @param 	time
-//	 * 			The extra time to add.
-//	 * @return	True if the extra time was added successfully.
-//	 * 			False if the extra time has a negative value.
-//	 */
-//	private boolean setExtraTime(int time){
-//		if(time<0)
-//			return false;
-//		this.extraTime = time;
-//		return true;
-//	}
-	
-//	private void updateBeginTime(LocalDateTime beginTime) {
-//		this.beginTime = beginTime;
-//	}
-//	
-//	private void updateEndTime(LocalDateTime endTime) {
-//		this.endTime = endTime;
-//	}
-//	
-//	private void changeStatus(String status) {
-//		taskStatus = TaskStatus.valueOf(status);
-//	}
 	
 	/**
 	 * This method compares the start time of the project with a given time and calculates the
@@ -314,7 +274,7 @@ public class Task {
 	 * 
 	 * @return	The estimated duration of the Task.
 	 */
-	public int getEstimatedDuration() {
+	public int[] getEstimatedDuration() {
 		return estimatedDuration;
 	}
 
@@ -414,15 +374,25 @@ public class Task {
 	}
 	
 	@Override
-	public boolean equals(Object o){
-		if(o == null)
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + taskID;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
 			return false;
-		if(o.getClass()!=this.getClass())
+		if (getClass() != obj.getClass())
 			return false;
-		if(this.getTaskID()!=((Task)o).getTaskID())
+		Task other = (Task) obj;
+		if (taskID != other.taskID)
 			return false;
 		return true;
-		
 	}
 	
 	
