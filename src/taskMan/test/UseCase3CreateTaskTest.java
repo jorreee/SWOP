@@ -286,7 +286,7 @@ public class UseCase3CreateTaskTest {
 		// Er is al een FAILED task aanwezig in het project
 		assertTrue(taskMan.createTask(0, "Design system", task00EstDur, task00Dev, -1, task00Dependencies));
 		assertEquals(taskMan.getTaskStatus(0, 0),"available");
-		assertTrue(taskMan.setTaskFailed(0, 0, startDate, altTaskEndDate);
+		assertTrue(taskMan.setTaskFailed(0, 0, startDate, altTaskEndDate));
 		assertEquals(taskMan.getTaskStatus(0, 0),"failed");
 		
 		// Task kan geen PreReq zijn voor zijn ALT
