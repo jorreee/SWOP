@@ -21,6 +21,7 @@ public class Task {
 	private LocalDateTime beginTime;
 	private LocalDateTime endTime;
 	private final int taskID;
+	private final int extraTime;
 
 	/**
 	 * Create a new Task.
@@ -33,13 +34,33 @@ public class Task {
 	 * 			The estimated duration of the new Task.
 	 * @param 	acceptableDeviation
 	 * 			The acceptable deviation of the new Task.
+	 * @param	extraTime
+	 * 			The extra time to add to the elapsed time
 	 */
 	public Task(int taskID, String taskDescription, int estimatedDuration,
-			int acceptableDeviation) {
+			int acceptableDeviation,int extraTime) {
 		this.taskID = taskID;
 		this.description = taskDescription;
 		this.estimatedDuration = estimatedDuration;
 		this.acceptableDeviation = acceptableDeviation;
+		this.extraTime = extraTime;
+	}
+	
+	/**
+	 Create a new Task without an added extra time.
+	 * 
+	 * @param 	taskID
+	 * 			The ID of the new Task.
+	 * @param 	taskDescription
+	 * 			The description of the new Task.
+	 * @param 	estimatedDuration
+	 * 			The estimated duration of the new Task.
+	 * @param 	acceptableDeviation
+	 * 			The acceptable deviation of the new Task.
+	 */
+	public Task(int taskID, String taskDescription, int estimatedDuration,
+			int acceptableDeviation){
+		this(taskID,taskDescription,estimatedDuration,acceptableDeviation,0);
 	}
 	
 	/**
@@ -88,21 +109,39 @@ public class Task {
 //	}
 	
 	/**
-	 * Checks whether the project is finished.
+	 * Checks whether the Task is finished.
 	 * 
-	 * @return	True if and only if the project has a finished status.
+	 * @return	True if and only if the Task has a finished status.
 	 */
 	public boolean isFinished() {
 		return (taskStatus == TaskStatus.FINISHED);
 	}
 	
 	/**
-	 * Checks whether the the project is failed.
+	 * Checks whether the the Task has failed.
 	 * 
-	 * @return	True if and only the project is failed.
+	 * @return	True if and only the Task has failed.
 	 */
 	public boolean isFailed(){
 		return (taskStatus ==TaskStatus.FAILED);
+	}
+	
+	/**
+	 * Checks whether the Task is available.
+	 * 
+	 * @return	True if and only the Task is available.
+	 */
+	public boolean isAvailable(){
+		return (taskStatus == TaskStatus.AVAILABLE);
+	}
+	
+	/**
+	 * Checks whether the Task is unavailable.
+	 * 
+	 * @return	True if and only the Task is unavailable.
+	 */
+	public boolean isUnavailable(){
+		return (taskStatus == TaskStatus.UNAVAILABLE);
 	}
 	
 	/**
@@ -130,6 +169,21 @@ public class Task {
 		else
 			return true;
 	}
+	
+//	/**
+//	 * Set the extra time of the Task.
+//	 * 
+//	 * @param 	time
+//	 * 			The extra time to add.
+//	 * @return	True if the extra time was added successfully.
+//	 * 			False if the extra time has a negative value.
+//	 */
+//	private boolean setExtraTime(int time){
+//		if(time<0)
+//			return false;
+//		this.extraTime = time;
+//		return true;
+//	}
 	
 //	private void updateBeginTime(LocalDateTime beginTime) {
 //		this.beginTime = beginTime;
