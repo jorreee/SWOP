@@ -556,7 +556,7 @@ public class Project {
 	public int getEstimatedTaskDuration(int taskID) {
 		if(!isValidTaskID(taskID))
 			return -1;
-		return getTask(taskID).getEstimatedDuration();
+		return getTask(taskID).getEstimatedDuration().getSpan();
 	}
 	
 	//TODO doc
