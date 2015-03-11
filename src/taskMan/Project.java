@@ -118,7 +118,10 @@ public class Project {
 		}
 		if(isValidAlternative(alternativeFor, newTask.getTaskID()) && !addAlternative(alternativeFor, newTask.getTaskID()))
 			return false;
-		if(!addPrerequisite(newTask.getTaskID(), prerequisiteTasks))
+		if(!isValidPrerequisites(newTask.getTaskID(), prerequisiteTasks)){
+			return false;
+		}
+		if(!addPrerequisites(newTask.getTaskID(), prerequisiteTasks))
 			return false;
 		updateTaskStatus(newTask);
 		boolean success = taskList.add(newTask);
@@ -406,41 +409,41 @@ public class Project {
 	 * 			The new prerequisites.
 	 * @return	True if and only the addition was successful.
 	 */
-	private boolean addPrerequisite(int taskID, List<Integer> pre){
-		if(pre.isEmpty())
-			return true;
-		if(!isValidTaskID(taskID)||pre==null)
+	private boolean addPrerequisites(int taskID, List<Integer> pre){
+		if (pre.isEmpty()) return true;
+		if(!isValidPrerequisites(taskID, pre)){
 			return false;
+		}
 		if(hasPrerequisites(taskID)){
-			for(int newPre: pre){
-				if(!isValidPrerequisite(taskID, newPre))
-					return false;
-			}
 			List<Integer> preOld = getPrerequisites(taskID);
 			pre.addAll(preOld);
 			taskPrerequisites.put(taskID, pre);
 			return true;
 		}
-		taskPrerequisites.put(taskID, pre);
-		return true;
-	}
+		else { taskPrerequisites.put(taskID, pre);
+			return true; }
+}
 
 	/**
-	 * Checks whether the given prerequisites is a valid one for the give Task.
+	 * Checks whether the given prerequisites are valid for the given Task.
 	 * 
 	 * @param 	task
 	 * 			The given Task.
 	 * @param 	pre
-	 * 			The prerequisite to check.
-	 * @return	True if and only the prerequisite is a valid one.
+	 * 			The prerequisites to check.
+	 * @return	True if and only the prerequisites are a valid.
 	 */
-	private boolean isValidPrerequisite(int task, int pre){
-		//		if(pre==null||task==null)
-		//			return false;
-		if(task == pre)
-			return false;
-		else
-			return true;
+	private boolean isValidPrerequisites(int task, List<Integer> pre){
+		if (pre == null) return false;
+		if (!isValidTaskID(task)) return false;
+		else if (pre.isEmpty()) return true;
+		else if(pre.contains(task)) return false;
+		for (int prereq : pre){
+			if (!isValidTaskID(prereq)){
+				return false;
+			}
+		}
+		return true;
 	}
 	/**
 	 * Returns the Tasks belonging to the given ID's.

@@ -158,7 +158,7 @@ public class UseCase3CreateTaskTest {
 		assertTrue(taskMan.createTask(0, "A new TASK", newTaskDur, newTaskDev, -1, newTaskDependencies));
 		// Step 4
 		assertTrue(taskMan.hasTaskPrerequisites(0, 2));
-		assertEquals(taskMan.getTaskPrerequisitesFor(0, 2),1);				// NIET 0 !!!!!
+		assertTrue(taskMan.getTaskPrerequisitesFor(0, 2).contains(1));				// NIET 0 !!!!!
 		assertEquals(taskMan.getTaskAmount(0),3);
 	}
 
