@@ -91,7 +91,12 @@ public class TaskMan {
 	 * 			false if the creation was unsuccessful
 	 */
 	public boolean createProject(String name, String description, LocalDateTime creationTime, LocalDateTime dueTime) {
-		Project project = new Project(projectList.size(), name, description, creationTime, dueTime);
+		Project project = null;
+		try{
+			 project = new Project(projectList.size(), name, description, creationTime, dueTime);
+		}catch(IllegalArgumentException e){
+			return false;
+		}
 		return projectList.add(project);
 	}
 	

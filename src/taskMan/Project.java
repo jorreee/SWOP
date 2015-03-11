@@ -52,9 +52,13 @@ public class Project {
 	 * 			The creation time of the new Project.
 	 * @param 	dueTime
 	 * 			The due time of the new Project.
+	 * @throws	IllegalArgumentException
+	 * 			Throws exception when the dueTime comes before the creationTime.
 	 */
 	public Project(int projectID, String projectName, String description,
-			LocalDateTime creationTime, LocalDateTime dueTime) {
+			LocalDateTime creationTime, LocalDateTime dueTime) throws IllegalArgumentException{
+		if(dueTime.isBefore(creationTime))
+			throw new IllegalArgumentException("Duetime comes before the creationTime");
 		this.projectName = projectName;
 		this.description = description;
 		this.creationTime = creationTime;
