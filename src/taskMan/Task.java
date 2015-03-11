@@ -278,12 +278,64 @@ public class Task {
 	 * @throws	IllegalArgumentException
 	 * 			If the status isn't a valid one.
 	 */
-	public void setTaskStatus(String taskStatus) throws IllegalArgumentException{
+	private void setTaskStatus(String taskStatus) throws IllegalArgumentException{
 		try{
 			this.taskStatus = TaskStatus.valueOf(taskStatus);
 		}catch(Exception e){
 			throw new IllegalArgumentException("Invalid status");
 		}
+	}
+	
+	/**
+	 * Set the status of this Task on finished.
+	 * 
+	 * @return	True is the operation was successful.
+	 * 			False if the status was already failed or finished.
+	 */
+	public boolean setFinished(){
+		if(this.taskStatus == TaskStatus.FAILED || this.taskStatus == TaskStatus.FINISHED)
+			return false;
+		this.taskStatus = TaskStatus.FINISHED;
+		return true;
+	}
+	
+	/**
+	 * Set the status of this Task on failed.
+	 * 
+	 * @return	True is the operation was successful.
+	 * 			False if the status was already failed or finished.
+	 */
+	public boolean setFailed(){
+		if(this.taskStatus == TaskStatus.FAILED || this.taskStatus == TaskStatus.FINISHED)
+			return false;
+		this.taskStatus = TaskStatus.FAILED;
+		return true;
+	}
+	
+	/**
+	 * Set the status of this Task on available.
+	 * 
+	 * @return	True is the operation was successful.
+	 * 			False if the status was already failed or finished.
+	 */
+	public boolean setAvailable(){
+		if(this.taskStatus == TaskStatus.FAILED || this.taskStatus == TaskStatus.FINISHED)
+			return false;
+		this.taskStatus = TaskStatus.AVAILABLE;
+		return true;
+	}
+	
+	/**
+	 * Set the status of this Task on unavailable.
+	 * 
+	 * @return	True is the operation was successful.
+	 * 			False if the status was already failed or finished.
+	 */
+	public boolean setUnavailable(){
+		if(this.taskStatus == TaskStatus.FAILED || this.taskStatus == TaskStatus.FINISHED)
+			return false;
+		this.taskStatus = TaskStatus.UNAVAILABLE;
+		return true;
 	}
 	
 	/**
