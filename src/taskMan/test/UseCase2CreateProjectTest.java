@@ -106,7 +106,7 @@ public class UseCase2CreateProjectTest {
 	public void flow4aNoTimeTest() {
 		// Stap 1 en 2 zijn impliciet
 		// Stap 3
-		assertFalse(taskMan.createProject("Test1", "testing 1", project0StartDateVeryBad, project0DueDateVeryBad2));
+		assertFalse(taskMan.createProject("Test1", "testing 1", project0StartDateGood, project0DueDateVeryBad2));
 		// Stap 4
 		assertEquals(taskMan.getProjectAmount(),0);
 	}

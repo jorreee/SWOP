@@ -61,6 +61,8 @@ public class Project {
 			throw new IllegalArgumentException("One of the arguments is null");
 		if(dueTime.isBefore(creationTime))
 			throw new IllegalArgumentException("Duetime comes before the creationTime");
+		if(dueTime.equals(creationTime))
+			throw new IllegalArgumentException("No time difference");
 		this.projectName = projectName;
 		this.description = description;
 		this.creationTime = creationTime;
