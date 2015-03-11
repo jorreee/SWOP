@@ -117,7 +117,7 @@ public class UseCase4UpdateTaskStatusTest {
 		// Step 1 is implicit
 		// Step 2 and 3 are handled in UI
 		// Step 4 and 5
-		assertFalse(taskMan.setTaskFailed(0, 0, null, null, null));
+		assertFalse(taskMan.setTaskFailed(0, 0, null, null));
 		// Step 6
 		assertTrue(taskMan.getTaskStatus(0,0).equals("available"));
 		assertTrue(taskMan.getTaskStatus(0,1).equals("unavailable"));
