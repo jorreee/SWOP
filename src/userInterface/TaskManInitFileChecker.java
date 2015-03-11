@@ -125,7 +125,7 @@ public class TaskManInitFileChecker extends StreamTokenizer {
 			String description = expectStringField("description");
 			int estimatedDuration = expectIntField("estimatedDuration");
 			int acceptableDeviation = expectIntField("acceptableDeviation");
-			Integer alternativeFor = null;
+			int alternativeFor = -1;
 			expectLabel("alternativeFor");
 			if (ttype == TT_NUMBER)
 				alternativeFor = expectInt();

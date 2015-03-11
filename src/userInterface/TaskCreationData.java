@@ -9,14 +9,14 @@ public class TaskCreationData {
 	private final String description;
 	private final int estimatedDuration;
 	private final int acceptableDeviation;
-	private final Integer alternativeFor;
+	private final int alternativeFor;
 	private final List<Integer> prerequisiteTasks;
 	private final TaskStatus status;
 	private final LocalDateTime startTime;
 	private final LocalDateTime endTime;
 
 	public TaskCreationData(int project, String description, int estimatedDuration,
-			int acceptableDeviation, Integer alternativeFor,
+			int acceptableDeviation, int alternativeFor,
 			List<Integer> prerequisiteTasks, TaskStatus status, LocalDateTime startTime, LocalDateTime endTime) {
 		this.project = project;
 		this.description = description;
@@ -45,7 +45,7 @@ public class TaskCreationData {
 		return acceptableDeviation;
 	}
 
-	public Integer getAlternativeFor() {
+	public int getAlternativeFor() {
 		return alternativeFor;
 	}
 
