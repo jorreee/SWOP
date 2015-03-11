@@ -448,6 +448,8 @@ public class TaskMan {
 	 * 			False if it was unsuccessful
 	 */
 	public boolean setTaskFinished(int projectID, int taskID, LocalDateTime startTime, LocalDateTime endTime) {
+		if(endTime == null || endTime.isAfter(currentTime))
+			return false;
 		return projectList.get(projectID).setTaskFinished(taskID,startTime,endTime);
 	}
 	
@@ -465,6 +467,8 @@ public class TaskMan {
 	 * 			False if it was unsuccessful
 	 */
 	public boolean setTaskFailed(int projectID, int taskID, LocalDateTime startTime, LocalDateTime endTime) {
+		if(endTime == null || endTime.isAfter(currentTime))
+			return false;
 		return projectList.get(projectID).setTaskFailed(taskID,startTime, endTime);
 	}
 }

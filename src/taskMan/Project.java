@@ -682,10 +682,13 @@ public class Project {
 	 * 			False if it was unsuccessful
 	 */
 	public boolean setTaskFinished(int taskID, LocalDateTime startTime, LocalDateTime endTime) {
+		if(startTime == null || startTime.isBefore(creationTime))
+			return false;
 		boolean success = getTask(taskID).setTaskFinished(startTime, endTime);
 		if(success) {
 			for(Task task : taskList)
 				updateTaskStatus(task);
+			recalculateProjectStatus();
 			return true;
 		}
 		return false;
@@ -703,6 +706,8 @@ public class Project {
 	 * 			False if it was unsuccessful
 	 */
 	public boolean setTaskFailed(int taskID, LocalDateTime startTime, LocalDateTime endTime) {
+		if(startTime == null || startTime.isBefore(creationTime))
+			return false;
 		boolean success = getTask(taskID).setTaskFailed(startTime, endTime);
 		if(success) {
 			for(Task task : taskList)
