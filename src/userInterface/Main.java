@@ -8,7 +8,10 @@ import java.util.ArrayList;
 
 import taskMan.Facade;
 import userInterface.requests.Request;
-
+/**
+ * Main class of the User Interface of the project TaskMan.
+ * @author Tim Van Den Broecke, Joran Van de Woestijne, Vincent Van Gestel and Eli Vangrieken
+ */
 public class Main {
 		
 	public static void main(String[] args) throws IOException {

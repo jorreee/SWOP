@@ -82,7 +82,7 @@ public class Project {
 			return false;
 		if(!isValidEstimatedTaskDuration(estimatedDuration)) // A task must have a valid estimated duration
 			return false;
-		if(alternativeFor >= 0 && !isValidTaskID(alternativeFor))
+		if(!isValidTaskID(alternativeFor) && alternativeFor != -1)
 			return false;
 		TaskStatus status = null;
 		if(taskStatus != null)
@@ -97,7 +97,7 @@ public class Project {
 		}catch(IllegalArgumentException e){
 			return false;
 		}
-		if(!addAlternative(alternativeFor, newTask.getTaskID()))
+		if(isValidAlternative(alternativeFor, newTask.getTaskID()) && !addAlternative(alternativeFor, newTask.getTaskID()))
 			return false;
 		if(!addPrerequisite(newTask.getTaskID(), prerequisiteTasks))
 			return false;
@@ -210,7 +210,7 @@ public class Project {
 	 * @return	True if and only the TaskID is a valid one.
 	 */
 	private boolean isValidTaskID(int taskID){
-		if(taskID<=this.getTaskAmount()){
+		if(taskID<=this.getTaskAmount() && taskID >= 0){
 			return true;
 		}
 		return false;
@@ -379,7 +379,7 @@ public class Project {
 	 * @return	True if and only if the addition was successful.
 	 */
 	private boolean addAlternative(int task, int alternative){
-		if(isValidAlternative(task, alternative))
+		if(!isValidAlternative(task, alternative))
 			return false;
 		if(!this.getTask(task).isFailed())
 			return false;
@@ -394,14 +394,16 @@ public class Project {
 	/**
 	 * checks whether the given alternative is a valid one for the given Task.
 	 * 
-	 * @param 	task
+	 * @param 	oldTask
 	 * 			The task to add the alternative to.
 	 * @param 	alt
 	 * 			The alternative to check.
 	 * @return	True if and only the alternative is valid one.
 	 */
-	private boolean isValidAlternative(int task,int alt){
-		return task!=alt;
+	private boolean isValidAlternative(int oldTask,int alt){
+		if(!isValidTaskID(oldTask))
+			return false;
+		return oldTask!=alt;
 	}
 	
 	/**
@@ -414,6 +416,8 @@ public class Project {
 	 * @return	True if and only the addition was successful.
 	 */
 	private boolean addPrerequisite(int taskID, List<Integer> pre){
+		if(pre.isEmpty())
+			return true;
 		if(!isValidTaskID(taskID)||pre==null)
 			return false;
 		if(hasPrerequisites(taskID)){
@@ -473,7 +477,7 @@ public class Project {
 	 * @return	The number of Tasks in the project.
 	 */
 	public int getTaskAmount() {
-		return this.taskList.size()-1;
+		return this.taskList.size();
 	}
 	
 	//TODO doc
