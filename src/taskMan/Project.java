@@ -1,11 +1,11 @@
 package taskMan;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import taskMan.util.TimeSpan;
 
 import com.google.common.collect.ImmutableList;
 
@@ -556,7 +556,7 @@ public class Project {
 	public int getEstimatedTaskDuration(int taskID) {
 		if(!isValidTaskID(taskID))
 			return -1;
-		return getTask(taskID).getEstimatedDuration().getSpan();
+		return getTask(taskID).getEstimatedDuration().getSpanMinutes();
 	}
 	
 	//TODO doc
