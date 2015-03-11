@@ -3,7 +3,12 @@ package taskMan.util;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
-
+/**
+ * Creates a timeSpan object.
+ * 
+ * @author Tim Van den Broecke, Joran Van de Woestijne, Vincent Van Gestel, Eli Vangrieken
+ *
+ */
 public class TimeSpan {
 
 	private final int[] span;
@@ -20,32 +25,17 @@ public class TimeSpan {
 		if(time1 == null || time2 == null)
 			throw new IllegalStateException("Time objects are null");
 
+		LocalDateTime fromDateTime = null;
+		LocalDateTime toDateTime =null;
+		
 		if(time2.isAfter(time1)){
-			LocalDateTime fromDateTime = time1;
-			LocalDateTime toDateTime = time2;
-
-			LocalDateTime tempDateTime = LocalDateTime.from( fromDateTime );
-
-			long years = tempDateTime.until( toDateTime, ChronoUnit.YEARS);
-			tempDateTime = tempDateTime.plusYears( years );
-
-			long months = tempDateTime.until( toDateTime, ChronoUnit.MONTHS);
-			tempDateTime = tempDateTime.plusMonths( months );
-
-			long days = tempDateTime.until( toDateTime, ChronoUnit.DAYS);
-			tempDateTime = tempDateTime.plusDays( days );
-
-
-			long hours = tempDateTime.until( toDateTime, ChronoUnit.HOURS);
-			tempDateTime = tempDateTime.plusHours( hours );
-
-			long minutes = tempDateTime.until( toDateTime, ChronoUnit.MINUTES);
-			tempDateTime = tempDateTime.plusMinutes( minutes );
-			this.span = new int[] {(int) years, (int) months, (int) days, (int) hours, (int) minutes };
+			 fromDateTime = time1;
+			 toDateTime = time2;
 		}
 		else{
-			LocalDateTime fromDateTime = time2;
-			LocalDateTime toDateTime = time1;
+			 fromDateTime = time2;
+			 toDateTime = time1;
+		}
 
 			LocalDateTime tempDateTime = LocalDateTime.from( fromDateTime );
 
@@ -65,7 +55,6 @@ public class TimeSpan {
 			long minutes = tempDateTime.until( toDateTime, ChronoUnit.MINUTES);
 			tempDateTime = tempDateTime.plusMinutes( minutes );
 			this.span = new int[] {(int) years, (int) months, (int) days, (int) hours, (int) minutes };
-		}
 	}
 
 	/**
@@ -101,6 +90,16 @@ public class TimeSpan {
 	 */
 	public int[] getSpan(){
 		return this.span;
+	}
+	
+	/**
+	 * Returns the TimeSpan in minutes.
+	 * 
+	 * @return	the span in minutes.
+	 */
+	public int getSpanMinutes(){
+		return this.getMinutes()+this.getHours()*60+this.getDays()*60*24+
+				this.getMonths()*60*24*30+this.getYears()*60*24*30*12;
 	}
 	
 	/**
