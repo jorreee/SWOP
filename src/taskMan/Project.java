@@ -150,6 +150,8 @@ public class Project {
 	private boolean hasFinishedAlternative(Integer task) {
 		if(!isValidTaskID(task))
 			return false;
+		if(taskAlternatives.get(task) == null)
+			return false;
 		return getTask(taskAlternatives.get(task)).isFinished() || hasFinishedAlternative(taskAlternatives.get(task));
 
 	}
