@@ -465,7 +465,7 @@ public class Project {
 	public List<Integer> getAvailableTasks() {
 		ArrayList<Integer> availableTasks = new ArrayList<Integer>();
 		for(Task task : taskList) {
-			if(task.getStatus().equals("AVAILABLE"))
+			if(task.getStatus().equals("available"))
 				availableTasks.add(task.getTaskID());
 		}
 		return availableTasks;
