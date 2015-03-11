@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 
+import taskMan.util.TimeSpan;
+
 
 //TODO task moeten dependencies hebben, dependencies moeten fullfiled zijn voor available anders unavailable
 //TODO enkel alternative voor task die failed is, alt pakt timespan en dependencies over
