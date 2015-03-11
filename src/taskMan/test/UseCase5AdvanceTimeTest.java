@@ -29,10 +29,10 @@ public class UseCase5AdvanceTimeTest {
 			task01Dev = 50,
 			task02Dev = 0,
 			task03Dev = 0;
-	private final ArrayList<Integer> task00Dependencies = new ArrayList(),
-			task01Dependencies = new ArrayList(),
-			task02Dependencies = new ArrayList(),
-			task03Dependencies = new ArrayList();
+	private final ArrayList<Integer> task00Dependencies = new ArrayList<Integer>(),
+			task01Dependencies = new ArrayList<Integer>(),
+			task02Dependencies = new ArrayList<Integer>(),
+			task03Dependencies = new ArrayList<Integer>();
 
 	/**
 	 * DEFAULT TASKMAN TESTER
