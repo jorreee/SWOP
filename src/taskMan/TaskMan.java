@@ -155,28 +155,6 @@ public class TaskMan {
 	}
 	
 	/**
-	 * Updates the details of a given Task.
-	 * 
-	 * @param 	taskID
-	 * 			The ID of the Task.
-	 * @param 	startTime
-	 * 			The new start time of the Task.
-	 * @param 	endTime
-	 * 			The new end time of the Task.
-	 * @param 	taskStatus
-	 * 			The new status of the Task.
-	 * @return	True if the update was successful.
-	 * 			False if the ID isn't a valid one ore the
-	 * 			update isn't valid.
-	 */
-	public boolean updateTaskDetails(int projectID, int taskID, LocalDateTime startTime, LocalDateTime endTime, String taskStatus) {
-		if (startTime.isAfter(currentTime) || endTime.isAfter(currentTime) ){
-			return false;
-		}
-		return getProject(projectID).updateTaskDetails(taskID, startTime, endTime, taskStatus);
-	}
-	
-	/**
 	 * Returns the name of the project with the given ID
 	 * @param 	projectID
 	 * 			The id of the project
@@ -444,5 +422,39 @@ public class TaskMan {
 	 */
 	public int getTaskAlternativeTo(int projectID, int taskID) {
 		return projectList.get(projectID).getAlternative(taskID);
+	}
+	
+	/**
+	 * Sets the task with the given task id belonging to the project with the given project id to finished
+	 * @param 	projectID
+	 * 			the id of the given project
+	 * @param 	taskID
+	 * 			the id of the given task
+	 * @param 	startTime
+	 * 			the start time of the given task
+	 * @param 	endTime
+	 * 			the end time of the given task
+	 * @return	True if setting the task to finished was successful,
+	 * 			False if it was unsuccessful
+	 */
+	public boolean setTaskFinished(int projectID, int taskID, LocalDateTime startTime, LocalDateTime endTime) {
+		return projectList.get(projectID).setTaskFinished(taskID,startTime,endTime);
+	}
+	
+	/**
+	 * Sets the task with the given task id belonging to the project with the given project id to failed
+	 * @param 	projectID
+	 * 			the id of the given project
+	 * @param 	taskID
+	 * 			the id of the given task
+	 * @param 	startTime
+	 * 			the start time of the given task
+	 * @param 	endTime
+	 * 			the end time of the given task
+	 * @return	True if setting the task to failed was successful,
+	 * 			False if it was unsuccessful
+	 */
+	public boolean setTaskFailed(int projectID, int taskID, LocalDateTime startTime, LocalDateTime endTime) {
+		return projectList.get(projectID).setTaskFailed(taskID,startTime, endTime);
 	}
 }

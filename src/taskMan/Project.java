@@ -1,7 +1,6 @@
 package taskMan;
 
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -213,30 +212,6 @@ public class Project {
 		return false;
 	}
 	
-	/**
-	 * Updates the details of a given Task.
-	 * 
-	 * @param 	taskID
-	 * 			The ID of the Task.
-	 * @param 	startTime
-	 * 			The new start time of the Task.
-	 * @param 	endTime
-	 * 			The new end time of the Task.
-	 * @param 	taskStatus
-	 * 			The new status of the Task.
-	 * @return	True if the update was successful.
-	 * 			False if the ID isn't a valid one ore the
-	 * 			update isn't valid.
-	 */
-	public boolean updateTaskDetails(int taskID, LocalDateTime startTime, LocalDateTime endTime, String taskStatus) {
-		if(isValidTaskID(taskID)){
-			boolean success = getTask(taskID).updateTaskDetails(startTime, endTime, taskStatus);
-			if(success)
-				recalculateProjectStatus();
-			return success;
-		}
-		return false;
-	}
 
 	/**
 	 * Returns the ID of the Project.
@@ -687,4 +662,33 @@ public class Project {
 		}
 		}
 	
+	/**
+	 * Sets the task with the given task id to finished
+	 * @param 	taskID
+	 * 			the id of the given task
+	 * @param 	startTime
+	 * 			the start time of the given task
+	 * @param 	endTime
+	 * 			the end time of the given task
+	 * @return	True if setting the task to finished was successful,
+	 * 			False if it was unsuccessful
+	 */
+	public boolean setTaskFinished(int taskID, LocalDateTime startTime, LocalDateTime endTime) {
+		return getTask(taskID).setTaskFinished(startTime, endTime);
+	}
+	
+	/**
+	 * Sets the task with the given task id to failed
+	 * @param 	taskID
+	 * 			the id of the given task
+	 * @param 	startTime
+	 * 			the start time of the given task
+	 * @param 	endTime
+	 * 			the end time of the given task
+	 * @return	True if setting the task to failed was successful,
+	 * 			False if it was unsuccessful
+	 */
+	public boolean setTaskFailed(int taskID, LocalDateTime startTime, LocalDateTime endTime) {
+		return getTask(taskID).setTaskFailed(startTime, endTime);
+	}
 }
