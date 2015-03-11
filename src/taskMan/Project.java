@@ -2,6 +2,7 @@ package taskMan;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,16 +15,27 @@ import com.google.common.collect.ImmutableList;
 //TODO werken met taskID ipv task objecten.
 //TODO isontime boolean, getDelay int 
 
+/**
+ * The project class used by TaskMan. A project will always have a unique
+ * identifier, a name, a description, a creation time, a due time, a status and
+ * a list containing all tasks assigned to this project. A project will also
+ * know if a task is another one's alternative or if a task depends on a series
+ * of other tasks.
+ * A project can be either ongoing or finished.
+ * 
+ * @author Tim Van Den Broecke, Joran Van de Woestijne, Vincent Van Gestel and
+ *         Eli Vangrieken
+ */
 public class Project {
 	
-	private ArrayList<Task> taskList;
+	private ArrayList<Task> taskList = new ArrayList<Task>();
 	private final String projectName;
 	private final String description;
 	private final LocalDateTime creationTime;
 	private final LocalDateTime dueTime;
 	private LocalDateTime endTime;
-	private HashMap<Integer,Integer> taskAlternatives;
-	private HashMap<Integer,List<Integer>> taskPrerequisites;
+	private HashMap<Integer,Integer> taskAlternatives = new HashMap<Integer, Integer>();
+	private HashMap<Integer,List<Integer>> taskPrerequisites = new HashMap<Integer, List<Integer>>();
 	private ProjectStatus projectStatus;
 	private final int projectID;
 	
@@ -48,6 +60,8 @@ public class Project {
 		this.creationTime = creationTime;
 		this.dueTime = dueTime;
 		this.projectID = projectID;
+		this.projectStatus = ProjectStatus.ONGOING;
+		
 	}
 
 	/**
@@ -75,27 +89,26 @@ public class Project {
 	public boolean createTask(String description, int estimatedDuration, 
 			int acceptableDeviation, String taskStatus, int alternativeFor, 
 			List<Integer> prerequisiteTasks, LocalDateTime startTime, LocalDateTime endTime) {
-		if(description==null)
+		if(description==null) // A task must have a description
 			return false;
-//		if(estimatedDuration==null)
-//			return false;
-		if(startTime==null)
+		if(!isValidEstimatedTaskDuration(estimatedDuration)) // A task must have a valid estimated duration
 			return false;
-		if(endTime==null)
+		if(!isValidTaskID(alternativeFor) && alternativeFor != -1)
 			return false;
-		if(taskStatus==null)
-			return false;
-		if(!isValidTaskID(alternativeFor))
-			return false;
-		TaskStatus status = TaskStatus.valueOf(taskStatus);
+		TaskStatus status = null;
+		if(taskStatus != null)
+			status = TaskStatus.valueOf(taskStatus);
 		Task newTask = null;
 		try{
-			newTask = new Task(taskList.size(), description, estimatedDuration, 
+			if(status != null)
+				newTask = new Task(taskList.size(), description, estimatedDuration, 
 					acceptableDeviation, status, startTime, endTime);
+			else
+				newTask = new Task(taskList.size(), description, estimatedDuration, acceptableDeviation);
 		}catch(IllegalArgumentException e){
 			return false;
 		}
-		if(!addAlternative(alternativeFor, newTask.getTaskID()))
+		if(isValidAlternative(alternativeFor, newTask.getTaskID()) && !addAlternative(alternativeFor, newTask.getTaskID()))
 			return false;
 		if(!addPrerequisite(newTask.getTaskID(), prerequisiteTasks))
 			return false;
@@ -166,23 +179,23 @@ public class Project {
 //		}
 //	}
 	
-//	/**
-//	 * This method will adjust the status of the project, depending on its tasks.
-//	 * If the project has at least one task and all of those tasks are finished (or failed with a finished alternative),
-//	 * the project itself will be considered finished.
-//	 */
-//	private void recalcultateProjectStatus() {
-//		for(Task task : taskList) {
-//			TaskStatus status = task.getTaskStatus();
-//			if( status == TaskStatus.AVAILABLE || status == TaskStatus.UNAVAILABLE)
-//				return;
-//			if( status == TaskStatus.FAILED) {
-//				if(!hasFinishedAlternative(task.getTaskID()))
-//					return;
-//			}
-//		}
-//		this.projectStatus = ProjectStatus.FINISHED;
-//	}
+	/**
+	 * This method will adjust the status of the project, depending on its tasks.
+	 * If the project has at least one task and all of those tasks are finished (or failed with a finished alternative),
+	 * the project itself will be considered finished.
+	 */
+	private void recalcultateProjectStatus() {
+		for(Task task : taskList) {
+			String status = task.getTaskStatusName();
+			if( status.equals("AVAILABLE") || status.equals("UNAVAILABLE"))
+				return;
+			if( status.equals("FAILED")) {
+				if(!hasFinishedAlternative(task.getTaskID()))
+					return;
+			}
+		}
+		this.projectStatus = ProjectStatus.FINISHED;
+	}
 	
 	/**
 	 * Returns a Task of the Project.
@@ -206,7 +219,7 @@ public class Project {
 	 * @return	True if and only the TaskID is a valid one.
 	 */
 	private boolean isValidTaskID(int taskID){
-		if(taskID<=this.getTaskAmount()){
+		if(taskID<=this.getTaskAmount() && taskID >= 0){
 			return true;
 		}
 		return false;
@@ -375,7 +388,7 @@ public class Project {
 	 * @return	True if and only if the addition was successful.
 	 */
 	private boolean addAlternative(int task, int alternative){
-		if(isValidAlternative(task, alternative))
+		if(!isValidAlternative(task, alternative))
 			return false;
 		if(!this.getTask(task).isFailed())
 			return false;
@@ -390,14 +403,16 @@ public class Project {
 	/**
 	 * checks whether the given alternative is a valid one for the given Task.
 	 * 
-	 * @param 	task
+	 * @param 	oldTask
 	 * 			The task to add the alternative to.
 	 * @param 	alt
 	 * 			The alternative to check.
 	 * @return	True if and only the alternative is valid one.
 	 */
-	private boolean isValidAlternative(int task,int alt){
-		return task!=alt;
+	private boolean isValidAlternative(int oldTask,int alt){
+		if(!isValidTaskID(oldTask))
+			return false;
+		return oldTask!=alt;
 	}
 	
 	/**
@@ -410,6 +425,8 @@ public class Project {
 	 * @return	True if and only the addition was successful.
 	 */
 	private boolean addPrerequisite(int taskID, List<Integer> pre){
+		if(pre.isEmpty())
+			return true;
 		if(!isValidTaskID(taskID)||pre==null)
 			return false;
 		if(hasPrerequisites(taskID)){
@@ -469,7 +486,17 @@ public class Project {
 	 * @return	The number of Tasks in the project.
 	 */
 	public int getTaskAmount() {
-		return this.taskList.size()-1;
+		return this.taskList.size();
+	}
+	
+	//TODO doc
+	public List<Integer> getAvailableTasks() {
+		ArrayList<Integer> availableTasks = new ArrayList<Integer>();
+		for(Task task : taskList) {
+			if(task.getStatus().equals("AVAILABLE"))
+				availableTasks.add(task.getTaskID());
+		}
+		return availableTasks;
 	}
 
 	/**
@@ -515,6 +542,8 @@ public class Project {
 			return null;
 		return getTask(taskID).getBeginTime();
 	}
+	
+	
 
 	/**
 	 * Returns the estimated duration of the Task belonging to the given ID.
@@ -527,7 +556,12 @@ public class Project {
 	public int getEstimatedTaskDuration(int taskID) {
 		if(!isValidTaskID(taskID))
 			return -1;
-		return getTask(taskID).getEstimatedDuration();
+		return getTask(taskID).getEstimatedDuration().getSpan();
+	}
+	
+	//TODO doc
+	private boolean isValidEstimatedTaskDuration(int estimatedDuration) {
+		return estimatedDuration > 0;
 	}
 
 	/**
@@ -635,7 +669,6 @@ public class Project {
 		}
 	}
 	
-	//TODO
 	/**
 	 * Returns the delay of the project if any.
 	 * 
@@ -643,11 +676,28 @@ public class Project {
 	 * 			The current time to check with.
 	 * @return	The delay of the project
 	 */
-	public int getDelay(LocalDateTime current){
-		if(!isOnTime(current))
-			return -1;
-		else
-			return 1;
-	}
+	public int[] getDelay(LocalDateTime current){
+		LocalDateTime dueTime = getProjectDueTime();
+	    LocalDateTime tempDateTime = LocalDateTime.from( dueTime );
+		long years = tempDateTime.until( current, ChronoUnit.YEARS);
+		tempDateTime = tempDateTime.plusYears( years );
+
+		long months = tempDateTime.until( current, ChronoUnit.MONTHS);
+		tempDateTime = tempDateTime.plusMonths( months );
+
+		long days = tempDateTime.until( current, ChronoUnit.DAYS);
+		tempDateTime = tempDateTime.plusDays( days );
+
+		long hours = tempDateTime.until( current, ChronoUnit.HOURS);
+		tempDateTime = tempDateTime.plusHours( hours );
+
+		long minutes = tempDateTime.until( current, ChronoUnit.MINUTES);
+		tempDateTime = tempDateTime.plusMinutes( minutes );
+		int delay = (int) (minutes + hours * 60 + days * 24 * 60 +  months * 30 * 24 * 60 + years * 12 * 30 * 24 * 60);
+		if (delay < 0){
+			return new int[] {0,0,0,0,0};
+		}
+		else return new int[] {(int) years, (int) months, (int) days, (int) hours, (int) minutes }; 
+		}
 	
 }

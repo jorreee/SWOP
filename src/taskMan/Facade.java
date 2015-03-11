@@ -25,7 +25,8 @@ public class Facade implements IFacade {
 	
 	@Override
 	public boolean createTask(int projectID, String description, int estimatedDuration, int acceptableDeviation, String taskStatus, Integer alternativeFor, List<Integer> prerequisiteTasks, LocalDateTime startTime, LocalDateTime endTime) {
-		return taskMan.createTask(projectID, description, estimatedDuration, acceptableDeviation, taskStatus, alternativeFor, prerequisiteTasks, startTime, endTime);	}
+		return taskMan.createTask(projectID, description, estimatedDuration, acceptableDeviation, taskStatus, alternativeFor, prerequisiteTasks, startTime, endTime);
+	}
 	
 	@Override
 	public boolean createTask(int projectID, String description, int estimatedDuration, int acceptableDeviation, Integer alternativeFor, List<Integer> prerequisiteTasks) {
@@ -95,7 +96,7 @@ public class Facade implements IFacade {
 	}
 
 	@Override
-	public int getProjectDelay(int projectID) {
+	public int[] getProjectDelay(int projectID) {
 		return taskMan.getProjectDelay(projectID);
 	}
 

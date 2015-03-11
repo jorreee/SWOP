@@ -8,7 +8,10 @@ import java.util.ArrayList;
 
 import taskMan.Facade;
 import userInterface.requests.Request;
-
+/**
+ * Main class of the User Interface of the project TaskMan.
+ * @author Tim Van Den Broecke, Joran Van de Woestijne, Vincent Van Gestel and Eli Vangrieken
+ */
 public class Main {
 		
 	public static void main(String[] args) throws IOException {
@@ -32,9 +35,13 @@ public class Main {
 			facade.createProject(pcd.getName(), pcd.getDescription(), pcd.getCreationTime(), pcd.getDueTime());
 		}
 		for(TaskCreationData tcd : taskData) {
+			TaskStatus status = tcd.getStatus();
+			String statusString = null;
+			if(status != null)
+				statusString = status.name();
 			facade.createTask(tcd.getProject(), tcd.getDescription(),
 					tcd.getEstimatedDuration(),
-					tcd.getAcceptableDeviation(), tcd.getStatus().name(),
+					tcd.getAcceptableDeviation(), statusString,
 					tcd.getAlternativeFor(), tcd.getPrerequisiteTasks(),
 					tcd.getStartTime(), tcd.getEndTime());
 		}

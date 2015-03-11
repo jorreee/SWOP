@@ -25,7 +25,7 @@ public interface IFacade {
 	
 	public boolean isOnTime(int projectID);
 	
-	public int getProjectDelay(int projectID);
+	public int[] getProjectDelay(int projectID);
 	
 	public String getProjectDescription(int projectID);
 	public String getTaskDescription(int projectID, int taskID);
