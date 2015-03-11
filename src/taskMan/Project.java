@@ -278,10 +278,10 @@ public class Project {
 		String status = "";
 		switch(stat){
 		case FINISHED:
-			status = "FINISHED";
+			status = "finished";
 			break;
 		case ONGOING:
-			status = "ONGOING";
+			status = "ongoing";
 			break;
 		}
 		return status;
@@ -676,7 +676,13 @@ public class Project {
 	 * 			False if it was unsuccessful
 	 */
 	public boolean setTaskFinished(int taskID, LocalDateTime startTime, LocalDateTime endTime) {
-		return getTask(taskID).setTaskFinished(startTime, endTime);
+		boolean success = getTask(taskID).setTaskFinished(startTime, endTime);
+		if(success) {
+			for(Task task : taskList)
+				updateTaskStatus(task);
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -691,6 +697,12 @@ public class Project {
 	 * 			False if it was unsuccessful
 	 */
 	public boolean setTaskFailed(int taskID, LocalDateTime startTime, LocalDateTime endTime) {
-		return getTask(taskID).setTaskFailed(startTime, endTime);
+		boolean success = getTask(taskID).setTaskFailed(startTime, endTime);
+		if(success) {
+			for(Task task : taskList)
+				updateTaskStatus(task);
+			return true;
+		}
+		return false;
 	}
 }
