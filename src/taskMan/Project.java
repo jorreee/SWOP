@@ -99,6 +99,8 @@ public class Project {
 	public boolean createTask(String description, int estimatedDuration, 
 			int acceptableDeviation, String taskStatus, int alternativeFor, 
 			List<Integer> prerequisiteTasks, LocalDateTime startTime, LocalDateTime endTime) {
+		if(isFinished())
+			return false;
 		if(description==null) // A task must have a description
 			return false;
 		if(!isValidEstimatedTaskDuration(estimatedDuration)) // A task must have a valid estimated duration
@@ -107,7 +109,7 @@ public class Project {
 			return false;
 		Task newTask = null;
 		try{
-			if(status != null)
+			if(taskStatus != null)
 				newTask = new Task(taskList.size(), description, estimatedDuration, 
 						acceptableDeviation, taskStatus, startTime, endTime);
 			else
