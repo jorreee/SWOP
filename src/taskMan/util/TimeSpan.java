@@ -62,8 +62,12 @@ public class TimeSpan {
 	 * 
 	 * @param 	duration
 	 * 			The number of minutes.
+	 * @throws	IllegalArgumentException
+	 * 			The duration must be a postive one.
 	 */
-	public TimeSpan(int duration){
+	public TimeSpan(int duration) throws IllegalArgumentException{
+		if(duration<0)
+			throw new IllegalArgumentException("Invalid duration");
 		int minutesM = duration%60;
 		duration -= minutesM;
 		int hoursM =  duration%(24*60);
@@ -80,6 +84,9 @@ public class TimeSpan {
 	public TimeSpan(int[] newSpan) throws IllegalArgumentException{
 		if(newSpan.length>5)
 			throw new IllegalArgumentException("invalid number of arguments");
+		for(int i: newSpan)
+			if(i<0)
+				throw new IllegalArgumentException("values must be positive");
 		this.span = newSpan;
 	}
 	
