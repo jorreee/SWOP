@@ -19,7 +19,6 @@ public class UseCase5AdvanceTimeTest {
 			newDateVeryBad1 = null,
 			newDateVeryBad2 = LocalDateTime.of(2015, 2, 8, 0, 0),
 			newDateVeryBad3 = startDate,
-			project0StartDate = startDate,
 			project0DueDate = LocalDateTime.of(2015, 2, 13, 23, 59);
 	private final int task00EstDur = 8*60,
 			task01EstDur = 16*60,
