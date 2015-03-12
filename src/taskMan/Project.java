@@ -1,6 +1,7 @@
 package taskMan;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -787,15 +788,22 @@ public class Project {
 		
 		// SUBTRACT TIME UNTIL DUE TIME FROM CHAIN (5/7 week, 8 hours/day)
 		TimeSpan timeUntilDue;
-		if(currentTime.isBefore(dueTime))
-			timeUntilDue = new TimeSpan(currentTime, dueTime);
+		int amountOfDays;
+		int a, b;
+		if(currentTime.isBefore(dueTime)) {
+			amountOfDays = (int) currentTime.until(dueTime, ChronoUnit.DAYS);
+			a = (amountOfDays / 7) - (amountOfDays % 7);
+			b = amountOfDays % 7;
+			if(b == 6)
+				timeUntilDue = new TimeSpan(a * 5 * 8 * 60 + 5 * 8 * 60);
+			else
+				timeUntilDue = new TimeSpan(a * 5 * 8 * 60 + b * 8 * 60);
+		}
 		else
 			timeUntilDue = new TimeSpan(0);
 		
-		
-		
 		// RESULT
-		return null;
+		return longest.minus(timeUntilDue);
 	}
 	
 	private TimeSpan getMaxDelayChain(int taskID) {
@@ -831,8 +839,8 @@ public class Project {
 		return dependants;
 	}
 
-	public boolean isEstimatedOnTime() {
-		TimeSpan estimatedDuration = new TimeSpan(getEstimatedProjectDelay());
+	public boolean isEstimatedOnTime(LocalDateTime currentTime) {
+		TimeSpan estimatedDuration = new TimeSpan(getEstimatedProjectDelay(currentTime));
 		return estimatedDuration.isZero();
 	}
 	
