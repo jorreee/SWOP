@@ -476,13 +476,11 @@ public class Task {
 	/**
 	 * Returns whether the current Task in on time.
 	 * 
-	 * @param 	currentTime
-	 * 			The current time.
 	 * @return	True if the Task is on time.
 	 * 			False if the elapsed time is longer then the acceptable duration.
 	 */
-	public boolean isOnTime(LocalDateTime currentTime){
-		TimeSpan acceptableSpan = this.getEstimatedDuration().getAcceptableSpan(this.getAcceptableDeviation());
+	public boolean isOnTime(){
+		TimeSpan acceptableSpan = this.getEstimatedDuration();
 		if(isFinished() || isFailed()){
 			return this.getTimeElapsed(this.getEndTime()).isShorter(acceptableSpan);
 		}
@@ -490,14 +488,33 @@ public class Task {
 			return true;
 	}
 
-	public boolean isUnacceptableOverdue(LocalDateTime currentTime) {
-		// TODO Auto-generated method stub
-		return false;
+	/**
+	 * Returns whether the current task in unacceptable overdue.
+	 * 
+	 * @return	True if the project is overtime beyond the deviation.
+	 * 			False otherwise.
+	 */
+	public boolean isUnacceptableOverdue() {
+		TimeSpan acceptableSpan = this.getEstimatedDuration().getAcceptableSpan(this.getAcceptableDeviation());
+		if(isFinished() || isFailed()){
+			return this.getTimeElapsed(this.getEndTime()).isShorter(acceptableSpan);
+		}
+		else
+			return false;
 	}
 
-	public int getOverTimePercentage(LocalDateTime currentTime) {
-		// TODO Auto-generated method stub
-		return 0;
+	/**
+	 * Get the percentage of the overdue.
+	 * 
+	 * @return	The percentage of overdue.
+	 */
+	public int getOverTimePercentage() {
+		if(!isOnTime()){
+			int overdue = this.getTimeSpan().getDifferenceMinute(estimatedDuration);
+			return (overdue/this.estimatedDuration.getSpanMinutes())*100;
+		}
+		else
+			return 0;
 	}
 	
 	@Override
