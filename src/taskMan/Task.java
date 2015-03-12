@@ -43,11 +43,11 @@ public class Task {
 	public Task(int taskID, String taskDescription, int estimatedDuration,
 			int acceptableDeviation, TimeSpan extraTime) {
 		if(!isValidTaskID(taskID))
-			throw new IllegalArgumentException("Invalid deviation");
+			throw new IllegalArgumentException("Invalid task ID");
 		if(!isValidDescription(taskDescription))
-			throw new IllegalArgumentException("Invalid deviation");
+			throw new IllegalArgumentException("Invalid description");
 		if(!isValidDuration(estimatedDuration))
-			throw new IllegalArgumentException("Invalid deviation");
+			throw new IllegalArgumentException("Invalid duration");
 		if(!isValidDeviation(acceptableDeviation))
 			throw new IllegalArgumentException("Invalid deviation");
 		this.taskID = taskID;
@@ -82,6 +82,8 @@ public class Task {
 		if(!taskStatus.equals("failed") && !taskStatus.equals("finished"))
 			throw new IllegalArgumentException("Time stamps are only required if a task is finished or failed");
 		this.taskStatus = TaskStatus.valueOf(taskStatus);
+		if(!isValidTimeStamps(beginTime, endTime))
+			throw new IllegalArgumentException("Time Stamps are faulty");
 		this.beginTime = beginTime;
 		this.endTime = endTime;
 	}
@@ -121,19 +123,6 @@ public class Task {
 	public boolean isUnavailable(){
 		return (taskStatus == TaskStatus.UNAVAILABLE);
 	}
-
-//	/**
-//	 * Checks whether the Task has started.
-//	 * 
-//	 * @return	True if the Task has started.
-//	 * 			False otherwise.
-//	 */
-//	public boolean hasStarted(){
-//		if(this.getBeginTime()==null)
-//			return false;
-//		else
-//			return true;
-//	}
 
 	/**
 	 * checks whether the Task has ended.

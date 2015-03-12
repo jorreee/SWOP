@@ -99,42 +99,112 @@ public class Project {
 	public boolean createTask(String description, int estimatedDuration, 
 			int acceptableDeviation, String taskStatus, int alternativeFor, 
 			List<Integer> prerequisiteTasks, LocalDateTime startTime, LocalDateTime endTime) {
-		
+
+		int newTaskID = taskList.size();
 		if(isFinished())
 			return false;
-		if(description==null) // A task must have a description
+		if(prerequisiteTasks.contains(alternativeFor)) 
 			return false;
-		if(!isValidEstimatedTaskDuration(estimatedDuration)) // A task must have a valid estimated duration
+		if(!isValidAlternative(alternativeFor, newTaskID)) 
 			return false;
-		if(!isValidTaskID(alternativeFor) && alternativeFor != -1)
+		if(!isValidPrerequisites(newTaskID, prerequisiteTasks))
 			return false;
+		
 		Task newTask = null;
 		TimeSpan extraTime = getExtraTime(alternativeFor);
+		
 		try{
 			if(taskStatus != null)
-				newTask = new Task(taskList.size(), description, estimatedDuration, 
+				newTask = new Task(newTaskID, description, estimatedDuration, 
 						acceptableDeviation, taskStatus, startTime, endTime, extraTime);
 			else
-				newTask = new Task(taskList.size(), description, estimatedDuration, acceptableDeviation, extraTime);
-		}catch(IllegalArgumentException e){
+				newTask = new Task(newTaskID, description, estimatedDuration, acceptableDeviation, extraTime);
+		} catch(IllegalArgumentException e) {
 			return false;
 		}
-		if(prerequisiteTasks.contains(alternativeFor)) return false;
-		if(!isValidAlternative(alternativeFor, newTask.getTaskID())) return false;
-		if(!addAlternative(alternativeFor, newTask.getTaskID()))
-			return false;
-		if(!isValidPrerequisites(newTask.getTaskID(), prerequisiteTasks)){
+		
+		if(!addAlternative(alternativeFor, newTaskID)) {
+			System.out.println("GROOT PROBLEEM: Was voorspeld goed alternatief, bleek toch niet");
 			return false;
 		}
-		if(!addPrerequisites(newTask.getTaskID(), prerequisiteTasks))
+		if(!addPrerequisites(newTaskID, prerequisiteTasks)) {
+			System.out.println("GROOT PROBLEEM: Was voorspeld goede prereq, bleek toch niet");
 			return false;
+		}
+		
 		updateTaskStatus(newTask);
+		
 		boolean success = taskList.add(newTask);
+		
 		if(success) {
 			recalculateProjectStatus();
+		} else {
+			System.out.println("GROOT PROBLEEM: Was voorspeld goede nieuwe task, bleek toch niet"); //TODO verwijder mij
 		}
 		return success;
 	}
+
+//	/**
+//	 * Creates a new Task with a status of failed or finished.
+//	 * 
+//	 * @param 	description
+//	 * 			The description of the given Task.
+//	 * @param 	estimatedDuration
+//	 * 			The estimated duration of the Task.
+//	 * @param 	acceptableDeviation
+//	 * 			The acceptable deviation of the Task.
+//	 * @param 	taskStatus
+//	 * 			The Status of the Task.
+//	 * @param 	alternativeFor
+//	 * 			The alternative Task.
+//	 * @param 	prerequisiteTasks
+//	 * 			The prerequisites Tasks for this Task.
+//	 * @param 	startTime
+//	 * 			The start time of the Task.
+//	 * @param 	endTime
+//	 * 			The end time of the Task.
+//	 * @return	True if and only the creation of a Task with a status
+//	 * 			of failed or finished was successful.
+//	 */
+//	public boolean createTask(String description, int estimatedDuration, 
+//			int acceptableDeviation, String taskStatus, int alternativeFor, 
+//			List<Integer> prerequisiteTasks, LocalDateTime startTime, LocalDateTime endTime) {
+//		
+//		if(isFinished())
+//			return false;
+//		if(description==null) // A task must have a description
+//			return false;
+//		if(!isValidEstimatedTaskDuration(estimatedDuration)) // A task must have a valid estimated duration
+//			return false;
+//		if(!isValidTaskID(alternativeFor) && alternativeFor != -1)
+//			return false;
+//		Task newTask = null;
+//		TimeSpan extraTime = getExtraTime(alternativeFor);
+//		try{
+//			if(taskStatus != null)
+//				newTask = new Task(taskList.size(), description, estimatedDuration, 
+//						acceptableDeviation, taskStatus, startTime, endTime, extraTime);
+//			else
+//				newTask = new Task(taskList.size(), description, estimatedDuration, acceptableDeviation, extraTime);
+//		}catch(IllegalArgumentException e){
+//			return false;
+//		}
+//		if(prerequisiteTasks.contains(alternativeFor)) return false;
+//		if(!isValidAlternative(alternativeFor, newTask.getTaskID())) return false;
+//		if(!addAlternative(alternativeFor, newTask.getTaskID()))
+//			return false;
+//		if(!isValidPrerequisites(newTask.getTaskID(), prerequisiteTasks)){
+//			return false;
+//		}
+//		if(!addPrerequisites(newTask.getTaskID(), prerequisiteTasks))
+//			return false;
+//		updateTaskStatus(newTask);
+//		boolean success = taskList.add(newTask);
+//		if(success) {
+//			recalculateProjectStatus();
+//		}
+//		return success;
+//	}
 	
 	public TimeSpan getExtraTime(int taskID) {
 		if(!isValidAltID(taskID))
@@ -238,10 +308,21 @@ public class Project {
 	 * @return	True if and only the TaskID is a valid one.
 	 */
 	private boolean isValidTaskID(int taskID){
-		if(taskID<=this.getTaskAmount() && taskID >= 0){
+		if(taskID<this.getTaskAmount() && taskID >= 0){
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * Returns whether the given TaskID is a valid TaskID.
+	 * 
+	 * @param 	taskID
+	 * 			The ID to check.
+	 * @return	True if and only the TaskID is a valid one.
+	 */
+	private boolean isValidNewTaskID(int taskID){
+		return isValidTaskID(taskID) || taskID == taskList.size();
 	}
 
 	/**
@@ -400,33 +481,35 @@ public class Project {
 	 * @return	True if and only if the addition was successful.
 	 */
 	private boolean addAlternative(int task, int alternative){
-		if(task == -1) return true;
+		if(task == -1) 
+			return true;
 		if(!isValidAlternative(task, alternative))
 			return false;
-		if(!this.getTask(task).isFailed())
-			return false;
-		else{
-
-			this.taskAlternatives.put(task, alternative);
-			return true;
-		}
+		
+		this.taskAlternatives.put(task, alternative);
+		return true;
 
 	}
 
 	/**
-	 * checks whether the given alternative is a valid one for the given Task.
+	 * Checks whether the given alternative is a valid one for the given Task.
 	 * 
-	 * @param 	oldTask
-	 * 			The task to add the alternative to.
-	 * @param 	alt
+	 * @param 	toReplace
+	 * 			The task to replace
+	 * @param 	altternative
 	 * 			The alternative to check.
 	 * @return	True if and only the alternative is valid one.
 	 */
-	private boolean isValidAlternative(int oldTask,int alt){
-		if(oldTask == -1) return true;
-		if(!isValidTaskID(oldTask)) return false;
-		if(taskAlternatives.containsKey(oldTask)) return false;
-		return oldTask!=alt;
+	private boolean isValidAlternative(int toReplace, int altternative){
+		if(toReplace == -1) 
+			return true;
+		if(!isValidTaskID(toReplace)) 
+			return false;
+		if(taskAlternatives.containsKey(toReplace)) 
+			return false;
+		if(!this.getTask(toReplace).isFailed())
+			return false;
+		return toReplace != altternative;
 	}
 
 	/**
@@ -465,20 +548,22 @@ public class Project {
 	 * 
 	 * @param 	task
 	 * 			The given Task.
-	 * @param 	pre
+	 * @param 	prerequisites
 	 * 			The prerequisites to check.
 	 * @return	True if and only the prerequisites are a valid.
 	 */
-	private boolean isValidPrerequisites(int task, List<Integer> pre){
-		if (pre == null) return false;
-		if (!isValidTaskID(task)) return false;
-		else if (pre.isEmpty()) return true;
-		else if(pre.contains(task)) return false;
-		for (int prereq : pre){
-			if (!isValidTaskID(prereq)){
+	private boolean isValidPrerequisites(int task, List<Integer> prerequisites){
+		if (prerequisites == null) 
+			return false;
+		if (!isValidNewTaskID(task)) 
+			return false;
+		else if (prerequisites.isEmpty()) 
+			return true;
+		else if(prerequisites.contains(task)) 
+			return false;
+		for (int prereq : prerequisites)
+			if (!isValidTaskID(prereq))
 				return false;
-			}
-		}
 		return true;
 	}
 
@@ -563,17 +648,6 @@ public class Project {
 		if(!isValidTaskID(taskID))
 			return -1;
 		return getTask(taskID).getEstimatedDuration().getSpanMinutes();
-	}
-
-	/**
-	 * Returns whether a given estimated duration is a valid estimated task duration
-	 * @param 	estimatedDuration
-	 * 			the estimated duration
-	 * @return	True if the estimated duration is valid,
-	 * 			False if the estimated duration is not valid
-	 */
-	private boolean isValidEstimatedTaskDuration(int estimatedDuration) {
-		return estimatedDuration > 0;
 	}
 
 	/**
