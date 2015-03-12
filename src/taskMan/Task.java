@@ -62,7 +62,9 @@ public class Task {
 	 * 			The acceptable deviation of the new Task.
 	 */
 	public Task(int taskID, String taskDescription, int estimatedDuration,
-			int acceptableDeviation){
+			int acceptableDeviation) throws IllegalArgumentException {
+		if(!isValidDeviation(acceptableDeviation))
+			throw new IllegalArgumentException("Invalid deviation");
 		this.taskID = taskID;
 		this.description = taskDescription;
 		this.estimatedDuration = new TimeSpan(estimatedDuration);
@@ -89,12 +91,12 @@ public class Task {
 	 * 			The endtime of the new Task.
 	 */
 	public Task(int taskID, String taskDescription, int estimatedDuration,
-			int acceptableDeviation, TaskStatus taskStatus,
+			int acceptableDeviation, String taskStatus,
 			LocalDateTime beginTime, LocalDateTime endTime) throws IllegalArgumentException {
 		this(taskID, taskDescription, estimatedDuration, acceptableDeviation);
-		if(taskStatus != TaskStatus.FAILED && taskStatus != TaskStatus.FINISHED)
+		if(!taskStatus.equals("failed") && !taskStatus.equals("finished"))
 			throw new IllegalArgumentException("Time stamps are only required if a task is finished or failed");
-		this.taskStatus = taskStatus;
+		this.taskStatus = TaskStatus.valueOf(taskStatus);
 		this.beginTime = beginTime;
 		this.endTime = endTime;
 	}
@@ -268,22 +270,6 @@ public class Task {
 	 */
 	public int getAcceptableDeviation() {
 		return acceptableDeviation;
-	}
-
-	/**
-	 * Set the status of this Task.
-	 * 
-	 * @param 	taskStatus
-	 * 			The new status of this Task.
-	 * @throws	IllegalArgumentException
-	 * 			If the status isn't a valid one.
-	 */
-	private void setTaskStatus(String taskStatus) throws IllegalArgumentException{
-		try{
-			this.taskStatus = TaskStatus.valueOf(taskStatus);
-		}catch(Exception e){
-			throw new IllegalArgumentException("Invalid status");
-		}
 	}
 
 	/**
