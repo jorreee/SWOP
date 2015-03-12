@@ -138,7 +138,7 @@ public class UseCase1ShowProjectsTest {
 		assertEquals(taskManager.getTaskAmount(0),1);
 		assertEquals(taskManager.getAvailableTasks(0).size(),0);
 		assertEquals(taskManager.getProjectCreationTime(0),startDate);
-//		assertTrue(taskManager.isProjectEstimatedOnTime(0));
+		assertTrue(taskManager.isProjectEstimatedOnTime(0));
 
 		assertTrue(taskManager.getProjectDescription(1).equals("Describing proj 1"));
 		assertEquals(taskManager.getProjectDueTime(1),project1DueDate);
@@ -148,7 +148,7 @@ public class UseCase1ShowProjectsTest {
 		assertEquals(taskManager.getTaskAmount(1),4);
 		assertEquals(taskManager.getAvailableTasks(1).size(),1);
 		assertEquals(taskManager.getProjectCreationTime(1),workdate1);
-//		assertTrue(taskManager.isProjectEstimatedOnTime(1));
+		assertFalse(taskManager.isProjectEstimatedOnTime(1)); // TODO is dit zo?
 
 		assertTrue(taskManager.getProjectDescription(2).equals("Describing proj 2"));
 		assertEquals(taskManager.getProjectDueTime(2),project2DueDate);
@@ -158,7 +158,7 @@ public class UseCase1ShowProjectsTest {
 		assertEquals(taskManager.getTaskAmount(2),1);
 		assertEquals(taskManager.getAvailableTasks(2).size(),1);
 		assertEquals(taskManager.getProjectCreationTime(2),workdate2);
-//		assertFalse(taskManager.isProjectEstimatedOnTime(2));											// DELAYED
+		assertFalse(taskManager.isProjectEstimatedOnTime(2));											// DELAYED
 
 		assertTrue(taskManager.getProjectDescription(3).equals("Describing proj 3"));
 		assertEquals(taskManager.getProjectDueTime(3),project3DueDate);
@@ -168,7 +168,7 @@ public class UseCase1ShowProjectsTest {
 		assertEquals(taskManager.getTaskAmount(3),2);
 		assertEquals(taskManager.getAvailableTasks(3).size(),1);
 		assertEquals(taskManager.getProjectCreationTime(3),workdate4);
-//		assertTrue(taskManager.isProjectEstimatedOnTime(0));
+		assertTrue(taskManager.isProjectEstimatedOnTime(0));
 		
 		//--------------------------------------------------------------------------
 		// Test Project 0 tasks
