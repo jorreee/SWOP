@@ -274,7 +274,7 @@ public class TaskMan {
 	 * @return	True if the project is on time,
 	 * 			false if the project is not on time
 	 */
-	public boolean isOnTime(int projectID) {
+	public boolean isProjectOnTime(int projectID) {
 		return getProject(projectID).isOnTime(currentTime);
 	}
 

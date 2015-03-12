@@ -88,7 +88,7 @@ public class Facade implements IFacade {
 
 	@Override
 	public boolean isOnTime(int projectID) {
-		return taskMan.isOnTime(projectID);
+		return taskMan.isProjectOnTime(projectID);
 	}
 
 	@Override

@@ -73,7 +73,7 @@ public class UseCase2CreateProjectTest {
 		assertEquals(taskMan.getAvailableTasks(0).size(),0);
 		assertEquals(taskMan.getProjectDueTime(0),project0DueDateGood);
 		assertTrue(taskMan.getProjectStatus(0).equals("ongoing"));
-		assertTrue(taskMan.isOnTime(0));
+		assertTrue(taskMan.isProjectOnTime(0));
 		assertEquals(taskMan.getProjectAmount(),1);
 		
 	}

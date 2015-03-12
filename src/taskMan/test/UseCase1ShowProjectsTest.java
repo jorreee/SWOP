@@ -75,7 +75,7 @@ public class UseCase1ShowProjectsTest {
 		// Stap verder:
 		// maak het derde project aan, samen met zijn TASK
 		taskMan.advanceTimeTo(workdate2);
-			assertTrue(taskMan.createProject("Project 2", "Describing project 2", project2DueDate));
+			assertTrue(taskMan.createProject("Project 2", "Describing proj 2", project2DueDate));
 				assertTrue(taskMan.createTask(2, "TASK 20", task20EstDur, task20Dev, -1, task20Dependencies));		// 20 AVAILABLE
 					
 		// Stap verder:
@@ -91,7 +91,7 @@ public class UseCase1ShowProjectsTest {
 		// Stap verder:
 		// maak het vierde project aan en maak zijn TASK lijst
 		assertTrue(taskMan.advanceTimeTo(workdate4));
-			assertTrue(taskMan.createProject("Project 3", "Describing project 3", project3DueDate));
+			assertTrue(taskMan.createProject("Project 3", "Describing proj 3", project3DueDate));
 				assertTrue(taskMan.createTask(3, "Task 30", task30EstDur, task30Dev, -1, task30Dependencies));		// 30 AVAILABLE
 				assertTrue(taskMan.createTask(3, "Task 31", task31EstDur, task31Dev, -1, task31Dependencies));		// 31 AVAILABLE
 				
@@ -109,7 +109,7 @@ public class UseCase1ShowProjectsTest {
 		int numOfProj = taskMan.getProjectAmount();
 		assertEquals(numOfProj,4);
 		// Stap 3
-		assertTrue(taskMan.getProjectDescription(0).equals("Describing project 0"));
+		assertTrue(taskMan.getProjectDescription(0).equals("Describing proj 0"));
 		assertEquals(taskMan.getProjectDueTime(0),project0DueDate);
 		assertTrue(taskMan.getProjectName(0).equals("Project 0"));
 		assertTrue(taskMan.getProjectStatus(0).equals("finished"));
@@ -117,9 +117,9 @@ public class UseCase1ShowProjectsTest {
 		assertEquals(taskMan.getTaskAmount(0),1);
 		assertEquals(taskMan.getAvailableTasks(0).size(),0);
 		assertEquals(taskMan.getProjectCreationTime(0),startDate);
-		assertTrue(taskMan.isOnTime(0));
+		assertTrue(taskMan.isProjectOnTime(0));
 
-		assertTrue(taskMan.getProjectDescription(1).equals("Describing project 1"));
+		assertTrue(taskMan.getProjectDescription(1).equals("Describing proj 1"));
 		assertEquals(taskMan.getProjectDueTime(1),project1DueDate);
 		assertTrue(taskMan.getProjectName(1).equals("Project 1"));
 		assertTrue(taskMan.getProjectStatus(1).equals("ongoing"));
@@ -127,9 +127,9 @@ public class UseCase1ShowProjectsTest {
 		assertEquals(taskMan.getTaskAmount(1),4);
 		assertEquals(taskMan.getAvailableTasks(1).size(),1);
 		assertEquals(taskMan.getProjectCreationTime(1),workdate1);
-		assertTrue(taskMan.isOnTime(1));
+		assertTrue(taskMan.isProjectOnTime(1));
 
-		assertTrue(taskMan.getProjectDescription(2).equals("Describing project 2"));
+		assertTrue(taskMan.getProjectDescription(2).equals("Describing proj 2"));
 		assertEquals(taskMan.getProjectDueTime(2),project2DueDate);
 		assertTrue(taskMan.getProjectName(2).equals("Project 2"));
 		assertTrue(taskMan.getProjectStatus(2).equals("ongoing"));
@@ -137,9 +137,9 @@ public class UseCase1ShowProjectsTest {
 		assertEquals(taskMan.getTaskAmount(2),1);
 		assertEquals(taskMan.getAvailableTasks().size(),1);
 		assertEquals(taskMan.getProjectCreationTime(2),workdate2);
-		assertFalse(taskMan.isOnTime(2));											// DELAYED
+		assertFalse(taskMan.isProjectOnTime(2));											// DELAYED
 
-		assertTrue(taskMan.getProjectDescription(3).equals("Describing project 3"));
+		assertTrue(taskMan.getProjectDescription(3).equals("Describing proj 3"));
 		assertEquals(taskMan.getProjectDueTime(3),project3DueDate);
 		assertTrue(taskMan.getProjectName(3).equals("Project 3"));
 		assertTrue(taskMan.getProjectStatus(3).equals("ongoing"));
@@ -147,7 +147,7 @@ public class UseCase1ShowProjectsTest {
 		assertEquals(taskMan.getTaskAmount(3),2);
 		assertEquals(taskMan.getAvailableTasks().size(),1);
 		assertEquals(taskMan.getProjectCreationTime(3),workdate4);
-		assertTrue(taskMan.isOnTime(0));
+		assertTrue(taskMan.isProjectOnTime(0));
 		
 		//--------------------------------------------------------------------------
 		// Test Project 0 tasks
@@ -244,7 +244,9 @@ public class UseCase1ShowProjectsTest {
 		assertEquals(taskMan.getTaskAmount(4),-1);
 		assertEquals(taskMan.getAvailableTasks(4),null);
 		assertEquals(taskMan.getProjectCreationTime(4),null);
-		assertFalse(taskMan.isOnTime(4));
+		assertFalse(taskMan.isProjectOnTime(4));
+		
+		
 		
 	}
 
