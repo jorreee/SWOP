@@ -278,7 +278,7 @@ public class UseCase1ShowProjectsTest {
 		assertEquals(taskManager.getTaskStartTime(3, 5),null);
 		assertEquals(taskManager.getTaskEndTime(3, 5),null);
 		assertFalse(taskManager.isTaskOnTime(3, 5));
-		assertTrue(taskManager.isTaskUnacceptableOverdue(3, 5));
+		assertFalse(taskManager.isTaskUnacceptableOverdue(3, 5));
 		assertEquals(taskManager.getTaskOverTimePercentage(3, 5),-1);
 		
 		
