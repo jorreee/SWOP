@@ -117,7 +117,8 @@ public class Project {
 			return false;
 		}
 		if(prerequisiteTasks.contains(alternativeFor)) return false;
-		if(isValidAlternative(alternativeFor, newTask.getTaskID()) && !addAlternative(alternativeFor, newTask.getTaskID()))
+		if(!isValidAlternative(alternativeFor, newTask.getTaskID())) return false;
+		if(!addAlternative(alternativeFor, newTask.getTaskID()))
 			return false;
 		if(!isValidPrerequisites(newTask.getTaskID(), prerequisiteTasks)){
 			return false;
@@ -374,6 +375,7 @@ public class Project {
 	 * @return	True if and only if the addition was successful.
 	 */
 	private boolean addAlternative(int task, int alternative){
+		if(task == -1) return true;
 		if(!isValidAlternative(task, alternative))
 			return false;
 		if(!this.getTask(task).isFailed())
@@ -396,8 +398,9 @@ public class Project {
 	 * @return	True if and only the alternative is valid one.
 	 */
 	private boolean isValidAlternative(int oldTask,int alt){
-		if(!isValidTaskID(oldTask))
-			return false;
+		if(oldTask == -1) return true;
+		if(!isValidTaskID(oldTask)) return false;
+		if(taskAlternatives.containsKey(oldTask)) return false;
 		return oldTask!=alt;
 	}
 
