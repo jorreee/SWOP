@@ -601,7 +601,7 @@ public class TaskMan {
 		if(!isValidProjectID(projectID)) {
 			return false;
 		}
-		return getProject(projectID).isEstimatedOnTime();
+		return getProject(projectID).isEstimatedOnTime(currentTime);
 	}
 	
 	/**
@@ -615,7 +615,7 @@ public class TaskMan {
 		if(!isValidProjectID(projectID)) {
 			return null;
 		}
-		return null;
+		return getProject(projectID).getEstimatedProjectDelay(currentTime);
 	}
 	
 	private boolean isValidProjectID(int PID) {

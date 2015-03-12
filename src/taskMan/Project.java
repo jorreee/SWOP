@@ -745,15 +745,15 @@ public class Project {
 	}
 
 	public boolean isTaskUnacceptableOverdue(int taskID) {
-		return getTask(taskID).isUnacceptableOverdue(currentTime);
+		return getTask(taskID).isUnacceptableOverdue();
 	}
 
 	public boolean isTaskOnTime(int taskID) {
-		return getTask(taskID).isOnTime(currentTime);
+		return getTask(taskID).isOnTime();
 	}
 
 	public int getTaskOverTimePercentage(int taskID) {
-		return getTask(taskID).getOverTimePercentage(currentTime);
+		return getTask(taskID).getOverTimePercentage();
 	}
 
 	public boolean isFinished() {
