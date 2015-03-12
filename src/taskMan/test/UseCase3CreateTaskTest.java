@@ -337,4 +337,21 @@ public class UseCase3CreateTaskTest {
 		
 	}
 
+	@Test
+	public void flow4aFINISHEDProjectTest() {
+		
+		assertTrue(taskManager.createTask(0, "Design system", task00EstDur, task00Dev, -1, task00Dependencies));
+		assertEquals(taskManager.getTaskStatus(0, 0),"available");
+		assertTrue(taskManager.setTaskFinished(0, 0, task00StartDateGood, task00EndDateGood));
+		assertTrue(taskManager.getProjectStatus(0).equals("finished"));
+		
+		// Step 1 and 2 are implicit
+		// Step 3
+		assertFalse(taskManager.createTask(0, "A new TASK", newTaskDur, newTaskDev, -1, newTaskDependencies));
+		// Step 4
+		assertEquals(taskManager.getProjectAmount(),1);
+		assertEquals(taskManager.getTaskAmount(0),1);
+		
+	}
+
 }
