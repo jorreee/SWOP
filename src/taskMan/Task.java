@@ -471,7 +471,7 @@ public class Task {
 	 * 
 	 * @param 	taskID
 	 * 			The taskID to check.
-	 * @return	True if 
+	 * @return	True if taskID >= 0
 	 */
 	private boolean isValidTaskID(int taskID){
 		return taskID>=0;
@@ -482,7 +482,7 @@ public class Task {
 	 * 
 	 * @param 	description
 	 * 			The description to check.
-	 * @return	True if 
+	 * @return	True if description != null
 	 */
 	private boolean isValidDescription(String description){
 		return description != null;
@@ -493,7 +493,7 @@ public class Task {
 	 * 
 	 * @param 	duration
 	 * 			The duration to check.
-	 * @return	True if 
+	 * @return	True if duration > 0
 	 */
 	private boolean isValidDuration(int duration){
 		return duration>0;
