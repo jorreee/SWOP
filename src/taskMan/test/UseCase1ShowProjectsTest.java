@@ -231,6 +231,20 @@ public class UseCase1ShowProjectsTest {
 	
 	@Test
 	public void badInputCasetest() {
+		// Stap 1 is impliciet
+		// Stap 2
+		int numOfProj = taskMan.getProjectAmount();
+		assertEquals(numOfProj,4);
+		// Stap 3
+		assertFalse(taskMan.getProjectDescription(4).equals("Describing project 0"));
+		assertEquals(taskMan.getProjectDueTime(4),null);
+		assertFalse(taskMan.getProjectName(4).equals("Project 0"));
+		assertFalse(taskMan.getProjectStatus(4).equals("finished"));
+		assertEquals(taskMan.getProjectEndTime(4),null);
+		assertEquals(taskMan.getTaskAmount(4),-1);
+		assertEquals(taskMan.getAvailableTasks(4),null);
+		assertEquals(taskMan.getProjectCreationTime(4),null);
+		assertFalse(taskMan.isOnTime(4));
 		
 	}
 
