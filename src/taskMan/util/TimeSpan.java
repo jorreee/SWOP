@@ -238,6 +238,24 @@ public class TimeSpan {
 	public int getDifferenceMinute(TimeSpan other){
 		return Math.abs(this.getSpanMinutes() - other.getSpanMinutes());
 	}
-
+	
+	/**
+	 * Returns the difference between 2 TimeSpan objects.
+	 * 
+	 * @param 	other
+	 * 			The other TimeSpan object
+	 * @return	The difference as int array.
+	 */
+	public int[] minus(TimeSpan other){
+		if(other.isLonger(this)){
+			int newSpan = other.getSpanMinutes()-this.getSpanMinutes();
+			return new TimeSpan(newSpan).getSpan();
+		}
+		else{
+			int newSpan = this.getSpanMinutes()-other.getSpanMinutes();
+			return new TimeSpan(newSpan).getSpan();
+		}
+			
+	}
 }
 
