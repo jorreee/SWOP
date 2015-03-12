@@ -179,6 +179,12 @@ public class TimeSpan {
 	public int getYears(){
 		return this.getSpan()[0];
 	}
+	
+	public TimeSpan getAcceptableSpan(int deviation){
+		int span = this.getSpanMinutes();
+		int acceptableSpan = span + deviation * (span/100);
+		return new TimeSpan(acceptableSpan);
+	}
 
 }
 

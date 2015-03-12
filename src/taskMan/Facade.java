@@ -106,10 +106,10 @@ public class Facade implements IFacade {
 		return taskMan.getTaskDescription(projectID, taskID);
 	}
 
-	@Override
-	public boolean hasTaskStarted(int projectID, int taskID) {
-		return taskMan.hasTaskStarted(projectID, taskID);
-	}
+//	@Override
+//	public boolean hasTaskStarted(int projectID, int taskID) {
+//		return taskMan.hasTaskStarted(projectID, taskID);
+//	}
 
 	@Override
 	public LocalDateTime getTaskStartTime(int projectID, int taskID) {

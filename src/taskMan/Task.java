@@ -135,18 +135,18 @@ public class Task {
 		return (taskStatus == TaskStatus.UNAVAILABLE);
 	}
 
-	/**
-	 * Checks whether the Task has started.
-	 * 
-	 * @return	True if the Task has started.
-	 * 			False otherwise.
-	 */
-	public boolean hasStarted(){
-		if(this.getBeginTime()==null)
-			return false;
-		else
-			return true;
-	}
+//	/**
+//	 * Checks whether the Task has started.
+//	 * 
+//	 * @return	True if the Task has started.
+//	 * 			False otherwise.
+//	 */
+//	public boolean hasStarted(){
+//		if(this.getBeginTime()==null)
+//			return false;
+//		else
+//			return true;
+//	}
 
 	/**
 	 * checks whether the Task has ended.
@@ -460,6 +460,23 @@ public class Task {
 		if(endTime.isBefore(startTime))
 			return false;
 		return true;
+	}
+	
+	/**
+	 * Checks whether the deviation is a valid one.
+	 * 
+	 * @param 	deviation
+	 * 			The deviation to check.
+	 * @return	True if 
+	 */
+	private boolean isValidDeviation(int deviation){
+		return deviation>=0;
+	}
+	
+	public boolean isOverdue(LocalDateTime currentTime){
+		if(isFinished() || isFailed()){
+			
+		}
 	}
 
 	@Override
