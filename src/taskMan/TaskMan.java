@@ -300,15 +300,15 @@ public class TaskMan {
 		return projectList.get(projectID).getTaskDescription(taskID);
 	}
 
-//	/**
-//	 * Returns whether the task with the given task id belonging to the project with the given project id has started
-//	 * @param 	projectID
-//	 * 			the id of the given project
-//	 * @param 	taskID
-//	 * 			the id of the given task
-//	 * @return	True if the task has started,
-//	 * 			false if the task hasn't started 
-//	 */
+	/**
+	 * Returns whether the task with the given task id belonging to the project with the given project id has started
+	 * @param 	projectID
+	 * 			the id of the given project
+	 * @param 	taskID
+	 * 			the id of the given task
+	 * @return	True if the task has started,
+	 * 			false if the task hasn't started 
+	 */
 //	public boolean hasTaskStarted(int projectID, int taskID) {
 //		return projectList.get(projectID).hasTaskStarted(taskID);
 //	}
