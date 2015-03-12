@@ -473,13 +473,33 @@ public class Task {
 		return deviation>=0;
 	}
 	
-	public boolean isOverdue(LocalDateTime currentTime){
+	/**
+	 * Returns whether the current Task in on time.
+	 * 
+	 * @param 	currentTime
+	 * 			The current time.
+	 * @return	True if the Task is on time.
+	 * 			False if the elapsed time is longer then the acceptable duration.
+	 */
+	public boolean isOnTime(LocalDateTime currentTime){
 		TimeSpan acceptableSpan = this.getEstimatedDuration().getAcceptableSpan(this.getAcceptableDeviation());
 		if(isFinished() || isFailed()){
-			if(this.getTimeElapsed(currentTime).isLonger(other))
+			return this.getTimeElapsed(this.getEndTime()).isShorter(acceptableSpan);
 		}
+		else
+			return true;
 	}
 
+	public boolean isUnacceptableOverdue(LocalDateTime currentTime) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public int getOverTimePercentage(LocalDateTime currentTime) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -501,6 +521,4 @@ public class Task {
 			return false;
 		return true;
 	}
-
-
 }
