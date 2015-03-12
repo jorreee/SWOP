@@ -15,11 +15,15 @@ public class CreateTaskRequest extends Request {
 	public String execute() {
 		while(true) {
 			try {
-				String[] creationForm = {"Project ID", "Description", "Estimated Duration" , "Acceptable Deviation", "Alternative For", "Prerequisite Tasks"};
+				String[] creationForm = { "Project ID", "Description",
+						"Estimated Duration (in minutes)",
+						"Acceptable Deviation (a precentage)",
+						"Alternative For",
+						"Prerequisite Tasks (Seperated by spaces)" };
 				String[] input = new String[6];
 				for(int i=0 ; i < 6 ; i++) {
 					// Show task creation form
-					System.out.println(creationForm[i] + "? (type quit to exit");
+					System.out.println(creationForm[i] + "? (type quit to exit)");
 
 					// Take user input
 					input[i] = inputReader.readLine();
@@ -30,7 +34,7 @@ public class CreateTaskRequest extends Request {
 				}
 				// System updates details
 				ArrayList<Integer> prereqList = new ArrayList<>();
-				for(String prereq : input[5].split("")) {
+				for(String prereq : input[5].split(" ")) {
 					prereqList.add(Integer.parseInt(prereq));
 				}
 				

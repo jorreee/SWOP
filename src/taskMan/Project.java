@@ -513,19 +513,19 @@ public class Project {
 		return getTask(taskID).getDescription();
 	}
 
-	/**
-	 * Checks whether the Task belonging to the given ID has started.
-	 * 
-	 * @param 	taskID
-	 * 			The ID of the Task to check.
-	 * @return	True is the Task has started.
-	 * 			False otherwise or if the ID isn't a valid one.
-	 */
-	public boolean hasTaskStarted(int taskID) {
-		if(!isValidTaskID(taskID))
-			return false;
-		return getTask(taskID).hasStarted();
-	}
+//	/**
+//	 * Checks whether the Task belonging to the given ID has started.
+//	 * 
+//	 * @param 	taskID
+//	 * 			The ID of the Task to check.
+//	 * @return	True is the Task has started.
+//	 * 			False otherwise or if the ID isn't a valid one.
+//	 */
+//	public boolean hasTaskStarted(int taskID) {
+//		if(!isValidTaskID(taskID))
+//			return false;
+//		return getTask(taskID).hasStarted();
+//	}
 
 	/**
 	 * Return the start time of the Task belonging to the given ID.
@@ -538,7 +538,7 @@ public class Project {
 	public LocalDateTime getTaskStartTime(int taskID) {
 		if(!isValidTaskID(taskID))
 			return null;
-		if(!hasTaskStarted(taskID))
+		if(!hasTaskEnded(taskID))
 			return null;
 		return getTask(taskID).getBeginTime();
 	}
@@ -737,5 +737,30 @@ public class Project {
 			return true;
 		}
 		return false;
+	}
+
+	public boolean isTaskUnacceptableOverdue(int taskID,LocalDateTime currentTime) {
+		return getTask(taskID).isUnacceptableOverdue(currentTime);
+	}
+
+	public boolean isTaskOnTime(int taskID,LocalDateTime currentTime) {
+		return getTask(taskID).isOnTime(currentTime);
+	}
+
+	public int getTaskOverTimePercentage(int taskID,LocalDateTime currentTime) {
+		return getTask(taskID).getOverTimePercentage(currentTime);
+	}
+
+	public boolean isFinished() {
+		return getProjectStatus().equalsIgnoreCase("FINISHED");
+	}
+
+	public int[] getEstimatedProjectEndTime() {
+		TimeSpan estimatedDuration = new TimeSpan(0);
+		for(Task task : taskList) {
+			if(!task.hasEnded())
+				estimatedDuration = estimatedDuration.add(task.getEstimatedDuration());
+		}
+		return estimatedDuration.getSpan();
 	}
 }

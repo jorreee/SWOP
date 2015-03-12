@@ -309,9 +309,9 @@ public class TaskMan {
 	 * @return	True if the task has started,
 	 * 			false if the task hasn't started 
 	 */
-	public boolean hasTaskStarted(int projectID, int taskID) {
-		return projectList.get(projectID).hasTaskStarted(taskID);
-	}
+//	public boolean hasTaskStarted(int projectID, int taskID) {
+//		return projectList.get(projectID).hasTaskStarted(taskID);
+//	}
 
 	/**
 	 * Returns the start time of the task with the given task id belonging to the project with the given project id
@@ -472,5 +472,38 @@ public class TaskMan {
 		if(endTime == null || endTime.isAfter(currentTime))
 			return false;
 		return projectList.get(projectID).setTaskFailed(taskID,startTime, endTime);
+	}
+
+	public boolean isTaskUnacceptableOverdue(int projectID, int taskID) {
+		return getProject(projectID).isTaskUnacceptableOverdue(taskID,getCurrentTime());
+	}
+
+	public boolean isTaskOnTime(int projectID, int taskID) {
+		return getProject(projectID).isTaskOnTime(taskID, getCurrentTime());
+	}
+
+	public int getTaskOverTimePercentage(int projectID, int taskID) {
+		return getProject(projectID).getTaskOverTimePercentage(taskID, getCurrentTime());
+	}
+
+	/**
+	 * Returns whether a certain project has finished
+	 * @param	projectID
+	 * 			the id of the given project
+	 * @return	True if the project has finished
+	 */
+	public boolean isProjectFinished(int projectID) {
+		return getProject(projectID).isFinished();
+	}
+	
+	/**
+	 * Returns the estimated time until the project should end
+	 * @param	projectID
+	 * 			the id of the given project
+	 * @return	The amount of years, months, days, hours and minutes
+	 * 			that are estimated to be required to finish the project
+	 */
+	public int[] getEstimatedProjectEndTime(int projectID) {
+		return getProject(projectID).getEstimatedProjectEndTime();
 	}
 }

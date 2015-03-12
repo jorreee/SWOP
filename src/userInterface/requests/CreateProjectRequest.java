@@ -15,11 +15,11 @@ public class CreateProjectRequest extends Request {
 	public String execute() {
 		while(true) {
 			try {
-				String[] creationForm = {"Name", "Description", "Due Time"};
+				String[] creationForm = {"Name", "Description", "Due Time (Format Y M D H M)"};
 				String[] input = new String[3];
 				for(int i=0 ; i < 3 ; i++) {
 					// Show project creation form
-					System.out.println(creationForm[i] + "? (type quit to exit");
+					System.out.println(creationForm[i] + "? (type quit to exit)");
 
 					// Take user input
 					input[i] = inputReader.readLine();
@@ -29,7 +29,9 @@ public class CreateProjectRequest extends Request {
 						return quit();
 				}
 				// System updates details
-				boolean success = facade.createProject(input[0], input[1], LocalDateTime.parse(input[2]));
+				String[] dueBits = input[2].split(" ");
+				LocalDateTime due = LocalDateTime.of(Integer.parseInt(dueBits[0]), Integer.parseInt(dueBits[1]), Integer.parseInt(dueBits[2]), Integer.parseInt(dueBits[3]), Integer.parseInt(dueBits[4]));
+				boolean success = facade.createProject(input[0], input[1], due);
 
 				// Invalid details
 				if(success) {

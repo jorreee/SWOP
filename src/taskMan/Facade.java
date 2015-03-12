@@ -106,10 +106,10 @@ public class Facade implements IFacade {
 		return taskMan.getTaskDescription(projectID, taskID);
 	}
 
-	@Override
-	public boolean hasTaskStarted(int projectID, int taskID) {
-		return taskMan.hasTaskStarted(projectID, taskID);
-	}
+//	@Override
+//	public boolean hasTaskStarted(int projectID, int taskID) {
+//		return taskMan.hasTaskStarted(projectID, taskID);
+//	}
 
 	@Override
 	public LocalDateTime getTaskStartTime(int projectID, int taskID) {
@@ -171,6 +171,31 @@ public class Facade implements IFacade {
 	public boolean setTaskFailed(int projectID, int taskID,
 			LocalDateTime startTime, LocalDateTime endTime) {
 		return taskMan.setTaskFailed(projectID, taskID,startTime,endTime);
+	}
+
+	@Override
+	public boolean isTaskUnacceptableOverdue(int projectID, int taskID) {
+		return taskMan.isTaskUnacceptableOverdue(projectID, taskID);
+	}
+
+	@Override
+	public boolean isTaskOnTime(int projectID, int taskID) {
+		return taskMan.isTaskOnTime(projectID, taskID);
+	}
+
+	@Override
+	public int getTaskOverTimePercentage(int projectID, int taskID) {
+		return taskMan.getTaskOverTimePercentage(projectID, taskID);
+	}
+
+	@Override
+	public boolean isProjectFinished(int projectID) {
+		return taskMan.isProjectFinished(projectID);
+	}
+
+	@Override
+	public int[] getEstimatedProjectEndTime(int projectID) {
+		return taskMan.getEstimatedProjectEndTime(projectID);
 	}
 
 }
