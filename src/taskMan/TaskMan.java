@@ -475,15 +475,15 @@ public class TaskMan {
 	}
 
 	public boolean isTaskUnacceptableOverdue(int projectID, int taskID) {
-		return getProject(projectID).isTaskUnacceptableOverdue(taskID,getCurrentTime());
+		return getProject(projectID).isTaskUnacceptableOverdue(taskID);
 	}
 
 	public boolean isTaskOnTime(int projectID, int taskID) {
-		return getProject(projectID).isTaskOnTime(taskID, getCurrentTime());
+		return getProject(projectID).isTaskOnTime(taskID);
 	}
 
 	public int getTaskOverTimePercentage(int projectID, int taskID) {
-		return getProject(projectID).getTaskOverTimePercentage(taskID, getCurrentTime());
+		return getProject(projectID).getTaskOverTimePercentage(taskID);
 	}
 
 	/**
