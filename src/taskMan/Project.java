@@ -105,14 +105,11 @@ public class Project {
 			return false;
 		if(!isValidTaskID(alternativeFor) && alternativeFor != -1)
 			return false;
-		TaskStatus status = null;
-		if(taskStatus != null)
-			status = TaskStatus.valueOf(taskStatus);
 		Task newTask = null;
 		try{
 			if(status != null)
 				newTask = new Task(taskList.size(), description, estimatedDuration, 
-						acceptableDeviation, status, startTime, endTime);
+						acceptableDeviation, taskStatus, startTime, endTime);
 			else
 				newTask = new Task(taskList.size(), description, estimatedDuration, acceptableDeviation);
 		}catch(IllegalArgumentException e){
@@ -744,18 +741,40 @@ public class Project {
 		return false;
 	}
 
+	/**
+	 * Returns whether the current task in unacceptably overdue.
+	 * 
+	 * @return	True if the project is overtime beyond the deviation.
+	 * 			False otherwise.
+	 */
 	public boolean isTaskUnacceptableOverdue(int taskID) {
 		return getTask(taskID).isUnacceptableOverdue();
 	}
 
+	/**
+	 * Returns whether the current Task in on time.
+	 * 
+	 * @return	True if the Task is on time.
+	 * 			False if the elapsed time is longer then the acceptable duration.
+	 */
 	public boolean isTaskOnTime(int taskID) {
 		return getTask(taskID).isOnTime();
 	}
-
+	
+	/**
+	 * Determine the percentage of over time for a certain task
+	 * @param	taskID
+	 * 			the given task
+	 * @return	The percentage of overdue
+	 */
 	public int getTaskOverTimePercentage(int taskID) {
 		return getTask(taskID).getOverTimePercentage();
 	}
-
+	
+	/**
+	 * A method to check whether this project is finished
+	 * @return	True if and only if this project is finished
+	 */
 	public boolean isFinished() {
 		return getProjectStatus().equalsIgnoreCase("FINISHED");
 	}
@@ -806,6 +825,14 @@ public class Project {
 		return longest.minus(timeUntilDue);
 	}
 	
+	/**
+	 * Determine the longest timespan needed for a chain of dependant tasks.
+	 * The timespan is the largest sum of the estimated durations of the dependant
+	 * task of the given task and the longest chain of it's dependancies
+	 * @param	taskID
+	 * 			the given task
+	 * @return	The longest chain of durations possible from the given task
+	 */
 	private TimeSpan getMaxDelayChain(int taskID) {
 		if(!isPrerequisite(taskID))
 			return new TimeSpan(0);
@@ -820,6 +847,12 @@ public class Project {
 		return longest;
 	}
 	
+	/**
+	 * A method to determine if a task is a prerequisite to another task
+	 * @param	taskID
+	 * 			the given task
+	 * @return	True if and only if the supplied task is a prerequisite to another task
+	 */
 	private boolean isPrerequisite(int taskID) {
 		Set<Integer> hasPrereq = taskPrerequisites.keySet();
 		for(Integer taskWithPrereq : hasPrereq) {
@@ -829,6 +862,13 @@ public class Project {
 		return false;
 	}
 	
+	/**
+	 * A method to retrieve all task identifiers from tasks that are dependant
+	 * on the supplied task identifier
+	 * @param	taskID
+	 * 			the given task
+	 * @return	A list of task identifiers from tasks that are dependant on the given task
+	 */
 	private List<Integer> getDependants(int taskID) {
 		Set<Integer> hasPrereq = taskPrerequisites.keySet();
 		ArrayList<Integer> dependants = new ArrayList<Integer>();
@@ -838,12 +878,23 @@ public class Project {
 		}
 		return dependants;
 	}
-
+	
+	/**
+	 * A check to determine if the project will end on time
+	 * @param	currentTime
+	 * 			The current time of the system
+	 * @return	True if the estimated required time to finish all tasks is
+	 * 			less than the time until the project due time
+	 */
 	public boolean isEstimatedOnTime(LocalDateTime currentTime) {
 		TimeSpan estimatedDuration = new TimeSpan(getEstimatedProjectDelay(currentTime));
 		return estimatedDuration.isZero();
 	}
 	
+	/**
+	 * Returns whether or not this project has any tasks available
+	 * @return	True if there is a task assigned to this project which is available
+	 */
 	private boolean hasAvailableTasks() {
 		return getAvailableTasks().size() > 0;
 	}
