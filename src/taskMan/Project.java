@@ -99,6 +99,7 @@ public class Project {
 	public boolean createTask(String description, int estimatedDuration, 
 			int acceptableDeviation, String taskStatus, int alternativeFor, 
 			List<Integer> prerequisiteTasks, LocalDateTime startTime, LocalDateTime endTime) {
+		
 		if(isFinished())
 			return false;
 		if(description==null) // A task must have a description
@@ -108,12 +109,14 @@ public class Project {
 		if(!isValidTaskID(alternativeFor) && alternativeFor != -1)
 			return false;
 		Task newTask = null;
+		//TODO get XTIME
+		TimeSpan extraTime = getExtraTime(alternativeFor);
 		try{
 			if(taskStatus != null)
 				newTask = new Task(taskList.size(), description, estimatedDuration, 
-						acceptableDeviation, taskStatus, startTime, endTime);
+						acceptableDeviation, taskStatus, startTime, endTime, extraTime);
 			else
-				newTask = new Task(taskList.size(), description, estimatedDuration, acceptableDeviation);
+				newTask = new Task(taskList.size(), description, estimatedDuration, acceptableDeviation, extraTime);
 		}catch(IllegalArgumentException e){
 			return false;
 		}
@@ -132,6 +135,12 @@ public class Project {
 			recalculateProjectStatus();
 		}
 		return success;
+	}
+	
+	public TimeSpan getExtraTime(int taskID) {
+		if(!taskList.get(taskID).isFailed())
+			return new TimeSpan(0);
+		return taskList.get(taskID).getTimeSpan();
 	}
 
 	/**
@@ -456,25 +465,6 @@ public class Project {
 			}
 		}
 		return true;
-	}
-	/**
-	 * Returns the Tasks belonging to the given ID's.
-	 * 
-	 * @param 	ids
-	 * 			The ID to convert to a Task.
-	 * @return	The Task belonging to the given ID's.
-	 * @throws 	IllegalArgumentException
-	 * 			The given ID must be a valid one.
-	 */
-	private ArrayList<Task> getTaskByIDs(List<Integer> ids) throws IllegalArgumentException{
-		ArrayList<Task> tasks = new ArrayList<Task>();
-		for(int id: ids){
-			if(!isValidTaskID(id)){
-				throw new IllegalArgumentException("The ID isn't a valid ID");
-			}
-			tasks.add(this.taskList.get(id));
-		}
-		return tasks;
 	}
 
 	/**

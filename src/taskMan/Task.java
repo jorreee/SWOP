@@ -42,27 +42,6 @@ public class Task {
 	 */
 	public Task(int taskID, String taskDescription, int estimatedDuration,
 			int acceptableDeviation, TimeSpan extraTime) {
-		this.taskID = taskID;
-		this.description = taskDescription;
-		this.estimatedDuration = new TimeSpan(estimatedDuration);
-		this.acceptableDeviation = acceptableDeviation;
-		this.extraTime = extraTime;
-	}
-
-	/**
-	 Create a new Task without an added extra time.
-	 * 
-	 * @param 	taskID
-	 * 			The ID of the new Task.
-	 * @param 	taskDescription
-	 * 			The description of the new Task.
-	 * @param 	estimatedDuration
-	 * 			The estimated duration of the new Task.
-	 * @param 	acceptableDeviation
-	 * 			The acceptable deviation of the new Task.
-	 */
-	public Task(int taskID, String taskDescription, int estimatedDuration,
-			int acceptableDeviation) throws IllegalArgumentException {
 		if(!isValidTaskID(taskID))
 			throw new IllegalArgumentException("Invalid deviation");
 		if(!isValidDescription(taskDescription))
@@ -71,12 +50,11 @@ public class Task {
 			throw new IllegalArgumentException("Invalid deviation");
 		if(!isValidDeviation(acceptableDeviation))
 			throw new IllegalArgumentException("Invalid deviation");
-		
 		this.taskID = taskID;
 		this.description = taskDescription;
 		this.estimatedDuration = new TimeSpan(estimatedDuration);
 		this.acceptableDeviation = acceptableDeviation;
-		this.extraTime = new TimeSpan(0);
+		this.extraTime = extraTime;
 	}
 
 	/**
@@ -99,8 +77,8 @@ public class Task {
 	 */
 	public Task(int taskID, String taskDescription, int estimatedDuration,
 			int acceptableDeviation, String taskStatus,
-			LocalDateTime beginTime, LocalDateTime endTime) throws IllegalArgumentException {
-		this(taskID, taskDescription, estimatedDuration, acceptableDeviation);
+			LocalDateTime beginTime, LocalDateTime endTime, TimeSpan extraTime) throws IllegalArgumentException {
+		this(taskID, taskDescription, estimatedDuration, acceptableDeviation, extraTime);
 		if(!taskStatus.equals("failed") && !taskStatus.equals("finished"))
 			throw new IllegalArgumentException("Time stamps are only required if a task is finished or failed");
 		this.taskStatus = TaskStatus.valueOf(taskStatus);
@@ -273,7 +251,7 @@ public class Task {
 	/**
 	 * Returns the acceptable deviation of the Task.
 	 * 
-	 * @return	The accepatble deviation of the Task.
+	 * @return	The acceptable deviation of the Task.
 	 */
 	public int getAcceptableDeviation() {
 		return acceptableDeviation;
