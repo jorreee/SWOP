@@ -120,6 +120,8 @@ public class UseCase4UpdateTaskStatusTest {
 		newTaskDependencies.add(Integer.valueOf(0));
 		newTaskDependencies.add(Integer.valueOf(1));
 		assertTrue(taskMan.createTask(0, "Test1", newTaskDur, newTaskDev, -1, newTaskDependencies));
+		assertTrue(taskMan.getTaskPrerequisitesFor(0, 3).contains(0));
+		assertTrue(taskMan.getTaskPrerequisitesFor(0, 3).contains(1));
 		
 		// Step 1 is implicit
 		// Step 2 and 3 are handled in UI
@@ -147,6 +149,8 @@ public class UseCase4UpdateTaskStatusTest {
 		newTaskDependencies.add(Integer.valueOf(0));
 		newTaskDependencies.add(Integer.valueOf(1));
 		assertTrue(taskMan.createTask(0, "Test1", newTaskDur, newTaskDev, -1, newTaskDependencies));
+		assertTrue(taskMan.getTaskPrerequisitesFor(0, 3).contains(0));
+		assertTrue(taskMan.getTaskPrerequisitesFor(0, 3).contains(1));
 		
 		// Step 1 is implicit
 		// Step 2 and 3 are handled in UI
@@ -174,6 +178,8 @@ public class UseCase4UpdateTaskStatusTest {
 		newTaskDependencies.add(Integer.valueOf(0));
 		newTaskDependencies.add(Integer.valueOf(1));
 		assertTrue(taskMan.createTask(0, "Test1", newTaskDur, newTaskDev, -1, newTaskDependencies));
+		assertTrue(taskMan.getTaskPrerequisitesFor(0, 3).contains(0));
+		assertTrue(taskMan.getTaskPrerequisitesFor(0, 3).contains(1));
 		
 		// Step 1 is implicit
 		// Step 2 and 3 are handled in UI
