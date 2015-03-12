@@ -490,7 +490,7 @@ public class Task {
 	public boolean isUnacceptableOverdue() {
 		TimeSpan acceptableSpan = this.getEstimatedDuration().getAcceptableSpan(this.getAcceptableDeviation());
 		if(isFinished() || isFailed()){
-			return this.getTimeElapsed(this.getEndTime()).isShorter(acceptableSpan);
+			return this.getTimeElapsed(this.getEndTime()).isLonger(acceptableSpan);
 		}
 		else
 			return false;

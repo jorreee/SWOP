@@ -148,7 +148,7 @@ public class UseCase1ShowProjectsTest {
 		assertEquals(taskManager.getTaskAmount(1),4);
 		assertEquals(taskManager.getAvailableTasks(1).size(),1);
 		assertEquals(taskManager.getProjectCreationTime(1),workdate1);
-		assertFalse(taskManager.isProjectEstimatedOnTime(1)); // TODO is dit zo?
+		assertFalse(taskManager.isProjectEstimatedOnTime(1));
 
 		assertTrue(taskManager.getProjectDescription(2).equals("Describing proj 2"));
 		assertEquals(taskManager.getProjectDueTime(2),project2DueDate);

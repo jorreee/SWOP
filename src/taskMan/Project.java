@@ -1,5 +1,6 @@
 package taskMan;
 
+import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -533,15 +534,15 @@ public class Project {
 			}
 		}
 		if(hasPrerequisites(taskID)){
-			
+
 			List<Integer> preOld = getPrerequisites(taskID);
 			pre.addAll(preOld);
 			taskPrerequisites.put(taskID, pre);
 			return true;
 		}
 		else { taskPrerequisites.put(taskID, pre);
-			return true; }
-}
+		return true; }
+	}
 
 	/**
 	 * Checks whether the given prerequisites are valid for the given Task.
@@ -604,19 +605,19 @@ public class Project {
 		return getTask(taskID).getDescription();
 	}
 
-//	/**
-//	 * Checks whether the Task belonging to the given ID has started.
-//	 * 
-//	 * @param 	taskID
-//	 * 			The ID of the Task to check.
-//	 * @return	True is the Task has started.
-//	 * 			False otherwise or if the ID isn't a valid one.
-//	 */
-//	public boolean hasTaskStarted(int taskID) {
-//		if(!isValidTaskID(taskID))
-//			return false;
-//		return getTask(taskID).hasStarted();
-//	}
+	//	/**
+	//	 * Checks whether the Task belonging to the given ID has started.
+	//	 * 
+	//	 * @param 	taskID
+	//	 * 			The ID of the Task to check.
+	//	 * @return	True is the Task has started.
+	//	 * 			False otherwise or if the ID isn't a valid one.
+	//	 */
+	//	public boolean hasTaskStarted(int taskID) {
+	//		if(!isValidTaskID(taskID))
+	//			return false;
+	//		return getTask(taskID).hasStarted();
+	//	}
 
 	/**
 	 * Return the start time of the Task belonging to the given ID.
@@ -841,7 +842,7 @@ public class Project {
 	public boolean isTaskOnTime(int taskID) {
 		return getTask(taskID).isOnTime();
 	}
-	
+
 	/**
 	 * Determine the percentage of over time for a certain task
 	 * @param	taskID
@@ -851,7 +852,7 @@ public class Project {
 	public int getTaskOverTimePercentage(int taskID) {
 		return getTask(taskID).getOverTimePercentage();
 	}
-	
+
 	/**
 	 * A method to check whether this project is finished
 	 * @return	True if and only if this project is finished
@@ -859,7 +860,7 @@ public class Project {
 	public boolean isFinished() {
 		return getProjectStatus().equalsIgnoreCase("FINISHED");
 	}
-	
+
 	/**
 	 * Returns the estimated time until the project should end
 	 * @param	projectID
@@ -870,7 +871,7 @@ public class Project {
 	public int[] getEstimatedProjectDelay(LocalDateTime currentTime) {
 		if(!hasAvailableTasks())
 			return new TimeSpan(0).getSpan();
-		
+
 		// FOR EACH AVAILABLE TASK CALCULATE CHAIN
 		int availableBranches = getAvailableTasks().size();
 		TimeSpan[] timeChains = new TimeSpan[availableBranches];
@@ -885,27 +886,40 @@ public class Project {
 			if(span.isLonger(longest))
 				longest = span;
 		}
-		
+
 		// SUBTRACT TIME UNTIL DUE TIME FROM CHAIN (5/7 week, 8 hours/day)
 		TimeSpan timeUntilDue;
 		int amountOfDays;
-		int a, b;
+		int amountFullWeeks, amountWorkDaysBeforeFullWeeks, amountWorkDaysAfterFullWeeks, dayOfWeekValue = 0;
 		if(currentTime.isBefore(dueTime)) {
+			DayOfWeek day = currentTime.getDayOfWeek();
+			switch(day) {
+			case MONDAY : dayOfWeekValue = 1;
+			case TUESDAY : dayOfWeekValue = 2;
+			case WEDNESDAY : dayOfWeekValue = 3;
+			case THURSDAY : dayOfWeekValue = 4;
+			case FRIDAY : dayOfWeekValue = 5;
+			case SATURDAY : dayOfWeekValue = 6;
+			case SUNDAY : dayOfWeekValue = 7;
+			}
 			amountOfDays = (int) currentTime.until(dueTime, ChronoUnit.DAYS);
-			a = (amountOfDays / 7) - (amountOfDays % 7);
-			b = amountOfDays % 7;
-			if(b == 6)
-				timeUntilDue = new TimeSpan(a * 5 * 8 * 60 + 5 * 8 * 60);
+			amountWorkDaysBeforeFullWeeks = Math.floorMod(amountOfDays - dayOfWeekValue + 1, 7);
+			amountFullWeeks = (amountOfDays - dayOfWeekValue + 1) / 7;
+			if(amountWorkDaysBeforeFullWeeks == 6)
+				amountWorkDaysBeforeFullWeeks = 5;
+			if(dayOfWeekValue == 1 || dayOfWeekValue == 6 || dayOfWeekValue == 7)
+				amountWorkDaysAfterFullWeeks = 0;
 			else
-				timeUntilDue = new TimeSpan(a * 5 * 8 * 60 + b * 8 * 60);
+				amountWorkDaysAfterFullWeeks = 6 - dayOfWeekValue;
+			timeUntilDue = new TimeSpan(amountFullWeeks * 5 * 8 * 60 + amountWorkDaysBeforeFullWeeks * 8 * 60 + amountWorkDaysAfterFullWeeks * 8 * 60);
 		}
 		else
 			timeUntilDue = new TimeSpan(0);
-		
+
 		// RESULT
 		return longest.minus(timeUntilDue);
 	}
-	
+
 	/**
 	 * Determine the longest timespan needed for a chain of dependant tasks.
 	 * The timespan is the largest sum of the estimated durations of the dependant
@@ -927,7 +941,7 @@ public class Project {
 		}
 		return longest;
 	}
-	
+
 	/**
 	 * A method to determine if a task is a prerequisite to another task
 	 * @param	taskID
@@ -942,7 +956,7 @@ public class Project {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * A method to retrieve all task identifiers from tasks that are dependant
 	 * on the supplied task identifier
@@ -959,7 +973,7 @@ public class Project {
 		}
 		return dependants;
 	}
-	
+
 	/**
 	 * A check to determine if the project will end on time
 	 * @param	currentTime
@@ -971,7 +985,7 @@ public class Project {
 		TimeSpan estimatedDuration = new TimeSpan(getEstimatedProjectDelay(currentTime));
 		return estimatedDuration.isZero();
 	}
-	
+
 	/**
 	 * Returns whether or not this project has any tasks available
 	 * @return	True if there is a task assigned to this project which is available
