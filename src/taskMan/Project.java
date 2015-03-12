@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import taskMan.util.TimeSpan;
 
@@ -740,15 +741,15 @@ public class Project {
 	}
 
 	public boolean isTaskUnacceptableOverdue(int taskID,LocalDateTime currentTime) {
-		return getTask(taskID).isUnacceptableOverdue(currentTime);
+		return getTask(taskID).isUnacceptableOverdue();
 	}
 
 	public boolean isTaskOnTime(int taskID,LocalDateTime currentTime) {
-		return getTask(taskID).isOnTime(currentTime);
+		return getTask(taskID).isOnTime();
 	}
 
 	public int getTaskOverTimePercentage(int taskID,LocalDateTime currentTime) {
-		return getTask(taskID).getOverTimePercentage(currentTime);
+		return getTask(taskID).getOverTimePercentage();
 	}
 
 	public boolean isFinished() {
@@ -783,17 +784,17 @@ public class Project {
 				longest = span;
 		}
 		
-		// SUBTRACHT TIME UNTIL DUE TIME FROM CHAIN (5/7 week, 8 hours/day)
+		// SUBTRACT TIME UNTIL DUE TIME FROM CHAIN (5/7 week, 8 hours/day)
 		
 		
 		// RESULT
-		return ;
+		return null;
 	}
 	
 	private TimeSpan getMaxDelayChain(int taskID) {
 		if(!isPrerequisite(taskID))
 			return new TimeSpan(0);
-		ArrayList<Integer> dependants = getDependants(taskID);
+		List<Integer> dependants = getDependants(taskID);
 		TimeSpan longest = new TimeSpan(0);
 		TimeSpan chain;
 		for(Integer dependant : dependants) {
@@ -801,10 +802,26 @@ public class Project {
 			if(chain.isLonger(longest))
 				longest = chain;
 		}
+		return longest;
 	}
 	
 	private boolean isPrerequisite(int taskID) {
-		taskPrerequisites.
+		Set<Integer> hasPrereq = taskPrerequisites.keySet();
+		for(Integer taskWithPrereq : hasPrereq) {
+			if(taskPrerequisites.get(taskWithPrereq).contains(taskID))
+				return true;
+		}
+		return false;
+	}
+	
+	private List<Integer> getDependants(int taskID) {
+		Set<Integer> hasPrereq = taskPrerequisites.keySet();
+		ArrayList<Integer> dependants = new ArrayList<Integer>();
+		for(Integer taskWithPrereq : hasPrereq) {
+			if(taskPrerequisites.get(taskWithPrereq).contains(taskID))
+				dependants.add(taskWithPrereq);
+		}
+		return dependants;
 	}
 
 	public boolean isEstimatedOnTime() {
