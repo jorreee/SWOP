@@ -46,6 +46,8 @@ public class Task {
 		this.description = taskDescription;
 		this.estimatedDuration = new TimeSpan(estimatedDuration);
 		this.acceptableDeviation = acceptableDeviation;
+		if(!isValidExtraTime(extraTime))
+			throw new IllegalArgumentException("Invalid deviation");
 		this.extraTime = extraTime;
 	}
 
@@ -63,8 +65,15 @@ public class Task {
 	 */
 	public Task(int taskID, String taskDescription, int estimatedDuration,
 			int acceptableDeviation) throws IllegalArgumentException {
+		if(!isValidTaskID(taskID))
+			throw new IllegalArgumentException("Invalid deviation");
+		if(!isValidDescription(taskDescription))
+			throw new IllegalArgumentException("Invalid deviation");
+		if(!isValidDuration(estimatedDuration))
+			throw new IllegalArgumentException("Invalid deviation");
 		if(!isValidDeviation(acceptableDeviation))
 			throw new IllegalArgumentException("Invalid deviation");
+		
 		this.taskID = taskID;
 		this.description = taskDescription;
 		this.estimatedDuration = new TimeSpan(estimatedDuration);
@@ -453,10 +462,43 @@ public class Task {
 	 * 
 	 * @param 	deviation
 	 * 			The deviation to check.
-	 * @return	True if 
+	 * @return	True if deviation >= 0
 	 */
 	private boolean isValidDeviation(int deviation){
 		return deviation>=0;
+	}
+	
+	/**
+	 * Checks whether the deviation is a valid one.
+	 * 
+	 * @param 	taskID
+	 * 			The taskID to check.
+	 * @return	True if 
+	 */
+	private boolean isValidTasKID(int taskID){
+		return taskID>=0;
+	}
+	
+	/**
+	 * Checks whether the deviation is a valid one.
+	 * 
+	 * @param 	description
+	 * 			The description to check.
+	 * @return	True if 
+	 */
+	private boolean isValidDescription(String description){
+		return description != null;
+	}
+	
+	/**
+	 * Checks whether the duration is a valid one.
+	 * 
+	 * @param 	duration
+	 * 			The duration to check.
+	 * @return	True if 
+	 */
+	private boolean isValidDuration(int duration){
+		return duration>0;
 	}
 	
 	/**
