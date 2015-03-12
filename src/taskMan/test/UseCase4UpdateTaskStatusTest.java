@@ -14,7 +14,6 @@ public class UseCase4UpdateTaskStatusTest {
 
 	private TaskMan taskMan;
 	private final LocalDateTime startDate = LocalDateTime.of(2015, 2, 9, 8, 0),
-			project0StartDate = startDate,
 			project0DueDate = LocalDateTime.of(2015, 2, 13, 23, 59),
 			workDate = LocalDateTime.of(2015, 2, 9, 16, 0),
 			task00StartDateGood = startDate,

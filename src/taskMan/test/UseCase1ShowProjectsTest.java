@@ -18,37 +18,43 @@ public class UseCase1ShowProjectsTest {
 			workdate2 = LocalDateTime.of(2015, 2, 12, 16, 0),
 			workdate3 = LocalDateTime.of(2015, 2, 13, 16, 0),
 			workdate4 = LocalDateTime.of(2015, 2, 15, 16, 0),
+			workdate5 = LocalDateTime.of(2015, 2, 16, 10, 0),
 			project0DueDate = LocalDateTime.of(2015, 2, 13, 23, 59),
 			project1DueDate = LocalDateTime.of(2015, 2, 21, 23, 59),
-			project2DueDate = LocalDateTime.of(2015, 2, 15, 23, 59),
+			project2DueDate = LocalDateTime.of(2015, 2, 16, 23, 59),
 			project3DueDate = LocalDateTime.of(2015, 2, 21, 23, 59),
 			task00Start = startDate,
 			task00End = LocalDateTime.of(2015, 2, 9, 10, 0),
 			task10Start = LocalDateTime.of(2015, 2, 12, 8, 0),
 			task10End = LocalDateTime.of(2015, 2, 13, 10, 0),
 			task11Start = LocalDateTime.of(2015, 2, 13, 10, 15),
-			task11End = LocalDateTime.of(2015, 2, 13, 14, 0);
+			task11End = LocalDateTime.of(2015, 2, 13, 14, 0),
+			task30Start = LocalDateTime.of(2015, 2, 16, 8, 0),
+			task30End = LocalDateTime.of(2015, 2, 16, 9, 45);
 	private final int task00EstDur = 120,
 			task10EstDur = 8*60,
 			task11EstDur = 3*8*60,
 			task12EstDur = 2*8*60,
 			task13EstDur = 2*8*60,
 			task20EstDur = 35*60,
-			task30EstDur = 3*8*60;
+			task30EstDur = 60,
+			task31EstDur = 3*8*60;
 	private final int task00Dev = 5,
 			task10Dev = 30,
 			task11Dev = 0,
 			task12Dev = 15,
 			task13Dev = 20,
-			task20Dev = 50,
-			task30Dev = 15; // Moet nog steeds delayed project geven!
+			task20Dev = 50,	// Moet nog steeds delayed project geven!
+			task30Dev = 0,
+			task31Dev = 15;
 	private final ArrayList<Integer> task00Dependencies = new ArrayList<Integer>(),
 			task10Dependencies = new ArrayList<Integer>(),
 			task11Dependencies = new ArrayList<Integer>(),
 			task12Dependencies = new ArrayList<Integer>(),
 			task13Dependencies = new ArrayList<Integer>(),
 			task20Dependencies = new ArrayList<Integer>(),
-			task30Dependencies = new ArrayList<Integer>();
+			task30Dependencies = new ArrayList<Integer>(),
+			task31Dependencies = new ArrayList<Integer>();
 	
 	@Before
 	public final void initialize() {
@@ -87,6 +93,12 @@ public class UseCase1ShowProjectsTest {
 		assertTrue(taskMan.advanceTimeTo(workdate4));
 			assertTrue(taskMan.createProject("Project 3", "Describing project 3", project3DueDate));
 				assertTrue(taskMan.createTask(3, "Task 30", task30EstDur, task30Dev, -1, task30Dependencies));		// 30 AVAILABLE
+				assertTrue(taskMan.createTask(3, "Task 31", task31EstDur, task31Dev, -1, task31Dependencies));		// 31 AVAILABLE
+				
+		// Stap verder:
+		// maak task 3,0 FAILED
+		assertTrue(taskMan.advanceTimeTo(workdate5));
+			assertTrue(taskMan.setTaskFailed(3, 0, task30Start, task30End));										// 30 FAILED DELAYED
 
 	}
 	
@@ -132,18 +144,94 @@ public class UseCase1ShowProjectsTest {
 		assertTrue(taskMan.getProjectName(3).equals("Project 3"));
 		assertTrue(taskMan.getProjectStatus(3).equals("ongoing"));
 		assertEquals(taskMan.getProjectEndTime(3),null);
-		assertEquals(taskMan.getTaskAmount(3),1);
+		assertEquals(taskMan.getTaskAmount(3),2);
 		assertEquals(taskMan.getAvailableTasks().size(),1);
 		assertEquals(taskMan.getProjectCreationTime(3),workdate4);
 		assertTrue(taskMan.isOnTime(0));
 		
 		//--------------------------------------------------------------------------
 		// Test Project 0 tasks
+
+		assertTrue(taskMan.getTaskDescription(0, 0).equals("TASK 00"));
+		assertTrue(taskMan.hasTaskEnded(0, 0));
+		assertEquals(taskMan.getTaskStartTime(0, 0),task00Start);
+		assertEquals(taskMan.getTaskEndTime(0, 0),task00End);
+		assertTrue(taskMan.isTaskOnTime(0, 0));
+		assertFalse(taskMan.isTaskUnacceptableOverdue(0, 0));
+		assertEquals(taskMan.getTaskOvertimePercentage(0, 0),0);
 		
+		//--------------------------------------------------------------------------
+		// Test Project 1 tasks
+
+		assertTrue(taskMan.getTaskDescription(1, 0).equals("TASK 10"));
+		assertTrue(taskMan.hasTaskEnded(1, 0));
+		assertEquals(taskMan.getTaskStartTime(1, 0),task10Start);
+		assertEquals(taskMan.getTaskEndTime(1, 0),task10End);
+		assertTrue(taskMan.isTaskOnTime(1, 0));
+		assertFalse(taskMan.isTaskUnacceptableOverdue(1, 0));
+		assertEquals(taskMan.getTaskOvertimePercentage(1, 0),0);
+
+		assertTrue(taskMan.getTaskDescription(1, 1).equals("TASK 11"));
+		assertTrue(taskMan.hasTaskEnded(1, 1));
+		assertEquals(taskMan.getTaskStartTime(1, 1),task10Start);
+		assertEquals(taskMan.getTaskEndTime(1, 1),task10End);
+		assertFalse(taskMan.isTaskOnTime(1, 1));						// Want FAILED task is niet op tijd
+		assertFalse(taskMan.isTaskUnacceptableOverdue(1, 1));			// !!!!!!
+		assertEquals(taskMan.getTaskOvertimePercentage(1, 1),0);		// !!!!!!
+
+		assertTrue(taskMan.getTaskDescription(1, 2).equals("TASK 12"));
+		assertFalse(taskMan.hasTaskEnded(1, 2));
+		assertEquals(taskMan.getTaskStartTime(1, 2),null);
+		assertEquals(taskMan.getTaskEndTime(1, 2),null);
+		assertTrue(taskMan.isTaskOnTime(1, 2));
+		assertFalse(taskMan.isTaskUnacceptableOverdue(1, 2));
+		assertEquals(taskMan.getTaskOvertimePercentage(1, 2),0);
+
+		assertTrue(taskMan.getTaskDescription(1, 3).equals("TASK 13"));
+		assertTrue(taskMan.hasTaskEnded(1, 3));
+		assertEquals(taskMan.getTaskStartTime(1, 3),null);
+		assertEquals(taskMan.getTaskEndTime(1, 3),null);
+		assertTrue(taskMan.isTaskOnTime(1, 3));
+		assertFalse(taskMan.isTaskUnacceptableOverdue(1, 3));
+		assertEquals(taskMan.getTaskOvertimePercentage(1, 3),0);
 		
+		//--------------------------------------------------------------------------
+		// Test Project 2 tasks
+
+		assertTrue(taskMan.getTaskDescription(2, 0).equals("TASK 20"));
+		assertFalse(taskMan.hasTaskEnded(2, 0));
+		assertEquals(taskMan.getTaskStartTime(2, 0),null);
+		assertEquals(taskMan.getTaskEndTime(2, 0),null);
+		assertTrue(taskMan.isTaskOnTime(2, 0));
+		assertFalse(taskMan.isTaskUnacceptableOverdue(2, 0));				// !!!!!
+		assertEquals(taskMan.getTaskOvertimePercentage(2, 0),0);
+		
+		//--------------------------------------------------------------------------
+		// Test Project 3 tasks
+
+		assertTrue(taskMan.getTaskDescription(3, 0).equals("TASK 30"));
+		assertFalse(taskMan.hasTaskEnded(3, 0));
+		assertEquals(taskMan.getTaskStartTime(3, 0),null);
+		assertEquals(taskMan.getTaskEndTime(3, 0),null);
+		assertFalse(taskMan.isTaskOnTime(3, 0));
+		assertTrue(taskMan.isTaskUnacceptableOverdue(3, 0));
+		assertTrue(taskMan.getTaskOvertimePercentage(3, 0) > 0);
+
+		assertTrue(taskMan.getTaskDescription(3, 1).equals("TASK 30"));
+		assertFalse(taskMan.hasTaskEnded(3, 1));
+		assertEquals(taskMan.getTaskStartTime(3, 1),null);
+		assertEquals(taskMan.getTaskEndTime(3, 1),null);
+		assertTrue(taskMan.isTaskOnTime(3, 1));
+		assertFalse(taskMan.isTaskUnacceptableOverdue(3, 1));
+		assertEquals(taskMan.getTaskOvertimePercentage(3, 1),0);
 		
 	}
 	
 	//TODO verkeerde IDs testen
+	
+	@Test
+	public void badInputCasetest() {
+		
+	}
 
 }

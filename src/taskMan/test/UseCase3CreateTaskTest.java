@@ -14,7 +14,6 @@ public class UseCase3CreateTaskTest {
 
 	private TaskMan taskMan;
 	private final LocalDateTime startDate = LocalDateTime.of(2015, 2, 9, 8, 0),
-			project0StartDate = startDate,
 			project0DueDate = LocalDateTime.of(2015, 2, 13, 23, 59),
 			task00StartDateGood = startDate,
 			task00EndDateGood = LocalDateTime.of(2015,2,9,10,0),
