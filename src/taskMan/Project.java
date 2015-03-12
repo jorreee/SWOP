@@ -763,17 +763,56 @@ public class Project {
 	 * 			that are estimated to be required to finish the project
 	 */
 	public int[] getEstimatedProjectDelay() {
-		int availableBranches = 
-		TimeSpan estimatedDuration = new TimeSpan(0);
-		for(Task task : taskList) {
-			if(!task.hasEnded())
-				estimatedDuration = estimatedDuration.add(task.getEstimatedDuration());
+		if(!hasAvailableTasks())
+			return new TimeSpan(0).getSpan();
+		
+		// FOR EACH AVAILABLE TASK CALCULATE CHAIN
+		int availableBranches = getAvailableTasks().size();
+		TimeSpan[] timeChains = new TimeSpan[availableBranches];
+		Integer testTask;
+		ArrayList<Integer> ch;
+		TimeSpan longestPre = new TimeSpan(0);
+		for(int i = 0 ; i < availableBranches ; i++) {
+			testTask = getAvailableTasks().get(i);
+			timeChains[i] = getTask(testTask).getEstimatedDuration().add(getMaxDelayChain(testTask));
 		}
-		return estimatedDuration.getSpan();
+		// FIND LONGEST CHAIN
+		TimeSpan longest = new TimeSpan(0);
+		for(TimeSpan span : timeChains) {
+			if(span.isLonger(longest))
+				longest = span;
+		}
+		
+		// SUBTRACHT TIME UNTIL DUE TIME FROM CHAIN (5/7 week, 8 hours/day)
+		
+		
+		// RESULT
+		return ;
+	}
+	
+	private TimeSpan getMaxDelayChain(int taskID) {
+		if(!isPrerequisite(taskID))
+			return new TimeSpan(0);
+		ArrayList<Integer> dependants = getDependants(taskID);
+		TimeSpan longest = new TimeSpan(0);
+		TimeSpan chain;
+		for(Integer dependant : dependants) {
+			chain = getTask(dependant).getEstimatedDuration().add(getMaxDelayChain(dependant));
+			if(chain.isLonger(longest))
+				longest = chain;
+		}
+	}
+	
+	private boolean isPrerequisite(int taskID) {
+		taskPrerequisites.
 	}
 
 	public boolean isEstimatedOnTime() {
 		TimeSpan estimatedDuration = new TimeSpan(getEstimatedProjectDelay());
 		return estimatedDuration.isZero();
+	}
+	
+	private boolean hasAvailableTasks() {
+		return getAvailableTasks().size() > 0;
 	}
 }
