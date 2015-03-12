@@ -185,6 +185,14 @@ public class TimeSpan {
 		int acceptableSpan = span + deviation * (span/100);
 		return new TimeSpan(acceptableSpan);
 	}
+	
+	public boolean isLonger(TimeSpan other){
+		return this.getSpanMinutes()>other.getSpanMinutes();
+	}
+	
+	public boolean isShorter(TimeSpan other){
+		return this.getSpanMinutes()<other.getSpanMinutes();
+	}
 
 }
 

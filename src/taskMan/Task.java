@@ -474,8 +474,9 @@ public class Task {
 	}
 	
 	public boolean isOverdue(LocalDateTime currentTime){
+		TimeSpan acceptableSpan = this.getEstimatedDuration().getAcceptableSpan(this.getAcceptableDeviation());
 		if(isFinished() || isFailed()){
-			
+			if(this.getTimeElapsed(currentTime).isLonger(other))
 		}
 	}
 
