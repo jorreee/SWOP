@@ -26,6 +26,9 @@ public interface IFacade {
 	public String getProjectName(int projectID);
 	
 	public boolean isOnTime(int projectID);
+	public boolean isTaskUnacceptableOverdue(int projectID, int i);
+	public boolean isTaskOnTime(int projectID, int i);
+	public String getTaskOverTimePercentage(int projectID, int i);
 	
 	public int[] getProjectDelay(int projectID);
 	
@@ -33,7 +36,6 @@ public interface IFacade {
 	public String getTaskDescription(int projectID, int taskID);
 	
 	public LocalDateTime getProjectCreationTime(int projectID);
-	public boolean hasTaskStarted(int projectID, int taskID);
 	public LocalDateTime getTaskStartTime(int projectID, int taskID);
 	
 	public LocalDateTime getProjectDueTime(int projectID);
@@ -55,19 +57,5 @@ public interface IFacade {
 
 	public boolean hasTaskAlternative(int projectID, int taskID);
 	public int getTaskAlternativeTo(int projectID, int taskID);
-
-
-
-
-
-	
-
-
-
-
-
-
-
-
 	
 }

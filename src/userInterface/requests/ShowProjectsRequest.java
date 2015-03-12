@@ -67,8 +67,17 @@ public class ShowProjectsRequest extends Request {
 
 				int taskAmount = facade.getTaskAmount(projectID);
 				for(int i = 0 ; i < taskAmount ; i++) {
-					System.out.println("  * Task " + i + ": "
-							+ facade.getTaskStatus(projectID, i)); // PRINT TASK i FROM SELECTED PROJECT HEADER
+					StringBuilder taskiHead = new StringBuilder();
+					taskiHead.append("  *");
+					if(facade.isTaskUnacceptableOverdue(projectID, i))
+						taskiHead.append("!");
+					taskiHead.append(" Task " + i + ":" + facade.getTaskStatus(projectID, i));
+					if(facade.isTaskOnTime(projectID, i))
+						taskiHead.append(", on time");
+					else {
+						taskiHead.append(", over time by " + facade.getTaskOverTimePercentage(projectID, i) + "%");
+					}
+					System.out.println(taskiHead.toString()); // PRINT TASK i FROM SELECTED PROJECT HEADER
 				}
 
 				// Ask user for task selection
@@ -84,11 +93,20 @@ public class ShowProjectsRequest extends Request {
 
 				// Show overview of task details
 				StringBuilder taskHeader = new StringBuilder(); // Build task details
-				taskHeader.append("  * Task " + taskID + " "
+				taskHeader.append("  *");
+				if(facade.isTaskUnacceptableOverdue(projectID, taskID))
+					taskHeader.append("!");
+				taskHeader.append(" Task " + taskID + " "
 						+ facade.getTaskStatus(projectID, taskID) + ": "
 						+ facade.getTaskDescription(projectID, taskID) + ", "
 						+ facade.getEstimatedTaskDuration(projectID, taskID) + " minutes, "
 						+ facade.getAcceptableTaskDeviation(projectID, taskID) + "% margin");
+				
+				if(facade.isTaskOnTime(projectID, taskID))
+					taskHeader.append(", on time");
+				else {
+					taskHeader.append(", over time by " + facade.getTaskOverTimePercentage(projectID, taskID) + "%");
+				}
 				
 				if(facade.hasTaskPrerequisites(projectID, taskID)) {
 					List<Integer> prereqs = facade.getTaskPrerequisitesFor(projectID, taskID);
@@ -96,16 +114,16 @@ public class ShowProjectsRequest extends Request {
 					for(int i = 0 ; i < prereqs.size() ; i++) {
 						if(i == 0)
 							taskHeader.append(" task " + prereqs.get(i));
+						else
+							taskHeader.append(prereqs.get(i));
 						if(i < prereqs.size() - 1)
 							taskHeader.append(" and ");
 					}
 				}
 				if(facade.hasTaskAlternative(projectID, taskID))
 					taskHeader.append(", alternative to task " + facade.getTaskAlternativeTo(projectID, taskID));
-				if(facade.hasTaskStarted(projectID, taskID))
-					taskHeader.append(", started " + facade.getTaskStartTime(projectID, taskID).toString());
 				if(facade.hasTaskEnded(projectID, taskID))
-					taskHeader.append(", finished " + facade.getTaskEndTime(projectID, taskID).toString());
+					taskHeader.append(", started " + facade.getTaskStartTime(projectID, taskID).toString() + " , finished " + facade.getTaskEndTime(projectID, taskID).toString());
 				System.out.println(taskHeader.toString()); // PRINT SELECTED TASK HEADER
 				
 			} catch(Exception e) {
