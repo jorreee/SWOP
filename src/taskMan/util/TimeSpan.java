@@ -208,7 +208,7 @@ public class TimeSpan {
 	 * @return	True if this span is longer.
 	 */
 	public boolean isLonger(TimeSpan other){
-		return this.getSpanMinutes()>other.getSpanMinutes();
+		return this.getSpanMinutes()>=other.getSpanMinutes();
 	}
 	
 	/**
@@ -219,7 +219,7 @@ public class TimeSpan {
 	 * @return	True if this span is shorter or equal.
 	 */
 	public boolean isShorter(TimeSpan other){
-		return this.getSpanMinutes()<other.getSpanMinutes();
+		return this.getSpanMinutes()<=other.getSpanMinutes();
 	}
 	
 	/**
