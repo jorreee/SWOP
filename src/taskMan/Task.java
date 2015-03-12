@@ -247,32 +247,6 @@ public class Task {
 	}
 
 	/**
-	 * Set the status of this Task on finished.
-	 * 
-	 * @return	True is the operation was successful.
-	 * 			False if the status was already failed or finished.
-	 */
-	public boolean setFinished(){
-		if(this.taskStatus == TaskStatus.FAILED || this.taskStatus == TaskStatus.FINISHED)
-			return false;
-		this.taskStatus = TaskStatus.FINISHED;
-		return true;
-	}
-
-	/**
-	 * Set the status of this Task on failed.
-	 * 
-	 * @return	True is the operation was successful.
-	 * 			False if the status was already failed or finished.
-	 */
-	public boolean setFailed(){
-		if(this.taskStatus == TaskStatus.FAILED || this.taskStatus == TaskStatus.FINISHED)
-			return false;
-		this.taskStatus = TaskStatus.FAILED;
-		return true;
-	}
-
-	/**
 	 * Set the status of this Task on available.
 	 * 
 	 * @return	True is the operation was successful.
@@ -509,26 +483,26 @@ public class Task {
 		else
 			return 0;
 	}
-	
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + taskID;
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Task other = (Task) obj;
-		if (taskID != other.taskID)
-			return false;
-		return true;
-	}
+//	
+//	@Override
+//	public int hashCode() {
+//		final int prime = 31;
+//		int result = 1;
+//		result = prime * result + taskID;
+//		return result;
+//	}
+//
+//	@Override
+//	public boolean equals(Object obj) {
+//		if (this == obj)
+//			return true;
+//		if (obj == null)
+//			return false;
+//		if (getClass() != obj.getClass())
+//			return false;
+//		Task other = (Task) obj;
+//		if (taskID != other.taskID)
+//			return false;
+//		return true;
+//	}
 }

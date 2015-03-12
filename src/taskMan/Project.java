@@ -461,15 +461,10 @@ public class Project {
 				pre.add(getAlternative(prereq));
 			}
 		}
-		if(hasPrerequisites(taskID)){
-
-			List<Integer> preOld = getPrerequisites(taskID);
-			pre.addAll(preOld);
-			taskPrerequisites.put(taskID, pre);
-			return true;
-		}
-		else { taskPrerequisites.put(taskID, pre);
-		return true; }
+		
+		taskPrerequisites.put(taskID, pre);
+		
+		return true;
 	}
 
 	/**
