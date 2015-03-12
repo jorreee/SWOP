@@ -766,7 +766,7 @@ public class Project {
 	 * @return	The amount of years, months, days, hours and minutes
 	 * 			that are estimated to be required to finish the project
 	 */
-	public int[] getEstimatedProjectDelay() {
+	public int[] getEstimatedProjectDelay(LocalDateTime currentTime) {
 		if(!hasAvailableTasks())
 			return new TimeSpan(0).getSpan();
 		
@@ -774,8 +774,6 @@ public class Project {
 		int availableBranches = getAvailableTasks().size();
 		TimeSpan[] timeChains = new TimeSpan[availableBranches];
 		Integer testTask;
-		ArrayList<Integer> ch;
-		TimeSpan longestPre = new TimeSpan(0);
 		for(int i = 0 ; i < availableBranches ; i++) {
 			testTask = getAvailableTasks().get(i);
 			timeChains[i] = getTask(testTask).getEstimatedDuration().add(getMaxDelayChain(testTask));
@@ -788,6 +786,12 @@ public class Project {
 		}
 		
 		// SUBTRACT TIME UNTIL DUE TIME FROM CHAIN (5/7 week, 8 hours/day)
+		TimeSpan timeUntilDue;
+		if(currentTime.isBefore(dueTime))
+			timeUntilDue = new TimeSpan(currentTime, dueTime);
+		else
+			timeUntilDue = new TimeSpan(0);
+		
 		
 		
 		// RESULT
