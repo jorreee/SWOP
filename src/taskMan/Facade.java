@@ -188,4 +188,14 @@ public class Facade implements IFacade {
 		return taskMan.getTaskOverTimePercentage(projectID, taskID);
 	}
 
+	@Override
+	public boolean isProjectFinished(int projectID) {
+		return taskMan.isProjectFinished(projectID);
+	}
+
+	@Override
+	public int[] getEstimatedProjectEndTime(int projectID) {
+		return taskMan.getEstimatedProjectEndTime(projectID);
+	}
+
 }

@@ -485,4 +485,25 @@ public class TaskMan {
 	public int getTaskOverTimePercentage(int projectID, int taskID) {
 		return getProject(projectID).getTaskOverTimePercentage(taskID, getCurrentTime());
 	}
+
+	/**
+	 * Returns whether a certain project has finished
+	 * @param	projectID
+	 * 			the id of the given project
+	 * @return	True if the project has finished
+	 */
+	public boolean isProjectFinished(int projectID) {
+		return getProject(projectID).isFinished();
+	}
+	
+	/**
+	 * Returns the estimated time until the project should end
+	 * @param	projectID
+	 * 			the id of the given project
+	 * @return	The amount of years, months, days, hours and minutes
+	 * 			that are estimated to be required to finish the project
+	 */
+	public int[] getEstimatedProjectEndTime(int projectID) {
+		return getProject(projectID).getEstimatedProjectEndTime();
+	}
 }

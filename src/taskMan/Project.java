@@ -750,4 +750,17 @@ public class Project {
 	public int getTaskOverTimePercentage(int taskID,LocalDateTime currentTime) {
 		return getTask(taskID).getOverTimePercentage(currentTime);
 	}
+
+	public boolean isFinished() {
+		return getProjectStatus().equalsIgnoreCase("FINISHED");
+	}
+
+	public int[] getEstimatedProjectEndTime() {
+		TimeSpan estimatedDuration = new TimeSpan(0);
+		for(Task task : taskList) {
+			if(!task.hasEnded())
+				estimatedDuration = estimatedDuration.add(task.getEstimatedDuration());
+		}
+		return estimatedDuration.getSpan();
+	}
 }

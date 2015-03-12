@@ -31,6 +31,8 @@ public interface IFacade {
 	public int getTaskOverTimePercentage(int projectID, int TaskID);
 	
 	public int[] getProjectDelay(int projectID);
+	public boolean isProjectFinished(int projectID);
+	public int[] getEstimatedProjectEndTime(int projectID);
 	
 	public String getProjectDescription(int projectID);
 	public String getTaskDescription(int projectID, int taskID);
@@ -57,5 +59,4 @@ public interface IFacade {
 
 	public boolean hasTaskAlternative(int projectID, int taskID);
 	public int getTaskAlternativeTo(int projectID, int taskID);
-	
 }

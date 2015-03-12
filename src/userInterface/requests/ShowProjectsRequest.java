@@ -62,6 +62,16 @@ public class ShowProjectsRequest extends Request {
 				}
 				projectHeader.append(")");
 				
+				if(!facade.isProjectFinished(projectID)) {
+					projectHeader.append(", estimated end time: ");
+					int[] estimatedProjectEndBits = facade.getEstimatedProjectEndTime(projectID);
+					if(estimatedProjectEndBits[0] != 0) projectHeader.append(estimatedProjectEndBits[0] + " working years "); // years
+					if(estimatedProjectEndBits[1] != 0) projectHeader.append(estimatedProjectEndBits[1] + " working months "); // months
+					if(estimatedProjectEndBits[2] != 0) projectHeader.append(estimatedProjectEndBits[2] + " working days "); // days
+					if(estimatedProjectEndBits[3] != 0) projectHeader.append(estimatedProjectEndBits[3] + " working hours "); // hours
+					if(estimatedProjectEndBits[4] != 0) projectHeader.append(estimatedProjectEndBits[4] + " working minutes "); // minutes
+				}
+				
 				System.out.println(projectHeader.toString());
 				System.out.println("\"" + facade.getProjectDescription(projectID) + "\""); // PRINT SELECTED PROJECT HEADER
 
