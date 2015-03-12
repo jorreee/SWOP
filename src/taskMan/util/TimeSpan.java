@@ -180,26 +180,63 @@ public class TimeSpan {
 		return this.getSpan()[0];
 	}
 	
+	/**
+	 * Creates a new TimeSpan object from a given deviation.
+	 * 
+	 * @param 	deviation
+	 * 			The deviation to be used.
+	 * @return	An new TimeSpan object representing a acceptable span.
+	 */
 	public TimeSpan getAcceptableSpan(int deviation){
 		int span = this.getSpanMinutes();
 		int acceptableSpan = span + deviation * (span/100);
 		return new TimeSpan(acceptableSpan);
 	}
 	
+	/**
+	 * Checks whether this TimeSpan is longer than the other.
+	 * 
+	 * @param 	other
+	 * 			The TimeSpan to compare to.
+	 * @return	True if this span is longer.
+	 */
 	public boolean isLonger(TimeSpan other){
 		return this.getSpanMinutes()>other.getSpanMinutes();
 	}
 	
+	/**
+	 * Checks whether this TimeSpan is shorter or equal to the other.
+	 * 
+	 * @param 	other
+	 * 			The TimeSpan to compare to.
+	 * @return	True if this span is shorter or equal.
+	 */
 	public boolean isShorter(TimeSpan other){
 		return this.getSpanMinutes()<other.getSpanMinutes();
 	}
 	
+	/**
+	 * Checks whether this TimeSpan has a zero value.
+	 * 
+	 * @return	True if there is a zero value.
+	 */
 	public boolean isZero() {
 		for(int slot : span) {
 			if(slot != 0)
 				return false;
 		}
 		return true;
+	}
+	
+	/**
+	 * Get the difference between to TimeSpan's in minutes.
+	 * 
+	 * @param 	other
+	 * 			The other TimeSpan object.
+	 * @return	The difference in minutes.
+	 */
+	public int getDifferenceMinute(TimeSpan other){
+		return Math.abs(this.getSpanMinutes() - other.getSpanMinutes());
 	}
 
 }

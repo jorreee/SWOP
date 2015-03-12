@@ -559,21 +559,21 @@ public class TaskMan {
 		if(!isValidProjectID(projectID)) {
 			return false;
 		}
-		return getProject(projectID).isTaskUnacceptableOverdue(taskID,getCurrentTime());
+		return getProject(projectID).isTaskUnacceptableOverdue(taskID);
 	}
 
 	public boolean isTaskOnTime(int projectID, int taskID) {
 		if(!isValidProjectID(projectID)) {
 			return false;
 		}
-		return getProject(projectID).isTaskOnTime(taskID, getCurrentTime());
+		return getProject(projectID).isTaskOnTime(taskID);
 	}
 
 	public int getTaskOverTimePercentage(int projectID, int taskID) {
 		if(!isValidProjectID(projectID)) {
 			return -1;
 		}
-		return getProject(projectID).getTaskOverTimePercentage(taskID, getCurrentTime());
+		return getProject(projectID).getTaskOverTimePercentage(taskID);
 	}
 
 	/**

@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import taskMan.util.TimeSpan;
 
@@ -711,6 +712,9 @@ public class Project {
 			for(Task task : taskList)
 				updateTaskStatus(task);
 			recalculateProjectStatus();
+			if(this.projectStatus==ProjectStatus.FINISHED){
+				this.endTime = endTime;
+			}
 			return true;
 		}
 		return false;
@@ -739,15 +743,15 @@ public class Project {
 		return false;
 	}
 
-	public boolean isTaskUnacceptableOverdue(int taskID,LocalDateTime currentTime) {
+	public boolean isTaskUnacceptableOverdue(int taskID) {
 		return getTask(taskID).isUnacceptableOverdue(currentTime);
 	}
 
-	public boolean isTaskOnTime(int taskID,LocalDateTime currentTime) {
+	public boolean isTaskOnTime(int taskID) {
 		return getTask(taskID).isOnTime(currentTime);
 	}
 
-	public int getTaskOverTimePercentage(int taskID,LocalDateTime currentTime) {
+	public int getTaskOverTimePercentage(int taskID) {
 		return getTask(taskID).getOverTimePercentage(currentTime);
 	}
 
@@ -762,7 +766,7 @@ public class Project {
 	 * @return	The amount of years, months, days, hours and minutes
 	 * 			that are estimated to be required to finish the project
 	 */
-	public int[] getEstimatedProjectDelay() {
+	public int[] getEstimatedProjectDelay(LocalDateTime currentTime) {
 		if(!hasAvailableTasks())
 			return new TimeSpan(0).getSpan();
 		
@@ -770,8 +774,6 @@ public class Project {
 		int availableBranches = getAvailableTasks().size();
 		TimeSpan[] timeChains = new TimeSpan[availableBranches];
 		Integer testTask;
-		ArrayList<Integer> ch;
-		TimeSpan longestPre = new TimeSpan(0);
 		for(int i = 0 ; i < availableBranches ; i++) {
 			testTask = getAvailableTasks().get(i);
 			timeChains[i] = getTask(testTask).getEstimatedDuration().add(getMaxDelayChain(testTask));
@@ -783,17 +785,23 @@ public class Project {
 				longest = span;
 		}
 		
-		// SUBTRACHT TIME UNTIL DUE TIME FROM CHAIN (5/7 week, 8 hours/day)
+		// SUBTRACT TIME UNTIL DUE TIME FROM CHAIN (5/7 week, 8 hours/day)
+		TimeSpan timeUntilDue;
+		if(currentTime.isBefore(dueTime))
+			timeUntilDue = new TimeSpan(currentTime, dueTime);
+		else
+			timeUntilDue = new TimeSpan(0);
+		
 		
 		
 		// RESULT
-		return ;
+		return null;
 	}
 	
 	private TimeSpan getMaxDelayChain(int taskID) {
 		if(!isPrerequisite(taskID))
 			return new TimeSpan(0);
-		ArrayList<Integer> dependants = getDependants(taskID);
+		List<Integer> dependants = getDependants(taskID);
 		TimeSpan longest = new TimeSpan(0);
 		TimeSpan chain;
 		for(Integer dependant : dependants) {
@@ -801,10 +809,26 @@ public class Project {
 			if(chain.isLonger(longest))
 				longest = chain;
 		}
+		return longest;
 	}
 	
 	private boolean isPrerequisite(int taskID) {
-		taskPrerequisites.
+		Set<Integer> hasPrereq = taskPrerequisites.keySet();
+		for(Integer taskWithPrereq : hasPrereq) {
+			if(taskPrerequisites.get(taskWithPrereq).contains(taskID))
+				return true;
+		}
+		return false;
+	}
+	
+	private List<Integer> getDependants(int taskID) {
+		Set<Integer> hasPrereq = taskPrerequisites.keySet();
+		ArrayList<Integer> dependants = new ArrayList<Integer>();
+		for(Integer taskWithPrereq : hasPrereq) {
+			if(taskPrerequisites.get(taskWithPrereq).contains(taskID))
+				dependants.add(taskWithPrereq);
+		}
+		return dependants;
 	}
 
 	public boolean isEstimatedOnTime() {
