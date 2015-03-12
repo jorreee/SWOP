@@ -738,4 +738,16 @@ public class Project {
 		}
 		return false;
 	}
+
+	public boolean isTaskUnacceptableOverdue(int taskID) {
+		return getTask(taskID).isUnacceptableOverdue();
+	}
+
+	public boolean isTaskOnTime(int taskID) {
+		return getTask(taskID).isOnTime();
+	}
+
+	public int getTaskOverTimePercentage(int taskID) {
+		return getTask(taskID).getOverTimePercentage();
+	}
 }

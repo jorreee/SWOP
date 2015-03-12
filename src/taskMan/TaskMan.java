@@ -473,4 +473,16 @@ public class TaskMan {
 			return false;
 		return projectList.get(projectID).setTaskFailed(taskID,startTime, endTime);
 	}
+
+	public boolean isTaskUnacceptableOverdue(int projectID, int taskID) {
+		return getProject(projectID).isTaskUnacceptableOverdue(taskID);
+	}
+
+	public boolean isTaskOnTime(int projectID, int taskID) {
+		return getProject(projectID).isTaskOnTime(taskID);
+	}
+
+	public int getTaskOverTimePercentage(int projectID, int taskID) {
+		return getProject(projectID).getTaskOverTimePercentage(taskID);
+	}
 }

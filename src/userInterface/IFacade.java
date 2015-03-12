@@ -26,9 +26,9 @@ public interface IFacade {
 	public String getProjectName(int projectID);
 	
 	public boolean isOnTime(int projectID);
-	public boolean isTaskUnacceptableOverdue(int projectID, int i);
-	public boolean isTaskOnTime(int projectID, int i);
-	public String getTaskOverTimePercentage(int projectID, int i);
+	public boolean isTaskUnacceptableOverdue(int projectID, int taskID);
+	public boolean isTaskOnTime(int projectID, int taskID);
+	public int getTaskOverTimePercentage(int projectID, int TaskID);
 	
 	public int[] getProjectDelay(int projectID);
 	

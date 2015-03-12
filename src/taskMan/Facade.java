@@ -173,4 +173,19 @@ public class Facade implements IFacade {
 		return taskMan.setTaskFailed(projectID, taskID,startTime,endTime);
 	}
 
+	@Override
+	public boolean isTaskUnacceptableOverdue(int projectID, int taskID) {
+		return taskMan.isTaskUnacceptableOverdue(projectID, taskID);
+	}
+
+	@Override
+	public boolean isTaskOnTime(int projectID, int taskID) {
+		return taskMan.isTaskOnTime(projectID, taskID);
+	}
+
+	@Override
+	public int getTaskOverTimePercentage(int projectID, int taskID) {
+		return taskMan.getTaskOverTimePercentage(projectID, taskID);
+	}
+
 }
