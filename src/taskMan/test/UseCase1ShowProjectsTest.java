@@ -21,42 +21,54 @@ public class UseCase1ShowProjectsTest {
 			project0DueDate = LocalDateTime.of(2015, 2, 13, 23, 59),
 			project1DueDate = LocalDateTime.of(2015, 2, 21, 23, 59),
 			project2DueDate = LocalDateTime.of(2015, 2, 15, 23, 59),
-			project3DueDate = LocalDateTime.of(2015, 2, 21, 23, 59);
-	private final int task00EstDur = 60,
-			task20EstDur = 35;
-	private final int task00Dev = 0,
+			project3DueDate = LocalDateTime.of(2015, 2, 21, 23, 59),
+			task00Start = startDate,
+			task00End = LocalDateTime.of(2015, 2, 9, 10, 0);
+	private final int task00EstDur = 120,
+			task20EstDur = 35*60;
+	private final int task00Dev = 5,
 			task20Dev = 50; // Moet nog steeds delayed project geven!
-	private final ArrayList<Integer> task00Dependencies = new ArrayList(),
-			task02Dependencies = new ArrayList();
-
-	/**
-	 * DEFAULT TASKMAN TESTER
-	 * - project 1 START 9 feb DUE 13 feb (midnight)
-	 * 		task 1			
-	 * 		task 2 <- 1
-	 * 		task 3 <- 2
-	 * 		task 4 <- 2
-	 */
+	private final ArrayList<Integer> task00Dependencies = new ArrayList<Integer>(),
+			task20Dependencies = new ArrayList<Integer>();
+	
 	@Before
 	public final void initialize() {
+		// INIT systeem en maak het eerste project aan, samen met zijn TASK
 		taskMan = new TaskMan(startDate);
-
-		taskMan.createProject("Test1", "testing 1", project0DueDate);
-
-
-		taskMan.createTask(0, "Design system", task00EstDur, task00Dev, -1, task00Dependencies);		// TASK 1
-		task01Dependencies.add(Integer.valueOf(1));
-		taskMan.createTask(0, "Implement Native", task01EstDur, task01Dev, -1, task01Dependencies);	// TASK 2
-		task02Dependencies.add(Integer.valueOf(2));
-		taskMan.createTask(0, "Test code", task02EstDur, task02Dev, -1, task02Dependencies);			// TASK 3
-		task03Dependencies.add(Integer.valueOf(2));
-		taskMan.createTask(0, "Document code", task03EstDur, task03Dev, -1, task03Dependencies);		// TASK 4
+			taskMan.createProject("Project 0", "Describing proj 0", project0DueDate);
+				taskMan.createTask(0, "Task 00", task00EstDur, task00Dev, -1, task00Dependencies);
+				
+		// Stap verder:
+		// maak het tweede project aan en maak zijn TASK lijst
+		taskMan.advanceTimeTo(workdate1);
+			taskMan.createProject("Project 1", "Describing proj 1", project1DueDate);
+				//TODO maak project 1 takensysteem
+		
+		// Stap verder:
+		// maak het derde project aan, samen met zijn TASK
+		taskMan.advanceTimeTo(workdate2);
+			taskMan.createProject("Project 2", "Describing project 2", project2DueDate);
+				taskMan.createTask(2, "Task 20", task20EstDur, task20Dev, -1, task20Dependencies);
+				
+		// Stap verder:
+		// maak TASK 0,0 af -> project 1 is finished
+		taskMan.advanceTimeTo(workdate3);
+			taskMan.setTaskFinished(0, 0, task00Start, task00End);
+			
+		// Stap verder:
+		// maak het vierde project aan en maak zijn TASK lijst
+		taskMan.advanceTimeTo(workdate3);
+			taskMan.createProject("Project 3", "Describing project 3", project3DueDate);
+				//TODO maak project 3 takensyteem
 
 	}
 
+	//TODO verwacht: PROJ0 FINISHED, PROJ2 DELAYED, PROJ1,3 ONGOING
+	
 	@Test
-	public void test() {
-		fail("Not yet implemented");
+	public void SuccesCasetest() {
+		//TODO
+		
 	}
 
 }
