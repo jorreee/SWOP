@@ -59,12 +59,30 @@ public class UseCase1ShowProjectsTest {
 			task30Dependencies = new ArrayList<Integer>(),
 			task31Dependencies = new ArrayList<Integer>();
 	
+	/**
+	 * - project 0 START 9 feb 8u DUE 31 feb midnight
+	 * 		task 0 FINISHED
+	 * 
+	 * - project 1 START 11 feb 16u DUE 
+	 * 		task 0 FINISHED
+	 * 		task 1 FAILED
+	 * 		task 2 <- 0, 1
+	 * 		task 3 ALT 0
+	 * 
+	 * - project 2 START 13 feb 16u DUE 
+	 * 		task 0 
+	 * 
+	 * - project 3 START 15 feb 16u DUE 
+	 * 		task 0 FAILED
+	 * 		task 1 
+	 * 
+	 */
 	@Before
 	public final void initialize() {
 		// INIT systeem en maak het eerste project aan, samen met zijn TASK
 		taskManager = new Facade(startDate);
 			assertTrue(taskManager.createProject("Project 0", "Describing proj 0", project0DueDate));
-				assertTrue(taskManager.createTask(0, "Task 00", task00EstDur, task00Dev, -1, task00Dependencies));		// 00 AVAILABLE
+				assertTrue(taskManager.createTask(0, "TASK 00", task00EstDur, task00Dev, -1, task00Dependencies));		// 00 AVAILABLE
 				
 		// Stap verder:
 		// maak het tweede project aan en maak zijn TASK lijst
@@ -95,8 +113,8 @@ public class UseCase1ShowProjectsTest {
 		// maak het vierde project aan en maak zijn TASK lijst
 		assertTrue(taskManager.advanceTimeTo(workdate4));
 			assertTrue(taskManager.createProject("Project 3", "Describing proj 3", project3DueDate));
-				assertTrue(taskManager.createTask(3, "Task 30", task30EstDur, task30Dev, -1, task30Dependencies));		// 30 AVAILABLE
-				assertTrue(taskManager.createTask(3, "Task 31", task31EstDur, task31Dev, -1, task31Dependencies));		// 31 AVAILABLE
+				assertTrue(taskManager.createTask(3, "TASK 30", task30EstDur, task30Dev, -1, task30Dependencies));		// 30 AVAILABLE
+				assertTrue(taskManager.createTask(3, "TASK 31", task31EstDur, task31Dev, -1, task31Dependencies));		// 31 AVAILABLE
 				
 		// Stap verder:
 		// maak task 3,0 FAILED
@@ -138,7 +156,7 @@ public class UseCase1ShowProjectsTest {
 		assertTrue(taskManager.getProjectStatus(2).equals("ongoing"));
 		assertEquals(taskManager.getProjectEndTime(2),null);
 		assertEquals(taskManager.getTaskAmount(2),1);
-		assertEquals(taskManager.getAvailableTasks().size(),1);
+		assertEquals(taskManager.getAvailableTasks(2).size(),1);
 		assertEquals(taskManager.getProjectCreationTime(2),workdate2);
 		assertFalse(taskManager.isProjectEstimatedOnTime(2));											// DELAYED
 
@@ -148,7 +166,7 @@ public class UseCase1ShowProjectsTest {
 		assertTrue(taskManager.getProjectStatus(3).equals("ongoing"));
 		assertEquals(taskManager.getProjectEndTime(3),null);
 		assertEquals(taskManager.getTaskAmount(3),2);
-		assertEquals(taskManager.getAvailableTasks().size(),1);
+		assertEquals(taskManager.getAvailableTasks(3).size(),1);
 		assertEquals(taskManager.getProjectCreationTime(3),workdate4);
 		assertTrue(taskManager.isProjectEstimatedOnTime(0));
 		
@@ -237,7 +255,7 @@ public class UseCase1ShowProjectsTest {
 		int numOfProj = taskManager.getProjectAmount();
 		assertEquals(numOfProj,4);
 		// Stap 3
-		assertFalse(taskManager.getProjectDescription(4).equals("Describing project 0"));
+		assertEquals(taskManager.getProjectDescription(4),null);
 		assertEquals(taskManager.getProjectDueTime(4),null);
 		assertEquals(taskManager.getProjectName(4),null);
 		assertEquals(taskManager.getProjectStatus(4),null);
@@ -252,7 +270,7 @@ public class UseCase1ShowProjectsTest {
 		assertEquals(taskManager.getTaskStartTime(4, 0),null);
 		assertEquals(taskManager.getTaskEndTime(4, 0),null);
 		assertFalse(taskManager.isTaskOnTime(4, 0));
-		assertTrue(taskManager.isTaskUnacceptableOverdue(4, 0));			// Design keuze; mag ook False
+		assertTrue(taskManager.isTaskUnacceptableOverdue(4, 0));						// Design keuze; mag ook False
 		assertEquals(taskManager.getTaskOverTimePercentage(4, 0),-1);
 		
 		assertEquals(taskManager.getTaskDescription(3, 5),null);

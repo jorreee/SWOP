@@ -67,6 +67,9 @@ public class TaskMan {
 	 * @return	The project with the project ID
 	 */
 	private Project getProject(int projectID) {
+		if(!isValidProjectID(projectID)) {
+			return null;
+		}
 		return projectList.get(projectID);
 	}
 		
@@ -139,7 +142,12 @@ public class TaskMan {
 	 * @return	True if and only the creation of a Task with a status
 	 * 			of failed or finished was successful.
 	 */
-	public boolean createTask(int projectID, String description, int estimatedDuration, int acceptableDeviation, String taskStatus, Integer alternativeFor, List<Integer> prerequisiteTasks, LocalDateTime startTime, LocalDateTime endTime) {
+	public boolean createTask(int projectID, String description, int estimatedDuration, 
+			int acceptableDeviation, String taskStatus, Integer alternativeFor, 
+			List<Integer> prerequisiteTasks, LocalDateTime startTime, LocalDateTime endTime) {
+		if(!isValidProjectID(projectID)) {
+			return false;
+		}
 		return getProject(projectID).createTask(description, estimatedDuration, acceptableDeviation, taskStatus, alternativeFor, prerequisiteTasks, startTime, endTime);
 	}
 	
@@ -158,7 +166,12 @@ public class TaskMan {
 	 * 			The prerequisites Tasks for this Task.
 	 * @return	True if the creation of a new Task was successful.
 	 */
-	public boolean createTask(int projectID, String description, int estimatedDuration, int acceptableDeviation, Integer alternativeFor, List<Integer> prerequisiteTasks) {
+	public boolean createTask(int projectID, String description, 
+			int estimatedDuration, int acceptableDeviation, Integer alternativeFor, 
+			List<Integer> prerequisiteTasks) {
+		if(!isValidProjectID(projectID)) {
+			return false;
+		}
 		if (projectID >= projectList.size()){
 			return false;
 		}
@@ -172,6 +185,9 @@ public class TaskMan {
 	 * @return	the name of the project
 	 */
 	public String getProjectName(int projectID) {
+		if(!isValidProjectID(projectID)) {
+			return null;
+		}
 		return getProject(projectID).getProjectName();
 	}
 	
@@ -182,6 +198,9 @@ public class TaskMan {
 	 * @return	the description of the project
 	 */
 	public String getProjectDescription(int projectID) {
+		if(!isValidProjectID(projectID)) {
+			return null;
+		}
 		return getProject(projectID).getProjectDescription();
 	}
 	
@@ -192,6 +211,9 @@ public class TaskMan {
 	 * @return	the creation time of the project
 	 */
 	public LocalDateTime getProjectCreationTime(int projectID) {
+		if(!isValidProjectID(projectID)) {
+			return null;
+		}
 		return getProject(projectID).getProjectCreationTime();
 	}
 	
@@ -202,6 +224,9 @@ public class TaskMan {
 	 * @return	the due time of the project
 	 */
 	public LocalDateTime getProjectDueTime(int projectID) {
+		if(!isValidProjectID(projectID)) {
+			return null;
+		}
 		return getProject(projectID).getProjectDueTime();
 	}
 	
@@ -212,6 +237,9 @@ public class TaskMan {
 	 * @return	the end time of the project
 	 */
 	public LocalDateTime getProjectEndTime(int projectID) {
+		if(!isValidProjectID(projectID)) {
+			return null;
+		}
 		return getProject(projectID).getProjectEndTime();
 	}
 	
@@ -222,6 +250,9 @@ public class TaskMan {
 	 * @return	the status of the project
 	 */
 	public String getProjectStatus(int projectID) {
+		if(!isValidProjectID(projectID)) {
+			return null;
+		}
 		return getProject(projectID).getProjectStatus();
 	}
 	
@@ -232,6 +263,9 @@ public class TaskMan {
 	 * @return	the delay of the project
 	 */
 	public int[] getProjectDelay(int projectID){
+		if(!isValidProjectID(projectID)) {
+			return null;
+		}
 		return getProject(projectID).getDelay(currentTime);
 
 	}
@@ -255,6 +289,9 @@ public class TaskMan {
 	 * @return	The available task id's of the project
 	 */
 	public List<Integer> getAvailableTasks(int projectID) {
+		if(!isValidProjectID(projectID)) {
+			return null;
+		}
 		return getProject(projectID).getAvailableTasks();
 	}
 	
@@ -274,6 +311,9 @@ public class TaskMan {
 	 * 			false if the project is not on time
 	 */
 	public boolean isProjectOnTime(int projectID) {
+		if(!isValidProjectID(projectID)) {
+			return false;
+		}
 		return getProject(projectID).isOnTime(currentTime);
 	}
 
@@ -284,6 +324,9 @@ public class TaskMan {
 	 * @return	the amount of tasks of the project
 	 */
 	public int getTaskAmount(int projectID) {
+		if(!isValidProjectID(projectID)) {
+			return -1;
+		}
 		return projectList.get(projectID).getTaskAmount();
 	}
 
@@ -296,6 +339,9 @@ public class TaskMan {
 	 * @return	the description of the task
 	 */
 	public String getTaskDescription(int projectID, int taskID) {
+		if(!isValidProjectID(projectID)) {
+			return null;
+		}
 		return projectList.get(projectID).getTaskDescription(taskID);
 	}
 
@@ -321,6 +367,9 @@ public class TaskMan {
 	 * @return	the start time of the task 
 	 */
 	public LocalDateTime getTaskStartTime(int projectID, int taskID) {
+		if(!isValidProjectID(projectID)) {
+			return null;
+		}
 		return projectList.get(projectID).getTaskStartTime(taskID);
 	}
 
@@ -333,6 +382,9 @@ public class TaskMan {
 	 * @return	the estimated duration of the task 
 	 */
 	public int getEstimatedTaskDuration(int projectID, int taskID) {
+		if(!isValidProjectID(projectID)) {
+			return -1;
+		}
 		return projectList.get(projectID).getEstimatedTaskDuration(taskID);
 	}
 
@@ -345,6 +397,9 @@ public class TaskMan {
 	 * @return	the acceptable deviation of the task 
 	 */
 	public int getAcceptableTaskDeviation(int projectID, int taskID) {
+		if(!isValidProjectID(projectID)) {
+			return -1;
+		}
 		return projectList.get(projectID).getAcceptableTaskDeviation(taskID);
 	}
 
@@ -358,6 +413,9 @@ public class TaskMan {
 	 * 			false if the task hasn't ended
 	 */
 	public boolean hasTaskEnded(int projectID, int taskID) {
+		if(!isValidProjectID(projectID)) {
+			return false;
+		}
 		return projectList.get(projectID).hasTaskEnded(taskID);
 	}
 
@@ -370,6 +428,9 @@ public class TaskMan {
 	 * @return	the end time of the task 
 	 */
 	public LocalDateTime getTaskEndTime(int projectID, int taskID) {
+		if(!isValidProjectID(projectID)) {
+			return null;
+		}
 		return projectList.get(projectID).getTaskEndTime(taskID);
 	}
 
@@ -382,6 +443,9 @@ public class TaskMan {
 	 * @return	the status of the task 
 	 */
 	public String getTaskStatus(int projectID, int taskID) {
+		if(!isValidProjectID(projectID)) {
+			return null;
+		}
 		return projectList.get(projectID).getTaskStatus(taskID);
 	}
 
@@ -395,6 +459,9 @@ public class TaskMan {
 	 * 			false if the task doesn't have prerequisites
 	 */
 	public boolean hasTaskPrerequisites(int projectID, int taskID) {
+		if(!isValidProjectID(projectID)) {
+			return false;
+		}
 		return projectList.get(projectID).hasPrerequisites(taskID);
 	}
 
@@ -407,6 +474,9 @@ public class TaskMan {
 	 * @return	the prerequisites for the task 
 	 */
 	public List<Integer> getTaskPrerequisitesFor(int projectID, int taskID) {
+		if(!isValidProjectID(projectID)) {
+			return null;
+		}
 		return projectList.get(projectID).getPrerequisites(taskID);
 	}
 
@@ -420,11 +490,14 @@ public class TaskMan {
 	 * 			false if the task doesn't have alternatives
 	 */
 	public boolean hasTaskAlternative(int projectID, int taskID) {
+		if(!isValidProjectID(projectID)) {
+			return false;
+		}
 		return projectList.get(projectID).hasAlternative(taskID);
 	}
 
 	/**
-	 * Returns the alternatives for the task with the given task id belonging to the project with the given project id
+	 * Returns the alternative for the task with the given task id belonging to the project with the given project id
 	 * @param 	projectID
 	 * 			the id of the given project
 	 * @param 	taskID
@@ -432,6 +505,9 @@ public class TaskMan {
 	 * @return	the alternatives for the task 
 	 */
 	public int getTaskAlternativeTo(int projectID, int taskID) {
+		if(!isValidProjectID(projectID)) {
+			return -1;
+		}
 		return projectList.get(projectID).getAlternative(taskID);
 	}
 	
@@ -451,6 +527,9 @@ public class TaskMan {
 	public boolean setTaskFinished(int projectID, int taskID, LocalDateTime startTime, LocalDateTime endTime) {
 		if(endTime == null || endTime.isAfter(currentTime))
 			return false;
+		if(!isValidProjectID(projectID)) {
+			return false;
+		}
 		return projectList.get(projectID).setTaskFinished(taskID,startTime,endTime);
 	}
 	
@@ -470,18 +549,30 @@ public class TaskMan {
 	public boolean setTaskFailed(int projectID, int taskID, LocalDateTime startTime, LocalDateTime endTime) {
 		if(endTime == null || endTime.isAfter(currentTime))
 			return false;
+		if(!isValidProjectID(projectID)) {
+			return false;
+		}
 		return projectList.get(projectID).setTaskFailed(taskID,startTime, endTime);
 	}
 
 	public boolean isTaskUnacceptableOverdue(int projectID, int taskID) {
+		if(!isValidProjectID(projectID)) {
+			return false;
+		}
 		return getProject(projectID).isTaskUnacceptableOverdue(taskID,getCurrentTime());
 	}
 
 	public boolean isTaskOnTime(int projectID, int taskID) {
+		if(!isValidProjectID(projectID)) {
+			return false;
+		}
 		return getProject(projectID).isTaskOnTime(taskID, getCurrentTime());
 	}
 
 	public int getTaskOverTimePercentage(int projectID, int taskID) {
+		if(!isValidProjectID(projectID)) {
+			return -1;
+		}
 		return getProject(projectID).getTaskOverTimePercentage(taskID, getCurrentTime());
 	}
 
@@ -492,6 +583,9 @@ public class TaskMan {
 	 * @return	True if the project has finished
 	 */
 	public boolean isProjectFinished(int projectID) {
+		if(!isValidProjectID(projectID)) {
+			return false;
+		}
 		return getProject(projectID).isFinished();
 	}
 	
@@ -504,6 +598,9 @@ public class TaskMan {
 	 * 			it will return whether or not it had accumulated a delay
 	 */
 	public boolean isProjectEstimatedOnTime(int projectID) {
+		if(!isValidProjectID(projectID)) {
+			return false;
+		}
 		return getProject(projectID).isEstimatedOnTime();
 	}
 	
@@ -515,6 +612,16 @@ public class TaskMan {
 	 * 			that are estimated to be required to finish the project
 	 */
 	public int[] getEstimatedProjectDelay(int projectID) {
+		if(!isValidProjectID(projectID)) {
+			return null;
+		}
 		return null;
 	}
+	
+	private boolean isValidProjectID(int PID) {
+		if(PID < 0 || PID >= getProjectAmount())
+			return false;
+		return true;
+	}
+	
 }

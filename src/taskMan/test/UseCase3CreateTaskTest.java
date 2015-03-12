@@ -33,8 +33,7 @@ public class UseCase3CreateTaskTest {
 									 newTaskDependencies = new ArrayList<Integer>();
 
 	/**
-	 * DEFAULT TASKMAN TESTER
-	 * - project 1 START 9 feb DUE 13 feb (midnight)
+	 * - project 1 START 9 feb 8u DUE 13 feb midnight
 	 * 		GEEN tasks aanwezig
 	 */
 	@Before
@@ -327,6 +326,7 @@ public class UseCase3CreateTaskTest {
 		assertTrue(taskManager.createTask(0, "Design system", task00EstDur, task00Dev, -1, task00Dependencies));
 		assertEquals(taskManager.getTaskStatus(0, 0),"available");
 		assertTrue(taskManager.setTaskFinished(0, 0, task00StartDateGood, task00EndDateGood));
+		assertTrue(taskManager.getProjectStatus(0).equals("finished"));
 		
 		// Step 1 and 2 are implicit
 		// Step 3
@@ -334,7 +334,7 @@ public class UseCase3CreateTaskTest {
 		// Step 4
 		assertEquals(taskManager.getProjectAmount(),1);
 		assertEquals(taskManager.getTaskAmount(0),1);
-
+		
 	}
 
 }
