@@ -109,7 +109,6 @@ public class Project {
 		if(!isValidTaskID(alternativeFor) && alternativeFor != -1)
 			return false;
 		Task newTask = null;
-		//TODO get XTIME
 		TimeSpan extraTime = getExtraTime(alternativeFor);
 		try{
 			if(taskStatus != null)
@@ -138,6 +137,8 @@ public class Project {
 	}
 	
 	public TimeSpan getExtraTime(int taskID) {
+		if(!isValidAltID(taskID))
+			return new TimeSpan(0);
 		if(!taskList.get(taskID).isFailed())
 			return new TimeSpan(0);
 		return taskList.get(taskID).getTimeSpan();
@@ -238,6 +239,20 @@ public class Project {
 	 */
 	private boolean isValidTaskID(int taskID){
 		if(taskID<=this.getTaskAmount() && taskID >= 0){
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Returns whether the given TaskID is a valid Alternative TaskID.
+	 * 
+	 * @param 	taskID
+	 * 			The ID to check.
+	 * @return	True if and only the TaskID is a valid one.
+	 */
+	private boolean isValidAltID(int taskID){
+		if(taskID<this.getTaskAmount() && taskID >= 0){
 			return true;
 		}
 		return false;
