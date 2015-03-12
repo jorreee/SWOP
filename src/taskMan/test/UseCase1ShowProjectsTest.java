@@ -238,14 +238,29 @@ public class UseCase1ShowProjectsTest {
 		// Stap 3
 		assertFalse(taskMan.getProjectDescription(4).equals("Describing project 0"));
 		assertEquals(taskMan.getProjectDueTime(4),null);
-		assertFalse(taskMan.getProjectName(4).equals("Project 0"));
-		assertFalse(taskMan.getProjectStatus(4).equals("finished"));
+		assertEquals(taskMan.getProjectName(4),null);
+		assertEquals(taskMan.getProjectStatus(4),null);
 		assertEquals(taskMan.getProjectEndTime(4),null);
 		assertEquals(taskMan.getTaskAmount(4),-1);
 		assertEquals(taskMan.getAvailableTasks(4),null);
 		assertEquals(taskMan.getProjectCreationTime(4),null);
 		assertFalse(taskMan.isProjectOnTime(4));
+
+		assertEquals(taskMan.getTaskDescription(4, 0),null);
+		assertFalse(taskMan.hasTaskEnded(4, 0));
+		assertEquals(taskMan.getTaskStartTime(4, 0),null);
+		assertEquals(taskMan.getTaskEndTime(4, 0),null);
+		assertFalse(taskMan.isTaskOnTime(4, 0));
+		assertTrue(taskMan.isTaskUnacceptableOverdue(4, 0));			// Design keuze; mag ook False
+		assertEquals(taskMan.getTaskOverTimePercentage(4, 0),-1);
 		
+		assertEquals(taskMan.getTaskDescription(3, 5),null);
+		assertFalse(taskMan.hasTaskEnded(3, 5));
+		assertEquals(taskMan.getTaskStartTime(3, 0),null);
+		assertEquals(taskMan.getTaskEndTime(3, 0),null);
+		assertFalse(taskMan.isTaskOnTime(3, 0));
+		assertTrue(taskMan.isTaskUnacceptableOverdue(3, 0));
+		assertEquals(taskMan.getTaskOverTimePercentage(3, 0),-1);
 		
 		
 	}

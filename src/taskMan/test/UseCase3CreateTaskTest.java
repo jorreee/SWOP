@@ -17,10 +17,6 @@ public class UseCase3CreateTaskTest {
 			project0DueDate = LocalDateTime.of(2015, 2, 13, 23, 59),
 			task00StartDateGood = startDate,
 			task00EndDateGood = LocalDateTime.of(2015,2,9,10,0),
-			task01StartDateGood = LocalDateTime.of(2015, 2, 9, 10, 10),
-			task01EndDateGood = LocalDateTime.of(2015, 2, 9, 12, 0),
-			task02StartDateGood = LocalDateTime.of(2015, 2, 9, 12, 10),
-			task02EndDateGood = LocalDateTime.of(2015, 2, 9, 14, 0),
 			workDate = LocalDateTime.of(2015, 2, 9, 16, 0),
 			altTaskEndDate = LocalDateTime.of(2015, 2, 9, 10, 0);
 	private final int task00EstDur = 8*60,
@@ -45,14 +41,6 @@ public class UseCase3CreateTaskTest {
 		assertTrue(taskMan.createProject("Test1", "testing 1", project0DueDate));
 
 		assertTrue(taskMan.advanceTimeTo(workDate));
-//
-//		taskMan.createTask(1, "Design system", task11EstDur, task11Dev, null, task11Dependencies);		// TASK 1
-//		task12Dependencies.add(Integer.valueOf(0));
-//		taskMan.createTask(1, "Implement Native", task12EstDur, task12Dev, null, task12Dependencies);	// TASK 2
-//		task13Dependencies.add(Integer.valueOf(1));
-//		taskMan.createTask(1, "Test code", task13EstDur, task13Dev, null, task13Dependencies);			// TASK 3
-//		task14Dependencies.add(Integer.valueOf(1));
-//		taskMan.createTask(1, "Document code", task14EstDur, task14Dev, null, task14Dependencies);		// TASK 4
 
 	}
 
