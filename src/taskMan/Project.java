@@ -754,13 +754,26 @@ public class Project {
 	public boolean isFinished() {
 		return getProjectStatus().equalsIgnoreCase("FINISHED");
 	}
-
-	public int[] getEstimatedProjectEndTime() {
+	
+	/**
+	 * Returns the estimated time until the project should end
+	 * @param	projectID
+	 * 			the id of the given project
+	 * @return	The amount of years, months, days, hours and minutes
+	 * 			that are estimated to be required to finish the project
+	 */
+	public int[] getEstimatedProjectDelay() {
+		int availableBranches = 
 		TimeSpan estimatedDuration = new TimeSpan(0);
 		for(Task task : taskList) {
 			if(!task.hasEnded())
 				estimatedDuration = estimatedDuration.add(task.getEstimatedDuration());
 		}
 		return estimatedDuration.getSpan();
+	}
+
+	public boolean isEstimatedOnTime() {
+		TimeSpan estimatedDuration = new TimeSpan(getEstimatedProjectDelay());
+		return estimatedDuration.isZero();
 	}
 }

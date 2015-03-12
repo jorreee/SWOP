@@ -497,13 +497,25 @@ public class TaskMan {
 	}
 	
 	/**
+	 * Returns whether the unfinished project is estimated to end on time
+	 * @param	projectID
+	 * 			The id of the given project
+	 * @return	True if the project is estimated to end on time
+	 * 			If the project is finished, if the project has already finished
+	 * 			it will return whether or not it had accumulated a delay
+	 */
+	public boolean isProjectEstimatedOnTime(int projectID) {
+		return getProject(projectID).isEstimatedOnTime();
+	}
+	
+	/**
 	 * Returns the estimated time until the project should end
 	 * @param	projectID
 	 * 			the id of the given project
 	 * @return	The amount of years, months, days, hours and minutes
 	 * 			that are estimated to be required to finish the project
 	 */
-	public int[] getEstimatedProjectEndTime(int projectID) {
-		return getProject(projectID).getEstimatedProjectEndTime();
+	public int[] getEstimatedProjectDelay(int projectID) {
+		return null;
 	}
 }

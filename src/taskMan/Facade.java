@@ -87,11 +87,6 @@ public class Facade implements IFacade {
 	}
 
 	@Override
-	public boolean isOnTime(int projectID) {
-		return taskMan.isProjectOnTime(projectID);
-	}
-
-	@Override
 	public int[] getProjectDelay(int projectID) {
 		return taskMan.getProjectDelay(projectID);
 	}
@@ -194,8 +189,13 @@ public class Facade implements IFacade {
 	}
 
 	@Override
-	public int[] getEstimatedProjectEndTime(int projectID) {
-		return taskMan.getEstimatedProjectEndTime(projectID);
+	public boolean isProjectEstimatedOnTime(int projectID) {
+		return taskMan.isProjectEstimatedOnTime(projectID);
+	}
+
+	@Override
+	public int[] getEstimatedProjectDelay(int projectID) {
+		return taskMan.getEstimatedProjectDelay(projectID);
 	}
 
 }

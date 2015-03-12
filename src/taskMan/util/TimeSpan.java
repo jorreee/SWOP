@@ -193,6 +193,14 @@ public class TimeSpan {
 	public boolean isShorter(TimeSpan other){
 		return this.getSpanMinutes()<other.getSpanMinutes();
 	}
+	
+	public boolean isZero() {
+		for(int slot : span) {
+			if(slot != 0)
+				return false;
+		}
+		return true;
+	}
 
 }
 

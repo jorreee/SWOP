@@ -25,14 +25,14 @@ public interface IFacade {
 	
 	public String getProjectName(int projectID);
 	
-	public boolean isOnTime(int projectID);
+	public boolean isProjectEstimatedOnTime(int projectID);
 	public boolean isTaskUnacceptableOverdue(int projectID, int taskID);
 	public boolean isTaskOnTime(int projectID, int taskID);
 	public int getTaskOverTimePercentage(int projectID, int TaskID);
 	
 	public int[] getProjectDelay(int projectID);
 	public boolean isProjectFinished(int projectID);
-	public int[] getEstimatedProjectEndTime(int projectID);
+	public int[] getEstimatedProjectDelay(int projectID);
 	
 	public String getProjectDescription(int projectID);
 	public String getTaskDescription(int projectID, int taskID);

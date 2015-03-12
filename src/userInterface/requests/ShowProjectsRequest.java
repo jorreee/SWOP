@@ -36,19 +36,23 @@ public class ShowProjectsRequest extends Request {
 				int projectID = Integer.parseInt(input);
 
 				// Show overview of project details including list of tasks and their status
-				String onTime = new String(); // build project details
-				int[] delay = null;
-				if(facade.isOnTime(projectID)) {
-					onTime = "on time";
-				} else {
-					onTime = "over time";
-					delay = facade.getProjectDelay(projectID);
-				}
-
-				StringBuilder projectHeader = new StringBuilder();
+				StringBuilder projectHeader = new StringBuilder(); // build project details
 				projectHeader.append("- Project " + projectID + " "
 						+ facade.getProjectName(projectID) + ": "
-						+ facade.getProjectStatus(projectID) + ", " + onTime + " (Due "
+						+ facade.getProjectStatus(projectID) + ", ");
+				
+				int[] delay = null;
+				if(!facade.isProjectFinished(projectID)) {
+					if(facade.isProjectEstimatedOnTime(projectID)) {
+						projectHeader.append("is estimated on time");
+					} else {
+						projectHeader.append("is estimated over time");
+						delay = facade.getEstimatedProjectDelay(projectID);
+					}
+				} else {
+					delay = facade.getProjectDelay(projectID);
+				}
+				projectHeader.append(" (Due "
 						+ facade.getProjectDueTime(projectID).toLocalDate().toString());
 
 				if(delay != null) {
@@ -61,17 +65,7 @@ public class ShowProjectsRequest extends Request {
 					projectHeader.append("short)");
 				}
 				projectHeader.append(")");
-				
-				if(!facade.isProjectFinished(projectID)) {
-					projectHeader.append(", estimated end time: ");
-					int[] estimatedProjectEndBits = facade.getEstimatedProjectEndTime(projectID);
-					if(estimatedProjectEndBits[0] != 0) projectHeader.append(estimatedProjectEndBits[0] + " working years "); // years
-					if(estimatedProjectEndBits[1] != 0) projectHeader.append(estimatedProjectEndBits[1] + " working months "); // months
-					if(estimatedProjectEndBits[2] != 0) projectHeader.append(estimatedProjectEndBits[2] + " working days "); // days
-					if(estimatedProjectEndBits[3] != 0) projectHeader.append(estimatedProjectEndBits[3] + " working hours "); // hours
-					if(estimatedProjectEndBits[4] != 0) projectHeader.append(estimatedProjectEndBits[4] + " working minutes "); // minutes
-				}
-				
+
 				System.out.println(projectHeader.toString());
 				System.out.println("\"" + facade.getProjectDescription(projectID) + "\""); // PRINT SELECTED PROJECT HEADER
 
@@ -111,13 +105,13 @@ public class ShowProjectsRequest extends Request {
 						+ facade.getTaskDescription(projectID, taskID) + ", "
 						+ facade.getEstimatedTaskDuration(projectID, taskID) + " minutes, "
 						+ facade.getAcceptableTaskDeviation(projectID, taskID) + "% margin");
-				
+
 				if(facade.isTaskOnTime(projectID, taskID))
 					taskHeader.append(", on time");
 				else {
 					taskHeader.append(", over time by " + facade.getTaskOverTimePercentage(projectID, taskID) + "%");
 				}
-				
+
 				if(facade.hasTaskPrerequisites(projectID, taskID)) {
 					List<Integer> prereqs = facade.getTaskPrerequisitesFor(projectID, taskID);
 					taskHeader.append(", depends on");
@@ -135,7 +129,7 @@ public class ShowProjectsRequest extends Request {
 				if(facade.hasTaskEnded(projectID, taskID))
 					taskHeader.append(", started " + facade.getTaskStartTime(projectID, taskID).toString() + " , finished " + facade.getTaskEndTime(projectID, taskID).toString());
 				System.out.println(taskHeader.toString()); // PRINT SELECTED TASK HEADER
-				
+
 			} catch(Exception e) {
 				System.out.println("Invalid input");
 			}
