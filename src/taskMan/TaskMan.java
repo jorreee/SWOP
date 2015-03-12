@@ -37,7 +37,6 @@ public class TaskMan {
 	 */
 	public TaskMan(LocalDateTime time){
 		projectList = new ArrayList<>();
-		currentTime = LocalDateTime.now();
 		currentTime = time;
 	}
 	

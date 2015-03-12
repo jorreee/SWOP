@@ -7,10 +7,20 @@ import java.util.List;
 import userInterface.IFacade;
 
 public class Facade implements IFacade {
-	private TaskMan taskMan = new TaskMan();
+	private final TaskMan taskMan;
 	
+	public Facade() {
+		this.taskMan = new TaskMan();
+	}
 	
-	public LocalDateTime getCurrentTime() { return taskMan.getCurrentTime(); }
+	public Facade(LocalDateTime time) {
+		this.taskMan = new TaskMan(time);
+	}
+	
+	@Override
+	public LocalDateTime getCurrentTime() { 
+		return taskMan.getCurrentTime(); 
+	}
 	
 	@Override
 	public boolean createProject(String name, String description, LocalDateTime creationTime, LocalDateTime dueTime) {
@@ -32,7 +42,6 @@ public class Facade implements IFacade {
 	public boolean createTask(int projectID, String description, int estimatedDuration, int acceptableDeviation, Integer alternativeFor, List<Integer> prerequisiteTasks) {
 		return taskMan.createTask(projectID, description, estimatedDuration, acceptableDeviation, alternativeFor, prerequisiteTasks);
 	}
-	
 	
 	@Override
 	public String getProjectName(int projectID) {
@@ -79,7 +88,6 @@ public class Facade implements IFacade {
 	public List<Integer> getAvailableTasks(int projectID) {
 		return taskMan.getAvailableTasks(projectID);
 	}
-
 
 	@Override
 	public int getProjectAmount() {
