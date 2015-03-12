@@ -816,28 +816,28 @@ public class Project {
 		// SUBTRACT TIME UNTIL DUE TIME FROM CHAIN (5/7 week, 8 hours/day)
 		TimeSpan timeUntilDue;
 		int amountOfDays;
-		int a, b, c, y = 0;
+		int amountFullWeeks, amountWorkDaysBeforeFullWeeks, amountWorkDaysAfterFullWeeks, dayOfWeekValue = 0;
 		if(currentTime.isBefore(dueTime)) {
 			DayOfWeek day = currentTime.getDayOfWeek();
 			switch(day) {
-			case MONDAY : y = 1;
-			case TUESDAY : y = 2;
-			case WEDNESDAY : y = 3;
-			case THURSDAY : y = 4;
-			case FRIDAY : y = 5;
-			case SATURDAY : y = 6;
-			case SUNDAY : y = 7;
+			case MONDAY : dayOfWeekValue = 1;
+			case TUESDAY : dayOfWeekValue = 2;
+			case WEDNESDAY : dayOfWeekValue = 3;
+			case THURSDAY : dayOfWeekValue = 4;
+			case FRIDAY : dayOfWeekValue = 5;
+			case SATURDAY : dayOfWeekValue = 6;
+			case SUNDAY : dayOfWeekValue = 7;
 			}
 			amountOfDays = (int) currentTime.until(dueTime, ChronoUnit.DAYS);
-			b = Math.floorMod(amountOfDays - y + 1, 7);
-			a = (amountOfDays - y + 1) / 7;
-			if(b == 6)
-				b = 5;
-			if(y == 1 || y == 6 || y == 7)
-				c = 0;
+			amountWorkDaysBeforeFullWeeks = Math.floorMod(amountOfDays - dayOfWeekValue + 1, 7);
+			amountFullWeeks = (amountOfDays - dayOfWeekValue + 1) / 7;
+			if(amountWorkDaysBeforeFullWeeks == 6)
+				amountWorkDaysBeforeFullWeeks = 5;
+			if(dayOfWeekValue == 1 || dayOfWeekValue == 6 || dayOfWeekValue == 7)
+				amountWorkDaysAfterFullWeeks = 0;
 			else
-				c = 6 - y;
-			timeUntilDue = new TimeSpan(a * 5 * 8 * 60 + b * 8 * 60 + c * 8 * 60);
+				amountWorkDaysAfterFullWeeks = 6 - dayOfWeekValue;
+			timeUntilDue = new TimeSpan(amountFullWeeks * 5 * 8 * 60 + amountWorkDaysBeforeFullWeeks * 8 * 60 + amountWorkDaysAfterFullWeeks * 8 * 60);
 		}
 		else
 			timeUntilDue = new TimeSpan(0);
