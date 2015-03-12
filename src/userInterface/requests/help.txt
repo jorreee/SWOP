@@ -1,3 +1,8 @@
-TaskMan iteration 1
+TaskMan iteration 1 commands:
 h				Display all commands with a short description
 exit				Closes the application
+advance				Advance time to a later date
+update task			Update an available task to an end state
+create project			Create a new project
+create task			Create a new task assigned to an existing project
+show				Overview with additional details

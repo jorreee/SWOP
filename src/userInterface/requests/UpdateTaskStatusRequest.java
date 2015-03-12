@@ -35,7 +35,7 @@ public class UpdateTaskStatusRequest extends Request {
 		while(!validLink) {
 			try {
 				// Ask for user input
-				System.out.println("Select a project and the task you wish to modify (type quit to exit");
+				System.out.println("Select a project and the task you wish to modify (Format: ProjectID TaskID, type quit to exit)");
 				String input = inputReader.readLine();
 
 				// User quits
@@ -61,7 +61,7 @@ public class UpdateTaskStatusRequest extends Request {
 				boolean success = false;
 				while(!success) {
 					// Show update form and ask user for input
-					System.out.println("Please enter the new status, start time and end time. Everything should go on a seperate line. If you wish not to suppply a certain element, simply leave said line blank (type quit at any time to exit)");
+					System.out.println("Please enter the new status, start time and end time. Everything should go on a seperate line (type quit at any time to exit)");
 					System.out.println("Task Status? (Finished or Failed)");
 					String status = inputReader.readLine();
 
@@ -69,30 +69,37 @@ public class UpdateTaskStatusRequest extends Request {
 					if(status.toLowerCase().equals("quit"))
 						return quit();	
 
-					System.out.println("Start Time?");
+					System.out.println("Start Time? (Format: Y M D H M)");
 					String startTime = inputReader.readLine();
 
 					// User quits
 					if(startTime.toLowerCase().equals("quit"))
 						return quit();
+					
+					String[] startBits = startTime.split(" ");
+					LocalDateTime start = LocalDateTime.of(Integer.parseInt(startBits[0]), Integer.parseInt(startBits[1]), Integer.parseInt(startBits[2]), Integer.parseInt(startBits[3]), Integer.parseInt(startBits[4]));
 
-					System.out.println("End Time?");
+
+					System.out.println("End Time? (Format: Y M D H M)");
 					String endTime = inputReader.readLine();
 
 					// User quits
 					if(endTime.toLowerCase().equals("quit"))
 						return quit();
+					
+					String[] endBits = endTime.split(" ");
+					LocalDateTime end = LocalDateTime.of(Integer.parseInt(endBits[0]), Integer.parseInt(endBits[1]), Integer.parseInt(endBits[2]), Integer.parseInt(endBits[3]), Integer.parseInt(endBits[4]));
 
 					// System updates details
 					if(status.toLowerCase().equals("finished"))
-						success = facade.setTaskFinished(projectID, taskID, LocalDateTime.parse(startTime), LocalDateTime.parse(endTime));
+						success = facade.setTaskFinished(projectID, taskID, start, end);
 					if(status.toLowerCase().equals("failed"))
-						success = facade.setTaskFailed(projectID, taskID, LocalDateTime.parse(startTime), LocalDateTime.parse(endTime));
+						success = facade.setTaskFailed(projectID, taskID, start, end);
 					// Invalid details
 					if(!success)
 						System.out.println("Invalid input");
 				}
-				System.out.println("Task updated!");
+				return "Task updated!";
 			} catch(Exception e) {
 				System.out.println("Invalid input");
 			}

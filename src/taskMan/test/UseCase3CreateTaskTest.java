@@ -110,13 +110,13 @@ public class UseCase3CreateTaskTest {
 		assertTrue(taskMan.getTaskDescription(0,1).equals("A new TASK"));
 		assertEquals(taskMan.getEstimatedTaskDuration(0,1),newTaskDur);
 		assertEquals(taskMan.getAcceptableTaskDeviation(0,1),newTaskDev);
-		assertTrue(taskMan.hasTaskAlternative(0, 0));
+		assertFalse(taskMan.hasTaskAlternative(0, 0));
 		assertFalse(taskMan.hasTaskPrerequisites(0, 0));
 		assertFalse(taskMan.hasTaskAlternative(0, 1));
-		assertFalse(taskMan.hasTaskPrerequisites(0, 1));
-		assertEquals(taskMan.getTaskPrerequisitesFor(0, 1),0);				//
-		assertTrue(taskMan.getTaskStatus(0, 1).equals("available"));
-		assertEquals(taskMan.getAvailableTasks(0).size(),2);
+		assertTrue(taskMan.hasTaskPrerequisites(0, 1));
+		assertTrue(taskMan.getTaskPrerequisitesFor(0, 1).contains(0));				//
+		assertTrue(taskMan.getTaskStatus(0, 1).equals("unavailable"));
+		assertEquals(taskMan.getAvailableTasks(0).size(),1);
 		
 	}
 	
@@ -137,7 +137,7 @@ public class UseCase3CreateTaskTest {
 		assertTrue(taskMan.createTask(0, "A new TASK", newTaskDur, newTaskDev, -1, newTaskDependencies));
 		// Step 4
 		assertTrue(taskMan.hasTaskPrerequisites(0, 1));
-		assertEquals(taskMan.getTaskPrerequisitesFor(0, 1),0);
+		assertTrue(taskMan.getTaskPrerequisitesFor(0, 1).contains(0));
 		assertEquals(taskMan.getTaskAmount(0),2);
 	}
 	
@@ -218,7 +218,7 @@ public class UseCase3CreateTaskTest {
 		assertFalse(taskMan.createTask(0, "A new TASK", newTaskDur, newTaskDev, 1, newTaskDependencies));
 		// Step 4
 		assertFalse(taskMan.hasTaskAlternative(0, 1));
-		assertFalse(taskMan.hasTaskPrerequisites(0, 1));
+		assertTrue(taskMan.hasTaskPrerequisites(0, 1));
 		assertEquals(taskMan.getTaskAmount(0),2);
 		
 		//----------------------------------------------------------------------------------------
