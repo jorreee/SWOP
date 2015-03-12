@@ -711,6 +711,9 @@ public class Project {
 			for(Task task : taskList)
 				updateTaskStatus(task);
 			recalculateProjectStatus();
+			if(this.projectStatus==ProjectStatus.FINISHED){
+				this.endTime = endTime;
+			}
 			return true;
 		}
 		return false;
@@ -739,15 +742,15 @@ public class Project {
 		return false;
 	}
 
-	public boolean isTaskUnacceptableOverdue(int taskID,LocalDateTime currentTime) {
+	public boolean isTaskUnacceptableOverdue(int taskID) {
 		return getTask(taskID).isUnacceptableOverdue(currentTime);
 	}
 
-	public boolean isTaskOnTime(int taskID,LocalDateTime currentTime) {
+	public boolean isTaskOnTime(int taskID) {
 		return getTask(taskID).isOnTime(currentTime);
 	}
 
-	public int getTaskOverTimePercentage(int taskID,LocalDateTime currentTime) {
+	public int getTaskOverTimePercentage(int taskID) {
 		return getTask(taskID).getOverTimePercentage(currentTime);
 	}
 
