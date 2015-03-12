@@ -46,8 +46,6 @@ public class Task {
 		this.description = taskDescription;
 		this.estimatedDuration = new TimeSpan(estimatedDuration);
 		this.acceptableDeviation = acceptableDeviation;
-		if(!isValidExtraTime(extraTime))
-			throw new IllegalArgumentException("Invalid deviation");
 		this.extraTime = extraTime;
 	}
 
@@ -475,7 +473,7 @@ public class Task {
 	 * 			The taskID to check.
 	 * @return	True if 
 	 */
-	private boolean isValidTasKID(int taskID){
+	private boolean isValidTaskID(int taskID){
 		return taskID>=0;
 	}
 	
