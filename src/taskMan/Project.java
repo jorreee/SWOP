@@ -829,7 +829,7 @@ public class Project {
 			case SUNDAY : y = 7;
 			}
 			amountOfDays = (int) currentTime.until(dueTime, ChronoUnit.DAYS);
-			b = (amountOfDays - y + 1) % 7;
+			b = Math.floorMod(amountOfDays - y + 1, 7);
 			a = (amountOfDays - y + 1) / 7;
 			if(b == 6)
 				b = 5;
