@@ -818,7 +818,7 @@ public class Project {
 		int a, b;
 		if(currentTime.isBefore(dueTime)) {
 			amountOfDays = (int) currentTime.until(dueTime, ChronoUnit.DAYS);
-			a = (amountOfDays / 7) - (amountOfDays % 7);
+			a = (amountOfDays / 7) - (amountOfDays % 7) / 7;
 			b = amountOfDays % 7;
 			if(b == 6)
 				timeUntilDue = new TimeSpan(a * 5 * 8 * 60 + 5 * 8 * 60);
