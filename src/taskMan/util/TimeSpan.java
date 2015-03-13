@@ -273,91 +273,130 @@ public class TimeSpan {
 	 * @param endTime
 	 * @return
 	 */
-	public static TimeSpan getDifferenceWorkingMinutes(LocalDateTime startTime, LocalDateTime endTime) {
-		
+	public static TimeSpan getDifferenceWorkingMinutes(LocalDateTime startTime,
+			LocalDateTime endTime) {
+
 		DayOfWeek beginDay = startTime.getDayOfWeek();
 		DayOfWeek endDay = endTime.getDayOfWeek();
-		
-		int y = 0, y1 = 0;
-		switch(beginDay) {
-		case MONDAY : y = 1; break;
-		case TUESDAY : y = 2; break;
-		case WEDNESDAY : y = 3; break;
-		case THURSDAY : y = 4; break;
-		case FRIDAY : y = 5; break;
-		case SATURDAY : y = 6; break;
-		case SUNDAY : y = 7; break;
+		int startingHourWorkDay = 8;
+		int endingHourWorkDay = 16;
+
+		int beginDayValue = 0, endDayValue = 0;
+		switch (beginDay) {
+		case MONDAY:
+			beginDayValue = 1;
+			break;
+		case TUESDAY:
+			beginDayValue = 2;
+			break;
+		case WEDNESDAY:
+			beginDayValue = 3;
+			break;
+		case THURSDAY:
+			beginDayValue = 4;
+			break;
+		case FRIDAY:
+			beginDayValue = 5;
+			break;
+		case SATURDAY:
+			beginDayValue = 6;
+			break;
+		case SUNDAY:
+			beginDayValue = 7;
+			break;
 		}
-		switch(endDay) {
-		case MONDAY : y1 = 1; break;
-		case TUESDAY : y1 = 2; break;
-		case WEDNESDAY : y1 = 3; break;
-		case THURSDAY : y1 = 4; break;
-		case FRIDAY : y1 = 5; break;
-		case SATURDAY : y1 = 6; break;
-		case SUNDAY : y1 = 7; break;
+		switch (endDay) {
+		case MONDAY:
+			endDayValue = 1;
+			break;
+		case TUESDAY:
+			endDayValue = 2;
+			break;
+		case WEDNESDAY:
+			endDayValue = 3;
+			break;
+		case THURSDAY:
+			endDayValue = 4;
+			break;
+		case FRIDAY:
+			endDayValue = 5;
+			break;
+		case SATURDAY:
+			endDayValue = 6;
+			break;
+		case SUNDAY:
+			endDayValue = 7;
+			break;
 		}
-		
-		int x,x1;
-		x = startTime.getHour();
-		x1 = endTime.getHour();
-		
-		int z,z1;
-		z = startTime.getMinute();
-		z1 = endTime.getMinute();
-		
-		long q;
-		q = startTime.until(endTime, ChronoUnit.MINUTES);
-		
-		long a;
-		int b,c,d,e;
-		int pb,pc,pd,pe;
-		
-		pb = (y1-1) * 24 * 60; // amount of minutes in B
-		pc = (7-y) * 24 * 60; // amount of minutes in C
-		pd = (x1 * 60) + z1; // amount of minutes in D
-		pe = (24 - x) * 60 - z; // amount of minutes in E
-		
+
+		int startDayHour, endDayHour;
+		startDayHour = startTime.getHour();
+		endDayHour = endTime.getHour();
+
+		int startDayMinute, endDayMinute;
+		startDayMinute = startTime.getMinute();
+		endDayMinute = endTime.getMinute();
+
+		long minutesBetweenTimeStamps;
+		minutesBetweenTimeStamps = startTime.until(endTime, ChronoUnit.MINUTES);
+
+		long workingMinutesFullWeeks;
+		int workingMinutesFullDaysAfterFullWeeks, workingMinutesFullDaysBeforeFullWeeks, workingMinutesInLastDay, workingMinutesInFirstDay;
+		int pb, pc, pd, pe;
+
+		pb = (endDayValue - 1) * 24 * 60; // amount of minutes in B
+		pc = (7 - beginDayValue) * 24 * 60; // amount of minutes in C
+		pd = (endDayHour * 60) + endDayMinute; // amount of minutes in D
+		pe = (24 - startDayHour) * 60 - startDayMinute; // amount of minutes in E
+
 		// A = amount of working minutes in full weeks
-		a = ((q - pb - pc - pd - pe) * 5 * 8) / (7 * 24);
-		
+		workingMinutesFullWeeks = ((minutesBetweenTimeStamps - pb - pc - pd - pe) * 5 * 8)
+				/ (7 * 24);
+
 		// B = amount of working minutes in full days after the full weeks
-		if(y1 == 1)
-			b = 0;
+		if (endDayValue == 1)
+			workingMinutesFullDaysAfterFullWeeks = 0;
 		else
-			b = (y-1) * 8 * 60;
-		if(b == 6 * 8 * 60)
-			b = 5 * 8 * 60;
-		
+			workingMinutesFullDaysAfterFullWeeks = (beginDayValue - 1) * 8 * 60;
+		if (workingMinutesFullDaysAfterFullWeeks == 6 * 8 * 60)
+			workingMinutesFullDaysAfterFullWeeks = 5 * 8 * 60;
+
 		// C = amount of working minutes in full days before the full weeks
-		if(y == 5 || y == 6 || y == 7)
-			c = 0;
+		if (beginDayValue == 5 || beginDayValue == 6 || beginDayValue == 7)
+			workingMinutesFullDaysBeforeFullWeeks = 0;
 		else
-			c = (5 - 1) * 8 * 60;
-		
-		// D = amount of working minutes in the last day (even if it is a full day)
-		if(y1 == 6 || y1 == 7) {
-			d = 0;
-		} else if(x1 < 9) {
-			d = 0;
+			workingMinutesFullDaysBeforeFullWeeks = (5 - 1) * 8 * 60;
+
+		// D = amount of working minutes in the last day (even if it is a full
+		// day)
+		if (endDayValue == 6 || endDayValue == 7) {
+			workingMinutesInLastDay = 0;
+		} else if (endDayHour < startingHourWorkDay) {
+			workingMinutesInLastDay = 0;
 		} else {
-			d = (x1 - 9) * 60 + z1;
+			workingMinutesInLastDay = (endDayHour - startingHourWorkDay) * 60
+					+ endDayMinute;
 		}
-		if(d > 8 * 60)
-			d = 8 * 60;
-		
-		// E = amount of working minutes in the first day (even if it is a full day)
-		if(y == 6 || y == 7) {
-			e = 0;
-		} else if(x >= 17) {
-			e = 0;
+		if (workingMinutesInLastDay > 8 * 60)
+			workingMinutesInLastDay = 8 * 60;
+
+		// E = amount of working minutes in the first day (even if it is a full
+		// day)
+		if (beginDayValue == 6 || beginDayValue == 7) {
+			workingMinutesInFirstDay = 0;
+		} else if (startDayHour >= endingHourWorkDay) {
+			workingMinutesInFirstDay = 0;
 		} else {
-			e = (17 - x) * 60 - z;
+			workingMinutesInFirstDay = (endingHourWorkDay - startDayHour) * 60
+					- startDayMinute;
 		}
-		if(e > 8 * 60)
-			e = 8 * 60;
-		
-		return new TimeSpan((int) a + b + c + d + e);
+		if (workingMinutesInFirstDay > 8 * 60)
+			workingMinutesInFirstDay = 8 * 60;
+
+		return new TimeSpan((int) workingMinutesFullWeeks
+				+ workingMinutesFullDaysAfterFullWeeks
+				+ workingMinutesFullDaysBeforeFullWeeks
+				+ workingMinutesInLastDay + workingMinutesInFirstDay);
 	}
 }
 
