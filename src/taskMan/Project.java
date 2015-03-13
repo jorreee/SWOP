@@ -807,34 +807,8 @@ public class Project {
 		}
 
 		// SUBTRACT TIME UNTIL DUE TIME FROM CHAIN (5/7 week, 8 hours/day)
-		TimeSpan timeUntilDue;
-		int amountOfDays;
-		int amountFullWeeks, amountWorkDaysBeforeFullWeeks, amountWorkDaysAfterFullWeeks, dayOfWeekValue = 0;
-		if(currentTime.isBefore(dueTime)) {
-			DayOfWeek day = currentTime.getDayOfWeek();
-			switch(day) {
-			case MONDAY : dayOfWeekValue = 1;
-			case TUESDAY : dayOfWeekValue = 2;
-			case WEDNESDAY : dayOfWeekValue = 3;
-			case THURSDAY : dayOfWeekValue = 4;
-			case FRIDAY : dayOfWeekValue = 5;
-			case SATURDAY : dayOfWeekValue = 6;
-			case SUNDAY : dayOfWeekValue = 7;
-			}
-			amountOfDays = (int) currentTime.until(dueTime, ChronoUnit.DAYS);
-			amountWorkDaysBeforeFullWeeks = Math.floorMod(amountOfDays - dayOfWeekValue + 1, 7);
-			amountFullWeeks = (amountOfDays - dayOfWeekValue + 1) / 7;
-			if(amountWorkDaysBeforeFullWeeks == 6)
-				amountWorkDaysBeforeFullWeeks = 5;
-			if(dayOfWeekValue == 1 || dayOfWeekValue == 6 || dayOfWeekValue == 7)
-				amountWorkDaysAfterFullWeeks = 0;
-			else
-				amountWorkDaysAfterFullWeeks = 6 - dayOfWeekValue;
-			timeUntilDue = new TimeSpan(amountFullWeeks * 5 * 8 * 60 + amountWorkDaysBeforeFullWeeks * 8 * 60 + amountWorkDaysAfterFullWeeks * 8 * 60);
-		}
-		else
-			timeUntilDue = new TimeSpan(0);
-
+		TimeSpan timeUntilDue = TimeSpan.getDifferenceWorkingMinutes(currentTime, dueTime);
+		
 		// RESULT
 		return longest.minus(timeUntilDue);
 	}

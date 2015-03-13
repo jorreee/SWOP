@@ -1,5 +1,6 @@
 package taskMan.util;
 
+import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
@@ -263,6 +264,100 @@ public class TimeSpan {
 			return new TimeSpan(newSpan).getSpan();
 		}
 			
+	}
+	
+	/**
+	 * Returns the amount of working minutes between two timestamps.
+	 * A working day is from 9 to 17 on weekdays.
+	 * @param startTime // TODO docu afwerken
+	 * @param endTime
+	 * @return
+	 */
+	public static TimeSpan getDifferenceWorkingMinutes(LocalDateTime startTime, LocalDateTime endTime) {
+		
+		DayOfWeek beginDay = startTime.getDayOfWeek();
+		DayOfWeek endDay = endTime.getDayOfWeek();
+		
+		int y = 0, y1 = 0;
+		switch(beginDay) {
+		case MONDAY : y = 1; break;
+		case TUESDAY : y = 2; break;
+		case WEDNESDAY : y = 3; break;
+		case THURSDAY : y = 4; break;
+		case FRIDAY : y = 5; break;
+		case SATURDAY : y = 6; break;
+		case SUNDAY : y = 7; break;
+		}
+		switch(endDay) {
+		case MONDAY : y1 = 1; break;
+		case TUESDAY : y1 = 2; break;
+		case WEDNESDAY : y1 = 3; break;
+		case THURSDAY : y1 = 4; break;
+		case FRIDAY : y1 = 5; break;
+		case SATURDAY : y1 = 6; break;
+		case SUNDAY : y1 = 7; break;
+		}
+		
+		int x,x1;
+		x = startTime.getHour();
+		x1 = endTime.getHour();
+		
+		int z,z1;
+		z = startTime.getMinute();
+		z1 = endTime.getMinute();
+		
+		long q;
+		q = startTime.until(endTime, ChronoUnit.MINUTES);
+		
+		long a;
+		int b,c,d,e;
+		int pb,pc,pd,pe;
+		
+		pb = (y1-1) * 24 * 60; // amount of minutes in B
+		pc = (7-y) * 24 * 60; // amount of minutes in C
+		pd = (x1 * 60) + z1; // amount of minutes in D
+		pe = (24 - x) * 60 - z; // amount of minutes in E
+		
+		// A = amount of working minutes in full weeks
+		a = ((q - pb - pc - pd - pe) * 5 * 8) / (7 * 24);
+		
+		// B = amount of working minutes in full days after the full weeks
+		if(y1 == 1)
+			b = 0;
+		else
+			b = (y-1) * 8 * 60;
+		if(b == 6 * 8 * 60)
+			b = 5 * 8 * 60;
+		
+		// C = amount of working minutes in full days before the full weeks
+		if(y == 5 || y == 6 || y == 7)
+			c = 0;
+		else
+			c = (5 - 1) * 8 * 60;
+		
+		// D = amount of working minutes in the last day (even if it is a full day)
+		if(y1 == 6 || y1 == 7) {
+			d = 0;
+		} else if(x1 < 9) {
+			d = 0;
+		} else {
+			d = (x1 - 9) * 60 + z1;
+		}
+		if(d > 8 * 60)
+			d = 8 * 60;
+		
+		// E = amount of working minutes in the first day (even if it is a full day)
+		if(y == 6 || y == 7) {
+			e = 0;
+		} else if(x >= 17) {
+			e = 0;
+		} else {
+			e = (17 - x) * 60 - z;
+		}
+		if(e > 8 * 60)
+			e = 8 * 60;
+		
+		return new TimeSpan((int) a + b + c + d + e);
 	}
 }
 
