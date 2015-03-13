@@ -71,7 +71,6 @@ public class UseCase5AdvanceTimeTest {
 		assertTrue(taskManager.getTaskStatus(0,1).equals("unavailable"));
 		assertTrue(taskManager.getTaskStatus(0,2).equals("unavailable"));
 		assertTrue(taskManager.getTaskStatus(0,3).equals("unavailable"));
-//		assertTrue(taskManager.isProjectEstimatedOnTime(0));
 	}
 
 	@Test
@@ -85,7 +84,6 @@ public class UseCase5AdvanceTimeTest {
 		assertTrue(taskManager.getTaskStatus(0,1).equals("unavailable"));
 		assertTrue(taskManager.getTaskStatus(0,2).equals("unavailable"));
 		assertTrue(taskManager.getTaskStatus(0,3).equals("unavailable"));
-//		assertFalse(taskManager.isProjectEstimatedOnTime(0));
 	}
 
 	@Test
@@ -99,7 +97,6 @@ public class UseCase5AdvanceTimeTest {
 		assertTrue(taskManager.getTaskStatus(0,1).equals("unavailable"));
 		assertTrue(taskManager.getTaskStatus(0,2).equals("unavailable"));
 		assertTrue(taskManager.getTaskStatus(0,3).equals("unavailable"));
-//		assertTrue(taskManager.isProjectEstimatedOnTime(0));
 	}
 
 	@Test
@@ -113,7 +110,6 @@ public class UseCase5AdvanceTimeTest {
 		assertTrue(taskManager.getTaskStatus(0,1).equals("unavailable"));
 		assertTrue(taskManager.getTaskStatus(0,2).equals("unavailable"));
 		assertTrue(taskManager.getTaskStatus(0,3).equals("unavailable"));
-//		assertTrue(taskManager.isProjectEstimatedOnTime(0));
 
 		//-----------------------------------------------------------
 
@@ -124,7 +120,6 @@ public class UseCase5AdvanceTimeTest {
 		assertTrue(taskManager.getTaskStatus(0,1).equals("unavailable"));
 		assertTrue(taskManager.getTaskStatus(0,2).equals("unavailable"));
 		assertTrue(taskManager.getTaskStatus(0,3).equals("unavailable"));
-//		assertTrue(taskManager.isProjectEstimatedOnTime(0));
 	}
 
 }

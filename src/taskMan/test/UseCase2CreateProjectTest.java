@@ -37,7 +37,6 @@ public class UseCase2CreateProjectTest {
 		assertEquals(taskManager.getAvailableTasks(0).size(),0);
 		assertEquals(taskManager.getProjectDueTime(0),project0DueDateGood);
 		assertFalse(taskManager.isProjectFinished(0));
-//		assertTrue(taskManager.isProjectEstimatedOnTime(0));
 		assertEquals(taskManager.getProjectAmount(),1);
 		
 	}

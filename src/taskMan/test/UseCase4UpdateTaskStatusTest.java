@@ -196,7 +196,6 @@ public class UseCase4UpdateTaskStatusTest {
 		assertTrue(taskManager.getTaskStatus(0,1).equals("failed"));
 		assertTrue(taskManager.getTaskStatus(0,2).equals("unavailable"));
 		assertFalse(taskManager.isProjectFinished(0));
-//		assertFalse(taskManager.isProjectEstimatedOnTime(0));									// Geen available tasks -> kan nooit eindigen
 		assertTrue(taskManager.getTaskStatus(0, 3).equals("unavailable"));
 		
 		assertTrue(taskManager.createTask(0, "Test2", newTaskDur, newTaskDev, 1, newTask2Dependencies));
@@ -289,7 +288,6 @@ public class UseCase4UpdateTaskStatusTest {
 		assertTrue(taskManager.getTaskStatus(0,0).equals("failed"));
 		assertTrue(taskManager.getTaskStatus(0,1).equals("unavailable"));
 		assertTrue(taskManager.getTaskStatus(0,2).equals("unavailable"));
-//		assertFalse(taskManager.isProjectEstimatedOnTime(0));									// Geen available tasks -> kan nooit eindigen
 		assertFalse(taskManager.isProjectFinished(0));
 		
 		//---------------------------------------------------------------------------------
@@ -302,7 +300,6 @@ public class UseCase4UpdateTaskStatusTest {
 		assertTrue(taskManager.getTaskStatus(0,0).equals("failed"));
 		assertTrue(taskManager.getTaskStatus(0,1).equals("unavailable"));
 		assertTrue(taskManager.getTaskStatus(0,2).equals("unavailable"));
-//		assertFalse(taskManager.isProjectEstimatedOnTime(0));									// Geen available tasks -> kan nooit eindigen
 		assertFalse(taskManager.isProjectFinished(0));
 	}
 	
