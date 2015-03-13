@@ -326,7 +326,7 @@ public class UseCase3CreateTaskTest {
 		assertTrue(taskManager.createTask(0, "Design system", task00EstDur, task00Dev, -1, task00Dependencies));
 		assertEquals(taskManager.getTaskStatus(0, 0),"available");
 		assertTrue(taskManager.setTaskFinished(0, 0, task00StartDateGood, task00EndDateGood));
-		assertTrue(taskManager.getProjectStatus(0).equals("finished"));
+		assertTrue(taskManager.isProjectFinished(0));
 		
 		// Step 1 and 2 are implicit
 		// Step 3
@@ -343,7 +343,7 @@ public class UseCase3CreateTaskTest {
 		assertTrue(taskManager.createTask(0, "Design system", task00EstDur, task00Dev, -1, task00Dependencies));
 		assertEquals(taskManager.getTaskStatus(0, 0),"available");
 		assertTrue(taskManager.setTaskFinished(0, 0, task00StartDateGood, task00EndDateGood));
-		assertTrue(taskManager.getProjectStatus(0).equals("finished"));
+		assertTrue(taskManager.isProjectFinished(0));
 		
 		// Step 1 and 2 are implicit
 		// Step 3

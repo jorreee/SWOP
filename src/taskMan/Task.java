@@ -42,41 +42,19 @@ public class Task {
 	 */
 	public Task(int taskID, String taskDescription, int estimatedDuration,
 			int acceptableDeviation, TimeSpan extraTime) {
+		if(!isValidTaskID(taskID))
+			throw new IllegalArgumentException("Invalid task ID");
+		if(!isValidDescription(taskDescription))
+			throw new IllegalArgumentException("Invalid description");
+		if(!isValidDuration(estimatedDuration))
+			throw new IllegalArgumentException("Invalid duration");
+		if(!isValidDeviation(acceptableDeviation))
+			throw new IllegalArgumentException("Invalid deviation");
 		this.taskID = taskID;
 		this.description = taskDescription;
 		this.estimatedDuration = new TimeSpan(estimatedDuration);
 		this.acceptableDeviation = acceptableDeviation;
 		this.extraTime = extraTime;
-	}
-
-	/**
-	 Create a new Task without an added extra time.
-	 * 
-	 * @param 	taskID
-	 * 			The ID of the new Task.
-	 * @param 	taskDescription
-	 * 			The description of the new Task.
-	 * @param 	estimatedDuration
-	 * 			The estimated duration of the new Task.
-	 * @param 	acceptableDeviation
-	 * 			The acceptable deviation of the new Task.
-	 */
-	public Task(int taskID, String taskDescription, int estimatedDuration,
-			int acceptableDeviation) throws IllegalArgumentException {
-		if(!isValidTaskID(taskID))
-			throw new IllegalArgumentException("Invalid deviation");
-		if(!isValidDescription(taskDescription))
-			throw new IllegalArgumentException("Invalid deviation");
-		if(!isValidDuration(estimatedDuration))
-			throw new IllegalArgumentException("Invalid deviation");
-		if(!isValidDeviation(acceptableDeviation))
-			throw new IllegalArgumentException("Invalid deviation");
-		
-		this.taskID = taskID;
-		this.description = taskDescription;
-		this.estimatedDuration = new TimeSpan(estimatedDuration);
-		this.acceptableDeviation = acceptableDeviation;
-		this.extraTime = new TimeSpan(0);
 	}
 
 	/**
@@ -99,11 +77,13 @@ public class Task {
 	 */
 	public Task(int taskID, String taskDescription, int estimatedDuration,
 			int acceptableDeviation, String taskStatus,
-			LocalDateTime beginTime, LocalDateTime endTime) throws IllegalArgumentException {
-		this(taskID, taskDescription, estimatedDuration, acceptableDeviation);
-		if(!taskStatus.equals("failed") && !taskStatus.equals("finished"))
+			LocalDateTime beginTime, LocalDateTime endTime, TimeSpan extraTime) throws IllegalArgumentException {
+		this(taskID, taskDescription, estimatedDuration, acceptableDeviation, extraTime);
+		if(!taskStatus.equalsIgnoreCase("failed") && !taskStatus.equalsIgnoreCase("finished"))
 			throw new IllegalArgumentException("Time stamps are only required if a task is finished or failed");
 		this.taskStatus = TaskStatus.valueOf(taskStatus);
+		if(!isValidTimeStamps(beginTime, endTime))
+			throw new IllegalArgumentException("Time Stamps are faulty");
 		this.beginTime = beginTime;
 		this.endTime = endTime;
 	}
@@ -143,19 +123,6 @@ public class Task {
 	public boolean isUnavailable(){
 		return (taskStatus == TaskStatus.UNAVAILABLE);
 	}
-
-//	/**
-//	 * Checks whether the Task has started.
-//	 * 
-//	 * @return	True if the Task has started.
-//	 * 			False otherwise.
-//	 */
-//	public boolean hasStarted(){
-//		if(this.getBeginTime()==null)
-//			return false;
-//		else
-//			return true;
-//	}
 
 	/**
 	 * checks whether the Task has ended.
@@ -273,36 +240,10 @@ public class Task {
 	/**
 	 * Returns the acceptable deviation of the Task.
 	 * 
-	 * @return	The accepatble deviation of the Task.
+	 * @return	The acceptable deviation of the Task.
 	 */
 	public int getAcceptableDeviation() {
 		return acceptableDeviation;
-	}
-
-	/**
-	 * Set the status of this Task on finished.
-	 * 
-	 * @return	True is the operation was successful.
-	 * 			False if the status was already failed or finished.
-	 */
-	public boolean setFinished(){
-		if(this.taskStatus == TaskStatus.FAILED || this.taskStatus == TaskStatus.FINISHED)
-			return false;
-		this.taskStatus = TaskStatus.FINISHED;
-		return true;
-	}
-
-	/**
-	 * Set the status of this Task on failed.
-	 * 
-	 * @return	True is the operation was successful.
-	 * 			False if the status was already failed or finished.
-	 */
-	public boolean setFailed(){
-		if(this.taskStatus == TaskStatus.FAILED || this.taskStatus == TaskStatus.FINISHED)
-			return false;
-		this.taskStatus = TaskStatus.FAILED;
-		return true;
 	}
 
 	/**
@@ -523,7 +464,7 @@ public class Task {
 	public boolean isUnacceptableOverdue() {
 		TimeSpan acceptableSpan = this.getEstimatedDuration().getAcceptableSpan(this.getAcceptableDeviation());
 		if(isFinished() || isFailed()){
-			return this.getTimeElapsed(this.getEndTime()).isShorter(acceptableSpan);
+			return this.getTimeElapsed(this.getEndTime()).isLonger(acceptableSpan);
 		}
 		else
 			return false;
@@ -542,26 +483,26 @@ public class Task {
 		else
 			return 0;
 	}
-	
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + taskID;
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Task other = (Task) obj;
-		if (taskID != other.taskID)
-			return false;
-		return true;
-	}
+//	
+//	@Override
+//	public int hashCode() {
+//		final int prime = 31;
+//		int result = 1;
+//		result = prime * result + taskID;
+//		return result;
+//	}
+//
+//	@Override
+//	public boolean equals(Object obj) {
+//		if (this == obj)
+//			return true;
+//		if (obj == null)
+//			return false;
+//		if (getClass() != obj.getClass())
+//			return false;
+//		Task other = (Task) obj;
+//		if (taskID != other.taskID)
+//			return false;
+//		return true;
+//	}
 }
