@@ -120,7 +120,9 @@ public class TimeSpan {
 	 * 			The other TimeSpan object
 	 * @return	A new TimeSpan object created by adding 2 timeSpan objects
 	 */
-	public TimeSpan add(TimeSpan newSpan){
+	public TimeSpan add(TimeSpan newSpan) throws IllegalArgumentException{
+		if(newSpan == null)
+			throw new IllegalArgumentException("Invalid newSpan");
 		int minutes = this.getMinutes() + newSpan.getMinutes();
 		int hours = this.getHours() + newSpan.getHours();
 		int days = this.getDays() + newSpan.getDays();
@@ -198,10 +200,13 @@ public class TimeSpan {
 	 * 			The deviation to be used.
 	 * @return	An new TimeSpan object representing a acceptable span.
 	 */
-	public TimeSpan getAcceptableSpan(int deviation){
+	public TimeSpan getAcceptableSpan(int deviation) throws IllegalArgumentException {
+		if(deviation<0)
+			throw new IllegalArgumentException("Invalid deviaiton");
 		int span = this.getSpanMinutes();
-		int acceptableSpan = span + deviation * (span/100);
-		return new TimeSpan(acceptableSpan);
+		float dev = deviation;
+		float acceptableSpan = span + (span * (dev/100));
+		return new TimeSpan((int) acceptableSpan);
 	}
 	
 	/**
@@ -211,7 +216,9 @@ public class TimeSpan {
 	 * 			The TimeSpan to compare to.
 	 * @return	True if this span is longer.
 	 */
-	public boolean isLonger(TimeSpan other){
+	public boolean isLonger(TimeSpan other) {
+		if(other == null)
+			return false;
 		return this.getSpanMinutes()>=other.getSpanMinutes();
 	}
 	
@@ -223,6 +230,8 @@ public class TimeSpan {
 	 * @return	True if this span is shorter or equal.
 	 */
 	public boolean isShorter(TimeSpan other){
+		if(other == null)
+			return false;
 		return this.getSpanMinutes()<=other.getSpanMinutes();
 	}
 	
@@ -240,13 +249,15 @@ public class TimeSpan {
 	}
 	
 	/**
-	 * Get the difference between to TimeSpan's in minutes.
+	 * Get the difference between to TimeSpan objects in minutes.
 	 * 
 	 * @param 	other
 	 * 			The other TimeSpan object.
 	 * @return	The difference in minutes.
 	 */
-	public int getDifferenceMinute(TimeSpan other){
+	public int getDifferenceMinute(TimeSpan other) {
+		if (other == null)
+			return -1;
 		return Math.abs(this.getSpanMinutes() - other.getSpanMinutes());
 	}
 	
@@ -258,6 +269,8 @@ public class TimeSpan {
 	 * @return	The difference as int array.
 	 */
 	public int[] minus(TimeSpan other){
+		if(other == null)
+			throw new IllegalArgumentException("Invalid other");
 		if(other.isLonger(this)){
 			int newSpan = other.getSpanMinutes()-this.getSpanMinutes();
 			return new TimeSpan(newSpan).getSpan();

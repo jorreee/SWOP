@@ -3,6 +3,7 @@ package taskMan.test;
 import static org.junit.Assert.*;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 
 import org.junit.Test;
 
@@ -12,9 +13,12 @@ public class TimeSpanTest {
 	
 	private final LocalDateTime monday152980 = LocalDateTime.of(2015,  2, 9, 8, 0),
 			monday1529810 = LocalDateTime.of(2015, 2, 9, 8, 10),
-			monday1521280 = LocalDateTime.of(2015, 2, 12, 8, 0),
-			monday15213160 = LocalDateTime.of(2015, 2, 13, 16, 0),
-			monday1521680 = LocalDateTime.of(2015, 2, 16, 8, 0);
+			thursday1521280 = LocalDateTime.of(2015, 2, 12, 8, 0),
+			friday15213160 = LocalDateTime.of(2015, 2, 13, 16, 0),
+			monday1521680 = LocalDateTime.of(2015, 2, 16, 8, 0),
+			wednesday152181225 = LocalDateTime.of(2015,  2, 18, 12, 25),
+			monday15291555 = LocalDateTime.of(2015, 2, 9, 15, 55),
+			tuesday1521085 = LocalDateTime.of(2015, 2, 10, 8, 5);
 
 	@Test
 	public void constructorFromDurationSuccestest() {
@@ -117,7 +121,7 @@ public class TimeSpanTest {
 		assertEquals(10,goodTS10MinutesFromReverseLDT.getSpanMinutes());
 		assertFalse(goodTS10MinutesFromReverseLDT.isZero());
 		
-		TimeSpan goodTS3daysFromLDT = new TimeSpan(monday152980,monday1521280);
+		TimeSpan goodTS3daysFromLDT = new TimeSpan(monday152980,thursday1521280);
 		assertEquals(0,goodTS3daysFromLDT.getMinutes());
 		assertEquals(0,goodTS3daysFromLDT.getHours());
 		assertEquals(3,goodTS3daysFromLDT.getDays());
@@ -165,6 +169,7 @@ public class TimeSpanTest {
 	public void GetDiffWorkingMinSuccesTest() {
 		
 		int threeDays = 3*24*60;
+		int sevenDaysFourHours25Minutes = 7*8*60+4*60+25;
 		
 		assertEquals(10,TimeSpan.getDifferenceWorkingMinutes(
 				monday152980, monday1529810).getSpanMinutes());
@@ -173,33 +178,169 @@ public class TimeSpanTest {
 		assertEquals(0,TimeSpan.getDifferenceWorkingMinutes(
 				monday152980, monday152980).getSpanMinutes());
 		assertEquals(threeDays,TimeSpan.getDifferenceWorkingMinutes(
-				monday152980, monday1521280).getSpanMinutes());
+				monday152980, thursday1521280).getSpanMinutes());
 		assertEquals(threeDays,TimeSpan.getDifferenceWorkingMinutes(
-				monday1521280, monday152980).getSpanMinutes());
+				thursday1521280, monday152980).getSpanMinutes());
 		assertEquals(0,TimeSpan.getDifferenceWorkingMinutes(
-				monday15213160, monday1521680).getSpanMinutes());
-
-//		TimeSpan zero = new TimeSpan(0);
-//		TimeSpan tenMin = new TimeSpan(10);
-//		TimeSpan threeDays = new TimeSpan(3*24*60);
-//		
-//		assertEquals(tenMin,TimeSpan.getDifferenceWorkingMinutes(
-//				monday152980, monday1529810));
-//		assertEquals(tenMin,TimeSpan.getDifferenceWorkingMinutes(
-//				monday1529810, monday152980));
-//		assertEquals(zero,TimeSpan.getDifferenceWorkingMinutes(
-//				monday152980, monday152980));
-//		assertEquals(threeDays,TimeSpan.getDifferenceWorkingMinutes(
-//				monday152980, monday1521280));
-//		assertEquals(threeDays,TimeSpan.getDifferenceWorkingMinutes(
-//				monday1521280, monday152980));
-//		assertEquals(zero,TimeSpan.getDifferenceWorkingMinutes(
-//				monday15213160, monday1521680));
+				friday15213160, monday1521680).getSpanMinutes());
+		assertEquals(sevenDaysFourHours25Minutes,TimeSpan.getDifferenceWorkingMinutes(
+				monday152980, wednesday152181225).getSpanMinutes());
+		assertEquals(sevenDaysFourHours25Minutes,TimeSpan.getDifferenceWorkingMinutes(
+				wednesday152181225, monday152980).getSpanMinutes());
+		assertEquals(10,TimeSpan.getDifferenceWorkingMinutes(
+				monday15291555,tuesday1521085).getSpanMinutes());
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void GetDiffWorkingMinBadLDTFailTest() {
-		TimeSpan.getDifferenceWorkingMinutes(monday1521280, null);
+		TimeSpan.getDifferenceWorkingMinutes(thursday1521280, null);
+		
+	}
+	
+	@Test
+	public void addSuccesTest() {
+		TimeSpan original = new TimeSpan(0);
+		TimeSpan toAdd1 = new TimeSpan(0);
+		TimeSpan toAdd2 = new TimeSpan(new int[]{0,0,0,0,10});
+		TimeSpan toAdd3 = new TimeSpan(monday152980,thursday1521280);
+		
+		TimeSpan result1 = original.add(toAdd1);
+		
+		assertEquals(0,result1.getSpanMinutes());
+		assertEquals(0,result1.getMinutes());
+		assertEquals(0,result1.getHours());
+		assertEquals(0,result1.getDays());
+		assertEquals(0,result1.getMonths());
+		assertEquals(0,result1.getYears());
+		assertEquals(0,result1.getSpanMinutes());
+		assertTrue(result1.isZero());
+		
+		TimeSpan result2 = original.add(toAdd2);
+		
+		assertEquals(10,result2.getSpanMinutes());
+		assertEquals(10,result2.getMinutes());
+		assertEquals(0,result2.getHours());
+		assertEquals(0,result2.getDays());
+		assertEquals(0,result2.getMonths());
+		assertEquals(0,result2.getYears());
+		assertEquals(10,result2.getSpanMinutes());
+		assertFalse(result2.isZero());
+
+		int threeDays = 3*24*60;
+		TimeSpan result3 = original.add(toAdd3);
+		
+		assertEquals(threeDays,result3.getSpanMinutes());
+		assertEquals(0,result3.getMinutes());
+		assertEquals(0,result3.getHours());
+		assertEquals(3,result3.getDays());
+		assertEquals(0,result3.getMonths());
+		assertEquals(0,result3.getYears());
+		assertEquals(threeDays,result3.getSpanMinutes());
+		assertFalse(result3.isZero());
+		
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void addBadArgumentFailTest() {
+		TimeSpan original = new TimeSpan(0);
+		TimeSpan toAdd = null;
+		
+		assertEquals(0,original.add(toAdd).getSpanMinutes());
+		
+	}
+	
+	@Test
+	public void getAcceptableTimeSpanSuccesTest() {
+		TimeSpan original = new TimeSpan(10);
+
+		assertEquals(10,original.getAcceptableSpan(0).getSpanMinutes());
+		assertEquals(15,original.getAcceptableSpan(50).getSpanMinutes());
+		assertEquals(20,original.getAcceptableSpan(100).getSpanMinutes());
+		assertEquals(100,original.getAcceptableSpan(900).getSpanMinutes());
+		
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void getAcceptableTimeSpanBadArgumentFailTest() {
+		TimeSpan original = new TimeSpan(10);
+
+		assertEquals(10,original.getAcceptableSpan(-10).getSpanMinutes());
+		
+	}
+	
+	@Test
+	public void isShorterSuccesTest() {
+		TimeSpan longer = new TimeSpan(10);
+		TimeSpan shorter = new TimeSpan(5);
+		TimeSpan equal = shorter;
+
+		assertFalse(longer.isShorter(shorter));
+		assertTrue(shorter.isShorter(longer));
+		assertTrue(shorter.isShorter(shorter));
+		
+	}
+	
+	@Test
+	public void isLongerSuccesTest() {
+		TimeSpan longer = new TimeSpan(10);
+		TimeSpan shorter = new TimeSpan(5);
+		TimeSpan equal = shorter;
+
+		assertFalse(shorter.isLonger(longer));
+		assertTrue(longer.isLonger(shorter));
+		assertTrue(longer.isLonger(equal));
+		
+	}
+	
+	@Test
+	public void isShorterBadArgumentFailTest() {
+		TimeSpan original = new TimeSpan(10);
+
+		assertFalse(original.isShorter(null));
+		
+	}
+	
+	@Test
+	public void isLongerBadArgumentFailTest() {
+		TimeSpan original = new TimeSpan(10);
+
+		assertFalse(original.isLonger(null));
+		
+	}
+	
+	@Test
+	public void getDifferenceMinuteSuccesTest() {
+		TimeSpan original = new TimeSpan(10);
+
+		assertEquals(10,original.getDifferenceMinute(new TimeSpan(0)));
+		assertEquals(10,original.getDifferenceMinute(new TimeSpan(20)));
+		assertEquals(0,original.getDifferenceMinute(new TimeSpan(10)));
+		
+	}
+	
+	@Test
+	public void getDifferenceMinuteBadArgumentFailTest() {
+		TimeSpan original = new TimeSpan(10);
+
+		assertTrue(original.getDifferenceMinute(null) < 0);
+		
+	}
+	
+	@Test
+	public void minusSuccessTest() {
+		TimeSpan original = new TimeSpan(10);
+
+		assertTrue(Arrays.equals(new int[]{0,0,0,0,10},original.minus(new TimeSpan(0))));
+		assertTrue(Arrays.equals(new int[]{0,0,0,0,10},original.minus(new TimeSpan(20))));
+		assertTrue(Arrays.equals(new int[]{0,0,0,0,0},original.minus(new TimeSpan(10))));
+		
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void minusBadArgumentFailTest() {
+		TimeSpan original = new TimeSpan(10);
+
+		assertEquals(10,original.minus(null));
 		
 	}
 	
