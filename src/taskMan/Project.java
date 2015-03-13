@@ -5,9 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
-
 import taskMan.util.TimeSpan;
-
 import com.google.common.collect.ImmutableList;
 
 /**
@@ -136,6 +134,7 @@ public class Project {
 	 * Returns the start value of time spent on a task, depending on the task it is replacing
 	 * 
 	 * @param 	taskID
+	 * 			The ID of the Task
 	 * @return	time spent on the tasks this task is replacing
 	 * 			0 if it doesn't replace a task
 	 */
@@ -183,6 +182,12 @@ public class Project {
 
 	}
 
+	/**
+	 * Updated the status of a given Task
+	 * 
+	 * @param 	task
+	 * 			The Task to update.
+	 */
 	private void updateTaskStatus(Task task){
 		if(!task.hasEnded()){
 			if(hasPrerequisites(task.getTaskID())) {
@@ -208,7 +213,7 @@ public class Project {
 	 */
 	private void recalculateProjectStatus() {
 		for(Task task : taskList) {
-			String status = task.getStatus();
+			String status = task.getTaskStatusName();
 			if( status.equals("available") || status.equals("unavailable"))
 				return;
 			if( status.equals("failed")) {
@@ -239,6 +244,7 @@ public class Project {
 	 * @param 	taskID
 	 * 			The ID to check.
 	 * @return	True if and only the TaskID is a valid one.
+	 * 			False otherwise.
 	 */
 	private boolean isValidTaskID(int taskID){
 		if(taskID<this.getTaskAmount() && taskID >= 0){
@@ -253,6 +259,7 @@ public class Project {
 	 * @param 	taskID
 	 * 			The ID to check.
 	 * @return	True if and only the TaskID is a valid one.
+	 * 			False otherwise.
 	 */
 	private boolean isValidNewTaskID(int taskID){
 		return isValidTaskID(taskID) || taskID == taskList.size();
@@ -382,6 +389,7 @@ public class Project {
 	 * @param 	task
 	 * 			The Task to check.
 	 * @return	True if and only the given Task has alternatives.
+	 * 			False if the Task IS isn't a valid one.
 	 */
 	public boolean hasAlternative(Integer taskID){
 		if(!isValidTaskID(taskID))
@@ -397,6 +405,8 @@ public class Project {
 	 * @param 	alternative
 	 * 			The new alternative.
 	 * @return	True if and only if the addition was successful.
+	 * 			True of toReplace ==-1
+	 * 			False if the alternative isn't valid.
 	 */
 	private boolean addAlternative(int toReplace, int alternative){
 		if(toReplace == -1) 
@@ -417,6 +427,10 @@ public class Project {
 	 * @param 	alternative
 	 * 			The alternative to check.
 	 * @return	True if and only the alternative is valid one.
+	 * 			True is toReplace == -1
+	 * 			False if the ID isn't a valid one
+	 * 			False if toReplace hasn't failed
+	 * 			False if teReplace has already an alternative
 	 */
 	private boolean isValidAlternative(int toReplace, int alternative){
 		if(toReplace == -1) 
@@ -438,6 +452,8 @@ public class Project {
 	 * @param 	pre
 	 * 			The new prerequisites.
 	 * @return	True if and only the addition was successful.
+	 * 			True if the prerequisites are empty
+	 * 			False if the prerequisites aren't valid
 	 */
 	private boolean addPrerequisites(int taskID, List<Integer> pre){
 		if (pre.isEmpty()) return true;
@@ -452,7 +468,6 @@ public class Project {
 		}
 		
 		taskPrerequisites.put(taskID, pre);
-		
 		return true;
 	}
 
@@ -464,6 +479,9 @@ public class Project {
 	 * @param 	prerequisites
 	 * 			The prerequisites to check.
 	 * @return	True if and only the prerequisites are a valid.
+	 * 			True if the prerequisites are empty
+	 * 			False if the prerequisites are null
+	 * 			False if the task ID isn't a valid one
 	 */
 	private boolean isValidPrerequisites(int task, List<Integer> prerequisites){
 		if (prerequisites == null) 
@@ -685,6 +703,9 @@ public class Project {
 	 * 			the end time of the given task
 	 * @return	True if setting the task to finished was successful,
 	 * 			False if it was unsuccessful
+	 * 			False if the task ID isn't a valid one
+	 * 			False if the start time is null
+	 * 			False if the start time is before creation time
 	 */
 	public boolean setTaskFinished(int taskID, LocalDateTime startTime, LocalDateTime endTime) {
 		if(!isValidTaskID(taskID))
@@ -715,6 +736,9 @@ public class Project {
 	 * 			the end time of the given task
 	 * @return	True if setting the task to failed was successful,
 	 * 			False if it was unsuccessful
+	 * 			False is the ID isn't a valid one
+	 * 			False if the start time is null
+	 * 			False if the start time is before creation time
 	 */
 	public boolean setTaskFailed(int taskID, LocalDateTime startTime, LocalDateTime endTime) {
 		if(!isValidTaskID(taskID))
@@ -821,6 +845,7 @@ public class Project {
 	 * @param	taskID
 	 * 			the given task
 	 * @return	The longest chain of durations possible from the given task
+	 * 			null if the task ID isn't a valid one
 	 */
 	private TimeSpan getMaxDelayChain(int taskID) {
 		if(!isValidTaskID(taskID))
@@ -844,6 +869,7 @@ public class Project {
 	 * @param	taskID
 	 * 			the given task
 	 * @return	True if and only if the supplied task is a prerequisite to another task
+	 * 			False if the ID isn't a valid one
 	 */
 	private boolean isPrerequisite(int taskID) {
 		if(!isValidTaskID(taskID))
@@ -857,12 +883,13 @@ public class Project {
 	}
 
 	/**
-	 * A method to retrieve all task identifiers from tasks that are dependant
+	 * A method to retrieve all task identifiers from tasks that are dependent
 	 * on the supplied task identifier
 	 * 
 	 * @param	taskID
 	 * 			the given task
-	 * @return	A list of task identifiers from tasks that are dependant on the given task
+	 * @return	A list of task identifiers from tasks that are dependent on the given task
+	 * 			null if the ID isn't a valid one
 	 */
 	private List<Integer> getDependants(int taskID) {
 		if(!isValidTaskID(taskID))
