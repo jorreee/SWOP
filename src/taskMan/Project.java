@@ -213,7 +213,7 @@ public class Project {
 	 */
 	private void recalculateProjectStatus() {
 		for(Task task : taskList) {
-			String status = task.getTaskStatusName();
+			String status = task.getStatus();
 			if( status.equals("available") || status.equals("unavailable"))
 				return;
 			if( status.equals("failed")) {
