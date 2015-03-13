@@ -17,7 +17,6 @@ public class TaskTest {
 		assertEquals("Descr",goodTask.getDescription());
 		assertEquals(new TimeSpan(5*60),goodTask.getEstimatedDuration());
 		assertEquals(10,goodTask.getAcceptableDeviation());
-		assertEquals(extraTimeGood,goodTask.getTimeSpan());
 	}
 
 }
