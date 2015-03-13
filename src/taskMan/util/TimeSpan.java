@@ -86,7 +86,7 @@ public class TimeSpan {
 	}
 	
 	public TimeSpan(int[] newSpan) throws IllegalArgumentException{
-		if(newSpan.length>5)
+		if(newSpan.length != 5)
 			throw new IllegalArgumentException("invalid number of arguments");
 		for(int i: newSpan)
 			if(i<0)

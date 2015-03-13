@@ -163,23 +163,38 @@ public class TimeSpanTest {
 	
 	@Test
 	public void GetDiffWorkingMinSuccesTest() {
-
-		TimeSpan zero = new TimeSpan(0);
-		TimeSpan tenMin = new TimeSpan(10);
-		TimeSpan threeDays = new TimeSpan(3*24*60);
 		
-		assertEquals(tenMin,TimeSpan.getDifferenceWorkingMinutes(
-				monday152980, monday1529810));
-		assertEquals(tenMin,TimeSpan.getDifferenceWorkingMinutes(
-				monday1529810, monday152980));
-		assertEquals(zero,TimeSpan.getDifferenceWorkingMinutes(
-				monday152980, monday152980));
+		int threeDays = 3*24*60;
+		
+		assertEquals(10,TimeSpan.getDifferenceWorkingMinutes(
+				monday152980, monday1529810).getSpanMinutes());
+		assertEquals(10,TimeSpan.getDifferenceWorkingMinutes(
+				monday1529810, monday152980).getSpanMinutes());
+		assertEquals(0,TimeSpan.getDifferenceWorkingMinutes(
+				monday152980, monday152980).getSpanMinutes());
 		assertEquals(threeDays,TimeSpan.getDifferenceWorkingMinutes(
-				monday152980, monday1521280));
+				monday152980, monday1521280).getSpanMinutes());
 		assertEquals(threeDays,TimeSpan.getDifferenceWorkingMinutes(
-				monday1521280, monday152980));
-		assertEquals(zero,TimeSpan.getDifferenceWorkingMinutes(
-				monday15213160, monday1521680));
+				monday1521280, monday152980).getSpanMinutes());
+		assertEquals(0,TimeSpan.getDifferenceWorkingMinutes(
+				monday15213160, monday1521680).getSpanMinutes());
+
+//		TimeSpan zero = new TimeSpan(0);
+//		TimeSpan tenMin = new TimeSpan(10);
+//		TimeSpan threeDays = new TimeSpan(3*24*60);
+//		
+//		assertEquals(tenMin,TimeSpan.getDifferenceWorkingMinutes(
+//				monday152980, monday1529810));
+//		assertEquals(tenMin,TimeSpan.getDifferenceWorkingMinutes(
+//				monday1529810, monday152980));
+//		assertEquals(zero,TimeSpan.getDifferenceWorkingMinutes(
+//				monday152980, monday152980));
+//		assertEquals(threeDays,TimeSpan.getDifferenceWorkingMinutes(
+//				monday152980, monday1521280));
+//		assertEquals(threeDays,TimeSpan.getDifferenceWorkingMinutes(
+//				monday1521280, monday152980));
+//		assertEquals(zero,TimeSpan.getDifferenceWorkingMinutes(
+//				monday15213160, monday1521680));
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
