@@ -45,7 +45,7 @@ public class TaskMan {
 	 * 
 	 * @param 	time
 	 * 			The time to which the system should advance
-	 * @return	True if the advance time was succesful.
+	 * @return	True if the advance time was successful.
 	 * 			False if the time parameter is earlier than the current time.
 	 */
 	public boolean advanceTimeTo(LocalDateTime time) {
@@ -65,6 +65,7 @@ public class TaskMan {
 	 * @param 	projectID
 	 * 			The ID of the project to be retrieved
 	 * @return	The project with the project ID
+	 * 			null if the ID isn't a valid one
 	 */
 	private Project getProject(int projectID) {
 		if(!isValidProjectID(projectID)) {
@@ -78,10 +79,13 @@ public class TaskMan {
 	 * 
 	 * @return the current time
 	 */
-	public LocalDateTime getCurrentTime() { return currentTime; }
+	public LocalDateTime getCurrentTime() { 
+		return currentTime; 
+		}
 	
 	/**
 	 * Creates a new Project with a creation time
+	 * 
 	 * @param 	name
 	 * 			The name of the project
 	 * @param 	description
@@ -165,6 +169,8 @@ public class TaskMan {
 	 * @param 	prerequisiteTasks
 	 * 			The prerequisites Tasks for this Task.
 	 * @return	True if the creation of a new Task was successful.
+	 * 			False if the projectID is a valid one.
+	 * 			False if the creation was unsuccessful
 	 */
 	public boolean createTask(int projectID, String description, 
 			int estimatedDuration, int acceptableDeviation, Integer alternativeFor, 
@@ -184,6 +190,7 @@ public class TaskMan {
 	 * @param 	projectID
 	 * 			The id of the project
 	 * @return	the name of the project
+	 * 			null if the ID isn't a valid one
 	 */
 	public String getProjectName(int projectID) {
 		if(!isValidProjectID(projectID)) {
@@ -198,6 +205,7 @@ public class TaskMan {
 	 * @param 	projectID
 	 * 			The id of the project
 	 * @return	the description of the project
+	 * 			null if the ID isn't a valid one
 	 */
 	public String getProjectDescription(int projectID) {
 		if(!isValidProjectID(projectID)) {
@@ -212,6 +220,7 @@ public class TaskMan {
 	 * @param 	projectID
 	 * 			The id of the project
 	 * @return	the creation time of the project
+	 * 			null if the ID isn't a valid one
 	 */
 	public LocalDateTime getProjectCreationTime(int projectID) {
 		if(!isValidProjectID(projectID)) {
@@ -226,6 +235,7 @@ public class TaskMan {
 	 * @param 	projectID
 	 * 			The id of the project
 	 * @return	the due time of the project
+	 * 			null if the ID isn't a valid one
 	 */
 	public LocalDateTime getProjectDueTime(int projectID) {
 		if(!isValidProjectID(projectID)) {
@@ -240,6 +250,7 @@ public class TaskMan {
 	 * @param 	projectID
 	 * 			The id of the project
 	 * @return	the end time of the project
+	 * 			null if the ID isn't a valid one
 	 */
 	public LocalDateTime getProjectEndTime(int projectID) {
 		if(!isValidProjectID(projectID)) {
@@ -254,6 +265,7 @@ public class TaskMan {
 	 * @param 	projectID
 	 * 			the id of the project
 	 * @return	the status of the project
+	 * 			null if the ID isn't a valid one
 	 */
 	public String getProjectStatus(int projectID) {
 		if(!isValidProjectID(projectID)) {
@@ -268,6 +280,7 @@ public class TaskMan {
 	 * @param 	projectID
 	 * 			the id of the project
 	 * @return	the delay of the project
+	 * 			null if the ID isn't a valid one
 	 */
 	public int[] getProjectDelay(int projectID){
 		if(!isValidProjectID(projectID)) {
@@ -296,6 +309,7 @@ public class TaskMan {
 	 * @param 	projectID
 	 * 			The id of the project
 	 * @return	The available task id's of the project
+	 * 			null if the ID isn't a valid one
 	 */
 	public List<Integer> getAvailableTasks(int projectID) {
 		if(!isValidProjectID(projectID)) {
@@ -334,6 +348,7 @@ public class TaskMan {
 	 * @param 	projectID
 	 * 			the id of the project
 	 * @return	the amount of tasks of the project
+	 * 			-1 if the ID isn't a valid one
 	 */
 	public int getTaskAmount(int projectID) {
 		if(!isValidProjectID(projectID)) {
@@ -351,6 +366,7 @@ public class TaskMan {
 	 * @param 	taskID
 	 * 			the id of the given task
 	 * @return	the description of the task
+	 * 			null if the ID isn't a valid one
 	 */
 	public String getTaskDescription(int projectID, int taskID) {
 		if(!isValidProjectID(projectID)) {
@@ -367,7 +383,8 @@ public class TaskMan {
 	 * 			the id of the given project
 	 * @param 	taskID
 	 * 			the id of the given task
-	 * @return	the start time of the task 
+	 * @return	the start time of the task
+	 * 			null if the ID isn't a valid one 
 	 */
 	public LocalDateTime getTaskStartTime(int projectID, int taskID) {
 		if(!isValidProjectID(projectID)) {
@@ -385,6 +402,7 @@ public class TaskMan {
 	 * @param 	taskID
 	 * 			the id of the given task
 	 * @return	the estimated duration of the task 
+	 * 			-1 if the project ID isn't a valid one
 	 */
 	public int getEstimatedTaskDuration(int projectID, int taskID) {
 		if(!isValidProjectID(projectID)) {
@@ -402,6 +420,7 @@ public class TaskMan {
 	 * @param 	taskID
 	 * 			the id of the given task
 	 * @return	the acceptable deviation of the task 
+	 * 			-1 if the project ID isn't a valid one
 	 */
 	public int getAcceptableTaskDeviation(int projectID, int taskID) {
 		if(!isValidProjectID(projectID)) {
@@ -420,6 +439,7 @@ public class TaskMan {
 	 * 			the id of the given task
 	 * @return	True if the task has ended,
 	 * 			false if the task hasn't ended
+	 * 			false if the project ID isn't a valid one
 	 */
 	public boolean hasTaskEnded(int projectID, int taskID) {
 		if(!isValidProjectID(projectID)) {
@@ -437,6 +457,7 @@ public class TaskMan {
 	 * @param 	taskID
 	 * 			the id of the given task
 	 * @return	the end time of the task 
+	 * 			null if the project ID isn't a valid one
 	 */
 	public LocalDateTime getTaskEndTime(int projectID, int taskID) {
 		if(!isValidProjectID(projectID)) {
@@ -454,6 +475,7 @@ public class TaskMan {
 	 * @param 	taskID
 	 * 			the id of the given task
 	 * @return	the status of the task 
+	 * 			null if the project ID isn't a valid one
 	 */
 	public String getTaskStatus(int projectID, int taskID) {
 		if(!isValidProjectID(projectID)) {
@@ -472,6 +494,7 @@ public class TaskMan {
 	 * 			the id of the given task
 	 * @return	True if the task has prerequisites,
 	 * 			false if the task doesn't have prerequisites
+	 * 			false if the project ID isn't a valid one
 	 */
 	public boolean hasTaskPrerequisites(int projectID, int taskID) {
 		if(!isValidProjectID(projectID)) {
@@ -489,6 +512,7 @@ public class TaskMan {
 	 * @param 	taskID
 	 * 			the id of the given task
 	 * @return	the prerequisites for the task 
+	 * 			null if the project ID isn't a valid one
 	 */
 	public List<Integer> getTaskPrerequisitesFor(int projectID, int taskID) {
 		if(!isValidProjectID(projectID)) {
@@ -507,6 +531,7 @@ public class TaskMan {
 	 * 			the id of the given task
 	 * @return	True if the task has alternatives,
 	 * 			false if the task doesn't have alternatives
+	 * 			false if the project ID isn't a valid one
 	 */
 	public boolean hasTaskAlternative(int projectID, int taskID) {
 		if(!isValidProjectID(projectID)) {
@@ -524,6 +549,7 @@ public class TaskMan {
 	 * @param 	taskID
 	 * 			the id of the given task
 	 * @return	the alternatives for the task 
+	 * 			-1 if the project ID isn't a valid one
 	 */
 	public int getTaskAlternativeTo(int projectID, int taskID) {
 		if(!isValidProjectID(projectID)) {
@@ -546,6 +572,7 @@ public class TaskMan {
 	 * 			the end time of the given task
 	 * @return	True if setting the task to finished was successful,
 	 * 			False if it was unsuccessful
+	 * 			false if the project ID isn't a valid one
 	 */
 	public boolean setTaskFinished(int projectID, int taskID, LocalDateTime startTime, LocalDateTime endTime) {
 		if(endTime == null || endTime.isAfter(currentTime))
@@ -568,8 +595,10 @@ public class TaskMan {
 	 * 			the start time of the given task
 	 * @param 	endTime
 	 * 			the end time of the given task
-	 * @return	True if setting the task to failed was successful,
-	 * 			False if it was unsuccessful
+	 * @return	True if setting the task to failed was successful.
+	 * 			False if it was unsuccessful.
+	 * 			False if the project ID isn't a valid one.
+	 * 			False if the end time is null or the end time comes after the current time.
 	 */
 	public boolean setTaskFailed(int projectID, int taskID, LocalDateTime startTime, LocalDateTime endTime) {
 		if(endTime == null || endTime.isAfter(currentTime))
@@ -589,6 +618,7 @@ public class TaskMan {
 	 * 			The ID of the Task
 	 * @return	True if the Task is unacceptable overdue.
 	 * 			False otherwise or the task has not ended or failed.
+	 * 			False if the project ID isn't a valid one
 	 */
 	public boolean isTaskUnacceptableOverdue(int projectID, int taskID) {
 		if(!isValidProjectID(projectID)) {
@@ -606,6 +636,7 @@ public class TaskMan {
 	 * 			The ID of the task.
 	 * @return	True if the Task is on time or has not yet finished or failed.
 	 * 			False otherwise.
+	 * 			False if the project ID isn't a valid one
 	 */
 	public boolean isTaskOnTime(int projectID, int taskID) {
 		if(!isValidProjectID(projectID)) {
@@ -623,7 +654,7 @@ public class TaskMan {
 	 * 			The ID of the task
 	 * @return	The percentage of overdue.
 	 * 			0 if the task is on time.
-	 * 			-1 if the ID isn't a valid one.
+	 * 			-1 if the project ID isn't a valid one.
 	 */
 	public int getTaskOverTimePercentage(int projectID, int taskID) {
 		if(!isValidProjectID(projectID)) {
@@ -638,6 +669,7 @@ public class TaskMan {
 	 * @param	projectID
 	 * 			the id of the given project
 	 * @return	True if the project has finished
+	 * 			false if the project ID isn't a valid one
 	 */
 	public boolean isProjectFinished(int projectID) {
 		if(!isValidProjectID(projectID)) {
@@ -652,8 +684,9 @@ public class TaskMan {
 	 * @param	projectID
 	 * 			The id of the given project
 	 * @return	True if the project is estimated to end on time
-	 * 			If the project is finished, if the project has already finished
-	 * 			it will return whether or not it had accumulated a delay
+	 * 			If the project has already finished,
+	 * 				it will return whether or not it had accumulated a delay
+	 * 			False if the project ID isn't a valid one
 	 */
 	public boolean isProjectEstimatedOnTime(int projectID) {
 		if(!isValidProjectID(projectID)) {
@@ -668,7 +701,8 @@ public class TaskMan {
 	 * @param	projectID
 	 * 			the id of the given project
 	 * @return	The amount of years, months, days, hours and minutes
-	 * 			that are estimated to be required to finish the project
+	 * 				that are estimated to be required to finish the project
+	 * 			null if the project ID isn't a valid one
 	 */
 	public int[] getEstimatedProjectDelay(int projectID) {
 		if(!isValidProjectID(projectID)) {
