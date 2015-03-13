@@ -353,6 +353,8 @@ public class TimeSpan {
 		// A = amount of working minutes in full weeks
 		workingMinutesFullWeeks = ((minutesBetweenTimeStamps - pb - pc - pd - pe) * 5 * 8)
 				/ (7 * 24);
+		if(workingMinutesFullWeeks < 0)
+			workingMinutesFullWeeks = 0;
 
 		// B = amount of working minutes in full days after the full weeks
 		if (endDayValue == 1)
