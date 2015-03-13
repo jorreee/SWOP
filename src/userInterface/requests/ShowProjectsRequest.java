@@ -34,7 +34,10 @@ public class ShowProjectsRequest extends Request {
 
 				// Parse input
 				int projectID = Integer.parseInt(input);
-
+				
+				if(projectID < 0 || projectID > facade.getProjectAmount())
+					throw new IllegalArgumentException();
+				
 				// Show overview of project details including list of tasks and their status
 				StringBuilder projectHeader = new StringBuilder(); // build project details
 				projectHeader.append("- Project " + projectID + " "
@@ -94,6 +97,9 @@ public class ShowProjectsRequest extends Request {
 
 				// Parse input
 				int taskID = Integer.parseInt(input);
+				
+				if(taskID < 0 || taskID > facade.getTaskAmount(projectID))
+					throw new IllegalArgumentException();
 
 				// Show overview of task details
 				StringBuilder taskHeader = new StringBuilder(); // Build task details
