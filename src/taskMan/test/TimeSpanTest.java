@@ -168,7 +168,7 @@ public class TimeSpanTest {
 	@Test
 	public void GetDiffWorkingMinSuccesTest() {
 		
-		int threeDays = 3*24*60;
+		int threeDays = 3*8*60;
 		int sevenDaysFourHours25Minutes = 7*8*60+4*60+25;
 		
 		assertEquals(10,TimeSpan.getDifferenceWorkingMinutes(
@@ -344,5 +344,4 @@ public class TimeSpanTest {
 		
 	}
 	
-
 }
