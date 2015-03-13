@@ -416,7 +416,7 @@ public class TimeSpan {
 		if (endDayValue == 1)
 			workingMinutesFullDaysAfterFullWeeks = 0;
 		else
-			workingMinutesFullDaysAfterFullWeeks = (beginDayValue - 1) * 8 * 60;
+			workingMinutesFullDaysAfterFullWeeks = (endDayValue - 1) * 8 * 60;
 		if (workingMinutesFullDaysAfterFullWeeks == 6 * 8 * 60)
 			workingMinutesFullDaysAfterFullWeeks = 5 * 8 * 60;
 
@@ -457,13 +457,14 @@ public class TimeSpan {
 					+ workingMinutesInLastDay);
 		}
 		
-		if(minutesBetweenTimeStamps <= 9 * 24 * 60) {
+		if(minutesBetweenTimeStamps - pe - pd <= 7 * 24 * 60) {
+			int amountOfDaysBetweenExtremeDays = (int) (minutesBetweenTimeStamps - pe - pd) / (24 * 60);
 			int amountOfWorkingDays = 0;
 			int testDay = beginDayValue + 1;
-			while(testDay != endDayValue) {
-				if(testDay != 6 || testDay != 7)
+			for(int i = 0 ; i < amountOfDaysBetweenExtremeDays ; i++) {
+				if(Math.floorMod(testDay,7) != 6 && Math.floorMod(testDay,7) != 0)
 					amountOfWorkingDays++;
-				testDay = Math.floorMod(testDay + 1, 7);
+				testDay++;
 			}
 			return new TimeSpan((int) amountOfWorkingDays * 8 * 60 + workingMinutesInLastDay
 					+ workingMinutesInFirstDay);
