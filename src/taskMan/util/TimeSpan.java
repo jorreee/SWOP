@@ -3,6 +3,7 @@ package taskMan.util;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 
 /**
  * Creates a timeSpan object.
@@ -397,6 +398,28 @@ public class TimeSpan {
 				+ workingMinutesFullDaysAfterFullWeeks
 				+ workingMinutesFullDaysBeforeFullWeeks
 				+ workingMinutesInLastDay + workingMinutesInFirstDay);
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Arrays.hashCode(span);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		TimeSpan other = (TimeSpan) obj;
+		if (!Arrays.equals(span, other.span))
+			return false;
+		return true;
 	}
 }
 
