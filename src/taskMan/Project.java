@@ -208,10 +208,10 @@ public class Project {
 	 */
 	private void recalculateProjectStatus() {
 		for(Task task : taskList) {
-			String status = task.getTaskStatusName();
-			if( status.equals("AVAILABLE") || status.equals("UNAVAILABLE"))
+			String status = task.getStatus();
+			if( status.equals("available") || status.equals("unavailable"))
 				return;
-			if( status.equals("FAILED")) {
+			if( status.equals("failed")) {
 				if(!hasFinishedAlternative(task.getTaskID()))
 					return;
 			}
