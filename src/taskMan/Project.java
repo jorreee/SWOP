@@ -1,8 +1,6 @@
 package taskMan;
 
-import java.time.DayOfWeek;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,12 +9,6 @@ import java.util.Set;
 import taskMan.util.TimeSpan;
 
 import com.google.common.collect.ImmutableList;
-
-
-//TODO voorspellen of task op tijd afgehandled kan worden
-//TODO methode om te weten hoeveel uw project te laat is
-//TODO werken met taskID ipv task objecten.
-//TODO isontime boolean, getDelay int 
 
 /**
  * The project class used by TaskMan. A project will always have a unique
@@ -125,11 +117,9 @@ public class Project {
 		}
 		
 		if(!addAlternative(alternativeFor, newTaskID)) {
-			System.out.println("GROOT PROBLEEM: Was voorspeld goed alternatief, bleek toch niet");
 			return false;
 		}
 		if(!addPrerequisites(newTaskID, prerequisiteTasks)) {
-			System.out.println("GROOT PROBLEEM: Was voorspeld goede prereq, bleek toch niet");
 			return false;
 		}
 		
@@ -139,13 +129,12 @@ public class Project {
 		
 		if(success) {
 			recalculateProjectStatus();
-		} else {
-			System.out.println("GROOT PROBLEEM: Was voorspeld goede nieuwe task, bleek toch niet"); //TODO verwijder mij
-		}
+		} 
 		return success;
 	}
 	/**
 	 * Returns the start value of time spent on a task, depending on the task it is replacing
+	 * 
 	 * @param 	taskID
 	 * @return	time spent on the tasks this task is replacing
 	 * 			0 if it doesn't replace a task
@@ -651,7 +640,9 @@ public class Project {
 	 * 
 	 * @param 	current
 	 * 			The current time to compare with.
-	 * @return
+	 * @return	True if the end time comes before the due time
+	 * 			True if the project has not yet finished
+	 * 			False otherwise.
 	 */
 	public boolean isOnTime(LocalDateTime current){
 		if(endTime == null){
@@ -671,6 +662,7 @@ public class Project {
 	 * @param 	current
 	 * 			The current time to check with.
 	 * @return	The delay of the project
+	 * 			a zero array if there isn't any.
 	 */
 	public int[] getDelay(LocalDateTime current){
 		if (current.isBefore(dueTime)) {
@@ -684,6 +676,7 @@ public class Project {
 
 	/**
 	 * Sets the task with the given task id to finished
+	 * 
 	 * @param 	taskID
 	 * 			the id of the given task
 	 * @param 	startTime
@@ -713,6 +706,7 @@ public class Project {
 
 	/**
 	 * Sets the task with the given task id to failed
+	 * 
 	 * @param 	taskID
 	 * 			the id of the given task
 	 * @param 	startTime
@@ -739,6 +733,8 @@ public class Project {
 	/**
 	 * Returns whether the current task in unacceptably overdue.
 	 * 
+	 * @param	TaskID
+	 * 			The ID of the Task.
 	 * @return	True if the project is overtime beyond the deviation.
 	 * 			False otherwise.
 	 */
@@ -762,9 +758,11 @@ public class Project {
 
 	/**
 	 * Determine the percentage of over time for a certain task
+	 * 
 	 * @param	taskID
 	 * 			the given task
 	 * @return	The percentage of overdue
+	 * 			-1 if the ID isn't a valid one.
 	 */
 	public int getTaskOverTimePercentage(int taskID) {
 		if(!isValidTaskID(taskID))
@@ -774,6 +772,7 @@ public class Project {
 
 	/**
 	 * A method to check whether this project is finished
+	 * 
 	 * @return	True if and only if this project is finished
 	 */
 	public boolean isFinished() {
@@ -782,6 +781,7 @@ public class Project {
 
 	/**
 	 * Returns the estimated time until the project should end
+	 * 
 	 * @param	projectID
 	 * 			the id of the given project
 	 * @return	The amount of years, months, days, hours and minutes
@@ -817,6 +817,7 @@ public class Project {
 	 * Determine the longest timespan needed for a chain of dependant tasks.
 	 * The timespan is the largest sum of the estimated durations of the dependant
 	 * task of the given task and the longest chain of it's dependancies
+	 * 
 	 * @param	taskID
 	 * 			the given task
 	 * @return	The longest chain of durations possible from the given task
@@ -839,6 +840,7 @@ public class Project {
 
 	/**
 	 * A method to determine if a task is a prerequisite to another task
+	 * 
 	 * @param	taskID
 	 * 			the given task
 	 * @return	True if and only if the supplied task is a prerequisite to another task
@@ -857,6 +859,7 @@ public class Project {
 	/**
 	 * A method to retrieve all task identifiers from tasks that are dependant
 	 * on the supplied task identifier
+	 * 
 	 * @param	taskID
 	 * 			the given task
 	 * @return	A list of task identifiers from tasks that are dependant on the given task
@@ -875,6 +878,7 @@ public class Project {
 
 	/**
 	 * A check to determine if the project will end on time
+	 * 
 	 * @param	currentTime
 	 * 			The current time of the system
 	 * @return	True if the estimated required time to finish all tasks is
@@ -887,6 +891,7 @@ public class Project {
 
 	/**
 	 * Returns whether or not this project has any tasks available
+	 * 
 	 * @return	True if there is a task assigned to this project which is available
 	 */
 	private boolean hasAvailableTasks() {

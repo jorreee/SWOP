@@ -4,14 +4,11 @@ import java.time.LocalDateTime;
 
 import taskMan.util.TimeSpan;
 
-
-//TODO task moeten dependencies hebben, dependencies moeten fullfiled zijn voor available anders unavailable
-//TODO enkel alternative voor task die failed is, alt pakt timespan en dependencies over
-//TODO timespan via 2 constructors, via extra parameters. Extra tijd variable moet private zijn(get and set)
-//TODO Finished 
-//TODO voor delay van task nu - begintime van Task
 /**
- * The Task object.
+ * The Task object. A task will have an ID, a description, an estimated duration, 
+ * acceptable deviation and a status. Also it will be possible to set the begin and end time
+ * once the project is finished or failed. There is also the extra time that is determined by
+ * the alternative.
  * 
  * @author	Tim Van den Broecke, Joran Van de Woestijne, Vincent Van Gestel, Eli Vangrieken
  *
@@ -73,7 +70,7 @@ public class Task {
 	 * @param 	beginTime
 	 * 			The begin time of the new Task.
 	 * @param 	endTime
-	 * 			The endtime of the new Task.
+	 * 			The end time of the new Task.
 	 */
 	public Task(int taskID, String taskDescription, int estimatedDuration,
 			int acceptableDeviation, String taskStatus,
@@ -148,13 +145,11 @@ public class Task {
 	 * @throws 	IllegalArgumentException 
 	 * 			When the start time of the task is after the time given.
 	 */
-	public TimeSpan getTimeElapsed(LocalDateTime currentTime) {
+	public TimeSpan getTimeElapsed(LocalDateTime currentTime) throws IllegalArgumentException{
 		if(beginTime == null)
-			throw new IllegalStateException("Project not yet started");
+			throw new IllegalArgumentException("Project not yet started");
 		if(beginTime.isAfter(currentTime))
 			throw new IllegalArgumentException("Timestamp is in the past");
-
-		//return new TimeSpan(beginTime, currentTime).add(extraTime) ;
 		return TimeSpan.getDifferenceWorkingMinutes(this.beginTime, currentTime).add(this.extraTime);
 	}
 
@@ -162,10 +157,11 @@ public class Task {
 	 * This method returns the time elapsed since the start of the project and 
 	 * the end of the project. 
 	 * 
-	 * @return returns time elapsed between the start time and end time
-	 * @throws IllegalStateException whenever the end time is not yet determined
+	 * @return 	returns time elapsed between the start time and end time
+	 * @throws 	IllegalStateException 
+	 * 			whenever the end time is not yet determined
 	 */
-	public TimeSpan getTimeSpan() {
+	public TimeSpan getTimeSpan() throws IllegalArgumentException{
 		if(endTime == null)
 			throw new IllegalStateException("Project not yet finished");
 		return getTimeElapsed(endTime);
@@ -287,6 +283,7 @@ public class Task {
 
 	/**
 	 * Returns the name of the current status of the Task
+	 * 
 	 * @return	the name of the current status of the Task
 	 */
 	public String getTaskStatusName() {
@@ -487,26 +484,4 @@ public class Task {
 		else
 			return 0;
 	}
-//	
-//	@Override
-//	public int hashCode() {
-//		final int prime = 31;
-//		int result = 1;
-//		result = prime * result + taskID;
-//		return result;
-//	}
-//
-//	@Override
-//	public boolean equals(Object obj) {
-//		if (this == obj)
-//			return true;
-//		if (obj == null)
-//			return false;
-//		if (getClass() != obj.getClass())
-//			return false;
-//		Task other = (Task) obj;
-//		if (taskID != other.taskID)
-//			return false;
-//		return true;
-//	}
 }

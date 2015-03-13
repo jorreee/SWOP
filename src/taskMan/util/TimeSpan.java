@@ -299,8 +299,11 @@ public class TimeSpan {
 			throw new IllegalArgumentException("Invalid start time");
 		if(endTime == null)
 			throw new IllegalArgumentException("Invalid end time");
-		if(startTime.isAfter(endTime))
-			throw new IllegalArgumentException("Start time is after the end time");
+		if(endTime.isBefore(startTime)){
+			LocalDateTime temp = startTime;
+			startTime = endTime;
+			endTime = temp;
+		}
 		
 		DayOfWeek beginDay = startTime.getDayOfWeek();
 		DayOfWeek endDay = endTime.getDayOfWeek();
@@ -365,6 +368,18 @@ public class TimeSpan {
 
 		long minutesBetweenTimeStamps;
 		minutesBetweenTimeStamps = startTime.until(endTime, ChronoUnit.MINUTES);
+		
+		if(minutesBetweenTimeStamps <= 24 * 60 && beginDay == endDay) {
+			if(startDayHour < startingHourWorkDay) {
+				startDayHour = startingHourWorkDay;
+				startDayMinute = 0;
+			}
+			if(endDayHour >= endingHourWorkDay) {
+				endDayHour = endingHourWorkDay;
+				endDayMinute = 0;
+			}
+			return new TimeSpan((endDayHour - startDayHour) * 60 + (endDayMinute - startDayMinute));
+		}
 
 		long workingMinutesFullWeeks;
 		int workingMinutesFullDaysAfterFullWeeks, workingMinutesFullDaysBeforeFullWeeks, workingMinutesInLastDay, workingMinutesInFirstDay;
@@ -420,7 +435,24 @@ public class TimeSpan {
 		}
 		if (workingMinutesInFirstDay > 8 * 60)
 			workingMinutesInFirstDay = 8 * 60;
-
+		
+		if(minutesBetweenTimeStamps <= 48 * 60) {
+			return new TimeSpan(workingMinutesInFirstDay
+					+ workingMinutesInLastDay);
+		}
+		
+		if(minutesBetweenTimeStamps <= 9 * 24 * 60) {
+			int amountOfWorkingDays = 0;
+			int testDay = beginDayValue + 1;
+			while(testDay != endDayValue) {
+				if(testDay != 6 || testDay != 7)
+					amountOfWorkingDays++;
+				testDay = Math.floorMod(testDay + 1, 7);
+			}
+			return new TimeSpan((int) amountOfWorkingDays * 8 * 60 + workingMinutesInLastDay
+					+ workingMinutesInFirstDay);
+		}
+		
 		return new TimeSpan((int) workingMinutesFullWeeks
 				+ workingMinutesFullDaysAfterFullWeeks
 				+ workingMinutesFullDaysBeforeFullWeeks

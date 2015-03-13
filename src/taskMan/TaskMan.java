@@ -75,6 +75,7 @@ public class TaskMan {
 		
 	/**
 	 * Gets the current time
+	 * 
 	 * @return the current time
 	 */
 	public LocalDateTime getCurrentTime() { return currentTime; }
@@ -93,8 +94,6 @@ public class TaskMan {
 	 * 			false if the creation was unsuccessful
 	 */
 	public boolean createProject(String name, String description, LocalDateTime creationTime, LocalDateTime dueTime) {
-//		if(creationTime.isBefore(currentTime) || dueTime.isBefore(currentTime))
-//			return false;
 		Project project = null;
 		try{
 			 project = new Project(projectList.size(), name, description, creationTime, dueTime);
@@ -106,6 +105,7 @@ public class TaskMan {
 	
 	/**
 	 * Creates a new Project with the current time as the creation time.
+	 * 
 	 * @param 	name
 	 * 			The name of the project
 	 * @param 	description
@@ -180,6 +180,7 @@ public class TaskMan {
 	
 	/**
 	 * Returns the name of the project with the given ID
+	 * 
 	 * @param 	projectID
 	 * 			The id of the project
 	 * @return	the name of the project
@@ -193,6 +194,7 @@ public class TaskMan {
 	
 	/**
 	 * Returns the description of the project with the given ID
+	 * 
 	 * @param 	projectID
 	 * 			The id of the project
 	 * @return	the description of the project
@@ -206,6 +208,7 @@ public class TaskMan {
 	
 	/**
 	 * Returns the creation time of the project with the given ID
+	 * 
 	 * @param 	projectID
 	 * 			The id of the project
 	 * @return	the creation time of the project
@@ -219,6 +222,7 @@ public class TaskMan {
 	
 	/**
 	 * Returns the due time of the project with the given ID
+	 * 
 	 * @param 	projectID
 	 * 			The id of the project
 	 * @return	the due time of the project
@@ -232,6 +236,7 @@ public class TaskMan {
 	
 	/**
 	 * Returns the end time of the project with the given ID
+	 * 
 	 * @param 	projectID
 	 * 			The id of the project
 	 * @return	the end time of the project
@@ -245,6 +250,7 @@ public class TaskMan {
 	
 	/**
 	 * Returns the status of the project with the given ID
+	 * 
 	 * @param 	projectID
 	 * 			the id of the project
 	 * @return	the status of the project
@@ -258,6 +264,7 @@ public class TaskMan {
 	
 	/**
 	 * Returns the delay of the project with the given ID
+	 * 
 	 * @param 	projectID
 	 * 			the id of the project
 	 * @return	the delay of the project
@@ -272,6 +279,7 @@ public class TaskMan {
 	
 	/**
 	 * Returns all available tasks per project
+	 * 
 	 * @return	a mapping of a project id on a list of available task id's
 	 */
 	public HashMap<Integer, List<Integer>> getAvailableTasks() {
@@ -284,6 +292,7 @@ public class TaskMan {
 	
 	/**
 	 * Returns all available tasks for a given project
+	 * 
 	 * @param 	projectID
 	 * 			The id of the project
 	 * @return	The available task id's of the project
@@ -297,6 +306,7 @@ public class TaskMan {
 	
 	/**
 	 * Returns the total amount of projects
+	 * 
 	 * @return	the amount of projects
 	 */
 	public int getProjectAmount() {
@@ -305,6 +315,7 @@ public class TaskMan {
 
 	/**
 	 * Returns whether the project with the given ID is on time or not
+	 * 
 	 * @param 	projectID
 	 * 			the id of the project
 	 * @return	True if the project is on time,
@@ -319,6 +330,7 @@ public class TaskMan {
 
 	/**
 	 * Returns the amount of tasks of the project with the given ID
+	 * 
 	 * @param 	projectID
 	 * 			the id of the project
 	 * @return	the amount of tasks of the project
@@ -331,7 +343,9 @@ public class TaskMan {
 	}
 
 	/**
-	 * Returns the description of the task with the given task id belonging to the project with the given project id
+	 * Returns the description of the task with the given task id belonging 
+	 * to the project with the given project id
+	 * 
 	 * @param 	projectID
 	 * 			the id of the given project
 	 * @param 	taskID
@@ -346,20 +360,9 @@ public class TaskMan {
 	}
 
 	/**
-	 * Returns whether the task with the given task id belonging to the project with the given project id has started
-	 * @param 	projectID
-	 * 			the id of the given project
-	 * @param 	taskID
-	 * 			the id of the given task
-	 * @return	True if the task has started,
-	 * 			false if the task hasn't started 
-	 */
-//	public boolean hasTaskStarted(int projectID, int taskID) {
-//		return projectList.get(projectID).hasTaskStarted(taskID);
-//	}
-
-	/**
-	 * Returns the start time of the task with the given task id belonging to the project with the given project id
+	 * Returns the start time of the task with the given task id 
+	 * belonging to the project with the given project id
+	 * 
 	 * @param 	projectID
 	 * 			the id of the given project
 	 * @param 	taskID
@@ -374,7 +377,9 @@ public class TaskMan {
 	}
 
 	/**
-	 * Returns the estimated duration of the task with the given task id belonging to the project with the given project id
+	 * Returns the estimated duration of the task with the given task id 
+	 * belonging to the project with the given project id
+	 * 
 	 * @param 	projectID
 	 * 			the id of the given project
 	 * @param 	taskID
@@ -389,7 +394,9 @@ public class TaskMan {
 	}
 
 	/**
-	 * Returns the acceptable deviation of the task with the given task id belonging to the project with the given project id
+	 * Returns the acceptable deviation of the task with the given task id 
+	 * belonging to the project with the given project id
+	 * 
 	 * @param 	projectID
 	 * 			the id of the given project
 	 * @param 	taskID
@@ -404,7 +411,9 @@ public class TaskMan {
 	}
 
 	/**
-	 * Returns whether the task with the given task id belonging to the project with the given project id has ended
+	 * Returns whether the task with the given task id belonging to the project 
+	 * with the given project id has ended
+	 * 
 	 * @param 	projectID
 	 * 			the id of the given project
 	 * @param 	taskID
@@ -420,7 +429,9 @@ public class TaskMan {
 	}
 
 	/**
-	 * Returns the end time of the task with the given task id belonging to the project with the given project id
+	 * Returns the end time of the task with the given task id belonging 
+	 * to the project with the given project id
+	 * 
 	 * @param 	projectID
 	 * 			the id of the given project
 	 * @param 	taskID
@@ -435,7 +446,9 @@ public class TaskMan {
 	}
 
 	/**
-	 * Returns the status of the task with the given task id belonging to the project with the given project id
+	 * Returns the status of the task with the given task id belonging 
+	 * to the project with the given project id
+	 * 
 	 * @param 	projectID
 	 * 			the id of the given project
 	 * @param 	taskID
@@ -450,7 +463,9 @@ public class TaskMan {
 	}
 
 	/**
-	 * Returns whether the task with the given task id belonging to the project with the given project id has prerequisites
+	 * Returns whether the task with the given task id belonging to the project 
+	 * with the given project id has prerequisites
+	 * 
 	 * @param 	projectID
 	 * 			the id of the given project
 	 * @param 	taskID
@@ -466,7 +481,9 @@ public class TaskMan {
 	}
 
 	/**
-	 * Returns the prerequisites for the task with the given task id belonging to the project with the given project id
+	 * Returns the prerequisites for the task with the given task id belonging 
+	 * to the project with the given project id
+	 * 
 	 * @param 	projectID
 	 * 			the id of the given project
 	 * @param 	taskID
@@ -481,7 +498,9 @@ public class TaskMan {
 	}
 
 	/**
-	 * Returns whether the task with the given task id belonging to the project with the given project id has alternatives
+	 * Returns whether the task with the given task id belonging 
+	 * to the project with the given project id has alternatives
+	 * 
 	 * @param 	projectID
 	 * 			the id of the given project
 	 * @param 	taskID
@@ -497,7 +516,9 @@ public class TaskMan {
 	}
 
 	/**
-	 * Returns the alternative for the task with the given task id belonging to the project with the given project id
+	 * Returns the alternative for the task with the given task id belonging 
+	 * to the project with the given project id
+	 * 
 	 * @param 	projectID
 	 * 			the id of the given project
 	 * @param 	taskID
@@ -512,7 +533,9 @@ public class TaskMan {
 	}
 	
 	/**
-	 * Sets the task with the given task id belonging to the project with the given project id to finished
+	 * Sets the task with the given task id belonging to the project 
+	 * with the given project id to finished
+	 * 
 	 * @param 	projectID
 	 * 			the id of the given project
 	 * @param 	taskID
@@ -534,7 +557,9 @@ public class TaskMan {
 	}
 	
 	/**
-	 * Sets the task with the given task id belonging to the project with the given project id to failed
+	 * Sets the task with the given task id belonging to the project 
+	 * with the given project id to failed
+	 * 
 	 * @param 	projectID
 	 * 			the id of the given project
 	 * @param 	taskID
@@ -555,6 +580,16 @@ public class TaskMan {
 		return projectList.get(projectID).setTaskFailed(taskID,startTime, endTime);
 	}
 
+	/**
+	 * Returns whether the Task is unacceptable overdue.
+	 * 
+	 * @param 	projectID
+	 * 			The ID of the project
+	 * @param 	taskID
+	 * 			The ID of the Task
+	 * @return	True if the Task is unacceptable overdue.
+	 * 			False otherwise or the task has not ended or failed.
+	 */
 	public boolean isTaskUnacceptableOverdue(int projectID, int taskID) {
 		if(!isValidProjectID(projectID)) {
 			return false;
@@ -562,6 +597,16 @@ public class TaskMan {
 		return getProject(projectID).isTaskUnacceptableOverdue(taskID);
 	}
 
+	/**
+	 * Checks whether the Task in on time.
+	 * 
+	 * @param 	projectID
+	 * 			The ID of the project
+	 * @param 	taskID
+	 * 			The ID of the task.
+	 * @return	True if the Task is on time or has not yet finished or failed.
+	 * 			False otherwise.
+	 */
 	public boolean isTaskOnTime(int projectID, int taskID) {
 		if(!isValidProjectID(projectID)) {
 			return false;
@@ -569,6 +614,17 @@ public class TaskMan {
 		return getProject(projectID).isTaskOnTime(taskID);
 	}
 
+	/**
+	 * Returns the percentage of overdue of the task if any.
+	 * 
+	 * @param 	projectID
+	 * 			The ID of the project
+	 * @param 	taskID
+	 * 			The ID of the task
+	 * @return	The percentage of overdue.
+	 * 			0 if the task is on time.
+	 * 			-1 if the ID isn't a valid one.
+	 */
 	public int getTaskOverTimePercentage(int projectID, int taskID) {
 		if(!isValidProjectID(projectID)) {
 			return -1;
@@ -578,6 +634,7 @@ public class TaskMan {
 
 	/**
 	 * Returns whether a certain project has finished
+	 * 
 	 * @param	projectID
 	 * 			the id of the given project
 	 * @return	True if the project has finished
@@ -591,6 +648,7 @@ public class TaskMan {
 	
 	/**
 	 * Returns whether the unfinished project is estimated to end on time
+	 * 
 	 * @param	projectID
 	 * 			The id of the given project
 	 * @return	True if the project is estimated to end on time
@@ -606,6 +664,7 @@ public class TaskMan {
 	
 	/**
 	 * Returns the estimated time until the project should end
+	 * 
 	 * @param	projectID
 	 * 			the id of the given project
 	 * @return	The amount of years, months, days, hours and minutes
@@ -618,6 +677,14 @@ public class TaskMan {
 		return getProject(projectID).getEstimatedProjectDelay(currentTime);
 	}
 	
+	/**
+	 * Checks whether the given project ID is a valid one.
+	 * 
+	 * @param 	PID
+	 * 			The ID to check.
+	 * @return	True if the ID is valid.
+	 * 			False otherwise.
+	 */
 	private boolean isValidProjectID(int PID) {
 		if(PID < 0 || PID >= getProjectAmount())
 			return false;
