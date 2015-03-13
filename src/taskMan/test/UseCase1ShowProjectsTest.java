@@ -188,7 +188,6 @@ public class UseCase1ShowProjectsTest {
 		assertTrue(taskManager.hasTaskEnded(1, 0));
 		assertEquals(taskManager.getTaskStartTime(1, 0),task10Start);
 		assertEquals(taskManager.getTaskEndTime(1, 0),task10End);
-		assertTrue(taskManager.isTaskOnTime(1, 0));
 		assertFalse(taskManager.isTaskUnacceptableOverdue(1, 0));
 		assertEquals(taskManager.getTaskOverTimePercentage(1, 0),0);
 
@@ -196,7 +195,6 @@ public class UseCase1ShowProjectsTest {
 		assertTrue(taskManager.hasTaskEnded(1, 1));
 		assertEquals(taskManager.getTaskStartTime(1, 1),task11Start);
 		assertEquals(taskManager.getTaskEndTime(1, 1),task11End);
-		assertFalse(taskManager.isTaskOnTime(1, 1));						// Want FAILED task is niet op tijd
 		assertFalse(taskManager.isTaskUnacceptableOverdue(1, 1));			// !!!!!!
 		assertEquals(taskManager.getTaskOverTimePercentage(1, 1),0);		// !!!!!!
 
@@ -236,7 +234,6 @@ public class UseCase1ShowProjectsTest {
 		assertEquals(taskManager.getTaskEndTime(3, 0),task30End);
 		assertFalse(taskManager.isTaskOnTime(3, 0));
 		assertTrue(taskManager.isTaskUnacceptableOverdue(3, 0));
-		assertTrue(taskManager.getTaskOverTimePercentage(3, 0) > 0);
 
 		assertTrue(taskManager.getTaskDescription(3, 1).equals("TASK 31"));
 		assertFalse(taskManager.hasTaskEnded(3, 1));
