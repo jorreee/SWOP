@@ -139,11 +139,14 @@ public class Task {
 
 	/**
 	 * This method compares the start time of the project with a given time and calculates the
-	 * elapsed time.
+	 * elapsed time in working hours.
 	 * 
-	 * @param currentTime The time with which the start time of the task must be compared with
-	 * @throws IllegalStateException when no start time has yet been documented
-	 * @throws IllegalArgumentException when the start time of the task is after the time given
+	 * @param 	currentTime 
+	 * 			The time with which the start time of the task must be compared with.
+	 * @throws 	IllegalStateException 
+	 * 			When no start time has yet been documented.
+	 * @throws 	IllegalArgumentException 
+	 * 			When the start time of the task is after the time given.
 	 */
 	public TimeSpan getTimeElapsed(LocalDateTime currentTime) {
 		if(beginTime == null)
@@ -151,7 +154,8 @@ public class Task {
 		if(beginTime.isAfter(currentTime))
 			throw new IllegalArgumentException("Timestamp is in the past");
 
-		return new TimeSpan(beginTime, currentTime).add(extraTime) ;
+		//return new TimeSpan(beginTime, currentTime).add(extraTime) ;
+		return TimeSpan.getDifferenceWorkingMinutes(this.beginTime, currentTime).add(this.extraTime);
 	}
 
 	/**
