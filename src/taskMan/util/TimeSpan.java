@@ -352,6 +352,18 @@ public class TimeSpan {
 
 		long minutesBetweenTimeStamps;
 		minutesBetweenTimeStamps = startTime.until(endTime, ChronoUnit.MINUTES);
+		
+		if(minutesBetweenTimeStamps < 24 * 60 && beginDay == endDay) {
+			if(startDayHour < startingHourWorkDay) {
+				startDayHour = startingHourWorkDay;
+				startDayMinute = 0;
+			}
+			if(endDayHour >= endingHourWorkDay) {
+				endDayHour = endingHourWorkDay;
+				endDayMinute = 0;
+			}
+			return new TimeSpan((endDayHour - startDayHour) * 60 + (endDayMinute - startDayMinute));
+		}
 
 		long workingMinutesFullWeeks;
 		int workingMinutesFullDaysAfterFullWeeks, workingMinutesFullDaysBeforeFullWeeks, workingMinutesInLastDay, workingMinutesInFirstDay;
@@ -407,7 +419,7 @@ public class TimeSpan {
 		}
 		if (workingMinutesInFirstDay > 8 * 60)
 			workingMinutesInFirstDay = 8 * 60;
-
+		
 		return new TimeSpan((int) workingMinutesFullWeeks
 				+ workingMinutesFullDaysAfterFullWeeks
 				+ workingMinutesFullDaysBeforeFullWeeks
