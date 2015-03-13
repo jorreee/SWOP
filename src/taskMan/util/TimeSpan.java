@@ -22,10 +22,12 @@ public class TimeSpan {
 	 * 			The first localDateTime object.
 	 * @param 	time2
 	 * 			The second localDateTime object.
+	 * @throws	IllegalArgumentException
+	 * 			An exception is thrown when a null pointer is shown
 	 */
-	public TimeSpan(LocalDateTime time1, LocalDateTime time2 ){
+	public TimeSpan(LocalDateTime time1, LocalDateTime time2 ) throws IllegalArgumentException {
 		if(time1 == null || time2 == null)
-			throw new IllegalStateException("Time objects are null");
+			throw new IllegalArgumentException("Time objects are null");
 
 		LocalDateTime fromDateTime = null;
 		LocalDateTime toDateTime =null;
@@ -270,13 +272,23 @@ public class TimeSpan {
 	/**
 	 * Returns the amount of working minutes between two timestamps.
 	 * A working day is from 9 to 17 on weekdays.
-	 * @param startTime // TODO docu afwerken
-	 * @param endTime
-	 * @return
+	 * @param	startTime
+	 * 			The given start time
+	 * @param	endTime
+	 * 			The given end time
+	 * @return	Returns the amount of working minutes between two timestamps
+	 * @throws	IllegalArgumentException
+	 * 			Throws an exception when a null pointer is found in the timestamps
 	 */
 	public static TimeSpan getDifferenceWorkingMinutes(LocalDateTime startTime,
-			LocalDateTime endTime) {
-
+			LocalDateTime endTime) throws IllegalArgumentException {
+		if(startTime == null)
+			throw new IllegalArgumentException("Invalid start time");
+		if(endTime == null)
+			throw new IllegalArgumentException("Invalid end time");
+		if(startTime.isAfter(endTime))
+			throw new IllegalArgumentException("Start time is after the end time");
+		
 		DayOfWeek beginDay = startTime.getDayOfWeek();
 		DayOfWeek endDay = endTime.getDayOfWeek();
 		int startingHourWorkDay = 8;
