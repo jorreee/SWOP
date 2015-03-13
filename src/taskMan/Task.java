@@ -35,10 +35,12 @@ public class Task {
 	 * @param 	acceptableDeviation
 	 * 			The acceptable deviation of the new Task.
 	 * @param	extraTime
-	 * 			The extra time to add to the elapsed time
+	 * 			The extra time offset to add to the elapsed time
+	 * @throws	IllegalArgumentException
+	 * 			if any of the parameters are invalid ( < 0 or null)
 	 */
 	public Task(int taskID, String taskDescription, int estimatedDuration,
-			int acceptableDeviation, TimeSpan extraTime) {
+			int acceptableDeviation, TimeSpan extraTime) throws IllegalArgumentException {
 		if(!isValidTaskID(taskID))
 			throw new IllegalArgumentException("Invalid task ID");
 		if(!isValidDescription(taskDescription))
@@ -71,6 +73,8 @@ public class Task {
 	 * 			The begin time of the new Task.
 	 * @param 	endTime
 	 * 			The end time of the new Task.
+	 * @throws	IllegalArgumentException
+	 * 			if any of the parameters are invalid ( < 0 or null)
 	 */
 	public Task(int taskID, String taskDescription, int estimatedDuration,
 			int acceptableDeviation, String taskStatus,
@@ -124,24 +128,19 @@ public class Task {
 	/**
 	 * checks whether the Task has ended.
 	 * 
-	 * @return	True if the Task has ended.
-	 * 			False otherwise.
+	 * @return	True if and only if the Task has ended.
 	 */
 	public boolean hasEnded(){
-		if(this.getEndTime()==null)
-			return false;
-		else
-			return true;
+		return (isFinished() || isFailed());
 	}
 
 	/**
-	 * This method compares the start time of the project with a given time and calculates the
-	 * elapsed time in working hours.
+	 * Compares the start time of the project with a given time and calculates the
+	 * elapsed time in working time.
 	 * 
 	 * @param 	currentTime 
 	 * 			The time with which the start time of the task must be compared with.
-	 * @throws 	IllegalStateException 
-	 * 			When no start time has yet been documented.
+	 * @return	time spent on this project in working time
 	 * @throws 	IllegalArgumentException 
 	 * 			When the start time of the task is after the time given.
 	 */
@@ -154,10 +153,10 @@ public class Task {
 	}
 
 	/**
-	 * This method returns the time elapsed since the start of the project and 
+	 * Returns the time elapsed since the start of the project and 
 	 * the end of the project. 
 	 * 
-	 * @return 	returns time elapsed between the start time and end time
+	 * @return 	time elapsed between the start time and end time
 	 * @throws 	IllegalStateException 
 	 * 			whenever the end time is not yet determined
 	 */
@@ -177,7 +176,7 @@ public class Task {
 	}
 
 	/**
-	 * This Method sets the start time of the Task.
+	 * Sets the start time of the Task.
 	 * 
 	 * @param 	beginTime
 	 * 			The new start time for the Task.
@@ -188,7 +187,7 @@ public class Task {
 		if(beginTime==null)
 			throw new IllegalArgumentException("The new beginTime is null");
 		if(this.beginTime!=null)
-			throw new IllegalArgumentException("The begintime is already set");
+			throw new IllegalArgumentException("The beginTime is already set");
 		else
 			this.beginTime = beginTime;
 	}
@@ -213,7 +212,7 @@ public class Task {
 	public void setEndTime(LocalDateTime endTime) throws IllegalArgumentException {
 		if(endTime==null)
 			throw new IllegalArgumentException("The new endTime is null");
-		if(this.endTime!=null)
+		if(getEndTime()!=null)
 			throw new IllegalArgumentException("The endtime is already set");
 		else
 			this.endTime = endTime;
@@ -279,15 +278,6 @@ public class Task {
 	 */
 	private TaskStatus getTaskStatus() {
 		return taskStatus;
-	}
-
-	/**
-	 * Returns the name of the current status of the Task
-	 * 
-	 * @return	the name of the current status of the Task
-	 */
-	public String getTaskStatusName() {
-		return getTaskStatus().name();
 	}
 
 	/**
@@ -357,7 +347,7 @@ public class Task {
 	}
 
 	/**
-	 * End the task in an endstate
+	 * End the task finished or failed
 	 * 
 	 * @param 	startTime
 	 * 			The new startTime of the Task.
@@ -381,13 +371,13 @@ public class Task {
 	}
 	
 	/**
-	 * Checks whether the given timestamps are valid
+	 * Checks whether the given timestamps are valid as start- and endtimes
 	 * 
 	 * @param 	startTime
 	 * 			The new startTime of the Task.
 	 * @param 	endTime
 	 * 			The new end time of the Task.
-	 * @return	True if and only if the timestamps are valid.
+	 * @return	True if and only if the timestamps are valid start- and endtimes.
 	 */
 	private boolean isValidTimeStamps(LocalDateTime startTime, LocalDateTime endTime) {
 		if(startTime == null || endTime == null)
@@ -409,7 +399,7 @@ public class Task {
 	}
 	
 	/**
-	 * Checks whether the deviation is a valid one.
+	 * Checks whether the taskID is a valid one.
 	 * 
 	 * @param 	taskID
 	 * 			The taskID to check.
@@ -420,7 +410,7 @@ public class Task {
 	}
 	
 	/**
-	 * Checks whether the deviation is a valid one.
+	 * Checks whether the description is a valid one.
 	 * 
 	 * @param 	description
 	 * 			The description to check.
@@ -457,7 +447,7 @@ public class Task {
 	}
 
 	/**
-	 * Returns whether the current task in unacceptable overdue.
+	 * Returns whether the current task in unacceptably overdue.
 	 * 
 	 * @return	True if the project is overtime beyond the deviation.
 	 * 			False otherwise.

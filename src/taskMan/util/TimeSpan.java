@@ -62,12 +62,12 @@ public class TimeSpan {
 	}
 
 	/**
-	 * Creates a timeSpan based on a duration of minutes.
+	 * Creates a TimeSpan object based on a duration in minutes.
 	 * 
 	 * @param 	duration
 	 * 			The number of minutes.
 	 * @throws	IllegalArgumentException
-	 * 			The duration must be a postive one.
+	 * 			if the duration is negative.
 	 */
 	public TimeSpan(int duration) throws IllegalArgumentException{
 		if(duration<0)
@@ -85,6 +85,15 @@ public class TimeSpan {
 		span = new int[] {yearsM/(24*60*30*12),monthsM/(24*60*30),dayM/(24*60),hoursM/60,minutesM};
 	}
 	
+	/**
+	 * Creates a TimeSpan object based on an integer array that holds years,
+	 * months, days, hours and minutes in that order.
+	 * 
+	 * @param 	newSpan
+	 * 			an integer array representing the time span
+	 * @throws 	IllegalArgumentException
+	 * 			if the integer array has the wrong dimensions (!= 5)
+	 */
 	public TimeSpan(int[] newSpan) throws IllegalArgumentException{
 		if(newSpan.length != 5)
 			throw new IllegalArgumentException("invalid number of arguments");
@@ -114,7 +123,7 @@ public class TimeSpan {
 	}
 	
 	/**
-	 * Creates a new TimeSpan objects by adding this timeSpan object with another TimeObject.
+	 * Creates a new TimeSpan object by adding this TimeSpan object to another TimeSpan.
 	 * 
 	 * @param 	newSpan
 	 * 			The other TimeSpan object
@@ -199,6 +208,8 @@ public class TimeSpan {
 	 * @param 	deviation
 	 * 			The deviation to be used.
 	 * @return	An new TimeSpan object representing a acceptable span.
+	 * @throws	IllegalArgumentException
+	 * 			if the deviation is negative
 	 */
 	public TimeSpan getAcceptableSpan(int deviation) throws IllegalArgumentException {
 		if(deviation<0)
@@ -215,6 +226,7 @@ public class TimeSpan {
 	 * @param 	other
 	 * 			The TimeSpan to compare to.
 	 * @return	True if this span is longer.
+	 * 			False if other == null
 	 */
 	public boolean isLonger(TimeSpan other) {
 		if(other == null)
@@ -228,6 +240,7 @@ public class TimeSpan {
 	 * @param 	other
 	 * 			The TimeSpan to compare to.
 	 * @return	True if this span is shorter or equal.
+	 * 			False if other == null
 	 */
 	public boolean isShorter(TimeSpan other){
 		if(other == null)
@@ -254,6 +267,7 @@ public class TimeSpan {
 	 * @param 	other
 	 * 			The other TimeSpan object.
 	 * @return	The difference in minutes.
+	 * 			-1 if other == null
 	 */
 	public int getDifferenceMinute(TimeSpan other) {
 		if (other == null)
@@ -267,8 +281,10 @@ public class TimeSpan {
 	 * @param 	other
 	 * 			The other TimeSpan object
 	 * @return	The difference as int array.
+	 * @throws	IllegalArgumentException
+	 * 			if other == null
 	 */
-	public int[] minus(TimeSpan other){
+	public int[] minus(TimeSpan other) throws IllegalArgumentException {
 		if(other == null)
 			throw new IllegalArgumentException("Invalid other");
 		if(other.isLonger(this)){
