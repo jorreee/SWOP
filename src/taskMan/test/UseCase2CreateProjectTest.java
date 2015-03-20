@@ -19,7 +19,8 @@ public class UseCase2CreateProjectTest {
 			project0StartDateGood = startDate,
 			project0DueDateGood = LocalDateTime.of(2015, 2, 13, 23, 59),
 			project0DueDateVeryBad1 = LocalDateTime.of(2015, 2, 8, 0, 0),
-			project0DueDateVeryBad2 = startDate;
+			project0DueDateVeryBad2 = startDate,
+			project0DueDateVeryBad3 = null;
 
 	@Before
 	public final void initialize() {
@@ -61,6 +62,15 @@ public class UseCase2CreateProjectTest {
 		// Stap 1 en 2 zijn impliciet
 		// Stap 3
 		assertFalse(taskManager.createProject("Test1", "testing 1", project0StartDateGood, project0DueDateVeryBad2));
+		// Stap 4
+		assertEquals(taskManager.getProjectAmount(),0);
+	}
+
+	@Test
+	public void flow4aNullDueTest() {
+		// Stap 1 en 2 zijn impliciet
+		// Stap 3
+		assertFalse(taskManager.createProject("Test1", "testing 1", project0StartDateGood, project0DueDateVeryBad3));
 		// Stap 4
 		assertEquals(taskManager.getProjectAmount(),0);
 	}

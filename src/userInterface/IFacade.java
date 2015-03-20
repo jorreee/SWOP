@@ -51,7 +51,7 @@ public interface IFacade {
 	public String getProjectStatus(int projectID);
 	public String getTaskStatus(int projectID, int taskID);
 
-	public HashMap<Integer, List<Integer>> getAvailableTasks();
+	public HashMap<Integer,List<Integer>> getAvailableTasks();
 	public List<Integer> getAvailableTasks(int projectID);
 
 	public boolean hasTaskPrerequisites(int projectID, int taskID);

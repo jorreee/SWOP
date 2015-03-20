@@ -41,14 +41,18 @@ public class Task {
 	 */
 	public Task(int taskID, String taskDescription, int estimatedDuration,
 			int acceptableDeviation, TimeSpan extraTime) throws IllegalArgumentException {
-		if(!isValidTaskID(taskID))
+		if(!isValidTaskID(taskID)) {
 			throw new IllegalArgumentException("Invalid task ID");
-		if(!isValidDescription(taskDescription))
+		}
+		if(!isValidDescription(taskDescription)) {
 			throw new IllegalArgumentException("Invalid description");
-		if(!isValidDuration(estimatedDuration))
+		}
+		if(!isValidDuration(estimatedDuration)) {
 			throw new IllegalArgumentException("Invalid duration");
-		if(!isValidDeviation(acceptableDeviation))
+		}
+		if(!isValidDeviation(acceptableDeviation)) {
 			throw new IllegalArgumentException("Invalid deviation");
+		}
 		this.taskID = taskID;
 		this.description = taskDescription;
 		this.estimatedDuration = new TimeSpan(estimatedDuration);
@@ -79,12 +83,16 @@ public class Task {
 	public Task(int taskID, String taskDescription, int estimatedDuration,
 			int acceptableDeviation, String taskStatus,
 			LocalDateTime beginTime, LocalDateTime endTime, TimeSpan extraTime) throws IllegalArgumentException {
+		
 		this(taskID, taskDescription, estimatedDuration, acceptableDeviation, extraTime);
-		if(!taskStatus.equalsIgnoreCase("failed") && !taskStatus.equalsIgnoreCase("finished"))
+		
+		if(!taskStatus.equalsIgnoreCase("failed") && !taskStatus.equalsIgnoreCase("finished")) {
 			throw new IllegalArgumentException("Time stamps are only required if a task is finished or failed");
+		}
 		this.taskStatus = TaskStatus.valueOf(taskStatus);
-		if(!isValidTimeStamps(beginTime, endTime))
+		if(!isValidTimeStamps(beginTime, endTime)) {
 			throw new IllegalArgumentException("Time Stamps are faulty");
+		}
 		this.beginTime = beginTime;
 		this.endTime = endTime;
 	}
@@ -145,10 +153,12 @@ public class Task {
 	 * 			When the start time of the task is after the time given.
 	 */
 	public TimeSpan getTimeElapsed(LocalDateTime currentTime) throws IllegalArgumentException{
-		if(beginTime == null)
+		if(beginTime == null) {
 			throw new IllegalArgumentException("Project not yet started");
-		if(beginTime.isAfter(currentTime))
+		}
+		if(beginTime.isAfter(currentTime)) {
 			throw new IllegalArgumentException("Timestamp is in the past");
+		}
 		return TimeSpan.getDifferenceWorkingMinutes(this.beginTime, currentTime).add(this.extraTime);
 	}
 
@@ -161,8 +171,9 @@ public class Task {
 	 * 			whenever the end time is not yet determined
 	 */
 	public TimeSpan getTimeSpan() throws IllegalArgumentException{
-		if(endTime == null)
+		if(endTime == null) {
 			throw new IllegalStateException("Project not yet finished");
+		}
 		return getTimeElapsed(endTime);
 	}
 
@@ -184,12 +195,13 @@ public class Task {
 	 * 			If the new begin time is null or the old begin time is already set. 
 	 */
 	public void setBeginTime(LocalDateTime beginTime) throws IllegalArgumentException{
-		if(beginTime==null)
+		if(beginTime==null) {
 			throw new IllegalArgumentException("The new beginTime is null");
-		if(this.beginTime!=null)
+		}
+		if(this.beginTime!=null) {
 			throw new IllegalArgumentException("The beginTime is already set");
-		else
-			this.beginTime = beginTime;
+		}
+		this.beginTime = beginTime;
 	}
 
 	/**
@@ -210,12 +222,13 @@ public class Task {
 	 * 			If the new end time is null or the old end time is already set. 
 	 */
 	public void setEndTime(LocalDateTime endTime) throws IllegalArgumentException {
-		if(endTime==null)
+		if(endTime==null) {
 			throw new IllegalArgumentException("The new endTime is null");
-		if(getEndTime()!=null)
+		}
+		if(getEndTime()!=null) {
 			throw new IllegalArgumentException("The endtime is already set");
-		else
-			this.endTime = endTime;
+		}
+		this.endTime = endTime;
 	}
 
 	/**
@@ -252,8 +265,9 @@ public class Task {
 	 * 			False if the status was already failed or finished.
 	 */
 	public boolean setAvailable(){
-		if(this.taskStatus == TaskStatus.FAILED || this.taskStatus == TaskStatus.FINISHED)
+		if(this.taskStatus == TaskStatus.FAILED || this.taskStatus == TaskStatus.FINISHED) {
 			return false;
+		}
 		this.taskStatus = TaskStatus.AVAILABLE;
 		return true;
 	}
@@ -265,8 +279,9 @@ public class Task {
 	 * 			False if the status was already failed or finished.
 	 */
 	public boolean setUnavailable(){
-		if(this.taskStatus == TaskStatus.FAILED || this.taskStatus == TaskStatus.FINISHED)
+		if(this.taskStatus == TaskStatus.FAILED || this.taskStatus == TaskStatus.FINISHED) {
 			return false;
+		}
 		this.taskStatus = TaskStatus.UNAVAILABLE;
 		return true;
 	}
@@ -341,8 +356,7 @@ public class Task {
 	 * 			The new end time of the Task.
 	 * @return	True if and only if the updates succeeds.
 	 */
-	public boolean setTaskFailed(LocalDateTime startTime,
-			LocalDateTime endTime) {
+	public boolean setTaskFailed(LocalDateTime startTime, LocalDateTime endTime) {
 		return setTaskStatus(startTime,endTime,TaskStatus.FAILED);
 	}
 
@@ -357,13 +371,13 @@ public class Task {
 	 * 			The new status of the Task.
 	 * @return	True if and only if the updates succeeds.
 	 */
-	private boolean setTaskStatus(LocalDateTime startTime,
-			LocalDateTime endTime, TaskStatus status) {
-		if(hasEnded() || isUnavailable())
+	private boolean setTaskStatus(LocalDateTime startTime,LocalDateTime endTime, TaskStatus status) {
+		if(hasEnded() || isUnavailable()) {
 			return false;
+		}
 		if(isValidTimeStamps(startTime, endTime)) {
-			this.setBeginTime(startTime);
-			this.setEndTime(endTime);
+			setBeginTime(startTime); //TODO exceptions DERUIT okee
+			setEndTime(endTime);
 			taskStatus = status;
 			return true;
 		}
@@ -380,10 +394,12 @@ public class Task {
 	 * @return	True if and only if the timestamps are valid start- and endtimes.
 	 */
 	private boolean isValidTimeStamps(LocalDateTime startTime, LocalDateTime endTime) {
-		if(startTime == null || endTime == null)
+		if(startTime == null || endTime == null) {
 			return false;
-		if(endTime.isBefore(startTime))
+		}
+		if(endTime.isBefore(startTime)) {
 			return false;
+		}
 		return true;
 	}
 	
@@ -395,7 +411,7 @@ public class Task {
 	 * @return	True if deviation >= 0
 	 */
 	private boolean isValidDeviation(int deviation){
-		return deviation>=0;
+		return deviation >= 0;
 	}
 	
 	/**
@@ -406,7 +422,7 @@ public class Task {
 	 * @return	True if taskID >= 0
 	 */
 	private boolean isValidTaskID(int taskID){
-		return taskID>=0;
+		return taskID >= 0;
 	}
 	
 	/**
@@ -428,7 +444,7 @@ public class Task {
 	 * @return	True if duration > 0
 	 */
 	private boolean isValidDuration(int duration){
-		return duration>0;
+		return duration > 0;
 	}
 	
 	/**
@@ -439,11 +455,10 @@ public class Task {
 	 */
 	public boolean isOnTime(){
 		TimeSpan acceptableSpan = this.getEstimatedDuration();
-		if(isFinished() || isFailed()){
+		if(isFinished() || isFailed()) {
 			return this.getTimeElapsed(this.getEndTime()).isShorter(acceptableSpan);
 		}
-		else
-			return true;
+		return true;
 	}
 
 	/**
@@ -454,11 +469,10 @@ public class Task {
 	 */
 	public boolean isUnacceptableOverdue() {
 		TimeSpan acceptableSpan = this.getEstimatedDuration().getAcceptableSpan(this.getAcceptableDeviation());
-		if(isFinished() || isFailed()){
+		if(isFinished() || isFailed()) {
 			return this.getTimeElapsed(this.getEndTime()).isLonger(acceptableSpan);
 		}
-		else
-			return false;
+		return false;
 	}
 
 	/**
@@ -471,7 +485,6 @@ public class Task {
 			int overdue = this.getTimeSpan().getDifferenceMinute(estimatedDuration);
 			return (overdue/this.estimatedDuration.getSpanMinutes())*100;
 		}
-		else
-			return 0;
+		return 0;
 	}
 }

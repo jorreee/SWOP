@@ -50,12 +50,16 @@ public class Project {
 	 */
 	public Project(int projectID, String projectName, String description,
 			LocalDateTime creationTime, LocalDateTime dueTime) throws IllegalArgumentException{
-		if(dueTime==null || creationTime==null)
+		if(dueTime==null || creationTime==null) {
 			throw new IllegalArgumentException("One of the arguments is null");
-		if(dueTime.isBefore(creationTime))
+		}
+		if(dueTime.isBefore(creationTime)) {
 			throw new IllegalArgumentException("Duetime comes before the creationTime");
-		if(dueTime.equals(creationTime))
+		}
+		if(dueTime.equals(creationTime)) {
 			throw new IllegalArgumentException("No time difference");
+		}
+		
 		this.projectName = projectName;
 		this.description = description;
 		this.creationTime = creationTime;
@@ -87,29 +91,35 @@ public class Project {
 	 * @return	True if and only the creation of a Task with a status
 	 * 			of failed or finished was successful.
 	 */
-	public boolean createTask(String description, int estimatedDuration, 
-			int acceptableDeviation, String taskStatus, int alternativeFor, 
-			List<Integer> prerequisiteTasks, LocalDateTime startTime, LocalDateTime endTime) {
+	public boolean createTask(String description, int estimatedDuration, int acceptableDeviation, 
+			String taskStatus, int alternativeFor, 	List<Integer> prerequisiteTasks, 
+			LocalDateTime startTime, LocalDateTime endTime) {
 
 		int newTaskID = taskList.size();
-		if(isFinished())
+		if(isFinished()) {
 			return false;
-		if(prerequisiteTasks.contains(alternativeFor)) 
+		}
+		if(prerequisiteTasks.contains(alternativeFor)) {
 			return false;
-		if(!isValidAlternative(alternativeFor, newTaskID)) 
+		}
+		if(!isValidAlternative(alternativeFor, newTaskID)) {
 			return false;
-		if(!isValidPrerequisites(newTaskID, prerequisiteTasks))
+		}
+		if(!isValidPrerequisites(newTaskID, prerequisiteTasks)) {
 			return false;
+		}
 		
 		Task newTask = null;
 		TimeSpan extraTime = getExtraTime(alternativeFor);
 		
 		try{
-			if(taskStatus != null)
+			if(taskStatus != null) {
 				newTask = new Task(newTaskID, description, estimatedDuration, 
 						acceptableDeviation, taskStatus, startTime, endTime, extraTime);
-			else
+			}
+			else {
 				newTask = new Task(newTaskID, description, estimatedDuration, acceptableDeviation, extraTime);
+			}
 		} catch(IllegalArgumentException e) {
 			return false;
 		}
@@ -130,6 +140,7 @@ public class Project {
 		} 
 		return success;
 	}
+	
 	/**
 	 * Returns the start value of time spent on a task, depending on the task it is replacing
 	 * 
@@ -139,10 +150,12 @@ public class Project {
 	 * 			0 if it doesn't replace a task
 	 */
 	public TimeSpan getExtraTime(int taskID) {
-		if(!isValidTaskID(taskID))
+		if(!isValidTaskID(taskID)) {
 			return new TimeSpan(0);
-		if(!taskList.get(taskID).isFailed())
+		}
+		if(!taskList.get(taskID).isFailed()) {
 			return new TimeSpan(0);
+		}
 		return taskList.get(taskID).getTimeSpan();
 	}
 
@@ -173,37 +186,42 @@ public class Project {
 	 * 			The Task to check.
 	 * @return	True if and only the given Task has finished alternatives.
 	 */
-	private boolean hasFinishedAlternative(int task) {
-		if(!isValidTaskID(task))
+	private boolean hasFinishedAlternative(int taskID) {
+		if(!isValidTaskID(taskID)) {
 			return false;
-		if(taskAlternatives.get(task) == null)
+		}
+		if(!hasAlternative(taskID)) {
 			return false;
-		return getTask(taskAlternatives.get(task)).isFinished() || hasFinishedAlternative(taskAlternatives.get(task));
+		}
+		return getTask(taskAlternatives.get(taskID)).isFinished() || hasFinishedAlternative(taskAlternatives.get(taskID));
 
 	}
 
 	/**
-	 * Updated the status of a given Task
+	 * Update the status of a given Task
 	 * 
 	 * @param 	task
 	 * 			The Task to update.
 	 */
 	private void updateTaskStatus(Task task){
-		if(!task.hasEnded()){
-			if(hasPrerequisites(task.getTaskID())) {
-				for(Integer preID : getPrerequisites(task.getTaskID())){
-					if(!(getTask(preID).isFinished() || getTask(preID).isFailed())){
-						task.setUnavailable();
-						return;
-					}
-					if(getTask(preID).isFailed() && (!hasAlternative(preID) || !hasFinishedAlternative(preID))) {
-						task.setUnavailable();
-						return;
-					}
-				}
-			}
-			task.setAvailable();
+		if(task.hasEnded()) { 
+			return;
 		}
+		if(!hasPrerequisites(task.getTaskID())) {
+			task.setAvailable();
+			return;
+		}
+		for(Integer preID : getPrerequisites(task.getTaskID())) {
+			if(!getTask(preID).hasEnded()) {
+				task.setUnavailable();
+				return;
+			}
+			if(getTask(preID).isFailed() && !hasFinishedAlternative(preID)) {
+				task.setUnavailable();
+				return;
+			}
+		}
+		task.setAvailable();
 	}
 
 	/**
@@ -214,11 +232,11 @@ public class Project {
 	private void recalculateProjectStatus() {
 		for(Task task : taskList) {
 			String status = task.getStatus();
-			if( status.equals("available") || status.equals("unavailable"))
+			if( status.equals("available") || status.equals("unavailable")) {
 				return;
-			if( status.equals("failed")) {
-				if(!hasFinishedAlternative(task.getTaskID()))
-					return;
+			}
+			if( status.equals("failed") && !hasFinishedAlternative(task.getTaskID())) {
+				return;
 			}
 		}
 		this.projectStatus = ProjectStatus.FINISHED;
@@ -233,9 +251,10 @@ public class Project {
 	 * 			Null otherwise.
 	 */
 	private Task getTask(int taskID) {
-		if(isValidTaskID(taskID))
-			return taskList.get(taskID);
-		return null;
+		if(!isValidTaskID(taskID)) {
+			return null;
+		}
+		return taskList.get(taskID);
 	}
 
 	/**
@@ -247,7 +266,7 @@ public class Project {
 	 * 			False otherwise.
 	 */
 	private boolean isValidTaskID(int taskID){
-		if(taskID<this.getTaskAmount() && taskID >= 0){
+		if(taskID < getTaskAmount() && taskID >= 0) {
 			return true;
 		}
 		return false;
@@ -273,6 +292,7 @@ public class Project {
 	public int getProjectID() {
 		return projectID;
 	}
+	
 	/**
 	 * Returns the name of this Project.
 	 * 
@@ -484,17 +504,23 @@ public class Project {
 	 * 			False if the task ID isn't a valid one
 	 */
 	private boolean isValidPrerequisites(int task, List<Integer> prerequisites){
-		if (prerequisites == null) 
+		if (prerequisites == null) {
 			return false;
-		if (!isValidNewTaskID(task)) 
+		}
+		if (!isValidNewTaskID(task)) {
 			return false;
-		else if (prerequisites.isEmpty()) 
+		}
+		else if (prerequisites.isEmpty()) {
 			return true;
-		else if(prerequisites.contains(task)) 
+		}
+		else if(prerequisites.contains(task)) {
 			return false;
-		for (int prereq : prerequisites)
-			if (!isValidTaskID(prereq))
+		}
+		for (int prereq : prerequisites) {
+			if (!isValidTaskID(prereq)) {
 				return false;
+			}
+		}
 		return true;
 	}
 
@@ -515,8 +541,9 @@ public class Project {
 	public List<Integer> getAvailableTasks() {
 		ArrayList<Integer> availableTasks = new ArrayList<Integer>();
 		for(Task task : taskList) {
-			if(task.getStatus().equals("available"))
+			if(task.getStatus().equals("available")) {
 				availableTasks.add(task.getTaskID());
+			}
 		}
 		return availableTasks;
 	}
@@ -530,8 +557,9 @@ public class Project {
 	 * 			Null if the given ID isn't a valid one.
 	 */
 	public String getTaskDescription(int taskID) {
-		if(!isValidTaskID(taskID))
+		if(!isValidTaskID(taskID)) {
 			return null;
+		}
 		return getTask(taskID).getDescription();
 	}
 
@@ -544,14 +572,14 @@ public class Project {
 	 * 			Null if the Task hasn't started or the ID isn't a valid one.
 	 */
 	public LocalDateTime getTaskStartTime(int taskID) {
-		if(!isValidTaskID(taskID))
+		if(!isValidTaskID(taskID)) {
 			return null;
-		if(!hasTaskEnded(taskID))
+		}
+		if(!hasTaskEnded(taskID)) {
 			return null;
+		}
 		return getTask(taskID).getBeginTime();
 	}
-
-
 
 	/**
 	 * Returns the estimated duration of the Task belonging to the given ID.
@@ -562,8 +590,9 @@ public class Project {
 	 * 			-1 if the ID isn't a valid one.
 	 */
 	public int getEstimatedTaskDuration(int taskID) {
-		if(!isValidTaskID(taskID))
+		if(!isValidTaskID(taskID)) {
 			return -1;
+		}
 		return getTask(taskID).getEstimatedDuration().getSpanMinutes();
 	}
 
@@ -576,8 +605,9 @@ public class Project {
 	 * 			-1 if the ID isn't a valid one.
 	 */
 	public int getAcceptableTaskDeviation(int taskID) {
-		if(!isValidTaskID(taskID))
+		if(!isValidTaskID(taskID)) {
 			return -1;
+		}
 		return getTask(taskID).getAcceptableDeviation();
 	}
 
@@ -590,8 +620,9 @@ public class Project {
 	 * 			False if the ID isn't a valid one or the Task has ended.
 	 */
 	public boolean hasTaskEnded(int taskID) {
-		if(!isValidTaskID(taskID))
+		if(!isValidTaskID(taskID)) {
 			return false;
+		}
 		return getTask(taskID).hasEnded();
 	}
 
@@ -604,10 +635,12 @@ public class Project {
 	 * 			Null if the Task hasn't ended or the ID isn't a valid one.
 	 */
 	public LocalDateTime getTaskEndTime(int taskID) {
-		if(!isValidTaskID(taskID))
+		if(!isValidTaskID(taskID)) {
 			return null;
-		if(!hasTaskEnded(taskID))
+		}
+		if(!hasTaskEnded(taskID)) {
 			return null;
+		}
 		return getTask(taskID).getEndTime();
 	}
 
@@ -620,8 +653,9 @@ public class Project {
 	 * 			Null if the ID isn't a valid one.
 	 */
 	public String getTaskStatus(int taskID) {
-		if(!isValidTaskID(taskID))
+		if(!isValidTaskID(taskID)) {
 			return null;
+		}
 		return getTask(taskID).getStatus();
 	}
 
@@ -634,8 +668,9 @@ public class Project {
 	 * 			False otherwise or the ID isn't a valid one.
 	 */
 	public boolean hasPrerequisites(int taskID) {
-		if(!isValidNewTaskID(taskID))
+		if(!isValidNewTaskID(taskID)) {
 			return false;
+		}
 		return this.taskPrerequisites.containsKey(taskID);
 	}
 
@@ -648,8 +683,9 @@ public class Project {
 	 * 			Null otherwise.
 	 */
 	public List<Integer> getPrerequisites(int taskID) {
-		if(!isValidNewTaskID(taskID))
+		if(!isValidNewTaskID(taskID)) {
 			return null;
+		}
 		return this.taskPrerequisites.get(taskID);
 	}
 
@@ -663,11 +699,12 @@ public class Project {
 	 * 			False otherwise.
 	 */
 	public boolean isOnTime(LocalDateTime current){
-		if(endTime == null){
-			if(current.isAfter(dueTime))
-				return false;
-			else
+		if(endTime == null) {
+			if(current.isAfter(dueTime)) {
+				return false; //TODO berekenen
+			} else {
 				return true;
+			}
 		}
 		else{
 			return endTime.isBefore(dueTime);
@@ -685,11 +722,10 @@ public class Project {
 	public int[] getDelay(LocalDateTime current){
 		if (current.isBefore(dueTime)) {
 			return new int[] { 0,0,0,0,0};		
-		}
-		else {
-			TimeSpan delay = new TimeSpan(current, dueTime);
-			return delay.getSpan();
-		}
+		} 
+		TimeSpan delay = new TimeSpan(current, dueTime);
+		return delay.getSpan();
+		
 	}
 
 	/**
@@ -708,15 +744,20 @@ public class Project {
 	 * 			False if the start time is before creation time
 	 */
 	public boolean setTaskFinished(int taskID, LocalDateTime startTime, LocalDateTime endTime) {
-		if(!isValidTaskID(taskID))
+		if(!isValidTaskID(taskID)) {
 			return false;
-		if(startTime == null || startTime.isBefore(creationTime))
+		}
+		if(startTime == null || startTime.isBefore(creationTime)) {
 			return false;
+		}
 		boolean success = getTask(taskID).setTaskFinished(startTime, endTime);
 		if(success) {
-			for(Task task : taskList)
+			for(Task task : taskList) {
 				updateTaskStatus(task);
+			}
+			
 			recalculateProjectStatus();
+			
 			if(this.projectStatus==ProjectStatus.FINISHED){
 				this.endTime = endTime;
 			}
@@ -741,10 +782,12 @@ public class Project {
 	 * 			False if the start time is before creation time
 	 */
 	public boolean setTaskFailed(int taskID, LocalDateTime startTime, LocalDateTime endTime) {
-		if(!isValidTaskID(taskID))
+		if(!isValidTaskID(taskID)) {
 			return false;
-		if(startTime == null || startTime.isBefore(creationTime))
+		}
+		if(startTime == null || startTime.isBefore(creationTime)) {
 			return false;
+		}
 		boolean success = getTask(taskID).setTaskFailed(startTime, endTime);
 		if(success) {
 			for(Task task : taskList)
@@ -763,8 +806,9 @@ public class Project {
 	 * 			False otherwise.
 	 */
 	public boolean isTaskUnacceptableOverdue(int taskID) {
-		if(!isValidTaskID(taskID))
+		if(!isValidTaskID(taskID)) {
 			return false;
+		}
 		return getTask(taskID).isUnacceptableOverdue();
 	}
 
@@ -775,8 +819,9 @@ public class Project {
 	 * 			False if the elapsed time is longer then the acceptable duration.
 	 */
 	public boolean isTaskOnTime(int taskID) {
-		if(!isValidTaskID(taskID))
+		if(!isValidTaskID(taskID)) {
 			return false;
+		}
 		return getTask(taskID).isOnTime();
 	}
 
@@ -789,8 +834,9 @@ public class Project {
 	 * 			-1 if the ID isn't a valid one.
 	 */
 	public int getTaskOverTimePercentage(int taskID) {
-		if(!isValidTaskID(taskID))
+		if(!isValidTaskID(taskID)) {
 			return -1;
+		}
 		return getTask(taskID).getOverTimePercentage();
 	}
 
@@ -800,7 +846,7 @@ public class Project {
 	 * @return	True if and only if this project is finished
 	 */
 	public boolean isFinished() {
-		return getProjectStatus().equalsIgnoreCase("FINISHED");
+		return projectStatus == ProjectStatus.FINISHED;
 	}
 
 	/**
@@ -812,8 +858,9 @@ public class Project {
 	 * 			that are estimated to be required to finish the project
 	 */
 	public int[] getEstimatedProjectDelay(LocalDateTime currentTime) {
-		if(!hasAvailableTasks())
+		if(!hasAvailableTasks()) {
 			return new TimeSpan(0).getSpan();
+		}
 
 		// FOR EACH AVAILABLE TASK CALCULATE CHAIN
 		int availableBranches = getAvailableTasks().size();
@@ -826,8 +873,9 @@ public class Project {
 		// FIND LONGEST CHAIN
 		TimeSpan longest = new TimeSpan(0);
 		for(TimeSpan span : timeChains) {
-			if(span.isLonger(longest))
+			if(span.isLonger(longest)) {
 				longest = span;
+			}
 		}
 
 		// SUBTRACT TIME UNTIL DUE TIME FROM CHAIN (5/7 week, 8 hours/day)
@@ -848,17 +896,20 @@ public class Project {
 	 * 			null if the task ID isn't a valid one
 	 */
 	private TimeSpan getMaxDelayChain(int taskID) {
-		if(!isValidTaskID(taskID))
+		if(!isValidTaskID(taskID)) {
 			return null;
-		if(!isPrerequisite(taskID))
+		}
+		if(!isPrerequisite(taskID)) {
 			return new TimeSpan(0);
+		}
 		List<Integer> dependants = getDependants(taskID);
 		TimeSpan longest = new TimeSpan(0);
 		TimeSpan chain;
 		for(Integer dependant : dependants) {
 			chain = getTask(dependant).getEstimatedDuration().add(getMaxDelayChain(dependant));
-			if(chain.isLonger(longest))
+			if(chain.isLonger(longest)) {
 				longest = chain;
+			}
 		}
 		return longest;
 	}
@@ -872,12 +923,14 @@ public class Project {
 	 * 			False if the ID isn't a valid one
 	 */
 	private boolean isPrerequisite(int taskID) {
-		if(!isValidTaskID(taskID))
+		if(!isValidTaskID(taskID)) {
 			return false;
+		}
 		Set<Integer> hasPrereq = taskPrerequisites.keySet();
 		for(Integer taskWithPrereq : hasPrereq) {
-			if(taskPrerequisites.get(taskWithPrereq).contains(taskID))
+			if(taskPrerequisites.get(taskWithPrereq).contains(taskID)) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -892,13 +945,15 @@ public class Project {
 	 * 			null if the ID isn't a valid one
 	 */
 	private List<Integer> getDependants(int taskID) {
-		if(!isValidTaskID(taskID))
+		if(!isValidTaskID(taskID)) {
 			return null;
+		}
 		Set<Integer> hasPrereq = taskPrerequisites.keySet();
 		ArrayList<Integer> dependants = new ArrayList<Integer>();
 		for(Integer taskWithPrereq : hasPrereq) {
-			if(taskPrerequisites.get(taskWithPrereq).contains(taskID))
+			if(taskPrerequisites.get(taskWithPrereq).contains(taskID)) {
 				dependants.add(taskWithPrereq);
+			}
 		}
 		return dependants;
 	}

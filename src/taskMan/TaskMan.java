@@ -101,7 +101,7 @@ public class TaskMan {
 		Project project = null;
 		try{
 			 project = new Project(projectList.size(), name, description, creationTime, dueTime);
-		}catch(IllegalArgumentException e){
+		} catch(IllegalArgumentException e) {
 			return false;
 		}
 		return projectList.add(project);
@@ -120,8 +120,7 @@ public class TaskMan {
 	 * 			false if the creation was unsuccessful
 	 */
 	public boolean createProject(String name, String description, LocalDateTime dueTime) {
-		Project project = new Project(projectList.size(), name, description, currentTime, dueTime);
-		return projectList.add(project);
+		return createProject(name, description, getCurrentTime(), dueTime);
 	}
 	
 	/**
@@ -172,13 +171,9 @@ public class TaskMan {
 	 * 			False if the projectID is a valid one.
 	 * 			False if the creation was unsuccessful
 	 */
-	public boolean createTask(int projectID, String description, 
-			int estimatedDuration, int acceptableDeviation, Integer alternativeFor, 
-			List<Integer> prerequisiteTasks) {
+	public boolean createTask(int projectID, String description, int estimatedDuration, 
+			int acceptableDeviation, Integer alternativeFor, List<Integer> prerequisiteTasks) {
 		if(!isValidProjectID(projectID)) {
-			return false;
-		}
-		if (projectID >= projectList.size()){
 			return false;
 		}
 		return getProject(projectID).createTask(description,estimatedDuration, acceptableDeviation, alternativeFor, prerequisiteTasks);
@@ -575,8 +570,9 @@ public class TaskMan {
 	 * 			false if the project ID isn't a valid one
 	 */
 	public boolean setTaskFinished(int projectID, int taskID, LocalDateTime startTime, LocalDateTime endTime) {
-		if(endTime == null || endTime.isAfter(currentTime))
+		if(endTime == null || endTime.isAfter(getCurrentTime())) {
 			return false;
+		}
 		if(!isValidProjectID(projectID)) {
 			return false;
 		}
@@ -601,8 +597,9 @@ public class TaskMan {
 	 * 			False if the end time is null or the end time comes after the current time.
 	 */
 	public boolean setTaskFailed(int projectID, int taskID, LocalDateTime startTime, LocalDateTime endTime) {
-		if(endTime == null || endTime.isAfter(currentTime))
+		if(endTime == null || endTime.isAfter(getCurrentTime())) {
 			return false;
+		}
 		if(!isValidProjectID(projectID)) {
 			return false;
 		}
@@ -654,7 +651,7 @@ public class TaskMan {
 	 * 			The ID of the task
 	 * @return	The percentage of overdue.
 	 * 			0 if the task is on time.
-	 * 			-1 if the project ID isn't a valid one.
+	 * 			-1 if the project ID or tak ID isn't a valid one.
 	 */
 	public int getTaskOverTimePercentage(int projectID, int taskID) {
 		if(!isValidProjectID(projectID)) {
@@ -720,8 +717,9 @@ public class TaskMan {
 	 * 			False otherwise.
 	 */
 	private boolean isValidProjectID(int PID) {
-		if(PID < 0 || PID >= getProjectAmount())
+		if(PID < 0 || PID >= getProjectAmount()) {
 			return false;
+		}
 		return true;
 	}
 	

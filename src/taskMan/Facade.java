@@ -78,9 +78,9 @@ public class Facade implements IFacade {
 		return taskMan.advanceTimeTo(time);
 		
 	}
-
+	
 	@Override
-	public HashMap<Integer, List<Integer>> getAvailableTasks() {
+	public HashMap<Integer,List<Integer>> getAvailableTasks() {
 		return taskMan.getAvailableTasks();
 	}
 
