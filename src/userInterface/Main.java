@@ -39,7 +39,7 @@ public class Main {
 			String statusString = null;
 			if(status != null)
 				statusString = status.name();
-			facade.createTask(tcd.getProject(), tcd.getDescription(),
+			facade.createRawTask(tcd.getProject(), tcd.getDescription(),
 					tcd.getEstimatedDuration(),
 					tcd.getAcceptableDeviation(), statusString,
 					tcd.getAlternativeFor(), tcd.getPrerequisiteTasks(),

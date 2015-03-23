@@ -3,9 +3,9 @@ package userInterface.requests;
 import java.io.BufferedReader;
 import java.util.List;
 
+import taskMan.view.ProjectView;
+import taskMan.view.TaskView;
 import userInterface.IFacade;
-import view.ProjectView;
-import view.TaskView;
 
 public class ShowProjectsRequest extends Request {
 

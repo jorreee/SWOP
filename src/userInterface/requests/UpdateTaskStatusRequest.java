@@ -4,9 +4,9 @@ import java.io.BufferedReader;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import taskMan.view.ProjectView;
+import taskMan.view.TaskView;
 import userInterface.IFacade;
-import view.ProjectView;
-import view.TaskView;
 
 public class UpdateTaskStatusRequest extends Request {
 
@@ -45,8 +45,10 @@ public class UpdateTaskStatusRequest extends Request {
 				taskID = Integer.parseInt(input.split(" ")[1]);
 
 				ProjectView project = projects.get(projectID);
+				TaskView task;
+				
 				if(isValidAvailableTask(project, taskID)) {
-					TaskView task = project.getTasks().get(taskID);
+					task = project.getTasks().get(taskID);
 				} else {
 					throw new IllegalArgumentException();
 				}

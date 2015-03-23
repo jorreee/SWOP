@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 import taskMan.util.TimeSpan;
-import view.TaskView;
+import taskMan.view.TaskView;
 
 import com.google.common.collect.ImmutableList;
 

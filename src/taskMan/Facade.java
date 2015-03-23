@@ -1,9 +1,10 @@
 package taskMan;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
 
+import taskMan.view.ProjectView;
+import taskMan.view.TaskView;
 import userInterface.IFacade;
 
 public class Facade implements IFacade {
@@ -34,15 +35,15 @@ public class Facade implements IFacade {
 	}
 	
 	@Override //TODO projectID -> ProjectView
-	public boolean createTask(int projectID, String description, int estimatedDuration, int acceptableDeviation, String taskStatus, Integer alternativeFor, List<Integer> prerequisiteTasks, LocalDateTime startTime, LocalDateTime endTime) {
+	public boolean createRawTask(int projectID, String description, int estimatedDuration, int acceptableDeviation, String taskStatus, Integer alternativeFor, List<Integer> prerequisiteTasks, LocalDateTime startTime, LocalDateTime endTime) {
 		return taskMan.createTask(projectID, description, estimatedDuration, acceptableDeviation, taskStatus, alternativeFor, prerequisiteTasks, startTime, endTime);
 	}
 	
 	@Override //TODO projectID -> ProjectView
-	public boolean createTask(int projectID, String description, int estimatedDuration, int acceptableDeviation, Integer alternativeFor, List<Integer> prerequisiteTasks) {
+	public boolean createTask(ProjectView projectID, String description, int estimatedDuration, int acceptableDeviation, Integer alternativeFor, List<Integer> prerequisiteTasks) {
 		return taskMan.createTask(projectID, description, estimatedDuration, acceptableDeviation, alternativeFor, prerequisiteTasks);
 	}
-	
+	/*
 	@Override //TODO kill
 	public String getProjectName(int projectID) {
 		return taskMan.getProjectName(projectID);
@@ -204,6 +205,32 @@ public class Facade implements IFacade {
 	@Override //TODO kill
 	public int[] getEstimatedProjectDelay(int projectID) {
 		return taskMan.getEstimatedProjectDelay(projectID);
+	}
+	*/
+
+	@Override
+	public boolean advanceTimeTo(LocalDateTime time) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean setTaskFinished(ProjectView projectID, TaskView taskID,
+			LocalDateTime startTime, LocalDateTime endTime) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean setTaskFailed(ProjectView projectID, TaskView taskID,
+			LocalDateTime startTime, LocalDateTime endTime) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public List<ProjectView> getProjects() {
+		return taskMan.getProjects();
 	}
 
 }

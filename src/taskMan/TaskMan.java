@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import taskMan.view.ProjectView;
+import taskMan.view.TaskView;
+
 //TODO Still not done
 
 /**
@@ -172,7 +175,7 @@ public class TaskMan {
 	 * 			False if the projectID is a valid one.
 	 * 			False if the creation was unsuccessful
 	 */
-	public boolean createTask(int projectID, String description, int estimatedDuration, 
+	public boolean createTask(ProjectView projectID, String description, int estimatedDuration, 
 			int acceptableDeviation, Integer alternativeFor, List<Integer> prerequisiteTasks) {
 		if(!isValidProjectID(projectID)) {
 			return false;
@@ -723,6 +726,11 @@ public class TaskMan {
 			return false;
 		}
 		return true;
+	}
+
+	public List<ProjectView> getProjects() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

@@ -4,8 +4,8 @@ import java.io.BufferedReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import taskMan.view.ProjectView;
 import userInterface.IFacade;
-import view.ProjectView;
 
 public class CreateTaskRequest extends Request {
 
