@@ -2,6 +2,7 @@ package userInterface.requests;
 
 import java.io.BufferedReader;
 import java.util.ArrayList;
+import java.util.List;
 
 import userInterface.IFacade;
 
@@ -13,13 +14,18 @@ public class CreateTaskRequest extends Request {
 
 	@Override
 	public String execute() {
+		List<ProjectView> projects = facade.getProjects();
+		for(ProjectView project : projects) {
+			System.out.println("Project " + project.getProjectName() + " ID: " + project.getID());
+		}
+		
 		while(true) {
 			try {
 				String[] creationForm = { "Project ID", "Description",
 						"Estimated Duration (in minutes)",
 						"Acceptable Deviation (a precentage)",
-						"Alternative For",
-						"Prerequisite Tasks (Seperated by spaces)" };
+						"Alternative For (-1 for no alternative)",
+						"Prerequisite Tasks (Seperated by spaces, nothing for no prerequisite)" };
 				String[] input = new String[6];
 				for(int i=0 ; i < 6 ; i++) {
 					// Show task creation form
@@ -35,10 +41,15 @@ public class CreateTaskRequest extends Request {
 				// System updates details
 				ArrayList<Integer> prereqList = new ArrayList<>();
 				for(String prereq : input[5].split(" ")) {
-					prereqList.add(Integer.parseInt(prereq));
+					if(!prereq.equals("")) {
+						prereqList.add(Integer.parseInt(prereq));
+					}
 				}
 				
-				boolean success = facade.createTask(Integer.parseInt(input[0]), input[1], Integer.parseInt(input[2]), Integer.parseInt(input[3]), Integer.parseInt(input[4]), prereqList);
+				boolean success = facade.createTask(
+						projects.get(Integer.parseInt(input[0])), input[1],
+						Integer.parseInt(input[2]), Integer.parseInt(input[3]),
+						Integer.parseInt(input[4]), prereqList);
 
 				// Invalid details
 				if(success) {

@@ -17,22 +17,20 @@ public class UpdateTaskStatusRequest extends Request {
 	@Override
 	public String execute() {
 		// Show list of available tasks and their project
-		HashMap<Integer,List<Integer>> availableTasks = facade.getAvailableTasks();
+		List<ProjectView> projects = facade.getProjects();
 
-		Set<Integer> projectSet = availableTasks.keySet();
-
-		for(Integer projectID : projectSet) {
-			System.out.println("- Project " + projectID + ":");
-			for(Integer taskID : availableTasks.get(projectID)) {
-				System.out.println("  * Task " + taskID + " is available");
+		for(ProjectView project : projects) {
+			System.out.println("- Project " + project.getID() + ":");
+			List<TaskView> availableTasks = project.getAvailableTasks();
+			for(TaskView task : availableTasks) {
+				System.out.println("  * Task " + task.getID() + " is available");
 			}
 		}
 
 		// SELECT PROJECT AND TASK
-		boolean validLink = false;
-		int projectID = 0;
-		int taskID = 0;
-		while(!validLink) {
+		int projectID = -1;
+		int taskID = -1;
+		while(true) {
 			try {
 				// Ask for user input
 				System.out.println("Select a project and the task you wish to modify (Format: ProjectID TaskID, type quit to exit)");
@@ -45,19 +43,16 @@ public class UpdateTaskStatusRequest extends Request {
 				// Select task
 				projectID = Integer.parseInt(input.split(" ")[0]);
 				taskID = Integer.parseInt(input.split(" ")[1]);
-				if(!availableTasks.containsKey(projectID) || !availableTasks.get(projectID).contains(taskID)) {
-					System.out.println("Invalid Project and Task pair");
+
+				ProjectView project = projects.get(projectID);
+				if(isValidAvailableTask(project, taskID)) {
+					TaskView task = project.getTasks().get(taskID);
 				} else {
-					validLink = true;
+					throw new IllegalArgumentException();
 				}
-			} catch(Exception e) {
-				System.out.println("Invalid Project and Task pair");
-			}
-		}
-		
-		// UPDATE TASK
-		while(true) {
-			try {
+				
+				// UPDATE TASK
+
 				boolean success = false;
 				while(!success) {
 					// Show update form and ask user for input
@@ -75,7 +70,7 @@ public class UpdateTaskStatusRequest extends Request {
 					// User quits
 					if(startTime.toLowerCase().equals("quit"))
 						return quit();
-					
+
 					String[] startBits = startTime.split(" ");
 					LocalDateTime start = LocalDateTime.of(Integer.parseInt(startBits[0]), Integer.parseInt(startBits[1]), Integer.parseInt(startBits[2]), Integer.parseInt(startBits[3]), Integer.parseInt(startBits[4]));
 
@@ -86,15 +81,15 @@ public class UpdateTaskStatusRequest extends Request {
 					// User quits
 					if(endTime.toLowerCase().equals("quit"))
 						return quit();
-					
+
 					String[] endBits = endTime.split(" ");
 					LocalDateTime end = LocalDateTime.of(Integer.parseInt(endBits[0]), Integer.parseInt(endBits[1]), Integer.parseInt(endBits[2]), Integer.parseInt(endBits[3]), Integer.parseInt(endBits[4]));
 
 					// System updates details
 					if(status.toLowerCase().equals("finished"))
-						success = facade.setTaskFinished(projectID, taskID, start, end);
+						success = facade.setTaskFinished(project, task, start, end);
 					if(status.toLowerCase().equals("failed"))
-						success = facade.setTaskFailed(projectID, taskID, start, end);
+						success = facade.setTaskFailed(project, task, start, end);
 					// Invalid details
 					if(!success)
 						System.out.println("Invalid input");
@@ -108,6 +103,16 @@ public class UpdateTaskStatusRequest extends Request {
 
 	private String quit() {
 		return "Tasks remain unaltered";
+	}
+	
+	private boolean isValidAvailableTask(ProjectView project, int taskID) {
+		List<TaskView> availableTasks = project.getAvailableTasks();
+		
+		for(int i = 0 ; i < availableTasks.size() ; i++) {
+			if(availableTasks.get(i).getID() == taskID)
+				return true;
+		}
+		return false;
 	}
 
 }
