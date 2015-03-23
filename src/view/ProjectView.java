@@ -12,6 +12,10 @@ public class ProjectView {
 	public ProjectView(Project p) {
 		this.project = p;
 	}
+	
+	public int getID() {
+		return project.getProjectID();
+	}
 
 	public String getProjectName() {
 		return project.getProjectName();
@@ -45,12 +49,16 @@ public class ProjectView {
 		return project.getAvailableTasks();
 	}
 	
-	public int[] getCurrentProjectDelay(LocalDateTime time) {
-		return project.getDelay(time);
+	public int[] getCurrentProjectDelay() {
+		return project.getDelay();
 	}
 	
-	public int[] getEstimatedProjectDelay(LocalDateTime time) {
-		return project.getEstimatedProjectDelay(time);
+	public int[] getEstimatedProjectDelay() {
+		return project.getEstimatedProjectDelay();
+	}
+	
+	public boolean isProjectEstimatedOnTime() {
+		return project.isEstimatedOnTime();
 	}
 	
 	public boolean isProjectFinished() {

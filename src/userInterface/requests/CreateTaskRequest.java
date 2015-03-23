@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import userInterface.IFacade;
+import view.ProjectView;
 
 public class CreateTaskRequest extends Request {
 

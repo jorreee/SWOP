@@ -1,8 +1,10 @@
 package userInterface;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
+
+import view.ProjectView;
+import view.TaskView;
 
 public interface IFacade {
 

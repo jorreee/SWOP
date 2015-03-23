@@ -15,7 +15,11 @@ public class TaskView {
 		this.task = t;
 	}
 	
-	public String getTaskDecsription() {
+	public int getID() {
+		return task.getTaskID();
+	}
+	
+	public String getTaskDescription() {
 		return task.getDescription();
 	}
 	

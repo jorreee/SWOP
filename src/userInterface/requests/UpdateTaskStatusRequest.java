@@ -2,11 +2,11 @@ package userInterface.requests;
 
 import java.io.BufferedReader;
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
 import userInterface.IFacade;
+import view.ProjectView;
+import view.TaskView;
 
 public class UpdateTaskStatusRequest extends Request {
 
