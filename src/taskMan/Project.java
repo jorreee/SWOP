@@ -32,8 +32,8 @@ public class Project {
 	private final LocalDateTime creationTime;
 	private final LocalDateTime dueTime;
 	private LocalDateTime endTime;
-	private HashMap<Integer,Integer> taskAlternatives = new HashMap<Integer, Integer>();
-	private HashMap<Integer,List<Integer>> taskPrerequisites = new HashMap<Integer, List<Integer>>();
+//	private HashMap<Integer,Integer> taskAlternatives = new HashMap<Integer, Integer>();
+//	private HashMap<Integer,List<Integer>> taskPrerequisites = new HashMap<Integer, List<Integer>>();
 	private ProjectStatus projectStatus;
 	private final int projectID;
 
@@ -191,14 +191,15 @@ public class Project {
 	 * 			The Task to check.
 	 * @return	True if and only the given Task has finished alternatives.
 	 */
-	private boolean hasFinishedAlternative(int taskID) {
-		if(!isValidTaskID(taskID)) {
-			return false;
-		}
-		if(!hasAlternative(taskID)) {
-			return false;
-		}
-		return getTask(taskAlternatives.get(taskID)).isFinished() || hasFinishedAlternative(taskAlternatives.get(taskID));
+	//TODO naar TASK
+	private boolean hasFinishedAlternative(Task task) {
+//		if(!isValidTaskID(taskID)) {
+//			return false;
+//		}
+//		if(!hasAlternative(taskID)) {
+//			return false;
+//		}
+		return task.isFinished() || hasFinishedAlternative(taskAlternatives.get(taskID));
 
 	}
 
@@ -878,7 +879,7 @@ public class Project {
 		TaskView testTask;
 		for(int i = 0 ; i < availableBranches ; i++) {
 			testTask = getAvailableTasks().get(i);
-			timeChains[i] = getTask(testTask).getEstimatedDuration().add(getMaxDelayChain(testTask));
+			timeChains[i] = testTask.getEstimatedTaskDuration().add(getMaxDelayChain(testTask));
 		}
 		// FIND LONGEST CHAIN
 		TimeSpan longest = new TimeSpan(0);
@@ -905,14 +906,14 @@ public class Project {
 	 * @return	The longest chain of durations possible from the given task
 	 * 			null if the task ID isn't a valid one
 	 */
-	private TimeSpan getMaxDelayChain(int taskID) {
-		if(!isValidTaskID(taskID)) {
-			return null;
-		}
-		if(!isPrerequisite(taskID)) {
-			return new TimeSpan(0);
-		}
-		List<Integer> dependants = getDependants(taskID);
+	private TimeSpan getMaxDelayChain(Task task) {
+//		if(!isValidTaskID(taskID)) {
+//			return null;
+//		}
+//		if(!isPrerequisite(taskID)) {
+//			return new TimeSpan(0);
+//		}
+		List<Task> dependants = getDependants(task);
 		TimeSpan longest = new TimeSpan(0);
 		TimeSpan chain;
 		for(Integer dependant : dependants) {
@@ -954,13 +955,13 @@ public class Project {
 	 * @return	A list of task identifiers from tasks that are dependent on the given task
 	 * 			null if the ID isn't a valid one
 	 */
-	private List<Integer> getDependants(int taskID) {
+	private List<Task> getDependants(int taskID) {
 		if(!isValidTaskID(taskID)) {
 			return null;
 		}
-		Set<Integer> hasPrereq = taskPrerequisites.keySet();
-		ArrayList<Integer> dependants = new ArrayList<Integer>();
-		for(Integer taskWithPrereq : hasPrereq) {
+		Set<Task> hasPrereq = taskPrerequisites.keySet();
+		ArrayList<Task> dependants = new ArrayList<Task>();
+		for(Task taskWithPrereq : hasPrereq) {
 			if(taskPrerequisites.get(taskWithPrereq).contains(taskID)) {
 				dependants.add(taskWithPrereq);
 			}

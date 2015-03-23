@@ -29,7 +29,7 @@ public class Task {
 	private TaskStatus taskStatus;
 	
 	private Task alternativeTask = null; //TODO mag maar één keer worden geSet
-	private ArrayList<Task> taskPrerequisites;
+	private ArrayList<Task> prerequisites;
 	
 	/**
 	 * Create a new Task.
@@ -266,6 +266,14 @@ public class Task {
 	 */
 	public int getAcceptableDeviation() {
 		return acceptableDeviation;
+	}
+	
+	public Task getAlternative() {
+		return alternativeTask;
+	}
+	
+	public ArrayList<Task> getTaskPrerequisites() {
+		return prerequisites;
 	}
 
 	/**

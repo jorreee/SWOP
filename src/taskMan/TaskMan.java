@@ -307,7 +307,7 @@ public class TaskMan {
 	 * @return	The available task id's of the project
 	 * 			null if the ID isn't a valid one
 	 */
-	public List<Integer> getAvailableTasks(int projectID) {
+	public List<TaskView> getAvailableTasks(int projectID) {
 		if(!isValidProjectID(projectID)) {
 			return null;
 		}
