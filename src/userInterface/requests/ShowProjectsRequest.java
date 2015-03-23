@@ -52,14 +52,14 @@ public class ShowProjectsRequest extends Request {
 				
 				int[] delay = null;
 				if(!project.isProjectFinished()) {
-					if(project.isProjectEstimatedOnTime()) {
+					if(project.isProjectEstimatedOnTime(facade.getCurrentTime())) {
 						projectHeader.append("is estimated on time");
 					} else {
 						projectHeader.append("is estimated over time");
-						delay = project.getEstimatedProjectDelay();
+						delay = project.getEstimatedProjectDelay(facade.getCurrentTime());
 					}
 				} else {
-					delay = project.getCurrentProjectDelay();
+					delay = project.getCurrentProjectDelay(facade.getCurrentTime());
 				}
 				projectHeader.append(" (Due "
 						+ project.getProjectDueTime().toLocalDate().toString());

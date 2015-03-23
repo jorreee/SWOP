@@ -36,7 +36,7 @@ public class Facade implements IFacade {
 	
 	@Override //TODO projectID -> ProjectView
 	public boolean createRawTask(int projectID, String description, int estimatedDuration, int acceptableDeviation, String taskStatus, Integer alternativeFor, List<Integer> prerequisiteTasks, LocalDateTime startTime, LocalDateTime endTime) {
-		return taskMan.createTask(projectID, description, estimatedDuration, acceptableDeviation, taskStatus, alternativeFor, prerequisiteTasks, startTime, endTime);
+		return taskMan.createRawTask(projectID, description, estimatedDuration, acceptableDeviation, taskStatus, alternativeFor, prerequisiteTasks, startTime, endTime);
 	}
 	
 	@Override //TODO projectID -> ProjectView
@@ -73,6 +73,7 @@ public class Facade implements IFacade {
 	public String getProjectStatus(int projectID) {
 		return taskMan.getProjectStatus(projectID);
 	}
+	*/
 
 	@Override
 	public boolean advanceTimeTo(LocalDateTime time) {
@@ -80,6 +81,7 @@ public class Facade implements IFacade {
 		
 	}
 	
+	/*
 	@Override// TODO ProjectView,List<TaskView>
 	public HashMap<Integer,List<Integer>> getAvailableTasks() {
 		return taskMan.getAvailableTasks();
@@ -164,19 +166,21 @@ public class Facade implements IFacade {
 	public int getTaskAlternativeTo(int projectID, int taskID) {
 		return taskMan.getTaskAlternativeTo(projectID, taskID);
 	}
+	*/
 
-	@Override //TODO IDs -> Views
-	public boolean setTaskFinished(int projectID, int taskID,
+	@Override
+	public boolean setTaskFinished(ProjectView projectID, TaskView taskID,
 			LocalDateTime startTime, LocalDateTime endTime) {
 		return taskMan.setTaskFinished(projectID, taskID, startTime, endTime);
 	}
 
-	@Override //TODO IDs -> Views
-	public boolean setTaskFailed(int projectID, int taskID,
+	@Override
+	public boolean setTaskFailed(ProjectView projectID, TaskView taskID,
 			LocalDateTime startTime, LocalDateTime endTime) {
 		return taskMan.setTaskFailed(projectID, taskID,startTime,endTime);
 	}
 
+	/*
 	@Override //TODO kill
 	public boolean isTaskUnacceptableOverdue(int projectID, int taskID) {
 		return taskMan.isTaskUnacceptableOverdue(projectID, taskID);
@@ -207,26 +211,6 @@ public class Facade implements IFacade {
 		return taskMan.getEstimatedProjectDelay(projectID);
 	}
 	*/
-
-	@Override
-	public boolean advanceTimeTo(LocalDateTime time) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean setTaskFinished(ProjectView projectID, TaskView taskID,
-			LocalDateTime startTime, LocalDateTime endTime) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean setTaskFailed(ProjectView projectID, TaskView taskID,
-			LocalDateTime startTime, LocalDateTime endTime) {
-		// TODO Auto-generated method stub
-		return false;
-	}
 
 	@Override
 	public List<ProjectView> getProjects() {

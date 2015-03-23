@@ -49,16 +49,16 @@ public class ProjectView {
 		return project.getAvailableTasks();
 	}
 	
-	public int[] getCurrentProjectDelay() {
-		return project.getDelay();
+	public int[] getCurrentProjectDelay(LocalDateTime time) {
+		return project.getDelay(time);
 	}
 	
-	public int[] getEstimatedProjectDelay() {
-		return project.getEstimatedProjectDelay();
+	public int[] getEstimatedProjectDelay(LocalDateTime time) {
+		return project.getEstimatedProjectDelay(time);
 	}
 	
-	public boolean isProjectEstimatedOnTime() {
-		return project.isEstimatedOnTime();
+	public boolean isProjectEstimatedOnTime(LocalDateTime time) {
+		return project.isEstimatedOnTime(time);
 	}
 	
 	public boolean isProjectFinished() {
