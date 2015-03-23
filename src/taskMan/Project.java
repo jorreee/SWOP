@@ -5,7 +5,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+
 import taskMan.util.TimeSpan;
+import view.TaskView;
+
 import com.google.common.collect.ImmutableList;
 
 /**
@@ -19,6 +22,8 @@ import com.google.common.collect.ImmutableList;
  * @author Tim Van Den Broecke, Joran Van de Woestijne, Vincent Van Gestel and
  *         Eli Vangrieken
  */
+//TODO weg met ID
+//TODO getTaskFromView(TaskView t), private?
 public class Project {
 
 	private ArrayList<Task> taskList = new ArrayList<Task>();
@@ -362,8 +367,12 @@ public class Project {
 	 * 
 	 * @return	A list of Tasks.
 	 */
-	public ArrayList<Task> getTaskList(){
-		return this.taskList;
+	public ArrayList<TaskView> getTaskList(){
+		ArrayList<TaskView> taskViewList = new ArrayList<TaskView>();
+		for(Task t : taskList) {
+			taskViewList.add(new TaskView(t));
+		}
+		return taskViewList;
 	}
 
 	/**
@@ -538,11 +547,11 @@ public class Project {
 	 * 
 	 * @return	a list of the availabke tasks' id's
 	 */
-	public List<Integer> getAvailableTasks() {
-		ArrayList<Integer> availableTasks = new ArrayList<Integer>();
+	public ArrayList<TaskView> getAvailableTasks() {
+		ArrayList<TaskView> availableTasks = new ArrayList<TaskView>();
 		for(Task task : taskList) {
-			if(task.getStatus().equals("available")) {
-				availableTasks.add(task.getTaskID());
+			if(task.isAvailable()) {
+				availableTasks.add(new TaskView(task));
 			}
 		}
 		return availableTasks;
@@ -578,7 +587,7 @@ public class Project {
 		if(!hasTaskEnded(taskID)) {
 			return null;
 		}
-		return getTask(taskID).getBeginTime();
+		return getTask(taskID).getStartTime();
 	}
 
 	/**
@@ -682,6 +691,7 @@ public class Project {
 	 * @return	The list of the prerequisites if any.
 	 * 			Null otherwise.
 	 */
+	//TODO REFACTOR AS OBSERVER + move to Task
 	public List<Integer> getPrerequisites(int taskID) {
 		if(!isValidNewTaskID(taskID)) {
 			return null;
@@ -865,7 +875,7 @@ public class Project {
 		// FOR EACH AVAILABLE TASK CALCULATE CHAIN
 		int availableBranches = getAvailableTasks().size();
 		TimeSpan[] timeChains = new TimeSpan[availableBranches];
-		Integer testTask;
+		TaskView testTask;
 		for(int i = 0 ; i < availableBranches ; i++) {
 			testTask = getAvailableTasks().get(i);
 			timeChains[i] = getTask(testTask).getEstimatedDuration().add(getMaxDelayChain(testTask));

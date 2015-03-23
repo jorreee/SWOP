@@ -1,6 +1,7 @@
 package taskMan;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 import taskMan.util.TimeSpan;
 
@@ -13,16 +14,23 @@ import taskMan.util.TimeSpan;
  * @author	Tim Van den Broecke, Joran Van de Woestijne, Vincent Van Gestel, Eli Vangrieken
  *
  */
+//TODO weg met ID ?
 public class Task {
+
+	private final int taskID;
 	private final String description;
 	private final TimeSpan estimatedDuration;
 	private final int acceptableDeviation;
-	private TaskStatus taskStatus;
+	
 	private LocalDateTime beginTime;
 	private LocalDateTime endTime;
-	private final int taskID;
 	private final TimeSpan extraTime;
 
+	private TaskStatus taskStatus;
+	
+	private Task alternativeTask = null; //TODO mag maar één keer worden geSet
+	private ArrayList<Task> taskPrerequisites;
+	
 	/**
 	 * Create a new Task.
 	 * 
@@ -39,6 +47,7 @@ public class Task {
 	 * @throws	IllegalArgumentException
 	 * 			if any of the parameters are invalid ( < 0 or null)
 	 */
+	//TODO taskPrerequisites initialiseren
 	public Task(int taskID, String taskDescription, int estimatedDuration,
 			int acceptableDeviation, TimeSpan extraTime) throws IllegalArgumentException {
 		if(!isValidTaskID(taskID)) {
@@ -80,6 +89,7 @@ public class Task {
 	 * @throws	IllegalArgumentException
 	 * 			if any of the parameters are invalid ( < 0 or null)
 	 */
+	//TODO taskPrerequisites initialiseren
 	public Task(int taskID, String taskDescription, int estimatedDuration,
 			int acceptableDeviation, String taskStatus,
 			LocalDateTime beginTime, LocalDateTime endTime, TimeSpan extraTime) throws IllegalArgumentException {
@@ -182,7 +192,7 @@ public class Task {
 	 * 
 	 * @return	The start time of the Task.
 	 */
-	public LocalDateTime getBeginTime() {
+	public LocalDateTime getStartTime() {
 		return beginTime;
 	}
 
