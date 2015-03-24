@@ -157,11 +157,8 @@ public class Project {
 	 * 			| NULL otherwise
 	 */
 	private Task unwrapTaskView(TaskView t) {
-		if(!taskList.contains(t)) {
-			return null;
-		}
 		for(Task task : taskList) {
-			if (t.equals(task)) {
+			if (t.hasAsTask(task)) {
 				return task;
 			}
 		}
