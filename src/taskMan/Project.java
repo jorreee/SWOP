@@ -23,7 +23,6 @@ import com.google.common.collect.ImmutableList;
  *         Eli Vangrieken
  */
 //TODO weg met ID
-//TODO getTaskFromView(TaskView t), private?
 public class Project {
 
 	private ArrayList<Task> taskList = new ArrayList<Task>();
@@ -147,22 +146,46 @@ public class Project {
 	}
 	
 	/**
-	 * Returns the start value of time spent on a task, depending on the task it is replacing
+	 * Unwraps the TaskView object and returns the Task that it contained
+	 * 		IF the unwrapped task belongs to this project:
+	 * 				(getTaskList().contains(task)
 	 * 
-	 * @param 	taskID
-	 * 			The ID of the Task
-	 * @return	time spent on the tasks this task is replacing
-	 * 			0 if it doesn't replace a task
+	 * @param 	
+	 * 			| the TaskView to unwrap
+	 * @return 
+	 * 			| the unwrapped Task if it belonged to this project
+	 * 			| NULL otherwise
 	 */
-	public TimeSpan getExtraTime(int taskID) {
-		if(!isValidTaskID(taskID)) {
-			return new TimeSpan(0);
+	private Task unwrapTaskView(TaskView t) {
+		if(!taskList.contains(t)) {
+			return null;
 		}
-		if(!taskList.get(taskID).isFailed()) {
-			return new TimeSpan(0);
+		for(Task task : taskList) {
+			if (t.equals(task)) {
+				return task;
+			}
 		}
-		return taskList.get(taskID).getTimeSpan();
+		return null;
 	}
+	
+	//TODO zit in TASK, hoe opvangen?
+//	/**
+//	 * Returns the start value of time spent on a task, depending on the task it is replacing
+//	 * 
+//	 * @param 	taskID
+//	 * 			The ID of the Task
+//	 * @return	time spent on the tasks this task is replacing
+//	 * 			0 if it doesn't replace a task
+//	 */
+//	public TimeSpan getExtraTime(int taskID) {
+//		if(!isValidTaskID(taskID)) {
+//			return new TimeSpan(0);
+//		}
+//		if(!taskList.get(taskID).isFailed()) {
+//			return new TimeSpan(0);
+//		}
+//		return taskList.get(taskID).getTimeSpan();
+//	}
 
 	/**
 	 * Creates a new Task without a set status.
@@ -209,6 +232,7 @@ public class Project {
 	 * @param 	task
 	 * 			The Task to update.
 	 */
+	//TODO Refactor as OBSERVER
 	private void updateTaskStatus(Task task){
 		if(task.hasEnded()) { 
 			return;
@@ -229,7 +253,7 @@ public class Project {
 		}
 		task.setAvailable();
 	}
-
+	
 	/**
 	 * This method will adjust the status of the project, depending on its tasks.
 	 * If the project has at least one task and all of those tasks are finished (or failed with a finished alternative),
@@ -248,20 +272,21 @@ public class Project {
 		this.projectStatus = ProjectStatus.FINISHED;
 	}
 
-	/**
-	 * Returns a Task of the Project.
-	 * 
-	 * @param 	taskID
-	 * 			The ID of the needed Task.
-	 * @return	The requested Task if it exists.
-	 * 			Null otherwise.
-	 */
-	private Task getTask(int taskID) {
-		if(!isValidTaskID(taskID)) {
-			return null;
-		}
-		return taskList.get(taskID);
-	}
+	//TODO is vervangen door unwrap
+//	/**
+//	 * Returns a Task of the Project.
+//	 * 
+//	 * @param 	taskID
+//	 * 			The ID of the needed Task.
+//	 * @return	The requested Task if it exists.
+//	 * 			Null otherwise.
+//	 */
+//	private Task getTask(int taskID) {
+//		if(!isValidTaskID(taskID)) {
+//			return null;
+//		}
+//		return taskList.get(taskID);
+//	}
 
 	/**
 	 * Returns whether the given TaskID is a valid TaskID.
@@ -368,12 +393,9 @@ public class Project {
 	 * 
 	 * @return	A list of Tasks.
 	 */
-	public ArrayList<TaskView> getTaskList(){
-		ArrayList<TaskView> taskViewList = new ArrayList<TaskView>();
-		for(Task t : taskList) {
-			taskViewList.add(new TaskView(t));
-		}
-		return taskViewList;
+	//TODO TaskViews hier aanmaken of pas in ProjectView?
+	public ArrayList<Task> getTaskList(){
+		return taskList;
 	}
 
 //	/** // TODO remove this
@@ -398,7 +420,7 @@ public class Project {
 //		return this.taskAlternatives;
 //	}
 
-//	/** // TODO naar task
+//	/** // TODO refactor as OBSERVER
 //	 * Returns a list of alternatives for the given Task.
 //	 * 
 //	 * @param 	task
@@ -413,7 +435,7 @@ public class Project {
 //		return this.taskAlternatives.get(task);
 //	}
 
-//	/** // TODO naar Task
+//	/** // TODO refactor as OBSERVER
 //	 * Checks whether the given Tasks has alternative Tasks.
 //	 * 
 //	 * @param 	task
@@ -427,7 +449,7 @@ public class Project {
 //		return this.taskAlternatives.containsKey(taskID);
 //	}
 
-//	/** // TODO naar Task
+//	/** // TODO refactor as OBSERVER
 //	 * Add an alternative Task to the list of alternatives of the given Task.
 //	 * 
 //	 * @param 	toReplace
@@ -449,30 +471,32 @@ public class Project {
 //
 //	}
 
-	/**
-	 * Checks whether the given alternative is a valid one for the given Task.
-	 * 
-	 * @param 	toReplace
-	 * 			The task to replace
-	 * @param 	alternative
-	 * 			The alternative to check.
-	 * @return	True if and only the alternative is valid one.
-	 * 			True is toReplace == -1
-	 * 			False if the ID isn't a valid one
-	 * 			False if toReplace hasn't failed
-	 * 			False if teReplace has already an alternative
-	 */ // TODO deze check is eigenlijk nog wel altijd belangrijk
-	private boolean isValidAlternative(int toReplace, int alternative){
-		if(toReplace == -1) 
-			return true;
-		if(!isValidTaskID(toReplace)) 
-			return false;
-		if(taskAlternatives.containsKey(toReplace)) 
-			return false;
-		if(!this.getTask(toReplace).isFailed())
-			return false;
-		return toReplace != alternative;
-	}
+//	/**
+//	 * Checks whether the given alternative is a valid one for the given Task.
+//	 * 
+//	 * @param 	toReplace
+//	 * 			The task to replace
+//	 * @param 	alternative
+//	 * 			The alternative to check.
+//	 * @return	True if and only the alternative is valid one.
+//	 * 			True is toReplace == -1
+//	 * 			False if the ID isn't a valid one
+//	 * 			False if toReplace hasn't failed
+//	 * 			False if teReplace has already an alternative
+//	 */
+//	TODO deze check is eigenlijk nog wel altijd belangrijk
+//	TODO niet op deze plek
+//	private boolean isValidAlternative(int toReplace, int alternative){
+//		if(toReplace == -1) // deze niet
+//			return true;
+//		if(!isValidTaskID(toReplace)) // deze ook niet
+//			return false;
+//		if(taskAlternatives.containsKey(toReplace)) // vraag aan task da je wilt vervangen
+//			return false;
+//		if(!this.getTask(toReplace).isFailed()) // same
+//			return false;
+//		return toReplace != alternative; // same
+//	}
 
 //	/** // TODO naar task
 //	 * Adds new prerequisites for the given Task.
@@ -513,6 +537,7 @@ public class Project {
 	 * 			False if the prerequisites are null
 	 * 			False if the task ID isn't a valid one
 	 */ // TODO deze check is eigenlijk nog wel altijd belangrijk
+	//TODO same, moet naar task
 	private boolean isValidPrerequisites(int task, List<Integer> prerequisites){
 		if (prerequisites == null) {
 			return false;
@@ -548,11 +573,12 @@ public class Project {
 	 * 
 	 * @return	a list of the availabke tasks' id's
 	 */
-	public ArrayList<TaskView> getAvailableTasks() {
-		ArrayList<TaskView> availableTasks = new ArrayList<TaskView>();
+	//TODO TaskViews hier aanmaken of pas in ProjectView?
+	public ArrayList<Task> getAvailableTasks() {
+		ArrayList<Task> availableTasks = new ArrayList<Task>();
 		for(Task task : taskList) {
 			if(task.isAvailable()) {
-				availableTasks.add(new TaskView(task));
+				availableTasks.add(task);
 			}
 		}
 		return availableTasks;
@@ -742,7 +768,7 @@ public class Project {
 	/**
 	 * Sets the task with the given task id to finished
 	 * 
-	 * @param 	taskID
+	 * @param 	task
 	 * 			the id of the given task
 	 * @param 	startTime
 	 * 			the start time of the given task
@@ -754,17 +780,18 @@ public class Project {
 	 * 			False if the start time is null
 	 * 			False if the start time is before creation time
 	 */
-	public boolean setTaskFinished(TaskView taskID, LocalDateTime startTime, LocalDateTime endTime) {
-		if(!isValidTaskID(taskID)) {
+	public boolean setTaskFinished(TaskView taskView, LocalDateTime startTime, LocalDateTime endTime) {
+//		if(!isValidTaskID(taskID)) {
+//			return false;
+//		}
+		Task task = unwrapTaskView(taskView);
+		if(task == null ||startTime == null || startTime.isBefore(creationTime)) {
 			return false;
 		}
-		if(startTime == null || startTime.isBefore(creationTime)) {
-			return false;
-		}
-		boolean success = getTask(taskID).setTaskFinished(startTime, endTime);
-		if(success) {
-			for(Task task : taskList) {
-				updateTaskStatus(task);
+		boolean success = task.setTaskFinished(startTime, endTime);
+		if(success) { // TODO notify observers
+			for(Task t : taskList) {
+				updateTaskStatus(t);
 			}
 			
 			recalculateProjectStatus();
@@ -780,7 +807,7 @@ public class Project {
 	/**
 	 * Sets the task with the given task id to failed
 	 * 
-	 * @param 	taskID
+	 * @param 	task
 	 * 			the id of the given task
 	 * @param 	startTime
 	 * 			the start time of the given task
@@ -792,17 +819,18 @@ public class Project {
 	 * 			False if the start time is null
 	 * 			False if the start time is before creation time
 	 */
-	public boolean setTaskFailed(TaskView taskID, LocalDateTime startTime, LocalDateTime endTime) {
-		if(!isValidTaskID(taskID)) {
+	public boolean setTaskFailed(TaskView taskView, LocalDateTime startTime, LocalDateTime endTime) {
+//		if(!isValidTaskID(taskID)) {
+//			return false;
+//		}
+		Task task = unwrapTaskView(taskView);
+		if(task == null ||startTime == null || startTime.isBefore(creationTime)) {
 			return false;
 		}
-		if(startTime == null || startTime.isBefore(creationTime)) {
-			return false;
-		}
-		boolean success = getTask(taskID).setTaskFailed(startTime, endTime);
-		if(success) {
-			for(Task task : taskList)
-				updateTaskStatus(task);
+		boolean success = task.setTaskFailed(startTime, endTime);
+		if(success) { // Notify Observers
+			for(Task t : taskList)
+				updateTaskStatus(t);
 			return true;
 		}
 		return false;
@@ -876,10 +904,10 @@ public class Project {
 		// FOR EACH AVAILABLE TASK CALCULATE CHAIN
 		int availableBranches = getAvailableTasks().size();
 		TimeSpan[] timeChains = new TimeSpan[availableBranches];
-		TaskView testTask;
+		Task testTask;
 		for(int i = 0 ; i < availableBranches ; i++) {
 			testTask = getAvailableTasks().get(i);
-			timeChains[i] = testTask.getEstimatedTaskDuration().add(getMaxDelayChain(testTask));
+			timeChains[i] = testTask.getEstimatedDuration().add(getMaxDelayChain(testTask));
 		}
 		// FIND LONGEST CHAIN
 		TimeSpan longest = new TimeSpan(0);
@@ -913,6 +941,7 @@ public class Project {
 //		if(!isPrerequisite(taskID)) {
 //			return new TimeSpan(0);
 //		}
+		// TODO hoe nu?
 		List<Task> dependants = getDependants(task);
 		TimeSpan longest = new TimeSpan(0);
 		TimeSpan chain;

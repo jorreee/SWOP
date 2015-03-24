@@ -82,14 +82,7 @@ public class TaskView {
 	
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		return true;
-		//TODO equals TaskView
+		return task.equals(obj);
 	}
 
 }
