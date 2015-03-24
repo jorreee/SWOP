@@ -75,6 +75,7 @@ public class ProjectView {
 		return project.isFinished();
 	}
 
+	//TODO eh...
 	@Override
 	public boolean equals(Object obj) {
 		return project.equals(obj);
