@@ -3,6 +3,8 @@ package taskMan;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
+import taskMan.util.DependentTask;
+import taskMan.util.PrerequisiteTask;
 import taskMan.util.TimeSpan;
 
 /**
@@ -15,7 +17,7 @@ import taskMan.util.TimeSpan;
  *
  */
 //TODO weg met ID ?
-public class Task {
+public class Task implements DependentTask, PrerequisiteTask {
 
 	private final int taskID;
 	private final String description;
@@ -29,7 +31,9 @@ public class Task {
 	private TaskStatus taskStatus;
 	
 	private Task alternativeTask = null; //TODO mag maar één keer worden geSet
-	private ArrayList<Task> prerequisites;
+//	private ArrayList<Task> prerequisites; // nodig?
+	private ArrayList<DependentTask> dependants;
+	private int numberOfPrerequisites;
 	
 	/**
 	 * Create a new Task.
@@ -47,7 +51,10 @@ public class Task {
 	 * @throws	IllegalArgumentException
 	 * 			if any of the parameters are invalid ( < 0 or null)
 	 */
-	//TODO taskPrerequisites initialiseren
+	//TODO taskPrerequisites initialiseren: 
+	//		krijgt lijst
+	//		registreert op elk el van lijst
+	//		set size as numberOfPrerequisites
 	public Task(int taskID, String taskDescription, int estimatedDuration,
 			int acceptableDeviation, TimeSpan extraTime) throws IllegalArgumentException {
 		if(!isValidTaskID(taskID)) {
@@ -67,6 +74,10 @@ public class Task {
 		this.estimatedDuration = new TimeSpan(estimatedDuration);
 		this.acceptableDeviation = acceptableDeviation;
 		this.extraTime = extraTime;
+
+//		this.prerequisites = new ArrayList<Task>();
+		this.dependants = new ArrayList<DependentTask>();
+		this.numberOfPrerequisites = 0; //TODO change!
 	}
 
 	/**
@@ -105,6 +116,39 @@ public class Task {
 		}
 		this.beginTime = beginTime;
 		this.endTime = endTime;
+	}
+
+	@Override
+	public boolean register(DependentTask t) {
+		// TODO check op validity
+		return dependants.add(t);
+	}
+
+	@Override
+	public boolean unregister(DependentTask t) {
+		// TODO check op validity
+		int depIndex = dependants.indexOf(t);
+		dependants.remove(depIndex);
+		return true;
+	}
+
+	@Override
+	public boolean notifyDependants() {
+		// TODO Check op validity?
+		boolean goingGood = true;
+		for(DependentTask t : dependants) {
+			goingGood = goingGood && t.update();
+		}
+		return false;
+	}
+
+	// TODO als failt, nog GEEN update. Als vervanger Finisht, laat dan de 
+	// vervangen task updaten.
+	@Override
+	public boolean update() {
+		numberOfPrerequisites--;
+		//TODO als == 0, set available
+		return true;
 	}
 
 	/**
@@ -273,7 +317,7 @@ public class Task {
 	}
 	
 	public ArrayList<Task> getTaskPrerequisites() {
-		return prerequisites;
+		return null; //TODO change!
 	}
 
 	/**
