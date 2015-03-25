@@ -15,8 +15,8 @@ public interface IFacade {
 	public boolean createProject(String name, String description, LocalDateTime creationTime, LocalDateTime dueTime);
 	public boolean createProject(String name, String description, LocalDateTime dueTime);
 	
-	public boolean createRawTask(int projectID, String description, int estimatedDuration, int acceptableDeviation, String taskStatus, Integer alternativeFor, List<Integer> prerequisiteTasks, LocalDateTime startTime, LocalDateTime endTime);
-	public boolean createTask(ProjectView projectID, String description, int estimatedDuration, int acceptableDeviation, Integer alternativeFor, List<Integer> prerequisiteTasks);
+	public boolean createRawTask(ProjectView project, String description, int estimatedDuration, int acceptableDeviation, List<TaskView> prerequisiteTasks, TaskView alternativeFor, String taskStatus, LocalDateTime startTime, LocalDateTime endTime);
+	public boolean createTask(ProjectView project, String description, int estimatedDuration, int acceptableDeviation, List<TaskView> prerequisiteTasks, TaskView alternativeFor);
 	
 
 	public boolean setTaskFinished(ProjectView projectID, TaskView taskID, LocalDateTime startTime, LocalDateTime endTime);

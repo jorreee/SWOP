@@ -33,16 +33,22 @@ public class Facade implements IFacade {
 			LocalDateTime dueTime) {
 		return taskMan.createProject(name, description, dueTime);
 	}
-	
-	@Override //TODO projectID -> ProjectView
-	public boolean createRawTask(int projectID, String description, int estimatedDuration, int acceptableDeviation, String taskStatus, Integer alternativeFor, List<Integer> prerequisiteTasks, LocalDateTime startTime, LocalDateTime endTime) {
-		return taskMan.createRawTask(projectID, description, estimatedDuration, acceptableDeviation, taskStatus, alternativeFor, prerequisiteTasks, startTime, endTime);
+
+	@Override
+	public boolean createTask(ProjectView project, String description,
+			int estimatedDuration, int acceptableDeviation,
+			List<TaskView> prerequisiteTasks, TaskView alternativeFor) {
+		return taskMan.createTask(project, description, estimatedDuration, acceptableDeviation, prerequisiteTasks, alternativeFor);
 	}
-	
-	@Override //TODO projectID -> ProjectView
-	public boolean createTask(ProjectView projectID, String description, int estimatedDuration, int acceptableDeviation, Integer alternativeFor, List<Integer> prerequisiteTasks) {
-		return taskMan.createTask(projectID, description, estimatedDuration, acceptableDeviation, alternativeFor, prerequisiteTasks);
+
+	@Override
+	public boolean createRawTask(ProjectView project, String description,
+			int estimatedDuration, int acceptableDeviation,
+			List<TaskView> prerequisiteTasks, TaskView alternativeFor,
+			String taskStatus, LocalDateTime startTime, LocalDateTime endTime) {
+		return taskMan.createRawTask(project, description, estimatedDuration, acceptableDeviation, prerequisiteTasks, alternativeFor, taskStatus, startTime, endTime);
 	}
+
 	/*
 	@Override //TODO kill
 	public String getProjectName(int projectID) {

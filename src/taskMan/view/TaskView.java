@@ -24,7 +24,7 @@ public class TaskView {
 	}
 	
 	public LocalDateTime getTaskStartTime() {
-		return task.getStartTime();
+		return task.getBeginTime();
 	}
 	
 	//TODO niet gebruikt
@@ -57,7 +57,7 @@ public class TaskView {
 	}
 	
 	public TaskView getTaskAlternativeTo() {
-		return new TaskView(task.getAlternative());
+		return new TaskView(task.getAlternativeFor());
 	}
 	
 	public boolean hasTaskPrerequisites() {

@@ -80,5 +80,10 @@ public class ProjectView {
 	public boolean equals(Object obj) {
 		return project.equals(obj);
 	}
+	
+	public boolean hasAsProject(Project p) {
+		return project == p;
+//		return project.equals(p); ?
+	}
 
 }

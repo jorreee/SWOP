@@ -85,7 +85,7 @@ public class Project {
 	 * @param 	taskStatus
 	 * 			The Status of the Task.
 	 * @param 	alternativeFor
-	 * 			The alternative Task.
+	 * 			The Task this new task will replace.
 	 * @param 	prerequisiteTasks
 	 * 			The prerequisites Tasks for this Task.
 	 * @param 	startTime
@@ -95,47 +95,82 @@ public class Project {
 	 * @return	True if and only the creation of a Task with a status
 	 * 			of failed or finished was successful.
 	 */
-	public boolean createTask(String description, int estimatedDuration, int acceptableDeviation, 
-			String taskStatus, int alternativeFor, 	List<Integer> prerequisiteTasks, 
-			LocalDateTime startTime, LocalDateTime endTime) {
+	public boolean createTask(String description, 
+						int estimatedDuration, 
+						int acceptableDeviation, 
+						List<TaskView> prerequisiteTasks, 
+						TaskView alternativeFor, 
+						String taskStatus,
+						LocalDateTime startTime, 
+						LocalDateTime endTime) {
 
 		int newTaskID = taskList.size();
+//		if(prerequisiteTasks.contains(alternativeFor)) {
+//			return false;
+//		}
+		
+//		if(!isValidAlternative(alternativeFor, newTaskID)) {
+//			return false;
+//		}
+//		if(!isValidPrerequisites(newTaskID, prerequisiteTasks)) {
+//			return false;
+//		}
 		if(isFinished()) {
 			return false;
 		}
-		if(prerequisiteTasks.contains(alternativeFor)) {
+		
+		if(!isValidTaskView(alternativeFor)) {
 			return false;
 		}
-		if(!isValidAlternative(alternativeFor, newTaskID)) {
-			return false;
-		}
-		if(!isValidPrerequisites(newTaskID, prerequisiteTasks)) {
-			return false;
+		Task altFor = unwrapTaskView(alternativeFor);
+		
+		ArrayList<Task> prereqTasks = new ArrayList<Task>();
+		for(TaskView t : prerequisiteTasks) {
+			if(!isValidTaskView(t)) {
+				return false;
+			}
+			prereqTasks.add(unwrapTaskView(t));
 		}
 		
 		Task newTask = null;
-		TimeSpan extraTime = getExtraTime(alternativeFor);
+//		TimeSpan extraTime = getExtraTime(alternativeFor);
 		
 		try{
 			if(taskStatus != null) {
-				newTask = new Task(newTaskID, description, estimatedDuration, 
-						acceptableDeviation, taskStatus, startTime, endTime, extraTime);
+				newTask = new Task(
+						newTaskID, 
+						description, 
+						estimatedDuration, 
+						acceptableDeviation, 
+						prereqTasks,
+						altFor,
+						taskStatus, 
+						startTime, 
+						endTime);
 			}
 			else {
-				newTask = new Task(newTaskID, description, estimatedDuration, acceptableDeviation, extraTime);
+				newTask = new Task(
+						newTaskID, 
+						description, 
+						estimatedDuration, 
+						acceptableDeviation, 
+						prereqTasks,
+						altFor);
 			}
 		} catch(IllegalArgumentException e) {
+//			System.out.println(e.getMessage());
+//			e.printStackTrace();
 			return false;
 		}
 		
-		if(!addAlternative(alternativeFor, newTaskID)) {
-			return false;
-		}
-		if(!addPrerequisites(newTaskID, prerequisiteTasks)) {
-			return false;
-		}
+//		if(!addAlternative(alternativeFor, newTaskID)) {
+//			return false;
+//		}
+//		if(!addPrerequisites(newTaskID, prerequisiteTasks)) {
+//			return false;
+//		}
 		
-		updateTaskStatus(newTask);
+//		updateTaskStatus(newTask);
 		
 		boolean success = taskList.add(newTask);
 		
@@ -143,6 +178,41 @@ public class Project {
 			recalculateProjectStatus();
 		} 
 		return success;
+	}
+
+	/**
+	 * Creates a new Task without a set status.
+	 * 
+	 * @param 	description
+	 * 			The description of the given Task.
+	 * @param 	estimatedDuration
+	 * 			The estimated duration of the Task.
+	 * @param 	acceptableDeviation
+	 * 			The acceptable deviation of the Task.
+	 * @param 	alternativeFor
+	 * 			The alternative Task.
+	 * @param 	prerequisiteTasks
+	 * 			The prerequisites Tasks for this Task.
+	 * @return	True if the creation of a new Task was successful.
+	 */
+	public boolean createTask(String description, 
+			int estimatedDuration, 
+			int acceptableDeviation,
+			List<TaskView> prerequisiteTasks,
+			TaskView alternativeFor) {
+		
+		return createTask(description, 
+				estimatedDuration, 
+				acceptableDeviation, 
+				prerequisiteTasks,
+				alternativeFor, 
+				null,
+				null, 
+				null);
+	}
+	
+	private boolean isValidTaskView(TaskView t) {
+		return taskList.contains(unwrapTaskView(t));
 	}
 	
 	/**
@@ -164,45 +234,6 @@ public class Project {
 		}
 		return null;
 	}
-	
-	//TODO zit in TASK, hoe opvangen?
-//	/**
-//	 * Returns the start value of time spent on a task, depending on the task it is replacing
-//	 * 
-//	 * @param 	taskID
-//	 * 			The ID of the Task
-//	 * @return	time spent on the tasks this task is replacing
-//	 * 			0 if it doesn't replace a task
-//	 */
-//	public TimeSpan getExtraTime(int taskID) {
-//		if(!isValidTaskID(taskID)) {
-//			return new TimeSpan(0);
-//		}
-//		if(!taskList.get(taskID).isFailed()) {
-//			return new TimeSpan(0);
-//		}
-//		return taskList.get(taskID).getTimeSpan();
-//	}
-
-	/**
-	 * Creates a new Task without a set status.
-	 * 
-	 * @param 	description
-	 * 			The description of the given Task.
-	 * @param 	estimatedDuration
-	 * 			The estimated duration of the Task.
-	 * @param 	acceptableDeviation
-	 * 			The acceptable deviation of the Task.
-	 * @param 	alternativeFor
-	 * 			The alternative Task.
-	 * @param 	prerequisiteTasks
-	 * 			The prerequisites Tasks for this Task.
-	 * @return	True if the creation of a new Task was successful.
-	 */
-	public boolean createTask(String description, int estimatedDuration, 
-			int acceptableDeviation,int alternativeFor, List<Integer> prerequisiteTasks) {
-		return createTask(description, estimatedDuration, acceptableDeviation, null, alternativeFor, prerequisiteTasks, null, null);
-	}
 
 //	/**
 //	 * Checks whether the given Task has finished alternatives.
@@ -223,33 +254,34 @@ public class Project {
 //
 //	}
 
-	/**
-	 * Update the status of a given Task
-	 * 
-	 * @param 	task
-	 * 			The Task to update.
-	 */
-	//TODO Refactor as OBSERVER
-	private void updateTaskStatus(Task task){
-		if(task.hasEnded()) { 
-			return;
-		}
-		if(!hasPrerequisites(task.getTaskID())) {
-			task.setAvailable();
-			return;
-		}
-		for(Integer preID : getPrerequisites(task.getTaskID())) {
-			if(!getTask(preID).hasEnded()) {
-				task.setUnavailable();
-				return;
-			}
-			if(getTask(preID).isFailed() && !hasFinishedAlternative(preID)) {
-				task.setUnavailable();
-				return;
-			}
-		}
-		task.setAvailable();
-	}
+	//TODO Task doet dit zelf
+//	/**
+//	 * Update the status of a given Task
+//	 * 
+//	 * @param 	task
+//	 * 			The Task to update.
+//	 */
+//	//TODO Refactor as OBSERVER
+//	private void updateTaskStatus(Task task){
+//		if(task.hasEnded()) { 
+//			return;
+//		}
+//		if(!hasPrerequisites(task.getTaskID())) {
+//			task.setAvailable();
+//			return;
+//		}
+//		for(Integer preID : getPrerequisites(task.getTaskID())) {
+//			if(!getTask(preID).hasEnded()) {
+//				task.setUnavailable();
+//				return;
+//			}
+//			if(getTask(preID).isFailed() && !hasFinishedAlternative(preID)) {
+//				task.setUnavailable();
+//				return;
+//			}
+//		}
+//		task.setAvailable();
+//	}
 	
 	/**
 	 * This method will adjust the status of the project, depending on its tasks.
@@ -257,12 +289,13 @@ public class Project {
 	 * the project itself will be considered finished.
 	 */
 	private void recalculateProjectStatus() {
+		//TODO status.check(taskList) -> hasFinishedEndpoint
 		for(Task task : taskList) {
 			String status = task.getStatus();
 			if( status.equals("available") || status.equals("unavailable")) {
 				return;
 			}
-			if( status.equals("failed") && !hasFinishedAlternative(task.getTaskID())) {
+			if( status.equals("failed")) {
 				return;
 			}
 		}
@@ -285,32 +318,17 @@ public class Project {
 //		return taskList.get(taskID);
 //	}
 
-	/**
-	 * Returns whether the given TaskID is a valid TaskID.
-	 * 
-	 * @param 	taskID
-	 * 			The ID to check.
-	 * @return	True if and only the TaskID is a valid one.
-	 * 			False otherwise.
-	 */
-	private boolean isValidTaskID(int taskID){
-		if(taskID < taskList.size() && taskID >= 0) {
-			return true;
-		}
-		return false;
-	}
-
-	/**
-	 * Returns whether the given TaskID is a valid TaskID.
-	 * 
-	 * @param 	taskID
-	 * 			The ID to check.
-	 * @return	True if and only the TaskID is a valid one.
-	 * 			False otherwise.
-	 */
-	private boolean isValidNewTaskID(int taskID){
-		return isValidTaskID(taskID) || taskID == taskList.size();
-	}
+//	/**
+//	 * Returns whether the given TaskID is a valid TaskID.
+//	 * 
+//	 * @param 	taskID
+//	 * 			The ID to check.
+//	 * @return	True if and only the TaskID is a valid one.
+//	 * 			False otherwise.
+//	 */
+//	private boolean isValidNewTaskID(int taskID){
+//		return isValidTaskID(taskID) || taskID == taskList.size();
+//	}
 
 	/**
 	 * Returns the ID of the Project.
@@ -521,40 +539,6 @@ public class Project {
 //		taskPrerequisites.put(taskID, pre);
 //		return true;
 //	}
-
-	/**
-	 * Checks whether the given prerequisites are valid for the given Task.
-	 * 
-	 * @param 	task
-	 * 			The given Task.
-	 * @param 	prerequisites
-	 * 			The prerequisites to check.
-	 * @return	True if and only the prerequisites are a valid.
-	 * 			True if the prerequisites are empty
-	 * 			False if the prerequisites are null
-	 * 			False if the task ID isn't a valid one
-	 */ // TODO deze check is eigenlijk nog wel altijd belangrijk
-	//TODO same, moet naar task
-	private boolean isValidPrerequisites(int task, List<Integer> prerequisites){
-		if (prerequisites == null) {
-			return false;
-		}
-		if (!isValidNewTaskID(task)) {
-			return false;
-		}
-		else if (prerequisites.isEmpty()) {
-			return true;
-		}
-		else if(prerequisites.contains(task)) {
-			return false;
-		}
-		for (int prereq : prerequisites) {
-			if (!isValidTaskID(prereq)) {
-				return false;
-			}
-		}
-		return true;
-	}
 
 //	/** // TODO remove this
 //	 * Returns the number of Tasks in the project.
@@ -786,19 +770,19 @@ public class Project {
 			return false;
 		}
 		boolean success = task.setTaskFinished(startTime, endTime);
-		if(success) { // TODO notify observers
-			for(Task t : taskList) {
-				updateTaskStatus(t);
-			}
+		if(success) { // TODO notify observers IN TASK
+//			for(Task t : taskList) {
+//				updateTaskStatus(t);
+//			}
 			
 			recalculateProjectStatus();
 			
-			if(this.projectStatus==ProjectStatus.FINISHED){
-				this.endTime = endTime;
-			}
-			return true;
+			//TODO laat status dit afhandelen
+//			if(this.projectStatus==ProjectStatus.FINISHED){
+//				this.endTime = endTime;
+//			}
 		}
-		return false;
+		return success;
 	}
 
 	/**
@@ -825,12 +809,12 @@ public class Project {
 			return false;
 		}
 		boolean success = task.setTaskFailed(startTime, endTime);
-		if(success) { // Notify Observers
-			for(Task t : taskList)
-				updateTaskStatus(t);
-			return true;
-		}
-		return false;
+//		if(success) { // Notify Observers
+//			for(Task t : taskList)
+//				updateTaskStatus(t);
+//			return true;
+//		}
+		return success;
 	}
 
 //	/** // TODO remove this
@@ -882,6 +866,7 @@ public class Project {
 	 * @return	True if and only if this project is finished
 	 */
 	public boolean isFinished() {
+		//TODO vraag aan status
 		return projectStatus == ProjectStatus.FINISHED;
 	}
 
@@ -939,16 +924,17 @@ public class Project {
 //			return new TimeSpan(0);
 //		}
 		// TODO hoe nu?
-		List<Task> dependants = getDependants(task);
-		TimeSpan longest = new TimeSpan(0);
-		TimeSpan chain;
-		for(Integer dependant : dependants) {
-			chain = getTask(dependant).getEstimatedDuration().add(getMaxDelayChain(dependant));
-			if(chain.isLonger(longest)) {
-				longest = chain;
-			}
-		}
-		return longest;
+		return task.getMaxDelayChain();
+//		List<Task> dependants = getDependants(task);
+//		TimeSpan longest = new TimeSpan(0);
+//		TimeSpan chain;
+//		for(Integer dependant : dependants) {
+//			chain = getTask(dependant).getEstimatedDuration().add(getMaxDelayChain(dependant));
+//			if(chain.isLonger(longest)) {
+//				longest = chain;
+//			}
+//		}
+//		return longest;
 	}
 
 //	/** // TODO naar Task

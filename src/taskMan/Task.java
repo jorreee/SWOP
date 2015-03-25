@@ -2,6 +2,7 @@ package taskMan;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
 import taskMan.util.TimeSpan;
 
@@ -14,7 +15,6 @@ import taskMan.util.TimeSpan;
  * @author	Tim Van den Broecke, Joran Van de Woestijne, Vincent Van Gestel, Eli Vangrieken
  *
  */
-//TODO weg met ID ?
 public class Task {
 
 	private final int taskID;
@@ -24,11 +24,10 @@ public class Task {
 	
 	private LocalDateTime beginTime;
 	private LocalDateTime endTime;
-	private final TimeSpan extraTime;
 
 	private TaskStatus taskStatus;
 	
-	private Task alternativeTask = null; //TODO mag maar één keer worden geSet
+	private final Task alternativeFor; //TODO mag maar één keer worden geSet
 	private ArrayList<Task> prerequisites;
 	
 	/**
@@ -47,9 +46,12 @@ public class Task {
 	 * @throws	IllegalArgumentException
 	 * 			if any of the parameters are invalid ( < 0 or null)
 	 */
-	//TODO taskPrerequisites initialiseren
-	public Task(int taskID, String taskDescription, int estimatedDuration,
-			int acceptableDeviation, TimeSpan extraTime) throws IllegalArgumentException {
+	public Task(int taskID, 
+			String taskDescription, 
+			int estimatedDuration,
+			int acceptableDeviation, 
+			List<Task> prerequisiteTasks,
+			Task alternativeFor) throws IllegalArgumentException {
 		if(!isValidTaskID(taskID)) {
 			throw new IllegalArgumentException("Invalid task ID");
 		}
@@ -62,11 +64,21 @@ public class Task {
 		if(!isValidDeviation(acceptableDeviation)) {
 			throw new IllegalArgumentException("Invalid deviation");
 		}
+		if(!isValidAlternative(alternativeFor)) {
+			throw new IllegalArgumentException("Invalid replacement");
+		}
+		if(!isValidPrerequisites(prerequisiteTasks)) {
+			throw new IllegalArgumentException("Invalid prerequisites");
+		}
 		this.taskID = taskID;
 		this.description = taskDescription;
 		this.estimatedDuration = new TimeSpan(estimatedDuration);
 		this.acceptableDeviation = acceptableDeviation;
-		this.extraTime = extraTime;
+//		this.extraTime = extraTime;
+		this.alternativeFor = alternativeFor;
+		for(Task t : prerequisiteTasks) {
+			// t.register(this);
+		}
 	}
 
 	/**
@@ -89,19 +101,30 @@ public class Task {
 	 * @throws	IllegalArgumentException
 	 * 			if any of the parameters are invalid ( < 0 or null)
 	 */
-	//TODO taskPrerequisites initialiseren
-	public Task(int taskID, String taskDescription, int estimatedDuration,
-			int acceptableDeviation, String taskStatus,
-			LocalDateTime beginTime, LocalDateTime endTime, TimeSpan extraTime) throws IllegalArgumentException {
+	public Task(int taskID, 
+			String taskDescription, 
+			int estimatedDuration,
+			int acceptableDeviation, 
+			List<Task> prerequisiteTasks,
+			Task alternativeFor,
+			String taskStatus,
+			LocalDateTime beginTime, 
+			LocalDateTime endTime) throws IllegalArgumentException {
 		
-		this(taskID, taskDescription, estimatedDuration, acceptableDeviation, extraTime);
+		this(	taskID, 
+				taskDescription, 
+				estimatedDuration, 
+				acceptableDeviation, 
+				prerequisiteTasks,
+				alternativeFor);
 		
 		if(!taskStatus.equalsIgnoreCase("failed") && !taskStatus.equalsIgnoreCase("finished")) {
-			throw new IllegalArgumentException("Time stamps are only required if a task is finished or failed");
+			throw new IllegalArgumentException(
+					"Time stamps are only allowed if a task is finished or failed");
 		}
-		this.taskStatus = TaskStatus.valueOf(taskStatus);
+		this.taskStatus = TaskStatus.valueOf(taskStatus); //TODO STATE
 		if(!isValidTimeStamps(beginTime, endTime)) {
-			throw new IllegalArgumentException("Time Stamps are faulty");
+			throw new IllegalArgumentException("Very bad timestamps");
 		}
 		this.beginTime = beginTime;
 		this.endTime = endTime;
@@ -162,37 +185,41 @@ public class Task {
 	 * @throws 	IllegalArgumentException 
 	 * 			When the start time of the task is after the time given.
 	 */
-	public TimeSpan getTimeElapsed(LocalDateTime currentTime) throws IllegalArgumentException{
-		if(beginTime == null) {
-			throw new IllegalArgumentException("Project not yet started");
+	public TimeSpan getTimeElapsed(LocalDateTime currentTime) {
+//		if(beginTime == null) { //TODO geen argument meer ?
+//			throw new IllegalArgumentException("Project not yet started");
+//		}
+//		if(beginTime.isAfter(currentTime)) {
+//			throw new IllegalArgumentException("Timestamp is in the past");
+//		}
+		TimeSpan currentTimeSpent = TimeSpan.getDifferenceWorkingMinutes(
+				this.beginTime, 
+				currentTime); //TODO kan ook variabele in Task zijn?
+		if(alternativeFor != null) {
+			currentTimeSpent = currentTimeSpent
+								.add(alternativeFor.getTimeElapsed(currentTime));
 		}
-		if(beginTime.isAfter(currentTime)) {
-			throw new IllegalArgumentException("Timestamp is in the past");
-		}
-		return TimeSpan.getDifferenceWorkingMinutes(this.beginTime, currentTime).add(this.extraTime);
+		return currentTimeSpent;
 	}
 
-	/**
-	 * Returns the time elapsed since the start of the project and 
-	 * the end of the project. 
-	 * 
-	 * @return 	time elapsed between the start time and end time
-	 * @throws 	IllegalStateException 
-	 * 			whenever the end time is not yet determined
-	 */
-	public TimeSpan getTimeSpan() throws IllegalArgumentException{
-		if(endTime == null) {
-			throw new IllegalStateException("Project not yet finished");
-		}
-		return getTimeElapsed(endTime);
-	}
+//	/**
+//	 * Returns the time elapsed since the start of the project and 
+//	 * the end of the project. 
+//	 * 
+//	 * @return 	time elapsed between the start time and end time
+//	 * @throws 	IllegalStateException 
+//	 * 			whenever the end time is not yet determined
+//	 */
+//	public TimeSpan getTimeSpent() {
+//		return getTimeElapsed(endTime);
+//	}
 
 	/**
 	 * Returns the start time of the Task.
 	 * 
 	 * @return	The start time of the Task.
 	 */
-	public LocalDateTime getStartTime() {
+	public LocalDateTime getBeginTime() {
 		return beginTime;
 	}
 
@@ -223,23 +250,23 @@ public class Task {
 		return endTime;
 	}
 
-	/**
-	 * Sets the end time of Task.
-	 * 
-	 * @param 	endTime
-	 * 			The new end time of the Task.
-	 * @throws	IllegalArgumentException
-	 * 			If the new end time is null or the old end time is already set. 
-	 */
-	public void setEndTime(LocalDateTime endTime) throws IllegalArgumentException {
-		if(endTime==null) {
-			throw new IllegalArgumentException("The new endTime is null");
-		}
-		if(getEndTime()!=null) {
-			throw new IllegalArgumentException("The endtime is already set");
-		}
-		this.endTime = endTime;
-	}
+//	/**
+//	 * Sets the end time of Task.
+//	 * 
+//	 * @param 	endTime
+//	 * 			The new end time of the Task.
+//	 * @throws	IllegalArgumentException
+//	 * 			If the new end time is null or the old end time is already set. 
+//	 */
+//	public void setEndTime(LocalDateTime endTime) throws IllegalArgumentException {
+//		if(endTime==null) {
+//			throw new IllegalArgumentException("The new endTime is null");
+//		}
+//		if(getEndTime()!=null) {
+//			throw new IllegalArgumentException("The endtime is already set");
+//		}
+//		this.endTime = endTime;
+//	}
 
 	/**
 	 * Returns the description of the Task.
@@ -268,50 +295,55 @@ public class Task {
 		return acceptableDeviation;
 	}
 	
-	public Task getAlternative() {
-		return alternativeTask;
+	public Task getAlternativeFor() {
+		return alternativeFor;
 	}
 	
 	public ArrayList<Task> getTaskPrerequisites() {
 		return prerequisites;
 	}
 
-	/**
-	 * Set the status of this Task on available.
-	 * 
-	 * @return	True is the operation was successful.
-	 * 			False if the status was already failed or finished.
-	 */
-	public boolean setAvailable(){
-		if(this.taskStatus == TaskStatus.FAILED || this.taskStatus == TaskStatus.FINISHED) {
-			return false;
-		}
-		this.taskStatus = TaskStatus.AVAILABLE;
-		return true;
+	public TimeSpan getMaxDelayChain() {
+		//TODO te doen
+		return null;
 	}
+	
+//	/**
+//	 * Set the status of this Task on available.
+//	 * 
+//	 * @return	True is the operation was successful.
+//	 * 			False if the status was already failed or finished.
+//	 */
+//	public boolean setAvailable(){
+//		if(this.taskStatus == TaskStatus.FAILED || this.taskStatus == TaskStatus.FINISHED) {
+//			return false;
+//		}
+//		this.taskStatus = TaskStatus.AVAILABLE;
+//		return true;
+//	}
 
-	/**
-	 * Set the status of this Task on unavailable.
-	 * 
-	 * @return	True is the operation was successful.
-	 * 			False if the status was already failed or finished.
-	 */
-	public boolean setUnavailable(){
-		if(this.taskStatus == TaskStatus.FAILED || this.taskStatus == TaskStatus.FINISHED) {
-			return false;
-		}
-		this.taskStatus = TaskStatus.UNAVAILABLE;
-		return true;
-	}
+//	/**
+//	 * Set the status of this Task on unavailable.
+//	 * 
+//	 * @return	True is the operation was successful.
+//	 * 			False if the status was already failed or finished.
+//	 */
+//	public boolean setUnavailable(){
+//		if(this.taskStatus == TaskStatus.FAILED || this.taskStatus == TaskStatus.FINISHED) {
+//			return false;
+//		}
+//		this.taskStatus = TaskStatus.UNAVAILABLE;
+//		return true;
+//	}
 
-	/**
-	 * Returns the current status of the Task.
-	 * 
-	 * @return	The current status of the Task.
-	 */
-	private TaskStatus getTaskStatus() {
-		return taskStatus;
-	}
+//	/**
+//	 * Returns the current status of the Task.
+//	 * 
+//	 * @return	The current status of the Task.
+//	 */
+//	private TaskStatus getTaskStatus() {
+//		return taskStatus;
+//	}
 
 	/**
 	 * Returns the status of the Task as a String.
@@ -319,26 +351,28 @@ public class Task {
 	 * @return	The status of the Task as a String.
 	 */
 	public String getStatus(){
-		TaskStatus stat = this.getTaskStatus();
-		String status ="";
-		switch(stat){
-		case FAILED:
-			status = "failed";
-			break;
-		case FINISHED:
-			status = "finished";
-			break;
-		case AVAILABLE:
-			status = "available";
-			break;
-		case UNAVAILABLE:
-			status = "unavailable";
-			break;
-		default:
-			status ="ERROR";
-			break;
-		}
-		return status;
+		//TODO state.asString(); hehe ass
+		return "werk is";
+//		TaskStatus stat = this.getTaskStatus();
+//		String status ="";
+//		switch(stat){
+//		case FAILED:
+//			status = "failed";
+//			break;
+//		case FINISHED:
+//			status = "finished";
+//			break;
+//		case AVAILABLE:
+//			status = "available";
+//			break;
+//		case UNAVAILABLE:
+//			status = "unavailable";
+//			break;
+//		default:
+//			status ="ERROR";
+//			break;
+//		}
+//		return status;
 
 	}
 
@@ -354,49 +388,54 @@ public class Task {
 	/**
 	 * End the task in a Finished state
 	 * 
-	 * @param 	startTime
-	 * 			The new startTime of the Task.
+	 * @param 	beginTime
+	 * 			The new begin time of the Task.
 	 * @param 	endTime
 	 * 			The new end time of the Task.
 	 * @return	True if and only if the updates succeeds.
 	 */
-	public boolean setTaskFinished(LocalDateTime startTime,
+	public boolean setTaskFinished(LocalDateTime beginTime,
 			LocalDateTime endTime) {
-		return setTaskStatus(startTime,endTime,TaskStatus.FINISHED);
+		//TODO return state.finish();
+		return setTaskStatus(beginTime,endTime,TaskStatus.FINISHED);
 	}
 
 	/**
 	 * End the task in a Failed state
 	 * 
-	 * @param 	startTime
-	 * 			The new startTime of the Task.
+	 * @param 	beginTime
+	 * 			The new begin time of the Task.
 	 * @param 	endTime
 	 * 			The new end time of the Task.
 	 * @return	True if and only if the updates succeeds.
 	 */
-	public boolean setTaskFailed(LocalDateTime startTime, LocalDateTime endTime) {
-		return setTaskStatus(startTime,endTime,TaskStatus.FAILED);
+	public boolean setTaskFailed(LocalDateTime beginTime, LocalDateTime endTime) {
+		//TODO return state.fail();
+		return setTaskStatus(beginTime,endTime,TaskStatus.FAILED);
 	}
 
 	/**
 	 * End the task finished or failed
 	 * 
-	 * @param 	startTime
-	 * 			The new startTime of the Task.
+	 * @param 	beginTime
+	 * 			The new begin time of the Task.
 	 * @param 	endTime
 	 * 			The new end time of the Task.
 	 * @param	status
 	 * 			The new status of the Task.
 	 * @return	True if and only if the updates succeeds.
 	 */
-	private boolean setTaskStatus(LocalDateTime startTime,LocalDateTime endTime, TaskStatus status) {
-		if(hasEnded() || isUnavailable()) {
-			return false;
-		}
-		if(isValidTimeStamps(startTime, endTime)) {
-			setBeginTime(startTime); //TODO exceptions DERUIT okee
-			setEndTime(endTime);
-			taskStatus = status;
+	private boolean setTaskStatus(LocalDateTime beginTime,
+			LocalDateTime endTime, 
+			TaskStatus status) {
+		
+//		if(hasEnded() || isUnavailable()) {
+//			return false;
+//		}//TODO STATE laten afhandelen
+		if(isValidTimeStamps(beginTime, endTime)) {
+			this.beginTime = beginTime;
+			this.endTime = endTime;
+//			taskStatus = status;
 			return true;
 		}
 		return false;
@@ -405,17 +444,17 @@ public class Task {
 	/**
 	 * Checks whether the given timestamps are valid as start- and endtimes
 	 * 
-	 * @param 	startTime
-	 * 			The new startTime of the Task.
+	 * @param 	beginTime
+	 * 			The new begin time of the Task.
 	 * @param 	endTime
 	 * 			The new end time of the Task.
 	 * @return	True if and only if the timestamps are valid start- and endtimes.
 	 */
-	private boolean isValidTimeStamps(LocalDateTime startTime, LocalDateTime endTime) {
-		if(startTime == null || endTime == null) {
+	private boolean isValidTimeStamps(LocalDateTime beginTime, LocalDateTime endTime) {
+		if(beginTime == null || endTime == null) {
 			return false;
 		}
-		if(endTime.isBefore(startTime)) {
+		if(endTime.isBefore(beginTime)) {
 			return false;
 		}
 		return true;
@@ -464,6 +503,39 @@ public class Task {
 	private boolean isValidDuration(int duration){
 		return duration > 0;
 	}
+
+	/**
+	 * Checks whether the given prerequisites are valid for the given Task.
+	 * 
+	 * @param 	task
+	 * 			The given Task.
+	 * @param 	prerequisites
+	 * 			The prerequisites to check.
+	 * @return	True if and only the prerequisites are a valid.
+	 * 			True if the prerequisites are empty
+	 * 			False if the prerequisites are null
+	 * 			False if the task ID isn't a valid one
+	 */
+	private boolean isValidPrerequisites(List<Task> prerequisites){
+		if (prerequisites == null) {
+			return false;
+		}
+		else if(prerequisites.contains(this)) {
+			return false;
+		}
+		return true;
+	}
+	
+	//TODO wa is er nog invalid alt task?
+	private boolean isValidAlternative(Task altTask) {
+		if(altTask.equals(this)) {
+			return false;
+		}
+		if(!altTask.isFailed()) {
+			return false;
+		}
+		return true;
+	}
 	
 	/**
 	 * Returns whether the current Task in on time.
@@ -498,9 +570,10 @@ public class Task {
 	 * 
 	 * @return	The percentage of overdue.
 	 */
+	//TODO hoe?
 	public int getOverTimePercentage() {
 		if(!isOnTime()){
-			int overdue = this.getTimeSpan().getDifferenceMinute(estimatedDuration);
+			int overdue = 0; // this.getTimeSpent().getDifferenceMinute(estimatedDuration);
 			return (overdue/this.estimatedDuration.getSpanMinutes())*100;
 		}
 		return 0;
