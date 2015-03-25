@@ -1,4 +1,4 @@
-package taskMan;
+package taskMan.state;
 
 public enum ProjectStatus {
 	

@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import taskMan.state.TaskStatus;
 import taskMan.util.DependentTask;
 import taskMan.util.PrerequisiteTask;
 import taskMan.util.TimeSpan;
