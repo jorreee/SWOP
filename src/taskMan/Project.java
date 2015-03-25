@@ -2,14 +2,10 @@ package taskMan;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
 import taskMan.util.TimeSpan;
 import taskMan.view.TaskView;
-
-import com.google.common.collect.ImmutableList;
 
 /**
  * The project class used by TaskMan. A project will always have a unique
