@@ -8,7 +8,7 @@ package taskMan.util;
  */
 public interface DependentTask {
 	
-	public boolean update(); 
+	public boolean updateDependency(); 
 	// TODO kan ook "heyDependant,I'mFinishedSoGoAhead()" noemen
 
 }

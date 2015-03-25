@@ -31,7 +31,8 @@ public class Task implements DependentTask, PrerequisiteTask {
 	
 	private final Task alternativeFor; //TODO mag maar één keer worden geSet
 	private ArrayList<DependentTask> dependants;
-	private int numberOfPrerequisites;
+	
+	private int numberOfPendingPrerequisites;
 	
 	/**
 	 * Create a new Task.
@@ -82,7 +83,8 @@ public class Task implements DependentTask, PrerequisiteTask {
 		for(Task t : prerequisiteTasks) {
 			 t.register(this);
 		}
-		this.numberOfPrerequisites = 0; //TODO change!
+		this.numberOfPendingPrerequisites = prerequisiteTasks.size(); 
+		
 	}
 
 	/**
@@ -156,22 +158,20 @@ public class Task implements DependentTask, PrerequisiteTask {
 		return t != this;
 	}
 
+	// TODO als failt, nog GEEN update
 	@Override
 	public boolean notifyDependants() {
 		// TODO Check op validity?
 		boolean goingGood = true;
 		for(DependentTask t : dependants) {
-			goingGood = goingGood && t.update();
+			goingGood = goingGood && t.updateDependency();
 		}
 		return goingGood;
 	}
 
-	// TODO als failt, nog GEEN update. Als vervanger Finisht, laat dan de 
-	// vervangen task updaten.
 	@Override
-	public boolean update() {
-		numberOfPrerequisites--;
-		//TODO als == 0, set available
+	public boolean updateDependency() {
+		numberOfPendingPrerequisites = numberOfPendingPrerequisites - 1;
 		return true;
 	}
 
@@ -442,6 +442,7 @@ public class Task implements DependentTask, PrerequisiteTask {
 	public boolean setTaskFinished(LocalDateTime beginTime,
 			LocalDateTime endTime) {
 		//TODO return state.finish();
+		// notifyDependants();
 		return setTaskStatus(beginTime,endTime,TaskStatus.FINISHED);
 	}
 
@@ -565,7 +566,10 @@ public class Task implements DependentTask, PrerequisiteTask {
 		if (prerequisites == null) {
 			return false;
 		}
-		else if(prerequisites.contains(this)) {
+		if(prerequisites.contains(null)) {
+			return false;
+		}
+		if(prerequisites.contains(this)) {
 			return false;
 		}
 		return true;
