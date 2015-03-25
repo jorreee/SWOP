@@ -41,6 +41,7 @@ public class Task implements Dependant, Prerequisite {
 	private final TaskStatus unavailable;
 	private final TaskStatus finished;
 	private final TaskStatus failed;
+	
 	private TaskStatus state;
 	
 	/**
@@ -97,8 +98,9 @@ public class Task implements Dependant, Prerequisite {
 		failed = new Failed(this);
 		
 		setUnavailable();
-		
+
 		this.prerequisites = new ArrayList<Prerequisite>();
+		this.unfinishedPrerequisites = new ArrayList<Prerequisite>();
 		
 		for(Task t : prerequisiteTasks) {
 			 t.register(this);
@@ -204,7 +206,7 @@ public class Task implements Dependant, Prerequisite {
 			return false;
 		}
 		prerequisites.remove(preIndex);
-		if(state.shouldBecomeAvailable(prerequisites)) {
+		if(state.shouldBecomeAvailable(unfinishedPrerequisites)) {
 			setAvailable();
 		}
 		return true;

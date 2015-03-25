@@ -301,7 +301,7 @@ public class Project implements Dependant {
 
 	@Override
 	public boolean updateDependency(Prerequisite preTask) {
-		setTaskFinished((Task) preTask);
+		markTaskFinished((Task) preTask);
 		if(state.shouldFinish(unfinishedTaskList)) {
 			setFinished();
 		}
@@ -775,7 +775,12 @@ public class Project implements Dependant {
 		
 	}
 	
-	private boolean setTaskFinished(Task task) {
+	public boolean setTaskFinished(TaskView t, LocalDateTime l1, LocalDateTime l2) {
+		//TODO te doen
+		return true;
+	}
+	
+	private boolean markTaskFinished(Task task) {
 		if(task == null) {
 			return true;
 		}
@@ -785,7 +790,7 @@ public class Project implements Dependant {
 		}
 		unfinishedTaskList.remove(taskIndex);
 		
-		return setTaskFinished(task.getAlternativeFor());
+		return markTaskFinished(task.getAlternativeFor());
 ////		if(!isValidTaskID(taskID)) {
 ////			return false;
 ////		}
