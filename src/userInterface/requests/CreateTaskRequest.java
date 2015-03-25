@@ -47,10 +47,14 @@ public class CreateTaskRequest extends Request {
 					}
 				}
 				
+				// createTask(ProjectView project, String description,
+				// int estimatedDuration, int acceptableDeviation,
+				// List<TaskView> prerequisiteTasks,
+				// TaskView alternativeFor);
 				boolean success = facade.createTask(
 						projects.get(Integer.parseInt(input[0])), input[1],
 						Integer.parseInt(input[2]), Integer.parseInt(input[3]),
-						Integer.parseInt(input[4]), prereqList);
+						prereqList, Integer.parseInt(input[4]));
 
 				// Invalid details
 				if(success) {

@@ -28,17 +28,32 @@ public class InputParser {
 		// Switch on first word
 		try {
 			switch(input[0].toLowerCase()) {
-			case "h"		: return new HelpRequest(facade, inputReader);
-			case "exit"		: return new ExitRequest(facade, inputReader);
-			case "advance"	: return new AdvanceTimeRequest(facade, inputReader);
-			case "update"	: if(input[1].toLowerCase().equals("task"))
-				return new UpdateTaskStatusRequest(facade, inputReader);
-			case "create"	: if(input[1].toLowerCase().equals("task"))
-				return new CreateTaskRequest(facade, inputReader);
-			if(input[1].toLowerCase().equals("project"))
-				return new CreateProjectRequest(facade, inputReader);
-			case "show"		: return new ShowProjectsRequest(facade, inputReader);
-			default	: return new InvalidRequest(facade, inputReader);
+			case "h"		: 
+				return new HelpRequest(facade, inputReader);
+			case "exit"		: 
+				return new ExitRequest(facade, inputReader);
+			case "advance"	: 
+				return new AdvanceTimeRequest(facade, inputReader);
+			case "update"	:
+				if(input[1].toLowerCase().equals("task")) {
+					return new UpdateTaskStatusRequest(facade, inputReader);
+				} else {
+					throw new IllegalArgumentException();
+				}
+			case "create"	: 
+				if(input[1].toLowerCase().equals("task")) {
+					return new CreateTaskRequest(facade, inputReader);
+				}
+				if(input[1].toLowerCase().equals("project")) {
+					return new CreateProjectRequest(facade, inputReader);
+				}
+				else {
+					throw new IllegalArgumentException();
+				}
+			case "show"		: 
+				return new ShowProjectsRequest(facade, inputReader);
+			default	: 
+				return new InvalidRequest(facade, inputReader);
 			}
 		}catch(Exception e) {
 			return new InvalidRequest(facade, inputReader);

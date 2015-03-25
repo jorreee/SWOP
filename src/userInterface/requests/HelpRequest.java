@@ -2,8 +2,8 @@ package userInterface.requests;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import userInterface.IFacade;
 
@@ -16,8 +16,14 @@ public class HelpRequest extends Request {
 	@Override
 	public String execute() {
 		try {
-			byte[] encoded = Files.readAllBytes(Paths.get("src", "userInterface", "requests", "help.txt"));
-			return new String(encoded);			
+			InputStream helpFileStream = getClass().getResourceAsStream("help.txt");
+			BufferedReader bufRead = new BufferedReader(new InputStreamReader(helpFileStream));
+			StringBuilder helpFileBody = new StringBuilder();
+			String fileLine;
+			while((fileLine = bufRead.readLine()) != null) {
+				helpFileBody.append(fileLine + "\n");
+			}
+			return helpFileBody.toString();
 		} catch (IOException e) {
 			System.out.println("Help file not found! ~Should not happen!");;
 		}

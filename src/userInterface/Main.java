@@ -41,8 +41,8 @@ public class Main {
 				statusString = status.name();
 			facade.createRawTask(tcd.getProject(), tcd.getDescription(),
 					tcd.getEstimatedDuration(),
-					tcd.getAcceptableDeviation(), statusString,
-					tcd.getAlternativeFor(), tcd.getPrerequisiteTasks(),
+					tcd.getAcceptableDeviation(), tcd.getPrerequisiteTasks(),
+					tcd.getAlternativeFor(), statusString,
 					tcd.getStartTime(), tcd.getEndTime());
 		}
 		

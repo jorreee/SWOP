@@ -15,12 +15,13 @@ public interface IFacade {
 	public boolean createProject(String name, String description, LocalDateTime creationTime, LocalDateTime dueTime);
 	public boolean createProject(String name, String description, LocalDateTime dueTime);
 	
-	public boolean createRawTask(ProjectView project, String description, int estimatedDuration, int acceptableDeviation, List<TaskView> prerequisiteTasks, TaskView alternativeFor, String taskStatus, LocalDateTime startTime, LocalDateTime endTime);
-	public boolean createTask(ProjectView project, String description, int estimatedDuration, int acceptableDeviation, List<TaskView> prerequisiteTasks, TaskView alternativeFor);
+	public boolean createRawTask(int project, String description, int estimatedDuration, int acceptableDeviation, List<Integer> prerequisiteTasks, int alternativeFor, String taskStatus, LocalDateTime startTime, LocalDateTime endTime);
+	public boolean createTask(ProjectView project, String description, int estimatedDuration, int acceptableDeviation, List<Integer> prerequisiteTasks, int alternativeFor);
 	
-
 	public boolean setTaskFinished(ProjectView projectID, TaskView taskID, LocalDateTime startTime, LocalDateTime endTime);
 	public boolean setTaskFailed(ProjectView projectID, TaskView taskID, LocalDateTime startTime, LocalDateTime endTime);
+	
+	public List<ProjectView> getProjects();
 	
 	/*
 	public boolean createTask(int projectID, String description, int estimatedDuration, int acceptableDeviation, String taskStatus, Integer alternativeFor, List<Integer> prerequisiteTasks, LocalDateTime startTime, LocalDateTime endTime);
@@ -70,5 +71,4 @@ public interface IFacade {
 	public boolean hasTaskAlternative(int projectID, int taskID);
 	public int getTaskAlternativeTo(int projectID, int taskID);
 	*/
-	public List<ProjectView> getProjects();
 }
