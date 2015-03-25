@@ -10,6 +10,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import taskMan.Facade;
+import taskMan.view.ProjectView;
+import taskMan.view.TaskView;
 import userInterface.IFacade;
 
 public class UseCase4UpdateTaskStatusTest {
@@ -54,159 +56,189 @@ public class UseCase4UpdateTaskStatusTest {
 		taskManager = new Facade(startDate);
 
 		assertTrue(taskManager.createProject("Test1", "testing 1", project0DueDate));
-
+		ProjectView project0 = taskManager.getProjects().get(0);
 		
-		assertTrue(taskManager.createTask(0, "Design system", task00EstDur, task00Dev, -1, task00Dependencies));		// TASK 1
+		assertTrue(taskManager.createTask(project0, "Design system", task00EstDur, task00Dev, task00Dependencies, -1));		// TASK 1
 		task01Dependencies.add(Integer.valueOf(0));
-		assertTrue(taskManager.createTask(0, "Implement Native", task01EstDur, task01Dev, -1, task01Dependencies));	// TASK 2
+		assertTrue(taskManager.createTask(project0, "Implement Native", task01EstDur, task01Dev, task01Dependencies, -1));	// TASK 2
 		task02Dependencies.add(Integer.valueOf(1));
 
-		assertTrue(taskManager.createTask(0, "Test code", task02EstDur, task02Dev, -1, task02Dependencies));			// TASK 3
+		assertTrue(taskManager.createTask(project0, "Test code", task02EstDur, task02Dev, task02Dependencies, -1));			// TASK 3
 		
 		assertTrue(taskManager.advanceTimeTo(workDate)); // Omdat task updates enkel in het verleden kunnen gezet worden
 	}
 	
 	@Test
 	public void succesCaseALTFINISHEDTest() {
-		assertTrue(taskManager.setTaskFailed(0, 0, task00StartDateGood, task00EndDateGood));
-		assertTrue(taskManager.createTask(0, "A new TASK", newTaskDur, newTaskDev, 0, newTaskDependencies));
+		ProjectView project0 = taskManager.getProjects().get(0);
+		TaskView task00 = project0.getTasks().get(0);
+		
+		assertTrue(taskManager.setTaskFailed(project0, task00, task00StartDateGood, task00EndDateGood));
+		assertTrue(taskManager.createTask(project0, "A new TASK", newTaskDur, newTaskDev, newTaskDependencies, 0));
 
 		// Step 1 is implicit
 		// Step 2 and 3 are handled in UI
 		// Step 4 and 5
-		assertTrue(taskManager.setTaskFinished(0, 3, startDate, newTaskEndDateGood));
+		TaskView task01 = project0.getTasks().get(1);
+		TaskView task02 = project0.getTasks().get(2);
+		TaskView task03 = project0.getTasks().get(3);
+		assertTrue(taskManager.setTaskFinished(project0, task03, startDate, newTaskEndDateGood));
 		// Step 6
-		assertTrue(taskManager.getTaskStatus(0,0).equals("failed"));
-		assertTrue(taskManager.getTaskStatus(0,2).equals("unavailable"));
-		assertFalse(taskManager.isProjectFinished(0));
+		assertTrue(task00.isFailed());
+		assertTrue(task02.isUnavailable());
+		assertFalse(project0.isProjectFinished());
 		
-		assertTrue(taskManager.getTaskStatus(0,3).equals("finished"));
-		assertTrue(taskManager.getTaskStatus(0,1).equals("available"));			// 
+		assertTrue(task03.isFinished());
+		assertTrue(task01.isAvailable());			// 
 		
 	}
 
 	@Test
 	public void succesCaseFINISHEDTest() {
+		ProjectView project0 = taskManager.getProjects().get(0);
+		TaskView task00 = project0.getTasks().get(0);
+		TaskView task01 = project0.getTasks().get(1);
+		TaskView task02 = project0.getTasks().get(2);
 		// Step 1 is implicit
 		// Step 2 and 3 are handled in UI
 		// Step 4 and 5
-		assertTrue(taskManager.setTaskFinished(0, 0, task00StartDateGood, task00EndDateGood));
+		assertTrue(taskManager.setTaskFinished(project0, task00, task00StartDateGood, task00EndDateGood));
 		// Step 6
-		assertTrue(taskManager.getTaskStatus(0,0).equals("finished"));
-		assertTrue(taskManager.getTaskStatus(0,1).equals("available"));
-		assertTrue(taskManager.getTaskStatus(0,2).equals("unavailable"));
-		assertFalse(taskManager.isProjectFinished(0));
+		assertTrue(task00.isFinished());
+		assertTrue(task01.isAvailable());
+		assertTrue(task02.isUnavailable());
+		assertFalse(project0.isProjectFinished());
 		
 	}
 
 	@Test
 	public void succesCaseFAILEDTest() {
+		ProjectView project0 = taskManager.getProjects().get(0);
+		TaskView task00 = project0.getTasks().get(0);
+		TaskView task01 = project0.getTasks().get(1);
+		TaskView task02 = project0.getTasks().get(2);
 		// Step 1 is implicit
 		// Step 2 and 3 are handled in UI
 		// Step 4 and 5
-		assertTrue(taskManager.setTaskFailed(0, 0, task00StartDateGood, task00EndDateGood));
+		assertTrue(taskManager.setTaskFailed(project0, task00, task00StartDateGood, task00EndDateGood));
 		// Step 6
-		assertTrue(taskManager.getTaskStatus(0,0).equals("failed"));
-		assertTrue(taskManager.getTaskStatus(0,1).equals("unavailable"));
-		assertTrue(taskManager.getTaskStatus(0,2).equals("unavailable"));
-		assertFalse(taskManager.isProjectFinished(0));
+		assertTrue(task00.isFailed());
+		assertTrue(task01.isUnavailable);
+		assertTrue(task02.isUnavailable());
+		assertFalse(project0.isProjectFinished());
 		
 	}
 	
 	@Test
 	public void succesCaseMultiplePrereqTest() {
+		ProjectView project0 = taskManager.getProjects().get(0);
+		TaskView task00 = project0.getTasks().get(0);
+		TaskView task01 = project0.getTasks().get(1);
+		TaskView task02 = project0.getTasks().get(2);
 
 		newTaskDependencies.add(Integer.valueOf(0));
 		newTaskDependencies.add(Integer.valueOf(1));
-		assertTrue(taskManager.createTask(0, "Test1", newTaskDur, newTaskDev, -1, newTaskDependencies));
-		assertTrue(taskManager.getTaskPrerequisitesFor(0, 3).contains(0));
-		assertTrue(taskManager.getTaskPrerequisitesFor(0, 3).contains(1));
+		assertTrue(taskManager.createTask(project0, "Test1", newTaskDur, newTaskDev, newTaskDependencies, -1));
+		TaskView task03 = project0.getTasks().get(3);
+		assertTrue(task03.getTaskPrerequisites().contains(task00));
+		assertTrue(task03.getTaskPrerequisites().contains(task01));
 		
 		// Step 1 is implicit
 		// Step 2 and 3 are handled in UI
 		// Step 4 and 5
-		assertTrue(taskManager.setTaskFinished(0, 0, task00StartDateGood, task00EndDateGood));
+		assertTrue(taskManager.setTaskFinished(project0, task00, task00StartDateGood, task00EndDateGood));
 		// Step 6
-		assertTrue(taskManager.getTaskStatus(0,0).equals("finished"));
-		assertTrue(taskManager.getTaskStatus(0,1).equals("available"));
-		assertTrue(taskManager.getTaskStatus(0,2).equals("unavailable"));
-		assertFalse(taskManager.isProjectFinished(0));
-		assertTrue(taskManager.getTaskStatus(0, 3).equals("unavailable"));
+		assertTrue(task00.isFinished());
+		assertTrue(task01.isAvailable());
+		assertTrue(task02.isUnavailable());
+		assertFalse(project0.isProjectFinished());
+		assertTrue(task03.isUnavailable());
 		
-		assertTrue(taskManager.setTaskFinished(0, 1, task01StartDateGood, task01EndDateGood));
-		assertTrue(taskManager.getTaskStatus(0,0).equals("finished"));
-		assertTrue(taskManager.getTaskStatus(0,1).equals("finished"));
-		assertTrue(taskManager.getTaskStatus(0,2).equals("available"));
-		assertFalse(taskManager.isProjectFinished(0));
-		assertTrue(taskManager.getTaskStatus(0, 3).equals("available"));
+		assertTrue(taskManager.setTaskFinished(project0, task01, task01StartDateGood, task01EndDateGood));
+		assertTrue(task00.isFinished());
+		assertTrue(task01.isFinished());
+		assertTrue(task02.isAvailable());
+		assertFalse(project0.isProjectFinished());
+		assertTrue(task03.isAvailable());
 		
 	}
 	
 	@Test
 	public void flow6aMultiplePrereqFAILEDTest() {
+		ProjectView project0 = taskManager.getProjects().get(0);
+		TaskView task00 = project0.getTasks().get(0);
+		TaskView task01 = project0.getTasks().get(1);
+		TaskView task02 = project0.getTasks().get(2);
 
 		newTaskDependencies.add(Integer.valueOf(0));
 		newTaskDependencies.add(Integer.valueOf(1));
-		assertTrue(taskManager.createTask(0, "Test1", newTaskDur, newTaskDev, -1, newTaskDependencies));
-		assertTrue(taskManager.getTaskPrerequisitesFor(0, 3).contains(0));
-		assertTrue(taskManager.getTaskPrerequisitesFor(0, 3).contains(1));
+		assertTrue(taskManager.createTask(project0, "Test1", newTaskDur, newTaskDev, newTaskDependencies, -1));
+		TaskView task03 = project0.getTasks().get(3);
+		assertTrue(task03.getTaskPrerequisites().contains(task00));
+		assertTrue(task03.getTaskPrerequisites().contains(task01));
 		
 		// Step 1 is implicit
 		// Step 2 and 3 are handled in UI
 		// Step 4 and 5
-		assertTrue(taskManager.setTaskFinished(0, 0, task00StartDateGood, task00EndDateGood));
+		assertTrue(taskManager.setTaskFinished(project0, task00, task00StartDateGood, task00EndDateGood));
 		// Step 6
-		assertTrue(taskManager.getTaskStatus(0,0).equals("finished"));
-		assertTrue(taskManager.getTaskStatus(0,1).equals("available"));
-		assertTrue(taskManager.getTaskStatus(0,2).equals("unavailable"));
-		assertFalse(taskManager.isProjectFinished(0));
-		assertTrue(taskManager.getTaskStatus(0, 3).equals("unavailable"));
+		assertTrue(task00.isFinished());
+		assertTrue(task01.isAvailable());
+		assertTrue(task02.isUnavailable());
+		assertFalse(project0.isProjectFinished());
+		assertTrue(task03.isUnavailable());
 		
-		assertTrue(taskManager.setTaskFailed(0, 1, task01StartDateGood, task01EndDateGood));
-		assertTrue(taskManager.getTaskStatus(0,0).equals("finished"));
-		assertTrue(taskManager.getTaskStatus(0,1).equals("failed"));
-		assertTrue(taskManager.getTaskStatus(0,2).equals("unavailable"));
-		assertFalse(taskManager.isProjectFinished(0));
-		assertTrue(taskManager.getTaskStatus(0, 3).equals("unavailable"));
+		assertTrue(taskManager.setTaskFailed(project0, task01, task01StartDateGood, task01EndDateGood));
+		assertTrue(task00.isFinished());
+		assertTrue(task01.isFailed());
+		assertTrue(task02.isUnavailable());
+		assertFalse(project0.isProjectFinished());
+		assertTrue(task03.isUnavailable());
 		
 	}
 	
 	@Test
 	public void succesCaseMultiplePrereqFAILEDALTTest() {
+		ProjectView project0 = taskManager.getProjects().get(0);
+		TaskView task00 = project0.getTasks().get(0);
+		TaskView task01 = project0.getTasks().get(1);
+		TaskView task02 = project0.getTasks().get(2);
 
 		newTaskDependencies.add(Integer.valueOf(0));
 		newTaskDependencies.add(Integer.valueOf(1));
-		assertTrue(taskManager.createTask(0, "Test1", newTaskDur, newTaskDev, -1, newTaskDependencies));
-		assertTrue(taskManager.getTaskPrerequisitesFor(0, 3).contains(0));
-		assertTrue(taskManager.getTaskPrerequisitesFor(0, 3).contains(1));
+		assertTrue(taskManager.createTask(project0, "Test1", newTaskDur, newTaskDev, newTaskDependencies, -1));
+		TaskView task03 = project0.getTasks().get(3);
+		assertTrue(task03.getTaskPrerequisites().contains(task00));
+		assertTrue(task03.getTaskPrerequisites().contains(task01));
 		
 		// Step 1 is implicit
 		// Step 2 and 3 are handled in UI
 		// Step 4 and 5
-		assertTrue(taskManager.setTaskFinished(0, 0, task00StartDateGood, task00EndDateGood));
+		assertTrue(taskManager.setTaskFinished(project0, task00, task00StartDateGood, task00EndDateGood));
 		// Step 6
-		assertTrue(taskManager.getTaskStatus(0,0).equals("finished"));
-		assertTrue(taskManager.getTaskStatus(0,1).equals("available"));
-		assertTrue(taskManager.getTaskStatus(0,2).equals("unavailable"));
-		assertFalse(taskManager.isProjectFinished(0));
-		assertTrue(taskManager.getTaskStatus(0, 3).equals("unavailable"));
+		assertTrue(task00.isFinished());
+		assertTrue(task01.isAvailable());
+		assertTrue(task02.isUnavailable());
+		assertFalse(project0.isProjectFinished());
+		assertTrue(task03.isUnavailable());
 		
-		assertTrue(taskManager.setTaskFailed(0, 1, task01StartDateGood, task01EndDateGood));
-		assertTrue(taskManager.getTaskStatus(0,0).equals("finished"));
-		assertTrue(taskManager.getTaskStatus(0,1).equals("failed"));
-		assertTrue(taskManager.getTaskStatus(0,2).equals("unavailable"));
-		assertFalse(taskManager.isProjectFinished(0));
-		assertTrue(taskManager.getTaskStatus(0, 3).equals("unavailable"));
+		assertTrue(taskManager.setTaskFailed(project0, task01, task01StartDateGood, task01EndDateGood));
+		assertTrue(task00.isFinished());
+		assertTrue(task01.isFailed());
+		assertTrue(task02.isUnavailable());
+		assertFalse(project0.isProjectFinished());
+		assertTrue(task03.isUnavailable());
 		
-		assertTrue(taskManager.createTask(0, "Test2", newTaskDur, newTaskDev, 1, newTask2Dependencies));
-		assertTrue(taskManager.setTaskFinished(0, 4, task02StartDateGood, task02EndDateGood));
-		assertTrue(taskManager.getTaskStatus(0,0).equals("finished"));
-		assertTrue(taskManager.getTaskStatus(0,1).equals("failed"));
-		assertTrue(taskManager.getTaskStatus(0,2).equals("available"));
-		assertTrue(taskManager.getTaskStatus(0,4).equals("finished"));
-		assertFalse(taskManager.isProjectFinished(0));
+		assertTrue(taskManager.createTask(project0, "Test2", newTaskDur, newTaskDev, newTask2Dependencies, 1));
+		TaskView task04 = project0.getTasks().get(4); 
+		assertTrue(taskManager.setTaskFinished(project0, task04, task02StartDateGood, task02EndDateGood));
+		assertTrue(task00.isFinished());
+		assertTrue(task01.isFailed());
+		assertTrue(task02.isAvailable());
+		assertTrue(task04.isFinished());
+		assertFalse(project0.isProjectFinished());
 		
-		assertTrue(taskManager.getTaskStatus(0, 3).equals("available"));
+		assertTrue(task03.isAvailable());
 		
 	}
 

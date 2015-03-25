@@ -11,6 +11,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import taskMan.Facade;
+import taskMan.view.ProjectView;
+import taskMan.view.TaskView;
 import userInterface.IFacade;
 
 public class UseCase5AdvanceTimeTest {
@@ -48,78 +50,98 @@ public class UseCase5AdvanceTimeTest {
 		taskManager = new Facade(startDate);
 
 		assertTrue(taskManager.createProject("Test1", "testing 1", project0DueDate));
+		ProjectView project0 = taskManager.getProjects().get(0);
 
-
-		assertTrue(taskManager.createTask(0, "Design system", task00EstDur, task00Dev, -1, task00Dependencies));		// TASK 1
+		assertTrue(taskManager.createTask(project0, "Design system", task00EstDur, task00Dev, task00Dependencies, -1));		// TASK 1
 		task01Dependencies.add(Integer.valueOf(0));
-		assertTrue(taskManager.createTask(0, "Implement Native", task01EstDur, task01Dev, -1, task01Dependencies));		// TASK 2
+		assertTrue(taskManager.createTask(project0, "Implement Native", task01EstDur, task01Dev, task01Dependencies, -1));		// TASK 2
 		task02Dependencies.add(Integer.valueOf(1));
-		assertTrue(taskManager.createTask(0, "Test code", task02EstDur, task02Dev, -1, task02Dependencies));			// TASK 3
+		assertTrue(taskManager.createTask(project0, "Test code", task02EstDur, task02Dev, task02Dependencies, -1));			// TASK 3
 		task03Dependencies.add(Integer.valueOf(1));
-		assertTrue(taskManager.createTask(0, "Document code", task03EstDur, task03Dev, -1, task03Dependencies));		// TASK 4
+		assertTrue(taskManager.createTask(project0, "Document code", task03EstDur, task03Dev, task03Dependencies, -1));		// TASK 4
 
 	}
 
 	@Test
 	public void SuccesCaseNoChangesTest() {
-		// Step 1 and 2 are implicit
+		ProjectView project0 = taskManager.getProjects().get(0);
+		TaskView task00 = project0.getTasks().get(0);
+		TaskView task01 = project0.getTasks().get(1);
+		TaskView task02 = project0.getTasks().get(2);
+		TaskView task03 = project0.getTasks().get(3);
+		// Step 1 and 2 are implicit0
 		// Step 3 assumption: the user inputs CORRECT data
 		assertTrue(taskManager.advanceTimeTo(newDateNoChanges));
 		assertEquals(taskManager.getCurrentTime(),newDateNoChanges);
 		// Step 4
-		assertTrue(taskManager.getTaskStatus(0,0).equals("available"));
-		assertTrue(taskManager.getTaskStatus(0,1).equals("unavailable"));
-		assertTrue(taskManager.getTaskStatus(0,2).equals("unavailable"));
-		assertTrue(taskManager.getTaskStatus(0,3).equals("unavailable"));
+		assertTrue(task00.isAvailable());
+		assertTrue(task01.isUnavailable());
+		assertTrue(task02.isUnavailable());
+		assertTrue(task03.isUnavailable());
 	}
 
 	@Test
 	public void SuccesCaseWithChangesTest() {
+		ProjectView project0 = taskManager.getProjects().get(0);
+		TaskView task00 = project0.getTasks().get(0);
+		TaskView task01 = project0.getTasks().get(1);
+		TaskView task02 = project0.getTasks().get(2);
+		TaskView task03 = project0.getTasks().get(3);
 		// Step 1 and 2 are implicit
 		// Step 3 assumption: the user inputs CORRECT data
 		assertTrue(taskManager.advanceTimeTo(newDateWithChanges));
 		assertEquals(taskManager.getCurrentTime(),newDateWithChanges);
 		// Step 4
-		assertTrue(taskManager.getTaskStatus(0,0).equals("available"));
-		assertTrue(taskManager.getTaskStatus(0,1).equals("unavailable"));
-		assertTrue(taskManager.getTaskStatus(0,2).equals("unavailable"));
-		assertTrue(taskManager.getTaskStatus(0,3).equals("unavailable"));
+		assertTrue(task00.isAvailable());
+		assertTrue(task01.isUnavailable());
+		assertTrue(task02.isUnavailable());
+		assertTrue(task03.isUnavailable());
 	}
 
 	@Test
 	public void flow3aTest() {
+		ProjectView project0 = taskManager.getProjects().get(0);
+		TaskView task00 = project0.getTasks().get(0);
+		TaskView task01 = project0.getTasks().get(1);
+		TaskView task02 = project0.getTasks().get(2);
+		TaskView task03 = project0.getTasks().get(3);
 		// Step 1 and 2 are implicit
 		// Step 3 assumption: the user inputs NO data
 		assertFalse(taskManager.advanceTimeTo(newDateVeryBad1));
 		assertEquals(taskManager.getCurrentTime(),startDate);
 		// Step 4
-		assertTrue(taskManager.getTaskStatus(0,0).equals("available"));
-		assertTrue(taskManager.getTaskStatus(0,1).equals("unavailable"));
-		assertTrue(taskManager.getTaskStatus(0,2).equals("unavailable"));
-		assertTrue(taskManager.getTaskStatus(0,3).equals("unavailable"));
+		assertTrue(task00.isAvailable());
+		assertTrue(task01.isUnavailable());
+		assertTrue(task02.isUnavailable());
+		assertTrue(task03.isUnavailable());
 	}
 
 	@Test
 	public void flow4aTest() {
+		ProjectView project0 = taskManager.getProjects().get(0);
+		TaskView task00 = project0.getTasks().get(0);
+		TaskView task01 = project0.getTasks().get(1);
+		TaskView task02 = project0.getTasks().get(2);
+		TaskView task03 = project0.getTasks().get(3);
 		// Step 1 and 2 are implicit
 		// Step 3 assumption: the user inputs INVALID data
 		assertFalse(taskManager.advanceTimeTo(newDateVeryBad2));
 		assertEquals(taskManager.getCurrentTime(),startDate);
 		// Step 4
-		assertTrue(taskManager.getTaskStatus(0,0).equals("available"));
-		assertTrue(taskManager.getTaskStatus(0,1).equals("unavailable"));
-		assertTrue(taskManager.getTaskStatus(0,2).equals("unavailable"));
-		assertTrue(taskManager.getTaskStatus(0,3).equals("unavailable"));
+		assertTrue(task00.isAvailable());
+		assertTrue(task01.isUnavailable());
+		assertTrue(task02.isUnavailable());
+		assertTrue(task03.isUnavailable());
 
 		//-----------------------------------------------------------
 
 		assertFalse(taskManager.advanceTimeTo(newDateVeryBad3));
 		assertEquals(taskManager.getCurrentTime(),startDate);
 		// Step 4
-		assertTrue(taskManager.getTaskStatus(0,0).equals("available"));
-		assertTrue(taskManager.getTaskStatus(0,1).equals("unavailable"));
-		assertTrue(taskManager.getTaskStatus(0,2).equals("unavailable"));
-		assertTrue(taskManager.getTaskStatus(0,3).equals("unavailable"));
+		assertTrue(task00.isAvailable());
+		assertTrue(task01.isUnavailable());
+		assertTrue(task02.isUnavailable());
+		assertTrue(task03.isUnavailable());
 	}
 
 }
