@@ -1,8 +1,10 @@
 package taskMan.state;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import taskMan.Task;
+import taskMan.util.Prerequisite;
 
 public class Failed implements TaskStatus {
 	
@@ -13,7 +15,7 @@ public class Failed implements TaskStatus {
 	}
 
 	@Override
-	public boolean shouldBecomeAvailable(int numberOfPendingPrerequisites) {
+	public boolean shouldBecomeAvailable(List<Prerequisite> preList) {
 		return false;
 	}
 

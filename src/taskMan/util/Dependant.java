@@ -6,9 +6,9 @@ package taskMan.util;
  * @author 
  *
  */
-public interface DependentTask {
+public interface Dependant {
 	
-	public boolean updateDependency(); 
+	public boolean updateDependency(Prerequisite preTask); 
 	// TODO kan ook "heyDependant,I'mFinishedSoGoAhead()" noemen
 
 }

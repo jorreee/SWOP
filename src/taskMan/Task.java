@@ -6,11 +6,11 @@ import java.util.List;
 
 import taskMan.state.Available;
 import taskMan.state.Failed;
-import taskMan.state.Finished;
+import taskMan.state.FinishedTask;
 import taskMan.state.TaskStatus;
 import taskMan.state.Unavailable;
-import taskMan.util.DependentTask;
-import taskMan.util.PrerequisiteTask;
+import taskMan.util.Dependant;
+import taskMan.util.Prerequisite;
 import taskMan.util.TimeSpan;
 
 /**
@@ -22,7 +22,7 @@ import taskMan.util.TimeSpan;
  * @author	Tim Van den Broecke, Joran Van de Woestijne, Vincent Van Gestel, Eli Vangrieken
  *
  */
-public class Task implements DependentTask, PrerequisiteTask {
+public class Task implements Dependant, Prerequisite {
 
 	private final int taskID;
 	private final String description;
@@ -33,15 +33,15 @@ public class Task implements DependentTask, PrerequisiteTask {
 	private LocalDateTime endTime;
 	
 	private final Task alternativeFor; //TODO mag maar één keer worden geSet
-	private ArrayList<DependentTask> dependants;
+	private ArrayList<Dependant> dependants;
+	private final ArrayList<Prerequisite> prerequisites;
+	private ArrayList<Prerequisite> unfinishedPrerequisites;
 
 	private final TaskStatus available;
 	private final TaskStatus unavailable;
 	private final TaskStatus finished;
 	private final TaskStatus failed;
 	private TaskStatus state;
-	
-	private int numberOfPendingPrerequisites;
 	
 	/**
 	 * Create a new Task.
@@ -93,16 +93,19 @@ public class Task implements DependentTask, PrerequisiteTask {
 
 		available = new Available(this);
 		unavailable = new Unavailable(this);
-		finished = new Finished(this);
+		finished = new FinishedTask(this);
 		failed = new Failed(this);
 		
 		setUnavailable();
 		
-		this.numberOfPendingPrerequisites = prerequisiteTasks.size(); 
+		this.prerequisites = new ArrayList<Prerequisite>();
 		
 		for(Task t : prerequisiteTasks) {
 			 t.register(this);
+			 this.prerequisites.add(t);
+			 this.unfinishedPrerequisites.add(t);
 		}
+		
 		
 	}
 
@@ -144,8 +147,10 @@ public class Task implements DependentTask, PrerequisiteTask {
 				alternativeFor);
 		
 		if(taskStatus.equalsIgnoreCase("failed")) {
+			setAvailable();
 			setTaskFailed(beginTime, endTime);
 		} else if(taskStatus.equalsIgnoreCase("finished")) {
+			setAvailable();
 			setTaskFinished(beginTime, endTime);
 		} else {
 			throw new IllegalArgumentException(
@@ -160,12 +165,15 @@ public class Task implements DependentTask, PrerequisiteTask {
 	}
 
 	@Override
-	public boolean register(DependentTask t) {
+	public boolean register(Dependant t) {
+		if(!isValidDependant(t)) {
+			return false;
+		}
 		return dependants.add(t);
 	}
 
 	@Override
-	public boolean unregister(DependentTask t) {
+	public boolean unregister(Dependant t) {
 		if(!isValidDependant(t)) {
 			return false;
 		}
@@ -177,22 +185,26 @@ public class Task implements DependentTask, PrerequisiteTask {
 		return true;
 	}
 	
-	private boolean isValidDependant(DependentTask t) {
+	private boolean isValidDependant(Dependant t) {
 		return t != this;
 	}
 
 	@Override
 	public boolean notifyDependants() {
-		for(DependentTask t : dependants) {
-			t.updateDependency();
+		for(Dependant t : dependants) {
+			t.updateDependency(this);
 		}
 		return true;
 	}
 
 	@Override
-	public boolean updateDependency() {
-		numberOfPendingPrerequisites = numberOfPendingPrerequisites - 1;
-		if(state.shouldBecomeAvailable(numberOfPendingPrerequisites)) {
+	public boolean updateDependency(Prerequisite preTask) {
+		int preIndex = prerequisites.indexOf(preTask);
+		if(preIndex < 0) {
+			return false;
+		}
+		prerequisites.remove(preIndex);
+		if(state.shouldBecomeAvailable(prerequisites)) {
 			setAvailable();
 		}
 		return true;
@@ -374,6 +386,14 @@ public class Task implements DependentTask, PrerequisiteTask {
 	public TimeSpan getMaxDelayChain() {
 		//TODO te doen
 		return null;
+	}
+	
+	public List<Task> getTaskPrerequisites() {
+		ArrayList<Task> preTasks = new ArrayList<Task>();
+		for(Prerequisite pt : prerequisites) {
+			preTasks.add((Task) pt);
+		}
+		return preTasks;
 	}
 	
 //	/**

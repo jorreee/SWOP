@@ -1,19 +1,21 @@
 package taskMan.state;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import taskMan.Task;
+import taskMan.util.Prerequisite;
 
-public class Finished implements TaskStatus {
+public class FinishedTask implements TaskStatus {
 
 	private Task task;
 
-	public Finished(Task t) {
+	public FinishedTask(Task t) {
 		task = t;
 	}
 
 	@Override
-	public boolean shouldBecomeAvailable(int numberOfPendingPrerequisites) {
+	public boolean shouldBecomeAvailable(List<Prerequisite> preList) {
 		return false;
 	}
 

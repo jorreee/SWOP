@@ -1,8 +1,10 @@
 package taskMan.state;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import taskMan.Task;
+import taskMan.util.Prerequisite;
 
 public class Unavailable implements TaskStatus {
 
@@ -13,11 +15,9 @@ public class Unavailable implements TaskStatus {
 	}
 
 	@Override
-	public boolean shouldBecomeAvailable(int numberOfPendingPrerequisites) {
-		if(numberOfPendingPrerequisites == 0) {
+	public boolean shouldBecomeAvailable(List<Prerequisite> preList) {
+		if(preList.size() == 0) {
 			return true;
-		} else if(numberOfPendingPrerequisites < 0) {
-			System.out.println("#### ERROR: te veel dependencies afgehandeld");
 		}
 		return false;
 	}
