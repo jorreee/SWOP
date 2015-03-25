@@ -80,7 +80,7 @@ public class Task implements DependentTask, PrerequisiteTask {
 //		this.extraTime = extraTime;
 		this.alternativeFor = alternativeFor;
 		for(Task t : prerequisiteTasks) {
-			// t.register(this);
+			 t.register(this);
 		}
 		this.numberOfPrerequisites = 0; //TODO change!
 	}
@@ -136,16 +136,24 @@ public class Task implements DependentTask, PrerequisiteTask {
 
 	@Override
 	public boolean register(DependentTask t) {
-		// TODO check op validity
 		return dependants.add(t);
 	}
 
 	@Override
 	public boolean unregister(DependentTask t) {
-		// TODO check op validity
+		if(!isValidDependant(t)) {
+			return false;
+		}
 		int depIndex = dependants.indexOf(t);
+		if(depIndex < 0) {
+			return false;
+		}
 		dependants.remove(depIndex);
 		return true;
+	}
+	
+	private boolean isValidDependant(DependentTask t) {
+		return t != this;
 	}
 
 	@Override
