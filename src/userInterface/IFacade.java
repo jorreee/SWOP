@@ -22,6 +22,10 @@ public interface IFacade {
 	public boolean setTaskFailed(ProjectView projectID, TaskView taskID, LocalDateTime startTime, LocalDateTime endTime);
 	
 	public List<ProjectView> getProjects();
+
+	public void storeInMemento();
+	public void revertFromMemento();
+	public void discardMemento();
 	
 	/*
 	public boolean createTask(int projectID, String description, int estimatedDuration, int acceptableDeviation, String taskStatus, Integer alternativeFor, List<Integer> prerequisiteTasks, LocalDateTime startTime, LocalDateTime endTime);

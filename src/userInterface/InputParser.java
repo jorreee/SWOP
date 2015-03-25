@@ -10,6 +10,7 @@ import userInterface.requests.HelpRequest;
 import userInterface.requests.InvalidRequest;
 import userInterface.requests.Request;
 import userInterface.requests.ShowProjectsRequest;
+import userInterface.requests.SimulationRequest;
 import userInterface.requests.UpdateTaskStatusRequest;
 
 public class InputParser {
@@ -52,6 +53,8 @@ public class InputParser {
 				}
 			case "show"		: 
 				return new ShowProjectsRequest(facade, inputReader);
+			case "simulate" :
+				return new SimulationRequest(facade, inputReader);
 			default	: 
 				return new InvalidRequest(facade, inputReader);
 			}
