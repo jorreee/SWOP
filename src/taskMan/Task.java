@@ -65,6 +65,7 @@ public class Task implements DependentTask, PrerequisiteTask {
 			int acceptableDeviation, 
 			List<Task> prerequisiteTasks,
 			Task alternativeFor) throws IllegalArgumentException {
+		
 		if(!isValidTaskID(taskID)) {
 			throw new IllegalArgumentException("Invalid task ID");
 		}
@@ -180,15 +181,12 @@ public class Task implements DependentTask, PrerequisiteTask {
 		return t != this;
 	}
 
-	// TODO als failt, nog GEEN update
 	@Override
 	public boolean notifyDependants() {
-		// TODO Check op validity?
-		boolean goingGood = true;
 		for(DependentTask t : dependants) {
-			goingGood = goingGood && t.updateDependency();
+			t.updateDependency();
 		}
-		return goingGood;
+		return true;
 	}
 
 	@Override
@@ -255,7 +253,7 @@ public class Task implements DependentTask, PrerequisiteTask {
 	 * @throws 	IllegalArgumentException 
 	 * 			When the start time of the task is after the time given.
 	 */
-	public TimeSpan getTimeElapsed(LocalDateTime currentTime) {
+	public TimeSpan getTimeSpent(LocalDateTime currentTime) {
 //		if(beginTime == null) { //TODO geen argument meer ?
 //			throw new IllegalArgumentException("Project not yet started");
 //		}
@@ -267,22 +265,22 @@ public class Task implements DependentTask, PrerequisiteTask {
 				currentTime); //TODO kan ook variabele in Task zijn?
 		if(alternativeFor != null) {
 			currentTimeSpent = currentTimeSpent
-								.add(alternativeFor.getTimeElapsed(currentTime));
+								.add(alternativeFor.getTimeSpent(currentTime));
 		}
 		return currentTimeSpent;
 	}
 
-//	/**
-//	 * Returns the time elapsed since the start of the project and 
-//	 * the end of the project. 
-//	 * 
-//	 * @return 	time elapsed between the start time and end time
-//	 * @throws 	IllegalStateException 
-//	 * 			whenever the end time is not yet determined
-//	 */
-//	public TimeSpan getTimeSpent() {
-//		return getTimeElapsed(endTime);
-//	}
+	/**
+	 * Returns the time elapsed since the start of the project and 
+	 * the end of the project. 
+	 * 
+	 * @return 	time elapsed between the start time and end time
+	 * @throws 	IllegalStateException 
+	 * 			whenever the end time is not yet determined
+	 */
+	public TimeSpan getTimeSpent() {
+		return getTimeSpent(endTime);
+	}
 
 	/**
 	 * Returns the start time of the Task.
@@ -305,7 +303,7 @@ public class Task implements DependentTask, PrerequisiteTask {
 		if(beginTime==null) {
 			throw new IllegalArgumentException("The new beginTime is null");
 		}
-		if(this.beginTime!=null) {
+		if(getBeginTime()!=null) {
 			throw new IllegalArgumentException("The beginTime is already set");
 		}
 		this.beginTime = beginTime;
@@ -320,23 +318,23 @@ public class Task implements DependentTask, PrerequisiteTask {
 		return endTime;
 	}
 
-//	/**
-//	 * Sets the end time of Task.
-//	 * 
-//	 * @param 	endTime
-//	 * 			The new end time of the Task.
-//	 * @throws	IllegalArgumentException
-//	 * 			If the new end time is null or the old end time is already set. 
-//	 */
-//	public void setEndTime(LocalDateTime endTime) throws IllegalArgumentException {
-//		if(endTime==null) {
-//			throw new IllegalArgumentException("The new endTime is null");
-//		}
-//		if(getEndTime()!=null) {
-//			throw new IllegalArgumentException("The endtime is already set");
-//		}
-//		this.endTime = endTime;
-//	}
+	/**
+	 * Sets the end time of Task.
+	 * 
+	 * @param 	endTime
+	 * 			The new end time of the Task.
+	 * @throws	IllegalArgumentException
+	 * 			If the new end time is null or the old end time is already set. 
+	 */
+	public void setEndTime(LocalDateTime endTime) throws IllegalArgumentException {
+		if(endTime==null) {
+			throw new IllegalArgumentException("The new endTime is null");
+		}
+		if(getEndTime()!=null) {
+			throw new IllegalArgumentException("The endtime is already set");
+		}
+		this.endTime = endTime;
+	}
 
 	/**
 	 * Returns the description of the Task.
@@ -369,9 +367,9 @@ public class Task implements DependentTask, PrerequisiteTask {
 		return alternativeFor;
 	}
 	
-	public ArrayList<Task> getTaskPrerequisites() {
-		return null; //TODO change!
-	}
+//	public ArrayList<Task> getTaskPrerequisites() {
+//		return null; //TODO niet meer nodig
+//	}
 
 	public TimeSpan getMaxDelayChain() {
 		//TODO te doen
@@ -421,7 +419,6 @@ public class Task implements DependentTask, PrerequisiteTask {
 	 * @return	The status of the Task as a String.
 	 */
 	public String getStatus(){
-		//TODO state.asString(); hehe ass
 		return state.toString();
 //		TaskStatus stat = this.getTaskStatus();
 //		String status ="";
@@ -466,11 +463,17 @@ public class Task implements DependentTask, PrerequisiteTask {
 	 */
 	public boolean setTaskFinished(LocalDateTime beginTime,
 			LocalDateTime endTime) {
+		
 		if(state.canFinish(beginTime, endTime)) {
-			this.beginTime = beginTime;
-			this.endTime = endTime;
+			
+			setBeginTime(beginTime);
+			setEndTime(endTime);
 			setFinished();
+			
+			notifyDependants();
+			
 			return true;
+			
 		}
 		return false;
 	}
@@ -487,8 +490,8 @@ public class Task implements DependentTask, PrerequisiteTask {
 	public boolean setTaskFailed(LocalDateTime beginTime,
 			LocalDateTime endTime) {
 		if(state.canFinish(beginTime, endTime)) {
-			this.beginTime = beginTime;
-			this.endTime = endTime;
+			setBeginTime(beginTime);
+			setEndTime(endTime);
 			setFailed();
 			return true;
 		}
@@ -627,7 +630,7 @@ public class Task implements DependentTask, PrerequisiteTask {
 	public boolean isOnTime(){
 		TimeSpan acceptableSpan = this.getEstimatedDuration();
 		if(isFinished() || isFailed()) {
-			return this.getTimeElapsed(this.getEndTime()).isShorter(acceptableSpan);
+			return this.getTimeSpent(this.getEndTime()).isShorter(acceptableSpan);
 		}
 		return true;
 	}
@@ -641,7 +644,7 @@ public class Task implements DependentTask, PrerequisiteTask {
 	public boolean isUnacceptableOverdue() {
 		TimeSpan acceptableSpan = this.getEstimatedDuration().getAcceptableSpan(this.getAcceptableDeviation());
 		if(isFinished() || isFailed()) {
-			return this.getTimeElapsed(this.getEndTime()).isLonger(acceptableSpan);
+			return this.getTimeSpent(this.getEndTime()).isLonger(acceptableSpan);
 		}
 		return false;
 	}
@@ -659,4 +662,5 @@ public class Task implements DependentTask, PrerequisiteTask {
 		}
 		return 0;
 	}
+	
 }
