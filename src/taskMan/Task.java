@@ -139,7 +139,7 @@ public class Task implements DependentTask, PrerequisiteTask {
 		for(DependentTask t : dependants) {
 			goingGood = goingGood && t.update();
 		}
-		return false;
+		return goingGood;
 	}
 
 	// TODO als failt, nog GEEN update. Als vervanger Finisht, laat dan de 
