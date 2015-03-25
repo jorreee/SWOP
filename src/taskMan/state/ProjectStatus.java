@@ -1,7 +1,7 @@
 package taskMan.state;
 
-public enum ProjectStatus {
+public interface ProjectStatus {
 	
-	ONGOING, FINISHED
+	
 	
 }
