@@ -37,7 +37,7 @@ public class Facade implements IFacade {
 	@Override
 	public boolean createTask(ProjectView project, String description,
 			int estimatedDuration, int acceptableDeviation,
-			List<Integer> prerequisiteTasks, int alternativeFor) {
+			List<TaskView> prerequisiteTasks, TaskView alternativeFor) {
 		return taskMan.createTask(project, description, estimatedDuration, acceptableDeviation, prerequisiteTasks, alternativeFor);
 	}
 

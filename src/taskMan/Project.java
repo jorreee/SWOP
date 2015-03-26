@@ -79,6 +79,50 @@ public class Project implements Dependant {
 		setOngoing();
 
 	}
+	
+	public boolean createRawTask(String description, 
+			int estimatedDuration, 
+			int acceptableDeviation, 
+			List<Integer> prerequisiteTasks, 
+			int alternativeFor, 
+			String taskStatus,
+			LocalDateTime startTime, 
+			LocalDateTime endTime) {
+		
+		List<TaskView> prereqTaskViews = new ArrayList<TaskView>();
+		TaskView altTaskView = null;
+		
+		// FIND prereqs
+		for(Integer prereqID : prerequisiteTasks) {
+			Task t = findTask(prereqID);
+			if(t != null) {
+				prereqTaskViews.add(new TaskView(t));
+			}
+			
+		}
+		// FIND alt
+		if(alternativeFor != -1) {
+			altTaskView = new TaskView(findTask(alternativeFor));
+		}
+		
+		return createTask(description, estimatedDuration, acceptableDeviation,
+				prereqTaskViews, altTaskView, taskStatus, startTime, endTime);
+	}
+	
+	/**
+	 * Find a specific task in this project by id
+	 * 
+	 * @param taskID
+	 *            the ID of the task to look for
+	 * @return The task with the specified ID or null when no task is found
+	 */
+	private Task findTask(int taskID) {
+		for(Task t : taskList) {
+			if(t.getTaskID() == taskID)
+				return t;
+		}
+		return null;
+	}
 
 	/**
 	 * Creates a new Task with a status of failed or finished.
@@ -102,11 +146,11 @@ public class Project implements Dependant {
 	 * @return	True if and only the creation of a Task with a status
 	 * 			of failed or finished was successful.
 	 */
-	public boolean createRawTask(String description, 
+	public boolean createTask(String description, 
 						int estimatedDuration, 
 						int acceptableDeviation, 
-						List<Integer> prerequisiteTasks, 
-						int alternativeFor, 
+						List<TaskView> prerequisiteTasks, 
+						TaskView alternativeFor, 
 						String taskStatus,
 						LocalDateTime startTime, 
 						LocalDateTime endTime) {
@@ -129,7 +173,7 @@ public class Project implements Dependant {
 		if(!isValidTaskView(alternativeFor)) {
 			return false;
 		}
-		Task altFor = taskList.get(alternativeFor);
+		Task altFor = unwrapTaskView(alternativeFor);
 		
 		ArrayList<Task> prereqTasks = new ArrayList<Task>();
 		for(TaskView t : prerequisiteTasks) {
@@ -205,10 +249,10 @@ public class Project implements Dependant {
 	public boolean createTask(String description, 
 			int estimatedDuration, 
 			int acceptableDeviation,
-			List<Integer> prerequisiteTasks,
-			int alternativeFor) {
+			List<TaskView> prerequisiteTasks,
+			TaskView alternativeFor) {
 		
-		return createRawTask(description, 
+		return createTask(description, 
 				estimatedDuration, 
 				acceptableDeviation, 
 				prerequisiteTasks,

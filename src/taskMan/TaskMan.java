@@ -205,8 +205,8 @@ public class TaskMan {
 			String description, 
 			int estimatedDuration, 
 			int acceptableDeviation,
-			List<Integer> prerequisiteTasks, 
-			int alternativeFor) {
+			List<TaskView> prerequisiteTasks, 
+			TaskView alternativeFor) {
 		
 		Project p = unwrapProjectView(project);
 		if(p == null) {
