@@ -33,10 +33,10 @@ public class UseCase5AdvanceTimeTest {
 			task01Dev = 50,
 			task02Dev = 0,
 			task03Dev = 0;
-	private final ArrayList<Integer> task00Dependencies = new ArrayList<Integer>(),
-			task01Dependencies = new ArrayList<Integer>(),
-			task02Dependencies = new ArrayList<Integer>(),
-			task03Dependencies = new ArrayList<Integer>();
+	private final ArrayList<TaskView> task00Dependencies = new ArrayList<TaskView>(),
+			task01Dependencies = new ArrayList<TaskView>(),
+			task02Dependencies = new ArrayList<TaskView>(),
+			task03Dependencies = new ArrayList<TaskView>();
 
 	/**
 	 * - project 0 START 9 feb 8u DUE 13 feb midnight
@@ -52,13 +52,13 @@ public class UseCase5AdvanceTimeTest {
 		assertTrue(taskManager.createProject("Test1", "testing 1", project0DueDate));
 		ProjectView project0 = taskManager.getProjects().get(0);
 
-		assertTrue(taskManager.createTask(project0, "Design system", task00EstDur, task00Dev, task00Dependencies, -1));		// TASK 1
-		task01Dependencies.add(Integer.valueOf(0));
-		assertTrue(taskManager.createTask(project0, "Implement Native", task01EstDur, task01Dev, task01Dependencies, -1));		// TASK 2
-		task02Dependencies.add(Integer.valueOf(1));
-		assertTrue(taskManager.createTask(project0, "Test code", task02EstDur, task02Dev, task02Dependencies, -1));			// TASK 3
-		task03Dependencies.add(Integer.valueOf(1));
-		assertTrue(taskManager.createTask(project0, "Document code", task03EstDur, task03Dev, task03Dependencies, -1));		// TASK 4
+		assertTrue(taskManager.createTask(project0, "Design system", task00EstDur, task00Dev, task00Dependencies, null));		// TASK 1
+		task01Dependencies.add(project0.getTasks().get(0));
+		assertTrue(taskManager.createTask(project0, "Implement Native", task01EstDur, task01Dev, task01Dependencies, null));		// TASK 2
+		task02Dependencies.add(project0.getTasks().get(1));
+		assertTrue(taskManager.createTask(project0, "Test code", task02EstDur, task02Dev, task02Dependencies, null));			// TASK 3
+		task03Dependencies.add(project0.getTasks().get(1));
+		assertTrue(taskManager.createTask(project0, "Document code", task03EstDur, task03Dev, task03Dependencies, null));		// TASK 4
 
 	}
 
