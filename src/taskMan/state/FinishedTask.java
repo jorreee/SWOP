@@ -52,11 +52,6 @@ public class FinishedTask implements TaskStatus {
 	}
 
 	@Override
-	public List<Task> adoptDependants() {
-		return new ArrayList<Task>();
-	}
-
-	@Override
 	public boolean register(Dependant d) {
 		task.addDependant(d);
 		task.notifyDependants();

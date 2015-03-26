@@ -607,6 +607,12 @@ public class TaskMan {
 	 * 			false if the project ID isn't a valid one
 	 */
 	public boolean setTaskFinished(ProjectView project, TaskView taskID, LocalDateTime startTime, LocalDateTime endTime) {
+		if(startTime == null || endTime == null) {
+			return false;
+		}
+		if(endTime.isAfter(currentTime)) {
+			return false;
+		}
 		Project p = unwrapProjectView(project);
 		if(p == null) {
 			return false;
@@ -632,6 +638,12 @@ public class TaskMan {
 	 * 			False if the end time is null or the end time comes after the current time.
 	 */
 	public boolean setTaskFailed(ProjectView project, TaskView taskID, LocalDateTime startTime, LocalDateTime endTime) {
+		if(startTime == null || endTime == null) {
+			return false;
+		}
+		if(endTime.isAfter(currentTime)) {
+			return false;
+		}
 		Project p = unwrapProjectView(project);
 		if(p == null) {
 			return false;

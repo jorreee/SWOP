@@ -76,11 +76,6 @@ public class Available implements TaskStatus {
 	}
 
 	@Override
-	public List<Task> adoptDependants() {
-		return new ArrayList<Task>();
-	}
-
-	@Override
 	public boolean register(Dependant d) {
 		task.addDependant(d);
 		return true;

@@ -29,7 +29,7 @@ public class UseCase3CreateTaskTest {
 			workDate = LocalDateTime.of(2015, 2, 9, 16, 0),
 			altTaskEndDate = LocalDateTime.of(2015, 2, 9, 10, 0),
 			task01StartDateGood = task00EndDateGood,
-			task01EndDateGood = LocalDateTime.of(2015, 2, 10, 8, 0);
+			task01EndDateGood = LocalDateTime.of(2015, 2, 9, 16, 0);
 	private final int task00EstDur = 8*60,
 			task01EstDur = 16*60,
 			newTaskDur = 5*60;

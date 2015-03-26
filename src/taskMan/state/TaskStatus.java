@@ -12,7 +12,6 @@ public interface TaskStatus {
 	public boolean shouldBecomeAvailable(List<Prerequisite> preList);
 	public boolean canFinish(LocalDateTime beginTime, LocalDateTime endTime);
 	public boolean canFail(LocalDateTime beginTime, LocalDateTime endTime);
-	public List<Task> adoptDependants();
 	public boolean register(Dependant d);
 	public boolean isAvailable();
 	public boolean isUnavailable();

@@ -426,16 +426,12 @@ public class Task implements Dependant, Prerequisite {
 		return preTasks;
 	}
 	
-	public List<Task> getDependants() {
-		ArrayList<Task> deps = new ArrayList<Task>();
+	public List<Dependant> getDependants() {
+		ArrayList<Dependant> deps = new ArrayList<Dependant>();
 		for(Dependant dt : dependants) {
-			deps.add((Task) dt);
+			deps.add(dt);
 		}
 		return deps;
-	}
-	
-	public List<Task> unregisterDependants() {
-		return state.adoptDependants();
 	}
 	
 //	/**

@@ -310,8 +310,9 @@ public class Project implements Dependant {
 		this.state = ongoing;
 	}
 	
-	private void setFinished() {
+	private void setFinished(LocalDateTime endTime) {
 		this.state = finished;
+		this.endTime = endTime;
 	}
 
 //	/**
@@ -366,7 +367,7 @@ public class Project implements Dependant {
 	public boolean updateDependency(Prerequisite preTask) {
 		markTaskFinished((Task) preTask);
 		if(state.shouldFinish(unfinishedTaskList)) {
-			setFinished();
+			setFinished(((Task) preTask).getEndTime() );
 		}
 		return true;
 	}
@@ -855,11 +856,14 @@ public class Project implements Dependant {
 		
 	}
 	
-	public boolean setTaskFinished(TaskView t, LocalDateTime beginTime, LocalDateTime endTime) {
+	public boolean setTaskFinished(TaskView t, LocalDateTime startTime, LocalDateTime endTime) {
 		if(!isValidTaskView(t)) {
 			return false;
 		}
-		return unwrapTaskView(t).setTaskFinished(beginTime, endTime);
+		if(startTime.isBefore(creationTime)) {
+			return false;
+		}
+		return unwrapTaskView(t).setTaskFinished(startTime, endTime);
 	}
 	
 	private boolean markTaskFinished(Task task) {
@@ -892,6 +896,9 @@ public class Project implements Dependant {
 	 */
 	public boolean setTaskFailed(TaskView t, LocalDateTime startTime, LocalDateTime endTime) {
 		if(!isValidTaskView(t)) {
+			return false;
+		}
+		if(startTime.isBefore(creationTime)) {
 			return false;
 		}
 		return unwrapTaskView(t).setTaskFailed(startTime, endTime);

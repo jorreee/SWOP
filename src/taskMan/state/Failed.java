@@ -56,15 +56,6 @@ public class Failed implements TaskStatus {
 	}
 
 	@Override
-	public List<Task> adoptDependants() {
-		List<Task> deps = task.getDependants();
-		for(Task t : deps) {
-			t.unregister(task);
-		}
-		return deps;
-	}
-
-	@Override
 	public boolean register(Dependant d) {
 		task.addDependant(d);
 		return true;
