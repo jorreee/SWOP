@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import taskMan.view.ProjectView;
+import taskMan.view.TaskView;
 import userInterface.IFacade;
 
 public class CreateTaskRequest extends Request {
@@ -39,6 +40,10 @@ public class CreateTaskRequest extends Request {
 					if(input[i].equals("quit"))
 						return quit();
 				}
+
+				ProjectView project = projects.get(Integer.parseInt(input[0]));
+				List<TaskView> tasks = project.getTasks();
+				
 				// System updates details
 				ArrayList<Integer> prereqList = new ArrayList<>();
 				for(String prereq : input[5].split(" ")) {

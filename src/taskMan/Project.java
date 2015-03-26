@@ -23,7 +23,6 @@ import taskMan.view.TaskView;
  * @author Tim Van Den Broecke, Joran Van de Woestijne, Vincent Van Gestel and
  *         Eli Vangrieken
  */
-//TODO weg met ID
 public class Project implements Dependant {
 
 	private final int projectID;
@@ -103,11 +102,11 @@ public class Project implements Dependant {
 	 * @return	True if and only the creation of a Task with a status
 	 * 			of failed or finished was successful.
 	 */
-	public boolean createTask(String description, 
+	public boolean createRawTask(String description, 
 						int estimatedDuration, 
 						int acceptableDeviation, 
-						List<TaskView> prerequisiteTasks, 
-						TaskView alternativeFor, 
+						List<Integer> prerequisiteTasks, 
+						int alternativeFor, 
 						String taskStatus,
 						LocalDateTime startTime, 
 						LocalDateTime endTime) {
@@ -130,7 +129,7 @@ public class Project implements Dependant {
 		if(!isValidTaskView(alternativeFor)) {
 			return false;
 		}
-		Task altFor = unwrapTaskView(alternativeFor);
+		Task altFor = taskList.get(alternativeFor);
 		
 		ArrayList<Task> prereqTasks = new ArrayList<Task>();
 		for(TaskView t : prerequisiteTasks) {
@@ -206,10 +205,10 @@ public class Project implements Dependant {
 	public boolean createTask(String description, 
 			int estimatedDuration, 
 			int acceptableDeviation,
-			List<TaskView> prerequisiteTasks,
-			TaskView alternativeFor) {
+			List<Integer> prerequisiteTasks,
+			int alternativeFor) {
 		
-		return createTask(description, 
+		return createRawTask(description, 
 				estimatedDuration, 
 				acceptableDeviation, 
 				prerequisiteTasks,
@@ -437,9 +436,12 @@ public class Project implements Dependant {
 	 * 
 	 * @return	A list of Tasks.
 	 */
-	//TODO TaskViews hier aanmaken of pas in ProjectView?
-	public ArrayList<Task> getTaskList(){
-		return taskList;
+	public List<TaskView> getTasks(){
+		ArrayList<TaskView> tasks = new ArrayList<TaskView>();
+		for(Task t : taskList) {
+			tasks.add(new TaskView(t));
+		}
+		return tasks;
 	}
 
 //	/** // TODO remove this
@@ -583,8 +585,22 @@ public class Project implements Dependant {
 	 * 
 	 * @return	a list of the availabke tasks' id's
 	 */
-	//TODO TaskViews hier aanmaken of pas in ProjectView?
-	public ArrayList<Task> getAvailableTasks() {
+	public ArrayList<TaskView> getAvailableTaskViews() {
+		ArrayList<TaskView> availableTasks = new ArrayList<TaskView>();
+		for(Task task : taskList) {
+			if(task.isAvailable()) {
+				availableTasks.add(new TaskView(task));
+			}
+		}
+		return availableTasks;
+	}
+	
+	/**
+	 * Returns a list of the id's of the available tasks of the project
+	 * 
+	 * @return	a list of the availabke tasks' id's
+	 */
+	private ArrayList<Task> getAvailableTasks() {
 		ArrayList<Task> availableTasks = new ArrayList<Task>();
 		for(Task task : taskList) {
 			if(task.isAvailable()) {
