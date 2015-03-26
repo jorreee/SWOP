@@ -4,8 +4,13 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import taskMan.util.DependentTask;
-import taskMan.util.PrerequisiteTask;
+import taskMan.state.Available;
+import taskMan.state.Failed;
+import taskMan.state.FinishedTask;
+import taskMan.state.TaskStatus;
+import taskMan.state.Unavailable;
+import taskMan.util.Dependant;
+import taskMan.util.Prerequisite;
 import taskMan.util.TimeSpan;
 
 /**
@@ -17,7 +22,7 @@ import taskMan.util.TimeSpan;
  * @author	Tim Van den Broecke, Joran Van de Woestijne, Vincent Van Gestel, Eli Vangrieken
  *
  */
-public class Task implements DependentTask, PrerequisiteTask {
+public class Task implements Dependant, Prerequisite {
 
 	private final int taskID;
 	private final String description;
@@ -26,13 +31,18 @@ public class Task implements DependentTask, PrerequisiteTask {
 	
 	private LocalDateTime beginTime;
 	private LocalDateTime endTime;
-
-	private TaskStatus taskStatus;
 	
 	private final Task alternativeFor; //TODO mag maar één keer worden geSet
-	private ArrayList<DependentTask> dependants;
+	private ArrayList<Dependant> dependants;
+	private final ArrayList<Prerequisite> prerequisites;
+	private ArrayList<Prerequisite> unfinishedPrerequisites;
+
+	private final TaskStatus available;
+	private final TaskStatus unavailable;
+	private final TaskStatus finished;
+	private final TaskStatus failed;
 	
-	private int numberOfPendingPrerequisites;
+	private TaskStatus state;
 	
 	/**
 	 * Create a new Task.
@@ -56,6 +66,7 @@ public class Task implements DependentTask, PrerequisiteTask {
 			int acceptableDeviation, 
 			List<Task> prerequisiteTasks,
 			Task alternativeFor) throws IllegalArgumentException {
+		
 		if(!isValidTaskID(taskID)) {
 			throw new IllegalArgumentException("Invalid task ID");
 		}
@@ -80,10 +91,23 @@ public class Task implements DependentTask, PrerequisiteTask {
 		this.acceptableDeviation = acceptableDeviation;
 //		this.extraTime = extraTime;
 		this.alternativeFor = alternativeFor;
+
+		available = new Available(this);
+		unavailable = new Unavailable(this);
+		finished = new FinishedTask(this);
+		failed = new Failed(this);
+		
+		setUnavailable();
+
+		this.prerequisites = new ArrayList<Prerequisite>();
+		this.unfinishedPrerequisites = new ArrayList<Prerequisite>();
+		
 		for(Task t : prerequisiteTasks) {
 			 t.register(this);
+			 this.prerequisites.add(t);
+			 this.unfinishedPrerequisites.add(t);
 		}
-		this.numberOfPendingPrerequisites = prerequisiteTasks.size(); 
+		
 		
 	}
 
@@ -124,25 +148,34 @@ public class Task implements DependentTask, PrerequisiteTask {
 				prerequisiteTasks,
 				alternativeFor);
 		
-		if(!taskStatus.equalsIgnoreCase("failed") && !taskStatus.equalsIgnoreCase("finished")) {
+		if(taskStatus.equalsIgnoreCase("failed")) {
+			setAvailable();
+			setTaskFailed(beginTime, endTime);
+		} else if(taskStatus.equalsIgnoreCase("finished")) {
+			setAvailable();
+			setTaskFinished(beginTime, endTime);
+		} else {
 			throw new IllegalArgumentException(
 					"Time stamps are only allowed if a task is finished or failed");
 		}
-		this.taskStatus = TaskStatus.valueOf(taskStatus); //TODO STATE
-		if(!isValidTimeStamps(beginTime, endTime)) {
-			throw new IllegalArgumentException("Very bad timestamps");
-		}
-		this.beginTime = beginTime;
-		this.endTime = endTime;
+//		this.state = TaskStatus.valueOf(taskStatus); //TODO ik heb nog geen idee
+//		if(!isValidTimeStamps(beginTime, endTime)) {
+//			throw new IllegalArgumentException("Very bad timestamps");
+//		}
+//		this.beginTime = beginTime;
+//		this.endTime = endTime;
 	}
 
 	@Override
-	public boolean register(DependentTask t) {
+	public boolean register(Dependant t) {
+		if(!isValidDependant(t)) {
+			return false;
+		}
 		return dependants.add(t);
 	}
 
 	@Override
-	public boolean unregister(DependentTask t) {
+	public boolean unregister(Dependant t) {
 		if(!isValidDependant(t)) {
 			return false;
 		}
@@ -154,24 +187,28 @@ public class Task implements DependentTask, PrerequisiteTask {
 		return true;
 	}
 	
-	private boolean isValidDependant(DependentTask t) {
+	private boolean isValidDependant(Dependant t) {
 		return t != this;
 	}
 
-	// TODO als failt, nog GEEN update
 	@Override
 	public boolean notifyDependants() {
-		// TODO Check op validity?
-		boolean goingGood = true;
-		for(DependentTask t : dependants) {
-			goingGood = goingGood && t.updateDependency();
+		for(Dependant t : dependants) {
+			t.updateDependency(this);
 		}
-		return goingGood;
+		return true;
 	}
 
 	@Override
-	public boolean updateDependency() {
-		numberOfPendingPrerequisites = numberOfPendingPrerequisites - 1;
+	public boolean updateDependency(Prerequisite preTask) {
+		int preIndex = prerequisites.indexOf(preTask);
+		if(preIndex < 0) {
+			return false;
+		}
+		prerequisites.remove(preIndex);
+		if(state.shouldBecomeAvailable(unfinishedPrerequisites)) {
+			setAvailable();
+		}
 		return true;
 	}
 
@@ -181,7 +218,7 @@ public class Task implements DependentTask, PrerequisiteTask {
 	 * @return	True if and only if the Task has a finished status.
 	 */
 	public boolean isFinished() {
-		return (taskStatus == TaskStatus.FINISHED);
+		return state.isFinished();
 	}
 
 	/**
@@ -190,7 +227,7 @@ public class Task implements DependentTask, PrerequisiteTask {
 	 * @return	True if and only the Task has failed.
 	 */
 	public boolean isFailed(){
-		return (taskStatus ==TaskStatus.FAILED);
+		return state.isFailed();
 	}
 
 	/**
@@ -199,7 +236,7 @@ public class Task implements DependentTask, PrerequisiteTask {
 	 * @return	True if and only the Task is available.
 	 */
 	public boolean isAvailable(){
-		return (taskStatus == TaskStatus.AVAILABLE);
+		return state.isAvailable();
 	}
 
 	/**
@@ -208,7 +245,7 @@ public class Task implements DependentTask, PrerequisiteTask {
 	 * @return	True if and only the Task is unavailable.
 	 */
 	public boolean isUnavailable(){
-		return (taskStatus == TaskStatus.UNAVAILABLE);
+		return state.isUnavailable();
 	}
 
 	/**
@@ -230,7 +267,7 @@ public class Task implements DependentTask, PrerequisiteTask {
 	 * @throws 	IllegalArgumentException 
 	 * 			When the start time of the task is after the time given.
 	 */
-	public TimeSpan getTimeElapsed(LocalDateTime currentTime) {
+	public TimeSpan getTimeSpent(LocalDateTime currentTime) {
 //		if(beginTime == null) { //TODO geen argument meer ?
 //			throw new IllegalArgumentException("Project not yet started");
 //		}
@@ -242,22 +279,22 @@ public class Task implements DependentTask, PrerequisiteTask {
 				currentTime); //TODO kan ook variabele in Task zijn?
 		if(alternativeFor != null) {
 			currentTimeSpent = currentTimeSpent
-								.add(alternativeFor.getTimeElapsed(currentTime));
+								.add(alternativeFor.getTimeSpent(currentTime));
 		}
 		return currentTimeSpent;
 	}
 
-//	/**
-//	 * Returns the time elapsed since the start of the project and 
-//	 * the end of the project. 
-//	 * 
-//	 * @return 	time elapsed between the start time and end time
-//	 * @throws 	IllegalStateException 
-//	 * 			whenever the end time is not yet determined
-//	 */
-//	public TimeSpan getTimeSpent() {
-//		return getTimeElapsed(endTime);
-//	}
+	/**
+	 * Returns the time elapsed since the start of the project and 
+	 * the end of the project. 
+	 * 
+	 * @return 	time elapsed between the start time and end time
+	 * @throws 	IllegalStateException 
+	 * 			whenever the end time is not yet determined
+	 */
+	public TimeSpan getTimeSpent() {
+		return getTimeSpent(endTime);
+	}
 
 	/**
 	 * Returns the start time of the Task.
@@ -280,7 +317,7 @@ public class Task implements DependentTask, PrerequisiteTask {
 		if(beginTime==null) {
 			throw new IllegalArgumentException("The new beginTime is null");
 		}
-		if(this.beginTime!=null) {
+		if(getBeginTime()!=null) {
 			throw new IllegalArgumentException("The beginTime is already set");
 		}
 		this.beginTime = beginTime;
@@ -295,23 +332,23 @@ public class Task implements DependentTask, PrerequisiteTask {
 		return endTime;
 	}
 
-//	/**
-//	 * Sets the end time of Task.
-//	 * 
-//	 * @param 	endTime
-//	 * 			The new end time of the Task.
-//	 * @throws	IllegalArgumentException
-//	 * 			If the new end time is null or the old end time is already set. 
-//	 */
-//	public void setEndTime(LocalDateTime endTime) throws IllegalArgumentException {
-//		if(endTime==null) {
-//			throw new IllegalArgumentException("The new endTime is null");
-//		}
-//		if(getEndTime()!=null) {
-//			throw new IllegalArgumentException("The endtime is already set");
-//		}
-//		this.endTime = endTime;
-//	}
+	/**
+	 * Sets the end time of Task.
+	 * 
+	 * @param 	endTime
+	 * 			The new end time of the Task.
+	 * @throws	IllegalArgumentException
+	 * 			If the new end time is null or the old end time is already set. 
+	 */
+	public void setEndTime(LocalDateTime endTime) throws IllegalArgumentException {
+		if(endTime==null) {
+			throw new IllegalArgumentException("The new endTime is null");
+		}
+		if(getEndTime()!=null) {
+			throw new IllegalArgumentException("The endtime is already set");
+		}
+		this.endTime = endTime;
+	}
 
 	/**
 	 * Returns the description of the Task.
@@ -344,13 +381,21 @@ public class Task implements DependentTask, PrerequisiteTask {
 		return alternativeFor;
 	}
 	
-	public ArrayList<Task> getTaskPrerequisites() {
-		return null; //TODO change!
-	}
+//	public ArrayList<Task> getTaskPrerequisites() {
+//		return null; //TODO niet meer nodig
+//	}
 
 	public TimeSpan getMaxDelayChain() {
 		//TODO te doen
 		return null;
+	}
+	
+	public List<Task> getTaskPrerequisites() {
+		ArrayList<Task> preTasks = new ArrayList<Task>();
+		for(Prerequisite pt : prerequisites) {
+			preTasks.add((Task) pt);
+		}
+		return preTasks;
 	}
 	
 //	/**
@@ -396,8 +441,7 @@ public class Task implements DependentTask, PrerequisiteTask {
 	 * @return	The status of the Task as a String.
 	 */
 	public String getStatus(){
-		//TODO state.asString(); hehe ass
-		return "werk is";
+		return state.toString();
 //		TaskStatus stat = this.getTaskStatus();
 //		String status ="";
 //		switch(stat){
@@ -441,9 +485,19 @@ public class Task implements DependentTask, PrerequisiteTask {
 	 */
 	public boolean setTaskFinished(LocalDateTime beginTime,
 			LocalDateTime endTime) {
-		//TODO return state.finish();
-		// notifyDependants();
-		return setTaskStatus(beginTime,endTime,TaskStatus.FINISHED);
+		
+		if(state.canFinish(beginTime, endTime)) {
+			
+			setBeginTime(beginTime);
+			setEndTime(endTime);
+			setFinished();
+			
+			notifyDependants();
+			
+			return true;
+			
+		}
+		return false;
 	}
 
 	/**
@@ -455,56 +509,59 @@ public class Task implements DependentTask, PrerequisiteTask {
 	 * 			The new end time of the Task.
 	 * @return	True if and only if the updates succeeds.
 	 */
-	public boolean setTaskFailed(LocalDateTime beginTime, LocalDateTime endTime) {
-		//TODO return state.fail();
-		return setTaskStatus(beginTime,endTime,TaskStatus.FAILED);
-	}
-
-	/**
-	 * End the task finished or failed
-	 * 
-	 * @param 	beginTime
-	 * 			The new begin time of the Task.
-	 * @param 	endTime
-	 * 			The new end time of the Task.
-	 * @param	status
-	 * 			The new status of the Task.
-	 * @return	True if and only if the updates succeeds.
-	 */
-	private boolean setTaskStatus(LocalDateTime beginTime,
-			LocalDateTime endTime, 
-			TaskStatus status) {
-		
-//		if(hasEnded() || isUnavailable()) {
-//			return false;
-//		}//TODO STATE laten afhandelen
-		if(isValidTimeStamps(beginTime, endTime)) {
-			this.beginTime = beginTime;
-			this.endTime = endTime;
-//			taskStatus = status;
+	public boolean setTaskFailed(LocalDateTime beginTime,
+			LocalDateTime endTime) {
+		if(state.canFinish(beginTime, endTime)) {
+			setBeginTime(beginTime);
+			setEndTime(endTime);
+			setFailed();
 			return true;
 		}
 		return false;
 	}
 	
-	/**
-	 * Checks whether the given timestamps are valid as start- and endtimes
-	 * 
-	 * @param 	beginTime
-	 * 			The new begin time of the Task.
-	 * @param 	endTime
-	 * 			The new end time of the Task.
-	 * @return	True if and only if the timestamps are valid start- and endtimes.
-	 */
-	private boolean isValidTimeStamps(LocalDateTime beginTime, LocalDateTime endTime) {
-		if(beginTime == null || endTime == null) {
-			return false;
-		}
-		if(endTime.isBefore(beginTime)) {
-			return false;
-		}
-		return true;
+	private void setAvailable() {
+		state = available;
 	}
+
+	private void setUnavailable() {
+		state = unavailable;
+	}
+
+	private void setFinished() {
+		state = finished;
+	}
+
+	private void setFailed() {
+		state = failed;
+	}
+
+//	/**
+//	 * End the task finished or failed
+//	 * 
+//	 * @param 	beginTime
+//	 * 			The new begin time of the Task.
+//	 * @param 	endTime
+//	 * 			The new end time of the Task.
+//	 * @param	status
+//	 * 			The new status of the Task.
+//	 * @return	True if and only if the updates succeeds.
+//	 */
+//	private boolean setTaskStatus(LocalDateTime beginTime,
+//			LocalDateTime endTime, 
+//			TaskStatus status) {
+//		
+////		if(hasEnded() || isUnavailable()) {
+////			return false;
+////		}//TODO STATE laten afhandelen
+//		if(isValidTimeStamps(beginTime, endTime)) {
+//			this.beginTime = beginTime;
+//			this.endTime = endTime;
+////			taskStatus = status;
+//			return true;
+//		}
+//		return false;
+//	}
 	
 	/**
 	 * Checks whether the deviation is a valid one.
@@ -595,7 +652,7 @@ public class Task implements DependentTask, PrerequisiteTask {
 	public boolean isOnTime(){
 		TimeSpan acceptableSpan = this.getEstimatedDuration();
 		if(isFinished() || isFailed()) {
-			return this.getTimeElapsed(this.getEndTime()).isShorter(acceptableSpan);
+			return this.getTimeSpent(this.getEndTime()).isShorter(acceptableSpan);
 		}
 		return true;
 	}
@@ -609,7 +666,7 @@ public class Task implements DependentTask, PrerequisiteTask {
 	public boolean isUnacceptableOverdue() {
 		TimeSpan acceptableSpan = this.getEstimatedDuration().getAcceptableSpan(this.getAcceptableDeviation());
 		if(isFinished() || isFailed()) {
-			return this.getTimeElapsed(this.getEndTime()).isLonger(acceptableSpan);
+			return this.getTimeSpent(this.getEndTime()).isLonger(acceptableSpan);
 		}
 		return false;
 	}
@@ -627,4 +684,5 @@ public class Task implements DependentTask, PrerequisiteTask {
 		}
 		return 0;
 	}
+	
 }
