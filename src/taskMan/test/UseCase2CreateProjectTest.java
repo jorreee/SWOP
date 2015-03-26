@@ -10,6 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import taskMan.Facade;
+import taskMan.view.ProjectView;
 import userInterface.IFacade;
 
 public class UseCase2CreateProjectTest {
@@ -32,20 +33,22 @@ public class UseCase2CreateProjectTest {
 		// Stap 1 en 2 zijn impliciet
 		// Stap 3
 		assertTrue(taskManager.createProject("Test1", "testing 1", project0StartDateGood, project0DueDateGood));
+		ProjectView project0 = taskManager.getProjects().get(0);
+
 		// Stap 4
-		assertTrue(taskManager.getProjectName(0).equals("Test1"));
-		assertTrue(taskManager.getProjectDescription(0).equals("testing 1"));
-		assertEquals(taskManager.getAvailableTasks(0).size(),0);
-		assertEquals(taskManager.getProjectDueTime(0),project0DueDateGood);
-		assertFalse(taskManager.isProjectFinished(0));
-		assertEquals(taskManager.getProjectAmount(),1);
+		assertTrue(project0.getProjectName().equals("Test1"));
+		assertTrue(project0.getProjectDescription().equals("testing 1"));
+		assertEquals(project0.getAvailableTasks().size(),0);
+		assertEquals(project0.getProjectDueTime(),project0DueDateGood);
+		assertFalse(project0.isProjectFinished());
+		assertEquals(taskManager.getProjects().size(),1);
 		
 	}
 	
 	@Test
 	public void flow3aTest() {
 		// Nothing will be created
-		assertEquals(taskManager.getProjectAmount(),0);
+		assertEquals(taskManager.getProjects().size(),0);
 	}
 
 	@Test
@@ -54,7 +57,7 @@ public class UseCase2CreateProjectTest {
 		// Stap 3
 		assertFalse(taskManager.createProject("Test1", "testing 1", project0StartDateGood, project0DueDateVeryBad1));
 		// Stap 4
-		assertEquals(taskManager.getProjectAmount(),0);
+		assertEquals(taskManager.getProjects().size(),0);
 	}
 
 	@Test
@@ -63,7 +66,7 @@ public class UseCase2CreateProjectTest {
 		// Stap 3
 		assertFalse(taskManager.createProject("Test1", "testing 1", project0StartDateGood, project0DueDateVeryBad2));
 		// Stap 4
-		assertEquals(taskManager.getProjectAmount(),0);
+		assertEquals(taskManager.getProjects().size(),0);
 	}
 
 	@Test
@@ -72,7 +75,7 @@ public class UseCase2CreateProjectTest {
 		// Stap 3
 		assertFalse(taskManager.createProject("Test1", "testing 1", project0StartDateGood, project0DueDateVeryBad3));
 		// Stap 4
-		assertEquals(taskManager.getProjectAmount(),0);
+		assertEquals(taskManager.getProjects().size(),0);
 	}
 	
 	
