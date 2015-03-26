@@ -57,12 +57,12 @@ public class UseCase4UpdateTaskStatusTest {
 
 		assertTrue(taskManager.createProject("Test1", "testing 1", project0DueDate));
 		ProjectView project0 = taskManager.getProjects().get(0);
-		TaskView task00 = project0.getTasks().get(0);
-		TaskView task01 = project0.getTasks().get(1);
 		
 		assertTrue(taskManager.createTask(project0, "Design system", task00EstDur, task00Dev, task00Dependencies, null));		// TASK 1
+		TaskView task00 = project0.getTasks().get(0);
 		task01Dependencies.add(task00);
 		assertTrue(taskManager.createTask(project0, "Implement Native", task01EstDur, task01Dev, task01Dependencies, null));	// TASK 2
+		TaskView task01 = project0.getTasks().get(1);
 		task02Dependencies.add(task01);
 
 		assertTrue(taskManager.createTask(project0, "Test code", task02EstDur, task02Dev, task02Dependencies, null));			// TASK 3
