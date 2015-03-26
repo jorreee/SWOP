@@ -1,6 +1,7 @@
 package userInterface;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import taskMan.view.ProjectView;
@@ -16,7 +17,7 @@ public interface IFacade {
 	public boolean createProject(String name, String description, LocalDateTime dueTime);
 	
 	public boolean createRawTask(int project, String description, int estimatedDuration, int acceptableDeviation, List<Integer> prerequisiteTasks, int alternativeFor, String taskStatus, LocalDateTime startTime, LocalDateTime endTime);
-	public boolean createTask(ProjectView project, String description, int estimatedDuration, int acceptableDeviation, List<Integer> prerequisiteTasks, int alternativeFor);
+	public boolean createTask(ProjectView project, String description, int estimatedDuration, int acceptableDeviation, List<TaskView> prerequisiteTasks, TaskView alternativeFor);
 	
 	public boolean setTaskFinished(ProjectView projectID, TaskView taskID, LocalDateTime startTime, LocalDateTime endTime);
 	public boolean setTaskFailed(ProjectView projectID, TaskView taskID, LocalDateTime startTime, LocalDateTime endTime);

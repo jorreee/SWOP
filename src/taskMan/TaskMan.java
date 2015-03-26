@@ -178,7 +178,7 @@ public class TaskMan {
 			LocalDateTime startTime, 
 			LocalDateTime endTime) {
 		if(isValidProjectID(project)) {
-			return createTask(description, estimatedDuration, acceptableDeviation, prerequisiteTasks, alternativeFor, taskStatus, startTime, endTime);
+			return projectList.get(project).createRawTask(description, estimatedDuration, acceptableDeviation, prerequisiteTasks, alternativeFor, taskStatus, startTime, endTime);
 		} else {
 			return false;
 		}
@@ -205,8 +205,8 @@ public class TaskMan {
 			String description, 
 			int estimatedDuration, 
 			int acceptableDeviation,
-			List<Integer> prerequisiteTasks, 
-			int alternativeFor) {
+			List<TaskView> prerequisiteTasks, 
+			TaskView alternativeFor) {
 		
 		Project p = unwrapProjectView(project);
 		if(p == null) {

@@ -23,7 +23,6 @@ import taskMan.view.TaskView;
  * @author Tim Van Den Broecke, Joran Van de Woestijne, Vincent Van Gestel and
  *         Eli Vangrieken
  */
-//TODO weg met ID
 public class Project implements Dependant {
 
 	private final int projectID;
@@ -79,6 +78,50 @@ public class Project implements Dependant {
 		
 		setOngoing();
 
+	}
+	
+	public boolean createRawTask(String description, 
+			int estimatedDuration, 
+			int acceptableDeviation, 
+			List<Integer> prerequisiteTasks, 
+			int alternativeFor, 
+			String taskStatus,
+			LocalDateTime startTime, 
+			LocalDateTime endTime) {
+		
+		List<TaskView> prereqTaskViews = new ArrayList<TaskView>();
+		TaskView altTaskView = null;
+		
+		// FIND prereqs
+		for(Integer prereqID : prerequisiteTasks) {
+			Task t = findTask(prereqID);
+			if(t != null) {
+				prereqTaskViews.add(new TaskView(t));
+			}
+			
+		}
+		// FIND alt
+		if(alternativeFor != -1) {
+			altTaskView = new TaskView(findTask(alternativeFor));
+		}
+		
+		return createTask(description, estimatedDuration, acceptableDeviation,
+				prereqTaskViews, altTaskView, taskStatus, startTime, endTime);
+	}
+	
+	/**
+	 * Find a specific task in this project by id
+	 * 
+	 * @param taskID
+	 *            the ID of the task to look for
+	 * @return The task with the specified ID or null when no task is found
+	 */
+	private Task findTask(int taskID) {
+		for(Task t : taskList) {
+			if(t.getTaskID() == taskID)
+				return t;
+		}
+		return null;
 	}
 
 	/**
@@ -437,9 +480,12 @@ public class Project implements Dependant {
 	 * 
 	 * @return	A list of Tasks.
 	 */
-	//TODO TaskViews hier aanmaken of pas in ProjectView?
-	public ArrayList<Task> getTaskList(){
-		return taskList;
+	public List<TaskView> getTasks(){
+		ArrayList<TaskView> tasks = new ArrayList<TaskView>();
+		for(Task t : taskList) {
+			tasks.add(new TaskView(t));
+		}
+		return tasks;
 	}
 
 //	/** // TODO remove this
@@ -583,8 +629,22 @@ public class Project implements Dependant {
 	 * 
 	 * @return	a list of the availabke tasks' id's
 	 */
-	//TODO TaskViews hier aanmaken of pas in ProjectView?
-	public ArrayList<Task> getAvailableTasks() {
+	public ArrayList<TaskView> getAvailableTaskViews() {
+		ArrayList<TaskView> availableTasks = new ArrayList<TaskView>();
+		for(Task task : taskList) {
+			if(task.isAvailable()) {
+				availableTasks.add(new TaskView(task));
+			}
+		}
+		return availableTasks;
+	}
+	
+	/**
+	 * Returns a list of the id's of the available tasks of the project
+	 * 
+	 * @return	a list of the availabke tasks' id's
+	 */
+	private ArrayList<Task> getAvailableTasks() {
 		ArrayList<Task> availableTasks = new ArrayList<Task>();
 		for(Task task : taskList) {
 			if(task.isAvailable()) {
