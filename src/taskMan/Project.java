@@ -224,9 +224,10 @@ public class Project implements Dependant {
 //		updateTaskStatus(newTask);
 		
 		boolean success = taskList.add(newTask);
+		unfinishedTaskList.add(newTask);
 		
 		if(success) {
-			recalculateProjectStatus();
+			newTask.register(this);
 		} 
 		return success;
 	}
@@ -310,7 +311,7 @@ public class Project implements Dependant {
 	}
 	
 	private void setFinished() {
-		this.state = ongoing;
+		this.state = finished;
 	}
 
 //	/**
@@ -375,7 +376,7 @@ public class Project implements Dependant {
 	 * If the project has at least one task and all of those tasks are finished (or failed with a finished alternative),
 	 * the project itself will be considered finished.
 	 */
-	private void recalculateProjectStatus() {
+//	private void recalculateProjectStatus() {
 //		//TODO status.check(taskList) -> hasFinishedEndpoint
 //		if(state.shouldFinish(taskList)) {
 //			setFinished();
@@ -390,7 +391,7 @@ public class Project implements Dependant {
 //			}
 //		}
 //		this.state = ProjectStatus.FINISHED;
-	}
+//	}
 
 	//TODO is vervangen door unwrap
 //	/**

@@ -12,6 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import taskMan.Facade;
+import taskMan.Project;
 import taskMan.Task;
 import taskMan.util.TimeSpan;
 import taskMan.view.ProjectView;
@@ -394,36 +395,45 @@ public class UseCase3CreateTaskTest {
 	
 	@Test
 	public void flow4aUnknownProjectTest() {
+		Project unexistent = new Project(1, "Very bad", "Very bad project", startDate, project0DueDate);
 		List<ProjectView> projects = taskManager.getProjects();
 		assertTrue(projects.size() == 1);
 		ProjectView project0 = projects.get(0);
 
-		assertTrue(taskManager.createTask(0, "Design system", task00EstDur, task00Dev, -1, task00Dependencies));
-		assertEquals(taskManager.getTaskStatus(0, 0),"available");
+		assertTrue(taskManager.createTask(project0, "Design system", task00EstDur, task00Dev, task00Dependencies, null));
+		List<TaskView> p0tasks = project0.getTasks();
+		assertTrue(p0tasks.size() == 1);
+		TaskView t00 = p0tasks.get(0);
+		assertEquals(t00.getTaskStatusAsString(),"Available");
 
 		// Step 1 and 2 are implicit
 		// Step 3
-		assertFalse(taskManager.createTask(5, "A new TASK", newTaskDur, newTaskDev, -1, newTaskDependencies));
+		assertFalse(taskManager.createTask(new ProjectView(unexistent), "A new TASK", newTaskDur, newTaskDev, newTaskDependencies, null));
 		// Step 4
-		assertEquals(taskManager.getProjectAmount(),1);		
+		assertEquals(taskManager.getProjects().size(),1);
+		p0tasks = project0.getTasks();
+		assertEquals(p0tasks.size(),1);
 		
 		//-------------------------------------------------------------------------------------------------
 
 		// Step 1 and 2 are implicit
 		// Step 3
-		assertFalse(taskManager.createTask(5, "A new TASK", newTaskDur, newTaskDev, 0, newTaskDependencies));
+		assertFalse(taskManager.createTask(new ProjectView(unexistent), "A new TASK", newTaskDur, newTaskDev, newTaskDependencies, t00));
 		// Step 4
-		assertEquals(taskManager.getProjectAmount(),1);		
+		assertEquals(taskManager.getProjects().size(),1);
+		p0tasks = project0.getTasks();
+		assertEquals(p0tasks.size(),1);
 		
 		//-------------------------------------------------------------------------------------------------
 
 		// Step 1 and 2 are implicit
 		// Step 3
-		newTaskDependencies.add(Integer.valueOf(0));
-		assertFalse(taskManager.createTask(5, "A new TASK", newTaskDur, newTaskDev, -1, newTaskDependencies));
+		newTaskDependencies.add(t00);
+		assertFalse(taskManager.createTask(new ProjectView(unexistent), "A new TASK", newTaskDur, newTaskDev, newTaskDependencies, null));
 		// Step 4
-		assertEquals(taskManager.getProjectAmount(),1);	
-		assertEquals(taskManager.getTaskAmount(0),1);
+		assertEquals(taskManager.getProjects().size(),1);
+		p0tasks = project0.getTasks();
+		assertEquals(p0tasks.size(),1);
 		
 	}
 
@@ -433,37 +443,20 @@ public class UseCase3CreateTaskTest {
 		assertTrue(projects.size() == 1);
 		ProjectView project0 = projects.get(0);
 		
-		assertTrue(taskManager.createTask(0, "Design system", task00EstDur, task00Dev, -1, task00Dependencies));
-		assertEquals(taskManager.getTaskStatus(0, 0),"available");
-		assertTrue(taskManager.setTaskFinished(0, 0, task00StartDateGood, task00EndDateGood));
-		assertTrue(taskManager.isProjectFinished(0));
+		assertTrue(taskManager.createTask(project0, "Design system", task00EstDur, task00Dev, task00Dependencies, null));
+		List<TaskView> p0tasks = project0.getTasks();
+		assertTrue(p0tasks.size() == 1);
+		TaskView t00 = p0tasks.get(0);
+		assertEquals(t00.getTaskStatusAsString(),"Available");
+		assertTrue(taskManager.setTaskFinished(project0, t00, task00StartDateGood, task00EndDateGood));
+		assertTrue(project0.isProjectFinished());
 		
 		// Step 1 and 2 are implicit
 		// Step 3
-		assertFalse(taskManager.createTask(5, "A new TASK", newTaskDur, newTaskDev, -1, newTaskDependencies));
+		assertFalse(taskManager.createTask(project0, "A new TASK", newTaskDur, newTaskDev, newTaskDependencies, null));
 		// Step 4
-		assertEquals(taskManager.getProjectAmount(),1);
-		assertEquals(taskManager.getTaskAmount(0),1);
-		
-	}
-
-	@Test
-	public void flow4aFINISHEDProjectTest() {
-		List<ProjectView> projects = taskManager.getProjects();
-		assertTrue(projects.size() == 1);
-		ProjectView project0 = projects.get(0);
-		
-		assertTrue(taskManager.createTask(0, "Design system", task00EstDur, task00Dev, -1, task00Dependencies));
-		assertEquals(taskManager.getTaskStatus(0, 0),"available");
-		assertTrue(taskManager.setTaskFinished(0, 0, task00StartDateGood, task00EndDateGood));
-		assertTrue(taskManager.isProjectFinished(0));
-		
-		// Step 1 and 2 are implicit
-		// Step 3
-		assertFalse(taskManager.createTask(0, "A new TASK", newTaskDur, newTaskDev, -1, newTaskDependencies));
-		// Step 4
-		assertEquals(taskManager.getProjectAmount(),1);
-		assertEquals(taskManager.getTaskAmount(0),1);
+		p0tasks = project0.getTasks();
+		assertTrue(p0tasks.size() == 1);
 		
 	}
 

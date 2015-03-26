@@ -20,7 +20,7 @@ public class FinishedProject implements ProjectStatus {
 
 	@Override
 	public boolean isFinished() {
-		return false;
+		return true;
 	}
 
 	@Override
