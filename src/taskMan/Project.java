@@ -814,37 +814,37 @@ public class Project implements Dependant {
 //		return success;
 	}
 
-//	/**
-//	 * Sets the task with the given task id to failed
-//	 * 
-//	 * @param 	task
-//	 * 			the id of the given task
-//	 * @param 	startTime
-//	 * 			the start time of the given task
-//	 * @param 	endTime
-//	 * 			the end time of the given task
-//	 * @return	True if setting the task to failed was successful,
-//	 * 			False if it was unsuccessful
-//	 * 			False is the ID isn't a valid one
-//	 * 			False if the start time is null
-//	 * 			False if the start time is before creation time
-//	 */
-//	public boolean setTaskFailed(TaskView taskView, LocalDateTime startTime, LocalDateTime endTime) {
-////		if(!isValidTaskID(taskID)) {
-////			return false;
-////		}
-//		Task task = unwrapTaskView(taskView);
-//		if(task == null ||startTime == null || startTime.isBefore(creationTime)) {
+	/**
+	 * Sets the task with the given task id to failed
+	 * 
+	 * @param 	task
+	 * 			the id of the given task
+	 * @param 	startTime
+	 * 			the start time of the given task
+	 * @param 	endTime
+	 * 			the end time of the given task
+	 * @return	True if setting the task to failed was successful,
+	 * 			False if it was unsuccessful
+	 * 			False is the ID isn't a valid one
+	 * 			False if the start time is null
+	 * 			False if the start time is before creation time
+	 */
+	public boolean setTaskFailed(TaskView taskView, LocalDateTime startTime, LocalDateTime endTime) {
+//		if(!isValidTaskID(taskID)) {
 //			return false;
 //		}
-//		boolean success = task.setTaskFailed(startTime, endTime);
-////		if(success) { // Notify Observers
-////			for(Task t : taskList)
-////				updateTaskStatus(t);
-////			return true;
-////		}
-//		return success;
-//	}
+		Task task = unwrapTaskView(taskView);
+		if(task == null ||startTime == null || startTime.isBefore(creationTime)) {
+			return false;
+		}
+		boolean success = task.setTaskFailed(startTime, endTime);
+//		if(success) { // Notify Observers
+//			for(Task t : taskList)
+//				updateTaskStatus(t);
+//			return true;
+//		}
+		return success;
+	}
 
 //	/** // TODO remove this
 //	 * Returns whether the current task in unacceptably overdue.
