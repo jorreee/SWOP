@@ -266,8 +266,20 @@ public class Project implements Dependant {
 		return taskList.contains(unwrapTaskView(t));
 	}
 	
-	private boolean isValidAlternative(TaskView t) {
-		return t == null || isValidTaskView(t);
+	private boolean isValidAlternative(TaskView tv) {
+		if(tv == null) {
+			return true;
+		}
+		if(isValidTaskView(tv)) {
+			Task task = unwrapTaskView(tv);
+			for(Task t : taskList) {
+				if(t.getAlternativeFor() == task) {
+					return false;
+				}
+			}
+			return true;
+		}
+		return false;
 	}
 	
 	/**

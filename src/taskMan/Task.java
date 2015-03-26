@@ -85,6 +85,9 @@ public class Task implements Dependant, Prerequisite {
 		if(!isValidPrerequisites(prerequisiteTasks)) {
 			throw new IllegalArgumentException("Invalid prerequisites");
 		}
+		if(prerequisiteTasks.contains(alternativeFor)) {
+			throw new IllegalArgumentException("Alt can't be a prerequisite");
+		}
 		this.taskID = taskID;
 		this.description = taskDescription;
 		this.estimatedDuration = new TimeSpan(estimatedDuration);

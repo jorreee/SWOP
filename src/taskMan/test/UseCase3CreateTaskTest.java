@@ -12,6 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import taskMan.Facade;
+import taskMan.Task;
 import taskMan.util.TimeSpan;
 import taskMan.view.ProjectView;
 import taskMan.view.TaskView;
@@ -217,147 +218,185 @@ public class UseCase3CreateTaskTest {
 		
 		assertEquals(nt.getTaskStatusAsString(),"Available");
 	}
-	//TODO TEST voor geen twee alt voor één task
 
 	@Test
 	public void flow3aTest() {
 		// De UI zal geen request doorsturen als de user geen volledig formulier invult.
-		assertTrue(taskManager.getTaskAmount(0) == 0);
+		List<ProjectView> projects = taskManager.getProjects();
+		assertEquals(projects.size(),1);
+		ProjectView project0 = projects.get(0);
+		List<TaskView> p0tasks = project0.getTasks();
+		assertEquals(p0tasks.size(),0);
 	}
 
 	@Test
 	public void flow4aUnknownAltTest() {
+		List<ProjectView> projects = taskManager.getProjects();
+		assertTrue(projects.size() == 1);
+		ProjectView project0 = projects.get(0);
 		
 		// Kan zichzelf niet als ALT nemen
 		
 		// Step 1 and 2 are implicit
 		// Step 3
-		assertFalse(taskManager.createTask(0, "A new TASK", newTaskDur, newTaskDev, 0, newTaskDependencies));
+//		assertFalse(taskManager.createTask(project0, "A new TASK", newTaskDur, newTaskDev, newTaskDependencies, )); // TODO hoe testen?
 		// Step 4
-		assertEquals(taskManager.getTaskAmount(0),0);
+		List<TaskView> p0tasks = project0.getTasks();
+		assertEquals(p0tasks.size(),0);
 		
 		//--------------------------------------------------------------------------------------
 		// Onbestaande task kan geen ALT nemen
+		Task unexistent = new Task(10, "Very bad", 50, 10, new ArrayList<Task>(), null);
 		
 		// Step 1 and 2 are implicit
 		// Step 3
-		assertFalse(taskManager.createTask(0, "A new TASK", newTaskDur, newTaskDev, 5, newTaskDependencies));
+		assertFalse(taskManager.createTask(project0, "A new TASK", newTaskDur, newTaskDev, newTaskDependencies, new TaskView(unexistent)));
 		// Step 4
-		assertEquals(taskManager.getTaskAmount(0),0);
+		p0tasks = project0.getTasks();
+		assertEquals(p0tasks.size(),0);
 		
 	}
 
 	@Test
 	public void flow4aBadAltTest() {
+		List<ProjectView> projects = taskManager.getProjects();
+		assertTrue(projects.size() == 1);
+		ProjectView project0 = projects.get(0);
 		
 		// Er is al een AVAILABLE en UNAVAILABLE task aanwezig in het project
-		assertTrue(taskManager.createTask(0, "Design system", task00EstDur, task00Dev, -1, task00Dependencies));
-		assertEquals(taskManager.getTaskStatus(0, 0),"available");
-		task01Dependencies.add(Integer.valueOf(0));
-		assertTrue(taskManager.createTask(0, "Implement Native", task01EstDur, task01Dev, -1, task01Dependencies));
-		assertEquals(taskManager.getTaskStatus(0, 1),"unavailable");
+		assertTrue(taskManager.createTask(project0, "Design system", task00EstDur, task00Dev, task00Dependencies, null));
+		List<TaskView> p0tasks = project0.getTasks();
+		assertTrue(p0tasks.size() == 1);
+		TaskView t00 = p0tasks.get(0);
+		assertEquals(t00.getTaskStatusAsString(),"Available");
+		task01Dependencies.add(t00);
+		assertTrue(taskManager.createTask(project0, "Implement Native", task01EstDur, task01Dev, task01Dependencies, null));
+		p0tasks = project0.getTasks();
+		assertTrue(p0tasks.size() == 2);
+		TaskView t01 = p0tasks.get(1);
+		assertEquals(t01.getTaskStatusAsString(),"Unavailable");
 		
-		// AVAILABLE task kan geen ALT nemen
+		// AVAILABLE task kan geen ALT krijgen
 		
 		// Step 1 and 2 are implicit
 		// Step 3
-		assertFalse(taskManager.createTask(0, "A new TASK", newTaskDur, newTaskDev, 0, newTaskDependencies));
+		assertFalse(taskManager.createTask(project0, "A new TASK", newTaskDur, newTaskDev, newTaskDependencies, t00));
 		// Step 4
-		assertFalse(taskManager.hasTaskAlternative(0, 0));
-		assertFalse(taskManager.hasTaskPrerequisites(0, 0));
-		assertEquals(taskManager.getTaskAmount(0),2);
+		p0tasks = project0.getTasks();
+		assertTrue(p0tasks.size() == 2);
 		
 		//----------------------------------------------------------------------------------------
-		// UNAVAILABLE task kan geen ALT nemen
+		// UNAVAILABLE task kan geen ALT krijgen
 		
 		// Step 1 and 2 are implicit
 		// Step 3
-		assertFalse(taskManager.createTask(0, "A new TASK", newTaskDur, newTaskDev, 1, newTaskDependencies));
+		assertFalse(taskManager.createTask(project0, "A new TASK", newTaskDur, newTaskDev, newTaskDependencies, t01));
 		// Step 4
-		assertFalse(taskManager.hasTaskAlternative(0, 1));
-		assertTrue(taskManager.hasTaskPrerequisites(0, 1));
-		assertEquals(taskManager.getTaskAmount(0),2);
+		p0tasks = project0.getTasks();
+		assertTrue(p0tasks.size() == 2);
 		
 		//----------------------------------------------------------------------------------------
-		// FINISHED task kan geen ALT nemen
+		// FINISHED task kan geen ALT krijgen
 		
-		assertTrue(taskManager.setTaskFinished(0, 0, startDate, altTaskEndDate));
+		assertTrue(taskManager.setTaskFinished(project0, t00, startDate, altTaskEndDate));
 		
 		// Step 1 and 2 are implicit
 		// Step 3
-		assertFalse(taskManager.createTask(0, "A new TASK", newTaskDur, newTaskDev, 0, newTaskDependencies));
+		assertFalse(taskManager.createTask(project0, "A new TASK", newTaskDur, newTaskDev, newTaskDependencies, t00));
 		// Step 4
-		assertFalse(taskManager.hasTaskAlternative(0, 0));
-		assertFalse(taskManager.hasTaskPrerequisites(0, 0));
-		assertEquals(taskManager.getTaskAmount(0),2);
+		p0tasks = project0.getTasks();
+		assertTrue(p0tasks.size() == 2);
 
 	}
 	
 	@Test
 	public void flow4aDoubleAltTest() {
+		List<ProjectView> projects = taskManager.getProjects();
+		assertTrue(projects.size() == 1);
+		ProjectView project0 = projects.get(0);
 
-		assertTrue(taskManager.createTask(0, "Design system", task00EstDur, task00Dev, -1, task00Dependencies));
-		assertTrue(taskManager.setTaskFailed(0, 0, task00StartDateGood, task00EndDateGood));
-		assertTrue(taskManager.createTask(0, "Implement Native", task01EstDur, task01Dev, 0, task01Dependencies));
-		assertEquals(taskManager.getTaskStatus(0, 1),"available");
+		assertTrue(taskManager.createTask(project0, "Design system", task00EstDur, task00Dev, task00Dependencies, null));
+		List<TaskView> p0tasks = project0.getTasks();
+		assertTrue(p0tasks.size() == 1);
+		TaskView t00 = p0tasks.get(0);
+		assertTrue(taskManager.setTaskFailed(project0, t00, task00StartDateGood, task00EndDateGood));
+		assertTrue(taskManager.createTask(project0, "Implement Native", task01EstDur, task01Dev, task01Dependencies, t00));
+		p0tasks = project0.getTasks();
+		assertTrue(p0tasks.size() == 2);
+		TaskView t01 = p0tasks.get(1);
+		assertEquals(t01.getTaskStatusAsString(),"Available");
 		
 		// Geen twee ALT tasks voor een failed task mogelijk
 		
 		// Step 1 and 2 are implicit
 		// Step 3
-		assertFalse(taskManager.createTask(0, "A new TASK", newTaskDur, newTaskDev, 0, newTaskDependencies));
+		assertFalse(taskManager.createTask(project0, "A new TASK", newTaskDur, newTaskDev, newTaskDependencies, t00));
+		p0tasks = project0.getTasks();
 		// Step 4
-		assertEquals(taskManager.getTaskAmount(0),2);
+		assertTrue(p0tasks.size() == 2);
 	}
 
 	@Test
 	public void flow4aUnknownDepTest() {
+		List<ProjectView> projects = taskManager.getProjects();
+		assertTrue(projects.size() == 1);
+		ProjectView project0 = projects.get(0);
 		
 		// Kan zichzelf niet als DEP nemen
 		
-		newTaskDependencies.add(Integer.valueOf(0));
+//		newTaskDependencies.add(); // TODO hoe testen?
 		// Step 1 and 2 are implicit
 		// Step 3
-		assertFalse(taskManager.createTask(0, "A new TASK", newTaskDur, newTaskDev, -1, newTaskDependencies));
+//		assertFalse(taskManager.createTask(project0, "A new TASK", newTaskDur, newTaskDev, newTaskDependencies, null));
 		// Step 4
-		assertEquals(taskManager.getTaskAmount(0),0);
+		List<TaskView> p0tasks = project0.getTasks();
+		assertTrue(p0tasks.size() == 0);
 		
 		//--------------------------------------------------------------------------------------
 		// Onbestaande task kan geen ALT nemen
+		Task unexistent = new Task(10, "Very bad", 50, 10, new ArrayList<Task>(), null);
 
-		newTaskDependencies.remove(0);
-		newTaskDependencies.add(Integer.valueOf(5));
+//		newTaskDependencies.remove(0);
+		newTaskDependencies.add(new TaskView(unexistent));
 		// Step 1 and 2 are implicit
 		// Step 3
-		assertFalse(taskManager.createTask(0, "A new TASK", newTaskDur, newTaskDev, -1, newTaskDependencies));
+		assertFalse(taskManager.createTask(project0, "A new TASK", newTaskDur, newTaskDev, newTaskDependencies, null));
 		// Step 4
-		assertEquals(taskManager.getTaskAmount(0),0);
+		p0tasks = project0.getTasks();
+		assertTrue(p0tasks.size() == 0);
 		
 	}
 	
 	@Test
 	public void flow4aBadDepTest() {
+		List<ProjectView> projects = taskManager.getProjects();
+		assertTrue(projects.size() == 1);
+		ProjectView project0 = projects.get(0);
 
 		// Er is al een FAILED task aanwezig in het project
-		assertTrue(taskManager.createTask(0, "Design system", task00EstDur, task00Dev, -1, task00Dependencies));
-		assertEquals(taskManager.getTaskStatus(0, 0),"available");
-		assertTrue(taskManager.setTaskFailed(0, 0, startDate, altTaskEndDate));
-		assertEquals(taskManager.getTaskStatus(0, 0),"failed");
+		assertTrue(taskManager.createTask(project0, "Design system", task00EstDur, task00Dev, task00Dependencies, null));
+		List<TaskView> p0tasks = project0.getTasks();
+		assertTrue(p0tasks.size() == 1);
+		TaskView t00 = p0tasks.get(0);
+		assertEquals(t00.getTaskStatusAsString(),"Available");
+		assertTrue(taskManager.setTaskFailed(project0, t00, startDate, altTaskEndDate));
+		assertEquals(t00.getTaskStatusAsString(),"Failed");
 		
 		// Task kan geen PreReq zijn voor zijn ALT
 
 		// Step 1 and 2 are implicit
 		// Step 3
-		newTaskDependencies.add(Integer.valueOf(0));
-		assertFalse(taskManager.createTask(0, "A new TASK", newTaskDur, newTaskDev, 0, newTaskDependencies));
+		newTaskDependencies.add(t00);
+		assertFalse(taskManager.createTask(project0, "A new TASK", newTaskDur, newTaskDev, newTaskDependencies, t00));
 		// Step 4
-		assertFalse(taskManager.hasTaskAlternative(0, 0));
-		assertFalse(taskManager.hasTaskPrerequisites(0, 0));
-		assertEquals(taskManager.getTaskAmount(0),1);
+		assertTrue(p0tasks.size() == 1);
 	}
 	
 	@Test
 	public void flow4aUnknownProjectTest() {
+		List<ProjectView> projects = taskManager.getProjects();
+		assertTrue(projects.size() == 1);
+		ProjectView project0 = projects.get(0);
 
 		assertTrue(taskManager.createTask(0, "Design system", task00EstDur, task00Dev, -1, task00Dependencies));
 		assertEquals(taskManager.getTaskStatus(0, 0),"available");
@@ -390,6 +429,9 @@ public class UseCase3CreateTaskTest {
 
 	@Test
 	public void flow4aBadProjectTest() {
+		List<ProjectView> projects = taskManager.getProjects();
+		assertTrue(projects.size() == 1);
+		ProjectView project0 = projects.get(0);
 		
 		assertTrue(taskManager.createTask(0, "Design system", task00EstDur, task00Dev, -1, task00Dependencies));
 		assertEquals(taskManager.getTaskStatus(0, 0),"available");
@@ -407,6 +449,9 @@ public class UseCase3CreateTaskTest {
 
 	@Test
 	public void flow4aFINISHEDProjectTest() {
+		List<ProjectView> projects = taskManager.getProjects();
+		assertTrue(projects.size() == 1);
+		ProjectView project0 = projects.get(0);
 		
 		assertTrue(taskManager.createTask(0, "Design system", task00EstDur, task00Dev, -1, task00Dependencies));
 		assertEquals(taskManager.getTaskStatus(0, 0),"available");
