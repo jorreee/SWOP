@@ -1,9 +1,11 @@
 package taskMan.state;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import taskMan.Task;
+import taskMan.util.Dependant;
 import taskMan.util.Prerequisite;
 
 public class Available implements TaskStatus {
@@ -71,6 +73,17 @@ public class Available implements TaskStatus {
 	@Override
 	public String toString() {
 		return "Available";
+	}
+
+	@Override
+	public List<Task> adoptDependants() {
+		return new ArrayList<Task>();
+	}
+
+	@Override
+	public boolean register(Dependant d) {
+		task.addDependant(d);
+		return true;
 	}
 
 }

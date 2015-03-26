@@ -57,6 +57,10 @@ public class TaskView {
 	}
 	
 	public TaskView getTaskAlternativeTo() {
+		Task alt = task.getAlternativeFor();
+		if(alt == null) {
+			return null;
+		}
 		return new TaskView(task.getAlternativeFor());
 	}
 	
@@ -64,7 +68,7 @@ public class TaskView {
 		return !getTaskPrerequisites().isEmpty();
 	}
 	
-	public boolean hasTaskAlternative() {
+	public boolean isTaskAlternative() {
 		return getTaskAlternativeTo() != null;
 	}
 	
@@ -83,6 +87,26 @@ public class TaskView {
 	public boolean hasAsTask(Task t) {
 		return task == t;
 //		return task.equals(t); ?
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((task == null) ? 0 : task.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		TaskView other = (TaskView) obj;
+		return other.hasAsTask(task);
 	}
 
 }

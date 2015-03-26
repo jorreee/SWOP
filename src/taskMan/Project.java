@@ -170,7 +170,7 @@ public class Project implements Dependant {
 			return false;
 		}
 		
-		if(!isValidTaskView(alternativeFor)) {
+		if(!isValidAlternative(alternativeFor)) {
 			return false;
 		}
 		Task altFor = unwrapTaskView(alternativeFor);
@@ -266,6 +266,10 @@ public class Project implements Dependant {
 		return taskList.contains(unwrapTaskView(t));
 	}
 	
+	private boolean isValidAlternative(TaskView t) {
+		return t == null || isValidTaskView(t);
+	}
+	
 	/**
 	 * Unwraps the TaskView object and returns the Task that it contained
 	 * 		IF the unwrapped task belongs to this project:
@@ -278,6 +282,9 @@ public class Project implements Dependant {
 	 * 			| NULL otherwise
 	 */
 	private Task unwrapTaskView(TaskView t) {
+		if(t == null) {
+			return null;
+		}
 		for(Task task : taskList) {
 			if (t.hasAsTask(task)) {
 				return task;
@@ -835,9 +842,11 @@ public class Project implements Dependant {
 		
 	}
 	
-	public boolean setTaskFinished(TaskView t, LocalDateTime l1, LocalDateTime l2) {
-		//TODO te doen
-		return true;
+	public boolean setTaskFinished(TaskView t, LocalDateTime beginTime, LocalDateTime endTime) {
+		if(!isValidTaskView(t)) {
+			return false;
+		}
+		return unwrapTaskView(t).setTaskFinished(beginTime, endTime);
 	}
 	
 	private boolean markTaskFinished(Task task) {
@@ -851,27 +860,6 @@ public class Project implements Dependant {
 		unfinishedTaskList.remove(taskIndex);
 		
 		return markTaskFinished(task.getAlternativeFor());
-////		if(!isValidTaskID(taskID)) {
-////			return false;
-////		}
-//		Task task = unwrapTaskView(taskView);
-//		if(task == null ||startTime == null || startTime.isBefore(creationTime)) {
-//			return false;
-//		}
-//		boolean success = task.setTaskFinished(startTime, endTime);
-//		if(success) { // TODO notify observers IN TASK
-////			for(Task t : taskList) {
-////				updateTaskStatus(t);
-////			}
-//			
-//			recalculateProjectStatus();
-//			
-//			//TODO laat status dit afhandelen
-////			if(this.projectStatus==ProjectStatus.FINISHED){
-////				this.endTime = endTime;
-////			}
-//		}
-//		return success;
 	}
 
 	/**
@@ -889,21 +877,21 @@ public class Project implements Dependant {
 	 * 			False if the start time is null
 	 * 			False if the start time is before creation time
 	 */
-	public boolean setTaskFailed(TaskView taskView, LocalDateTime startTime, LocalDateTime endTime) {
-//		if(!isValidTaskID(taskID)) {
-//			return false;
-//		}
-		Task task = unwrapTaskView(taskView);
-		if(task == null ||startTime == null || startTime.isBefore(creationTime)) {
+	public boolean setTaskFailed(TaskView t, LocalDateTime startTime, LocalDateTime endTime) {
+		if(!isValidTaskView(t)) {
 			return false;
 		}
-		boolean success = task.setTaskFailed(startTime, endTime);
-//		if(success) { // Notify Observers
-//			for(Task t : taskList)
-//				updateTaskStatus(t);
-//			return true;
-//		}
-		return success;
+		return unwrapTaskView(t).setTaskFailed(startTime, endTime);
+////		if(!isValidTaskID(taskID)) {
+////			return false;
+////		}
+//		boolean success = task.setTaskFailed(startTime, endTime);
+////		if(success) { // Notify Observers
+////			for(Task t : taskList)
+////				updateTaskStatus(t);
+////			return true;
+////		}
+//		return success;
 	}
 
 //	/** // TODO remove this
