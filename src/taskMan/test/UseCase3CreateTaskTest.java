@@ -6,11 +6,14 @@ import static org.junit.Assert.assertTrue;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import taskMan.Facade;
+import taskMan.view.ProjectView;
+import taskMan.view.TaskView;
 import userInterface.IFacade;
 
 public class UseCase3CreateTaskTest {
@@ -50,38 +53,56 @@ public class UseCase3CreateTaskTest {
 	public void SuccesCaseTest() {
 		// Step 1 and 2 are implicit
 		// Step 3
-		assertTrue(taskManager.createTask(0, "A new TASK", newTaskDur, newTaskDev, -1, newTaskDependencies));
+		List<ProjectView> projects = taskManager.getProjects();
+		assertTrue(projects.size() == 1);
+		ProjectView project0 = projects.get(0);
+		assertTrue(taskManager.createTask(project0, "A new TASK", newTaskDur, newTaskDev, newTaskDependencies, -1));
 		// Step 4
-		assertTrue(taskManager.getTaskDescription(0,0).equals("A new TASK"));
-		assertEquals(taskManager.getEstimatedTaskDuration(0,0),newTaskDur);
-		assertEquals(taskManager.getAcceptableTaskDeviation(0,0),newTaskDev);
-		assertFalse(taskManager.hasTaskAlternative(0, 0));
-		assertFalse(taskManager.hasTaskPrerequisites(0, 0));
-		assertEquals(taskManager.getAvailableTasks(0).size(),1);
+		List<TaskView> p0tasks = project0.getTasks();
+		assertTrue(p0tasks.size() == 1);
+		TaskView t = p0tasks.get(0);
+		
+		assertTrue(t.getTaskDescription().equals("A new TASK"));
+		assertEquals(t.getEstimatedTaskDuration(),newTaskDur);
+		assertEquals(t.getAcceptableTaskDeviation(),newTaskDev);
+		assertFalse(t.hasTaskAlternative());
+		assertFalse(t.hasTaskPrerequisites());
+		assertEquals(project0.getAvailableTasks().size(),1);
 	}
 
 	@Test
 	public void SuccesCaseALTTest() {
 
 		// Er is al een FAILED task aanwezig in het project
-		assertTrue(taskManager.createTask(0, "Design system", task00EstDur, task00Dev, -1, task00Dependencies));
-		assertTrue(taskManager.setTaskFailed(0, 0, startDate, altTaskEndDate));
+		List<ProjectView> projects = taskManager.getProjects();
+		assertTrue(projects.size() == 1);
+		ProjectView project0 = projects.get(0);
+		assertTrue(taskManager.createTask(project0, "Design system", task00EstDur, task00Dev, task00Dependencies, -1));
+		
+		List<TaskView> p0tasks = project0.getTasks();
+		assertTrue(p0tasks.size() == 1);
+		TaskView t00 = p0tasks.get(0);
+		assertTrue(taskManager.setTaskFailed(project0, t00, startDate, altTaskEndDate));
 		
 		
 		// Step 1 and 2 are implicit
 		// Step 3
-		assertTrue(taskManager.createTask(0, "A new TASK", newTaskDur, newTaskDev, 0, newTaskDependencies));
+		assertTrue(taskManager.createTask(project0, "A new TASK", newTaskDur, newTaskDev, newTaskDependencies, 0));
 		// Step 4
-		assertTrue(taskManager.getTaskDescription(0,1).equals("A new TASK"));
-		assertEquals(taskManager.getEstimatedTaskDuration(0,1),newTaskDur);
-		assertEquals(taskManager.getAcceptableTaskDeviation(0,1),newTaskDev);
-		assertTrue(taskManager.hasTaskAlternative(0, 0));
-		assertEquals(taskManager.getTaskAlternativeTo(0, 0),1);					//
-		assertFalse(taskManager.hasTaskPrerequisites(0, 0));
-		assertFalse(taskManager.hasTaskAlternative(0, 1));
-		assertFalse(taskManager.hasTaskPrerequisites(0, 1));
-		assertTrue(taskManager.getTaskStatus(0, 1).equals("available"));
-		assertEquals(taskManager.getAvailableTasks(0).size(),1);
+		p0tasks = project0.getTasks();
+		assertTrue(p0tasks.size() == 2);
+		TaskView t01 = p0tasks.get(1);
+		
+		assertTrue(t01.getTaskDescription().equals("A new TASK"));
+		assertEquals(t01.getEstimatedTaskDuration(),newTaskDur);
+		assertEquals(t01.getAcceptableTaskDeviation(),newTaskDev);
+		assertTrue(t01.hasTaskAlternative());
+		assertEquals(t01.getTaskAlternativeTo(),t00);					//
+		assertFalse(t01.hasTaskPrerequisites());
+		assertFalse(t01.hasTaskAlternative());
+		assertFalse(t01.hasTaskPrerequisites());
+		assertTrue(t01.getTaskStatusAsString().equals("Available"));
+		assertEquals(project0.getAvailableTasks().size(),1);
 		
 	}
 
@@ -89,23 +110,34 @@ public class UseCase3CreateTaskTest {
 	public void SuccesCaseDepTest() {
 
 		// Er is al een task aanwezig in het project
-		assertTrue(taskManager.createTask(0, "Design system", task00EstDur, task00Dev, -1, task00Dependencies));
+		List<ProjectView> projects = taskManager.getProjects();
+		assertTrue(projects.size() == 1);
+		ProjectView project0 = projects.get(0);
+		assertTrue(taskManager.createTask(project0, "Design system", task00EstDur, task00Dev, task00Dependencies, -1));
+		
+		List<TaskView> p0tasks = project0.getTasks();
+		assertTrue(p0tasks.size() == 1);
+		TaskView t00 = p0tasks.get(0);
 
 		// Step 1 and 2 are implicit
 		// Step 3
 		newTaskDependencies.add(Integer.valueOf(0));
-		assertTrue(taskManager.createTask(0, "A new TASK", newTaskDur, newTaskDev, -1, newTaskDependencies));
+		assertTrue(taskManager.createTask(project0, "A new TASK", newTaskDur, newTaskDev, newTaskDependencies, -1));
 		// Step 4
-		assertTrue(taskManager.getTaskDescription(0,1).equals("A new TASK"));
-		assertEquals(taskManager.getEstimatedTaskDuration(0,1),newTaskDur);
-		assertEquals(taskManager.getAcceptableTaskDeviation(0,1),newTaskDev);
-		assertFalse(taskManager.hasTaskAlternative(0, 0));
-		assertFalse(taskManager.hasTaskPrerequisites(0, 0));
-		assertFalse(taskManager.hasTaskAlternative(0, 1));
-		assertTrue(taskManager.hasTaskPrerequisites(0, 1));
-		assertTrue(taskManager.getTaskPrerequisitesFor(0, 1).contains(0));				//
-		assertTrue(taskManager.getTaskStatus(0, 1).equals("unavailable"));
-		assertEquals(taskManager.getAvailableTasks(0).size(),1);
+		p0tasks = project0.getTasks();
+		assertTrue(p0tasks.size() == 2);
+		TaskView t01 = p0tasks.get(1);
+		
+		assertTrue(t01.getTaskDescription().equals("A new TASK"));
+		assertEquals(t01.getEstimatedTaskDuration(),newTaskDur);
+		assertEquals(t01.getAcceptableTaskDeviation(),newTaskDev);
+		assertFalse(t01.hasTaskAlternative());
+		assertFalse(t01.hasTaskPrerequisites());
+		assertFalse(t01.hasTaskAlternative());
+		assertTrue(t01.hasTaskPrerequisites());
+		assertTrue(t01.getTaskPrerequisites().contains(t00));				//
+		assertTrue(t01.getTaskStatusAsString().equals("Unavailable"));
+		assertEquals(project0.getAvailableTasks().size(),1);
 		
 	}
 	
@@ -113,33 +145,52 @@ public class UseCase3CreateTaskTest {
 	public void SuccesCaseFailedDepNoAltTest() {
 
 		// Er is al een FAILED task aanwezig in het project
-		assertTrue(taskManager.createTask(0, "Design system", task00EstDur, task00Dev, -1, task00Dependencies));
-		assertEquals(taskManager.getTaskStatus(0, 0),"available");
-		assertTrue(taskManager.setTaskFailed(0, 0, startDate, altTaskEndDate));
-		assertEquals(taskManager.getTaskStatus(0, 0),"failed");
+		List<ProjectView> projects = taskManager.getProjects();
+		assertTrue(projects.size() == 1);
+		ProjectView project0 = projects.get(0);
+		assertTrue(taskManager.createTask(project0, "Design system", task00EstDur, task00Dev, task00Dependencies, -1));
+
+		List<TaskView> p0tasks = project0.getTasks();
+		assertTrue(p0tasks.size() == 1);
+		TaskView t00 = p0tasks.get(0);
+		assertEquals(t00.getTaskStatusAsString(),"Available");
+		assertTrue(taskManager.setTaskFailed(project0, t00, startDate, altTaskEndDate));
+		assertEquals(t00.getTaskStatusAsString(),"Failed");
 		
 		// Task kan FAILED task ZONDER ALT als dep nemen !!!!!!!!!!!!!!
 
 		// Step 1 and 2 are implicit
 		// Step 3
 		newTaskDependencies.add(Integer.valueOf(0));
-		assertTrue(taskManager.createTask(0, "A new TASK", newTaskDur, newTaskDev, -1, newTaskDependencies));
+		assertTrue(taskManager.createTask(project0, "A new TASK", newTaskDur, newTaskDev, newTaskDependencies, -1));
 		// Step 4
-		assertTrue(taskManager.hasTaskPrerequisites(0, 1));
-		assertTrue(taskManager.getTaskPrerequisitesFor(0, 1).contains(0));
-		assertEquals(taskManager.getTaskAmount(0),2);
+		p0tasks = project0.getTasks();
+		assertTrue(p0tasks.size() == 2);
+		TaskView t01 = p0tasks.get(0);
+		assertTrue(t01.hasTaskPrerequisites());
+		assertTrue(t01.getTaskPrerequisites().contains(t00));
 	}
 	
 	@Test
 	public void SuccesCaseFailedDepWithAltTest() {
 
 		// Er is al een FAILED task MET ALT aanwezig in het project
-		assertTrue(taskManager.createTask(0, "Design system", task00EstDur, task00Dev, -1, task00Dependencies));
-		assertEquals(taskManager.getTaskStatus(0, 0),"available");
-		assertTrue(taskManager.setTaskFailed(0, 0, startDate, altTaskEndDate));
-		assertEquals(taskManager.getTaskStatus(0, 0),"failed");
-		assertTrue(taskManager.createTask(0, "Implement Native", task01EstDur, task01Dev, 0, task01Dependencies));
-		assertEquals(taskManager.getTaskStatus(0, 1),"available");
+		List<ProjectView> projects = taskManager.getProjects();
+		assertTrue(projects.size() == 1);
+		ProjectView project0 = projects.get(0);
+		assertTrue(taskManager.createTask(project0, "Design system", task00EstDur, task00Dev, task00Dependencies, -1));
+		List<TaskView> p0tasks = project0.getTasks();
+		assertTrue(p0tasks.size() == 1);
+		TaskView t00 = p0tasks.get(0);
+		assertEquals(t00.getTaskStatusAsString(),"Available");
+		assertTrue(taskManager.setTaskFailed(project0, t00, startDate, altTaskEndDate));
+		assertEquals(t00.getTaskStatusAsString(),"Failed");
+
+		assertTrue(taskManager.createTask(project0, "Implement native", task01EstDur, task01Dev, task01Dependencies, 0));
+		p0tasks = project0.getTasks();
+		assertTrue(p0tasks.size() == 2);
+		TaskView t01 = p0tasks.get(1);
+		assertEquals(t01.getTaskStatusAsString(),"Available");
 
 		// Step 1 and 2 are implicit
 		// Step 3
@@ -147,7 +198,7 @@ public class UseCase3CreateTaskTest {
 		assertTrue(taskManager.createTask(0, "A new TASK", newTaskDur, newTaskDev, -1, newTaskDependencies));
 		// Step 4
 		assertTrue(taskManager.hasTaskPrerequisites(0, 2));
-		assertTrue(taskManager.getTaskPrerequisitesFor(0, 2).contains(1));				// NIET 0 !!!!!
+		assertTrue(taskManager.getTaskPrerequisites(0, 2).contains(1));				// NIET 0 !!!!!
 		assertEquals(taskManager.getTaskAmount(0),3);
 	}
 

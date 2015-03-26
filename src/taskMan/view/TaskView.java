@@ -80,12 +80,6 @@ public class TaskView {
 		return task.isUnacceptableOverdue();
 	}
 	
-	//TODO eh...
-	@Override
-	public boolean equals(Object obj) {
-		return task.equals(obj);
-	}
-	
 	public boolean hasAsTask(Task t) {
 		return task == t;
 //		return task.equals(t); ?
