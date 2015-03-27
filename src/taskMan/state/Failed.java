@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import taskMan.Task;
+import taskMan.util.Dependant;
 import taskMan.util.Prerequisite;
 
 public class Failed implements TaskStatus {
@@ -52,6 +53,12 @@ public class Failed implements TaskStatus {
 	@Override
 	public String toString() {
 		return "Failed";
+	}
+
+	@Override
+	public boolean register(Dependant d) {
+		task.addDependant(d);
+		return true;
 	}
 
 }

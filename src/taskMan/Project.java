@@ -23,7 +23,6 @@ import taskMan.view.TaskView;
  * @author Tim Van Den Broecke, Joran Van de Woestijne, Vincent Van Gestel and
  *         Eli Vangrieken
  */
-//TODO weg met ID
 public class Project implements Dependant {
 
 	private final int projectID;
@@ -80,6 +79,50 @@ public class Project implements Dependant {
 		setOngoing();
 
 	}
+	
+	public boolean createRawTask(String description, 
+			int estimatedDuration, 
+			int acceptableDeviation, 
+			List<Integer> prerequisiteTasks, 
+			int alternativeFor, 
+			String taskStatus,
+			LocalDateTime startTime, 
+			LocalDateTime endTime) {
+		
+		List<TaskView> prereqTaskViews = new ArrayList<TaskView>();
+		TaskView altTaskView = null;
+		
+		// FIND prereqs
+		for(Integer prereqID : prerequisiteTasks) {
+			Task t = findTask(prereqID);
+			if(t != null) {
+				prereqTaskViews.add(new TaskView(t));
+			}
+			
+		}
+		// FIND alt
+		if(alternativeFor != -1) {
+			altTaskView = new TaskView(findTask(alternativeFor));
+		}
+		
+		return createTask(description, estimatedDuration, acceptableDeviation,
+				prereqTaskViews, altTaskView, taskStatus, startTime, endTime);
+	}
+	
+	/**
+	 * Find a specific task in this project by id
+	 * 
+	 * @param taskID
+	 *            the ID of the task to look for
+	 * @return The task with the specified ID or null when no task is found
+	 */
+	private Task findTask(int taskID) {
+		for(Task t : taskList) {
+			if(t.getTaskID() == taskID)
+				return t;
+		}
+		return null;
+	}
 
 	/**
 	 * Creates a new Task with a status of failed or finished.
@@ -127,7 +170,7 @@ public class Project implements Dependant {
 			return false;
 		}
 		
-		if(!isValidTaskView(alternativeFor)) {
+		if(!isValidAlternative(alternativeFor)) {
 			return false;
 		}
 		Task altFor = unwrapTaskView(alternativeFor);
@@ -181,9 +224,10 @@ public class Project implements Dependant {
 //		updateTaskStatus(newTask);
 		
 		boolean success = taskList.add(newTask);
+		unfinishedTaskList.add(newTask);
 		
 		if(success) {
-			recalculateProjectStatus();
+			newTask.register(this);
 		} 
 		return success;
 	}
@@ -223,6 +267,22 @@ public class Project implements Dependant {
 		return taskList.contains(unwrapTaskView(t));
 	}
 	
+	private boolean isValidAlternative(TaskView tv) {
+		if(tv == null) {
+			return true;
+		}
+		if(isValidTaskView(tv)) {
+			Task task = unwrapTaskView(tv);
+			for(Task t : taskList) {
+				if(t.getAlternativeFor() == task) {
+					return false;
+				}
+			}
+			return true;
+		}
+		return false;
+	}
+	
 	/**
 	 * Unwraps the TaskView object and returns the Task that it contained
 	 * 		IF the unwrapped task belongs to this project:
@@ -235,6 +295,9 @@ public class Project implements Dependant {
 	 * 			| NULL otherwise
 	 */
 	private Task unwrapTaskView(TaskView t) {
+		if(t == null) {
+			return null;
+		}
 		for(Task task : taskList) {
 			if (t.hasAsTask(task)) {
 				return task;
@@ -247,8 +310,9 @@ public class Project implements Dependant {
 		this.state = ongoing;
 	}
 	
-	private void setFinished() {
-		this.state = ongoing;
+	private void setFinished(LocalDateTime endTime) {
+		this.state = finished;
+		this.endTime = endTime;
 	}
 
 //	/**
@@ -303,7 +367,7 @@ public class Project implements Dependant {
 	public boolean updateDependency(Prerequisite preTask) {
 		markTaskFinished((Task) preTask);
 		if(state.shouldFinish(unfinishedTaskList)) {
-			setFinished();
+			setFinished(((Task) preTask).getEndTime() );
 		}
 		return true;
 	}
@@ -313,7 +377,7 @@ public class Project implements Dependant {
 	 * If the project has at least one task and all of those tasks are finished (or failed with a finished alternative),
 	 * the project itself will be considered finished.
 	 */
-	private void recalculateProjectStatus() {
+//	private void recalculateProjectStatus() {
 //		//TODO status.check(taskList) -> hasFinishedEndpoint
 //		if(state.shouldFinish(taskList)) {
 //			setFinished();
@@ -328,7 +392,7 @@ public class Project implements Dependant {
 //			}
 //		}
 //		this.state = ProjectStatus.FINISHED;
-	}
+//	}
 
 	//TODO is vervangen door unwrap
 //	/**
@@ -437,9 +501,12 @@ public class Project implements Dependant {
 	 * 
 	 * @return	A list of Tasks.
 	 */
-	//TODO TaskViews hier aanmaken of pas in ProjectView?
-	public ArrayList<Task> getTaskList(){
-		return taskList;
+	public List<TaskView> getTasks(){
+		ArrayList<TaskView> tasks = new ArrayList<TaskView>();
+		for(Task t : taskList) {
+			tasks.add(new TaskView(t));
+		}
+		return tasks;
 	}
 
 //	/** // TODO remove this
@@ -583,8 +650,22 @@ public class Project implements Dependant {
 	 * 
 	 * @return	a list of the availabke tasks' id's
 	 */
-	//TODO TaskViews hier aanmaken of pas in ProjectView?
-	public ArrayList<Task> getAvailableTasks() {
+	public ArrayList<TaskView> getAvailableTaskViews() {
+		ArrayList<TaskView> availableTasks = new ArrayList<TaskView>();
+		for(Task task : taskList) {
+			if(task.isAvailable()) {
+				availableTasks.add(new TaskView(task));
+			}
+		}
+		return availableTasks;
+	}
+	
+	/**
+	 * Returns a list of the id's of the available tasks of the project
+	 * 
+	 * @return	a list of the availabke tasks' id's
+	 */
+	private ArrayList<Task> getAvailableTasks() {
 		ArrayList<Task> availableTasks = new ArrayList<Task>();
 		for(Task task : taskList) {
 			if(task.isAvailable()) {
@@ -775,9 +856,14 @@ public class Project implements Dependant {
 		
 	}
 	
-	public boolean setTaskFinished(TaskView t, LocalDateTime l1, LocalDateTime l2) {
-		//TODO te doen
-		return true;
+	public boolean setTaskFinished(TaskView t, LocalDateTime startTime, LocalDateTime endTime) {
+		if(!isValidTaskView(t)) {
+			return false;
+		}
+		if(startTime.isBefore(creationTime)) {
+			return false;
+		}
+		return unwrapTaskView(t).setTaskFinished(startTime, endTime);
 	}
 	
 	private boolean markTaskFinished(Task task) {
@@ -791,52 +877,34 @@ public class Project implements Dependant {
 		unfinishedTaskList.remove(taskIndex);
 		
 		return markTaskFinished(task.getAlternativeFor());
-////		if(!isValidTaskID(taskID)) {
-////			return false;
-////		}
-//		Task task = unwrapTaskView(taskView);
-//		if(task == null ||startTime == null || startTime.isBefore(creationTime)) {
-//			return false;
-//		}
-//		boolean success = task.setTaskFinished(startTime, endTime);
-//		if(success) { // TODO notify observers IN TASK
-////			for(Task t : taskList) {
-////				updateTaskStatus(t);
-////			}
-//			
-//			recalculateProjectStatus();
-//			
-//			//TODO laat status dit afhandelen
-////			if(this.projectStatus==ProjectStatus.FINISHED){
-////				this.endTime = endTime;
-////			}
-//		}
-//		return success;
 	}
 
-//	/**
-//	 * Sets the task with the given task id to failed
-//	 * 
-//	 * @param 	task
-//	 * 			the id of the given task
-//	 * @param 	startTime
-//	 * 			the start time of the given task
-//	 * @param 	endTime
-//	 * 			the end time of the given task
-//	 * @return	True if setting the task to failed was successful,
-//	 * 			False if it was unsuccessful
-//	 * 			False is the ID isn't a valid one
-//	 * 			False if the start time is null
-//	 * 			False if the start time is before creation time
-//	 */
-//	public boolean setTaskFailed(TaskView taskView, LocalDateTime startTime, LocalDateTime endTime) {
+	/**
+	 * Sets the task with the given task id to failed
+	 * 
+	 * @param 	task
+	 * 			the id of the given task
+	 * @param 	startTime
+	 * 			the start time of the given task
+	 * @param 	endTime
+	 * 			the end time of the given task
+	 * @return	True if setting the task to failed was successful,
+	 * 			False if it was unsuccessful
+	 * 			False is the ID isn't a valid one
+	 * 			False if the start time is null
+	 * 			False if the start time is before creation time
+	 */
+	public boolean setTaskFailed(TaskView t, LocalDateTime startTime, LocalDateTime endTime) {
+		if(!isValidTaskView(t)) {
+			return false;
+		}
+		if(startTime.isBefore(creationTime)) {
+			return false;
+		}
+		return unwrapTaskView(t).setTaskFailed(startTime, endTime);
 ////		if(!isValidTaskID(taskID)) {
 ////			return false;
 ////		}
-//		Task task = unwrapTaskView(taskView);
-//		if(task == null ||startTime == null || startTime.isBefore(creationTime)) {
-//			return false;
-//		}
 //		boolean success = task.setTaskFailed(startTime, endTime);
 ////		if(success) { // Notify Observers
 ////			for(Task t : taskList)
@@ -844,7 +912,7 @@ public class Project implements Dependant {
 ////			return true;
 ////		}
 //		return success;
-//	}
+	}
 
 //	/** // TODO remove this
 //	 * Returns whether the current task in unacceptably overdue.

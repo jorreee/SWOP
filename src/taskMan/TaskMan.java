@@ -168,21 +168,20 @@ public class TaskMan {
 	 * @return	True if and only the creation of a Task with a status
 	 * 			of failed or finished was successful.
 	 */
-	public boolean createRawTask(ProjectView project, 
+	public boolean createRawTask(int project, 
 			String description, 
 			int estimatedDuration, 
 			int acceptableDeviation,
-			List<TaskView> prerequisiteTasks, 
-			TaskView alternativeFor, 
+			List<Integer> prerequisiteTasks, 
+			int alternativeFor, 
 			String taskStatus,
 			LocalDateTime startTime, 
 			LocalDateTime endTime) {
-		
-		Project p = unwrapProjectView(project);
-		if(p == null) {
+		if(isValidProjectID(project)) {
+			return projectList.get(project).createRawTask(description, estimatedDuration, acceptableDeviation, prerequisiteTasks, alternativeFor, taskStatus, startTime, endTime);
+		} else {
 			return false;
 		}
-		return p.createTask(description, estimatedDuration, acceptableDeviation, prerequisiteTasks, alternativeFor, taskStatus, startTime, endTime);
 	}
 	
 	/**
@@ -608,6 +607,12 @@ public class TaskMan {
 	 * 			false if the project ID isn't a valid one
 	 */
 	public boolean setTaskFinished(ProjectView project, TaskView taskID, LocalDateTime startTime, LocalDateTime endTime) {
+		if(startTime == null || endTime == null) {
+			return false;
+		}
+		if(endTime.isAfter(currentTime)) {
+			return false;
+		}
 		Project p = unwrapProjectView(project);
 		if(p == null) {
 			return false;
@@ -633,6 +638,12 @@ public class TaskMan {
 	 * 			False if the end time is null or the end time comes after the current time.
 	 */
 	public boolean setTaskFailed(ProjectView project, TaskView taskID, LocalDateTime startTime, LocalDateTime endTime) {
+		if(startTime == null || endTime == null) {
+			return false;
+		}
+		if(endTime.isAfter(currentTime)) {
+			return false;
+		}
 		Project p = unwrapProjectView(project);
 		if(p == null) {
 			return false;
@@ -742,20 +753,20 @@ public class TaskMan {
 //		return getProject(projectID).getEstimatedProjectDelay(currentTime);
 //	}
 //	
-//	/**
-//	 * Checks whether the given project ID is a valid one.
-//	 * 
-//	 * @param 	projectID
-//	 * 			The ID to check.
-//	 * @return	True if the ID is valid.
-//	 * 			False otherwise.
-//	 */
-//	private boolean isValidProjectID(int projectID) {
-//		if(projectID < 0 || projectID >= projectList.size()) {
-//			return false;
-//		}
-//		return true;
-//	}
+	/**
+	 * Checks whether the given project ID is a valid one.
+	 * 
+	 * @param 	projectID
+	 * 			The ID to check.
+	 * @return	True if the ID is valid.
+	 * 			False otherwise.
+	 */
+	private boolean isValidProjectID(int projectID) {
+		if(projectID < 0 || projectID >= projectList.size()) {
+			return false;
+		}
+		return true;
+	}
 
 	/**
 	 * Returns a list of ProjectView objects that each contain one of this taskman's projects
@@ -768,6 +779,21 @@ public class TaskMan {
 		for(Project project : projectList)
 			views.add(new ProjectView(project));
 		return views;
+	}
+
+	public void storeInMemento() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void revertFromMemento() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void discardMemento() {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

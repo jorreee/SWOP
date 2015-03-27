@@ -1,9 +1,11 @@
 package taskMan.state;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import taskMan.Task;
+import taskMan.util.Dependant;
 import taskMan.util.Prerequisite;
 
 public class FinishedTask implements TaskStatus {
@@ -47,6 +49,13 @@ public class FinishedTask implements TaskStatus {
 	@Override
 	public boolean isFailed() {
 		return false;
+	}
+
+	@Override
+	public boolean register(Dependant d) {
+		task.addDependant(d);
+		task.notifyDependants();
+		return true;
 	}
 	
 	@Override

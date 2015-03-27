@@ -34,7 +34,7 @@ public class Task implements Dependant, Prerequisite {
 	
 	private final Task alternativeFor; //TODO mag maar één keer worden geSet
 	private ArrayList<Dependant> dependants;
-	private final ArrayList<Prerequisite> prerequisites;
+	private ArrayList<Prerequisite> prerequisites;
 	private ArrayList<Prerequisite> unfinishedPrerequisites;
 
 	private final TaskStatus available;
@@ -85,12 +85,14 @@ public class Task implements Dependant, Prerequisite {
 		if(!isValidPrerequisites(prerequisiteTasks)) {
 			throw new IllegalArgumentException("Invalid prerequisites");
 		}
+		if(prerequisiteTasks.contains(alternativeFor)) {
+			throw new IllegalArgumentException("Alt can't be a prerequisite");
+		}
 		this.taskID = taskID;
 		this.description = taskDescription;
 		this.estimatedDuration = new TimeSpan(estimatedDuration);
 		this.acceptableDeviation = acceptableDeviation;
 //		this.extraTime = extraTime;
-		this.alternativeFor = alternativeFor;
 
 		available = new Available(this);
 		unavailable = new Unavailable(this);
@@ -99,15 +101,22 @@ public class Task implements Dependant, Prerequisite {
 		
 		setUnavailable();
 
+		this.dependants = new ArrayList<Dependant>();
 		this.prerequisites = new ArrayList<Prerequisite>();
 		this.unfinishedPrerequisites = new ArrayList<Prerequisite>();
 		
+		this.alternativeFor = alternativeFor;
+
 		for(Task t : prerequisiteTasks) {
-			 t.register(this);
-			 this.prerequisites.add(t);
-			 this.unfinishedPrerequisites.add(t);
+			t.register(this);
+			this.prerequisites.add(t);
+			this.unfinishedPrerequisites.add(t);
 		}
-		
+		removeAlternativesDependencies();
+
+		if(state.shouldBecomeAvailable(unfinishedPrerequisites)) {
+			setAvailable();
+		}
 		
 	}
 
@@ -171,7 +180,11 @@ public class Task implements Dependant, Prerequisite {
 		if(!isValidDependant(t)) {
 			return false;
 		}
-		return dependants.add(t);
+		return state.register(t);
+	}
+	
+	public void addDependant(Dependant d) {
+		dependants.add(d);
 	}
 
 	@Override
@@ -196,20 +209,35 @@ public class Task implements Dependant, Prerequisite {
 		for(Dependant t : dependants) {
 			t.updateDependency(this);
 		}
+		if(alternativeFor != null) {
+			alternativeFor.notifyDependants();
+		}
 		return true;
 	}
 
 	@Override
 	public boolean updateDependency(Prerequisite preTask) {
-		int preIndex = prerequisites.indexOf(preTask);
+		int preIndex = unfinishedPrerequisites.indexOf(preTask);
 		if(preIndex < 0) {
 			return false;
 		}
-		prerequisites.remove(preIndex);
+		unfinishedPrerequisites.remove(preIndex);
 		if(state.shouldBecomeAvailable(unfinishedPrerequisites)) {
 			setAvailable();
 		}
 		return true;
+	}
+	
+	public void removeAlternativesDependencies() {
+		if(alternativeFor != null) {
+			int depIndex;
+			for(Dependant d : alternativeFor.getDependants()) {
+				depIndex = dependants.indexOf(d);
+				if(depIndex >= 0) {
+					dependants.remove(depIndex);
+				}
+			}
+		}
 	}
 
 	/**
@@ -396,6 +424,14 @@ public class Task implements Dependant, Prerequisite {
 			preTasks.add((Task) pt);
 		}
 		return preTasks;
+	}
+	
+	public List<Dependant> getDependants() {
+		ArrayList<Dependant> deps = new ArrayList<Dependant>();
+		for(Dependant dt : dependants) {
+			deps.add(dt);
+		}
+		return deps;
 	}
 	
 //	/**
@@ -634,6 +670,9 @@ public class Task implements Dependant, Prerequisite {
 	
 	//TODO wa is er nog invalid alt task?
 	private boolean isValidAlternative(Task altTask) {
+		if(altTask == null) {
+			return true;
+		}
 		if(altTask.equals(this)) {
 			return false;
 		}

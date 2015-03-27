@@ -140,13 +140,14 @@ public class ShowProjectsRequest extends Request {
 							taskHeader.append(" and ");
 					}
 				}
-				if(task.hasTaskAlternative())
+				if(task.isTaskAlternative())
 					taskHeader.append(", alternative to task " + task.getTaskAlternativeTo().getID());
 				if(task.hasEnded())
 					taskHeader.append(", started " + task.getTaskStartTime().toString() + " , finished " + task.getTaskEndTime().toString());
 				System.out.println(taskHeader.toString()); // PRINT SELECTED TASK HEADER
 
 			} catch(Exception e) {
+				e.printStackTrace();
 				System.out.println("Invalid input");
 			}
 		}

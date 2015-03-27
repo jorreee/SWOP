@@ -42,9 +42,9 @@ public class Facade implements IFacade {
 	}
 
 	@Override
-	public boolean createRawTask(ProjectView project, String description,
+	public boolean createRawTask(int project, String description,
 			int estimatedDuration, int acceptableDeviation,
-			List<TaskView> prerequisiteTasks, TaskView alternativeFor,
+			List<Integer> prerequisiteTasks, int alternativeFor,
 			String taskStatus, LocalDateTime startTime, LocalDateTime endTime) {
 		return taskMan.createRawTask(project, description, estimatedDuration, acceptableDeviation, prerequisiteTasks, alternativeFor, taskStatus, startTime, endTime);
 	}
@@ -221,6 +221,21 @@ public class Facade implements IFacade {
 	@Override
 	public List<ProjectView> getProjects() {
 		return taskMan.getProjects();
+	}
+
+	@Override
+	public void storeInMemento() {
+		taskMan.storeInMemento();
+	}
+
+	@Override
+	public void revertFromMemento() {
+		taskMan.revertFromMemento();
+	}
+
+	@Override
+	public void discardMemento() {
+		taskMan.discardMemento();		
 	}
 
 }

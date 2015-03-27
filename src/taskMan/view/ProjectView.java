@@ -1,11 +1,9 @@
 package taskMan.view;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import taskMan.Project;
-import taskMan.Task;
 
 public class ProjectView {
 
@@ -44,19 +42,11 @@ public class ProjectView {
 	}
 
 	public List<TaskView> getTasks() {
-		ArrayList<TaskView> taskList = new ArrayList<TaskView>();
-		for(Task t : project.getTaskList()) {
-			taskList.add(new TaskView(t));
-		}
-		return taskList;
+		return project.getTasks();
 	}
 
 	public List<TaskView> getAvailableTasks() {
-		ArrayList<TaskView> availableTasks = new ArrayList<TaskView>();
-		for(Task t : project.getAvailableTasks()) {
-			availableTasks.add(new TaskView(t));
-		}
-		return availableTasks;
+		return project.getAvailableTaskViews();
 	}
 	
 	public int[] getCurrentProjectDelay(LocalDateTime time) {
@@ -74,16 +64,22 @@ public class ProjectView {
 	public boolean isProjectFinished() {
 		return project.isFinished();
 	}
-
-	//TODO eh...
-	@Override
-	public boolean equals(Object obj) {
-		return project.equals(obj);
-	}
 	
 	public boolean hasAsProject(Project p) {
 		return project == p;
 //		return project.equals(p); ?
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ProjectView other = (ProjectView) obj;
+		return other.hasAsProject(project);
 	}
 
 }

@@ -20,12 +20,17 @@ public class FinishedProject implements ProjectStatus {
 
 	@Override
 	public boolean isFinished() {
-		return false;
+		return true;
 	}
 
 	@Override
 	public boolean isOngoing() {
 		return !isFinished();
+	}
+	
+	@Override
+	public String toString() {
+		return "Finished";
 	}
 
 }
