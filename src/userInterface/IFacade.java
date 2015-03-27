@@ -1,7 +1,6 @@
 package userInterface;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import taskMan.view.ProjectView;
