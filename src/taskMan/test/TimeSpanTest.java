@@ -134,34 +134,34 @@ public class TimeSpanTest {
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void constructorFromDurationFailTest() {
-		TimeSpan badTS = new TimeSpan(-1);
+		new TimeSpan(-1);
 		
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void constructorFromIntArrayBigArrayFailTest() {
 		int[] badArray = new int[]{0, 0, 0, 0, 0, 0};
-		TimeSpan badTS = new TimeSpan(badArray);
+		new TimeSpan(badArray);
 		
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void constructorFromIntArraySmallArrayFailTest() {
 		int[] badArray = new int[]{0, 0, 0, 0};
-		TimeSpan badTS = new TimeSpan(badArray);
+		new TimeSpan(badArray);
 		
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void constructorFromIntArrayBadValuesTest() {
 		int[] badArray = new int[]{0, -1, 0, 0, 0};
-		TimeSpan badTS = new TimeSpan(badArray);
+		new TimeSpan(badArray);
 		
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void constructorFromLocalDateTimeBadLDTFailTest() {
-		TimeSpan badTS = new TimeSpan(monday152980,null);
+		new TimeSpan(monday152980,null);
 		
 	}
 	
@@ -276,7 +276,7 @@ public class TimeSpanTest {
 
 		assertFalse(longer.isShorter(shorter));
 		assertTrue(shorter.isShorter(longer));
-		assertTrue(shorter.isShorter(shorter));
+		assertTrue(shorter.isShorter(equal));
 		
 	}
 	

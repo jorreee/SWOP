@@ -12,7 +12,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import taskMan.Facade;
-import taskMan.Project;
 import taskMan.view.ProjectView;
 import taskMan.view.TaskView;
 import userInterface.IFacade;
@@ -282,7 +281,6 @@ public class UseCase1ShowProjectsTest {
 		// Stap 1 is impliciet
 		// Stap 2
 		assertTrue(projects.size() == 4);
-		ProjectView project0 = projects.get(0);
 		// Stap 3
 		assertEquals(null,projects.get(4));
 //		assertEquals(taskManager.getProjectDescription(4),null); //TODO is eigenlijk null testen
