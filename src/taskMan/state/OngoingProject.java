@@ -30,5 +30,10 @@ public class OngoingProject implements ProjectStatus {
 	public boolean isOngoing() {
 		return !isFinished();
 	}
+	
+	@Override
+	public String toString() {
+		return "Ongoing";
+	}
 
 }

@@ -147,6 +147,7 @@ public class ShowProjectsRequest extends Request {
 				System.out.println(taskHeader.toString()); // PRINT SELECTED TASK HEADER
 
 			} catch(Exception e) {
+				e.printStackTrace();
 				System.out.println("Invalid input");
 			}
 		}

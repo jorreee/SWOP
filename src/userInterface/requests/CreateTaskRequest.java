@@ -52,6 +52,13 @@ public class CreateTaskRequest extends Request {
 					}
 				}
 				
+				//-1 mag geen error geven
+				TaskView altFor = null;
+				int altForID = Integer.parseInt(input[4]);
+				if(altForID >= 0) {
+					altFor = tasks.get(altForID);
+				}
+				
 				// createTask(ProjectView project, String description,
 				// int estimatedDuration, int acceptableDeviation,
 				// List<TaskView> prerequisiteTasks,
@@ -59,7 +66,7 @@ public class CreateTaskRequest extends Request {
 				boolean success = facade.createTask(
 						projects.get(Integer.parseInt(input[0])), input[1],
 						Integer.parseInt(input[2]), Integer.parseInt(input[3]),
-						prereqList, tasks.get(Integer.parseInt(input[4])));
+						prereqList, altFor);
 
 				// Invalid details
 				if(success) {
@@ -69,6 +76,7 @@ public class CreateTaskRequest extends Request {
 				}
 
 			} catch(Exception e) {
+				e.printStackTrace();
 				System.out.println("Invalid input");
 			}
 			return null;
