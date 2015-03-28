@@ -3,7 +3,6 @@ package taskMan.state;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import taskMan.Task;
 import taskMan.util.Dependant;
 import taskMan.util.Prerequisite;
 
