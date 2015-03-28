@@ -3,7 +3,7 @@ package taskMan.state;
 import java.util.List;
 
 import taskMan.Project;
-import taskMan.util.Prerequisite;
+import taskMan.Task;
 
 public class OngoingProject implements ProjectStatus {
 	
@@ -14,8 +14,10 @@ public class OngoingProject implements ProjectStatus {
 	}
 
 	@Override
-	public boolean shouldFinish(List<Prerequisite> pre) {
+	public boolean finish(List<Task> pre, Task lastTask) {
 		if(pre.size() == 0) {
+			project.setProjectStatus(new FinishedProject(project));
+			project.setEndTime(lastTask.getEndTime());
 			return true;
 		}
 		return false;

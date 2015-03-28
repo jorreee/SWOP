@@ -7,7 +7,6 @@ import java.util.List;
 import taskMan.state.TaskStatus;
 import taskMan.state.Unavailable;
 import taskMan.util.Dependant;
-import taskMan.util.Prerequisite;
 import taskMan.util.TimeSpan;
 
 /**
@@ -19,7 +18,7 @@ import taskMan.util.TimeSpan;
  * @author	Tim Van den Broecke, Joran Van de Woestijne, Vincent Van Gestel, Eli Vangrieken
  *
  */
-public class Task implements Dependant, Prerequisite {
+public class Task implements Dependant {
 
 	private final int taskID;
 	private final String description;
@@ -29,10 +28,10 @@ public class Task implements Dependant, Prerequisite {
 	private LocalDateTime beginTime;
 	private LocalDateTime endTime;
 	
-	private final Task alternativeFor; //TODO mag maar één keer worden geSet
+	private final Task alternativeFor;
 	private ArrayList<Dependant> dependants;
-	private ArrayList<Prerequisite> prerequisites;
-	private ArrayList<Prerequisite> unfinishedPrerequisites;
+	private ArrayList<Task> prerequisites;
+	private ArrayList<Task> unfinishedPrerequisites;
 	
 	private TaskStatus state;
 	
@@ -89,8 +88,8 @@ public class Task implements Dependant, Prerequisite {
 		this.state = new Unavailable(this);
 
 		this.dependants = new ArrayList<Dependant>();
-		this.prerequisites = new ArrayList<Prerequisite>();
-		this.unfinishedPrerequisites = new ArrayList<Prerequisite>();
+		this.prerequisites = new ArrayList<Task>();
+		this.unfinishedPrerequisites = new ArrayList<Task>();
 		
 		this.alternativeFor = alternativeFor;
 
@@ -158,7 +157,6 @@ public class Task implements Dependant, Prerequisite {
 //		this.endTime = endTime;
 	}
 
-	@Override
 	public boolean register(Dependant t) {
 		if(!isValidDependant(t)) {
 			return false;
@@ -170,7 +168,6 @@ public class Task implements Dependant, Prerequisite {
 		dependants.add(d);
 	}
 
-	@Override
 	public boolean unregister(Dependant t) {
 		if(!isValidDependant(t)) {
 			return false;
@@ -187,7 +184,6 @@ public class Task implements Dependant, Prerequisite {
 		return t != this;
 	}
 
-	@Override
 	public boolean notifyDependants() {
 		for(Dependant t : dependants) {
 			t.updateDependency(this);
@@ -199,7 +195,7 @@ public class Task implements Dependant, Prerequisite {
 	}
 
 	@Override
-	public boolean updateDependency(Prerequisite preTask) {
+	public boolean updateDependency(Task preTask) {
 		int preIndex = unfinishedPrerequisites.indexOf(preTask);
 		if(preIndex < 0) {
 			return false;
@@ -400,11 +396,7 @@ public class Task implements Dependant, Prerequisite {
 	}
 	
 	public List<Task> getTaskPrerequisites() {
-		ArrayList<Task> preTasks = new ArrayList<Task>();
-		for(Prerequisite pt : prerequisites) {
-			preTasks.add((Task) pt);
-		}
-		return preTasks;
+		return prerequisites;
 	}
 	
 	public List<Dependant> getDependants() {

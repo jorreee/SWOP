@@ -4,11 +4,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import taskMan.state.FinishedProject;
 import taskMan.state.OngoingProject;
 import taskMan.state.ProjectStatus;
 import taskMan.util.Dependant;
-import taskMan.util.Prerequisite;
 import taskMan.util.TimeSpan;
 import taskMan.view.TaskView;
 
@@ -32,12 +30,10 @@ public class Project implements Dependant {
 	private final LocalDateTime dueTime;
 	private LocalDateTime endTime;
 
-	private final ProjectStatus ongoing;
-	private final ProjectStatus finished;
 	private ProjectStatus state;
 
 	private ArrayList<Task> taskList = new ArrayList<Task>();
-	private ArrayList<Prerequisite> unfinishedTaskList = new ArrayList<Prerequisite>();
+	private ArrayList<Task> unfinishedTaskList = new ArrayList<Task>();
 
 	/**
 	 * Creates a new Project.
@@ -72,11 +68,8 @@ public class Project implements Dependant {
 		this.creationTime = creationTime;
 		this.dueTime = dueTime;
 		this.projectID = projectID;
-
-		this.ongoing = new OngoingProject(this);
-		this.finished = new FinishedProject(this);
 		
-		setOngoing();
+		this.state = new OngoingProject(this);
 
 	}
 	
@@ -306,14 +299,19 @@ public class Project implements Dependant {
 		return null;
 	}
 	
-	private void setOngoing() {
-		this.state = ongoing;
+	public boolean setProjectStatus(ProjectStatus newStatus) {
+		this.state = newStatus;
+		return true;
 	}
 	
-	private void setFinished(LocalDateTime endTime) {
-		this.state = finished;
-		this.endTime = endTime;
-	}
+//	private void setOngoing() {
+//		this.state = ongoing;
+//	}
+//	
+//	private void setFinished(LocalDateTime endTime) {
+//		this.state = finished;
+//		this.endTime = endTime;
+//	}
 
 //	/**
 //	 * Checks whether the given Task has finished alternatives.
@@ -364,12 +362,27 @@ public class Project implements Dependant {
 //	}
 
 	@Override
-	public boolean updateDependency(Prerequisite preTask) {
-		markTaskFinished((Task) preTask);
-		if(state.shouldFinish(unfinishedTaskList)) {
-			setFinished(((Task) preTask).getEndTime() );
+	public boolean updateDependency(Task preTask) {
+		markTaskFinished(preTask);
+		return state.finish(unfinishedTaskList, preTask);
+	}
+
+	/**
+	 * Sets the end time of the Project.
+	 * 
+	 * @param 	endTime
+	 * 			The new end time of the Project.
+	 * @throws	IllegalArgumentException
+	 * 			If the new end time is null or the old end time is already set. 
+	 */
+	public void setEndTime(LocalDateTime endTime) throws IllegalArgumentException {
+		if(endTime==null) {
+			throw new IllegalArgumentException("The new endTime is null");
 		}
-		return true;
+		if(getProjectEndTime()!=null) {
+			throw new IllegalArgumentException("The endtime is already set");
+		}
+		this.endTime = endTime;
 	}
 	
 	/**

@@ -1,5 +1,7 @@
 package taskMan.util;
 
+import taskMan.Task;
+
 /**
  * OBSERVER
  * 
@@ -8,7 +10,7 @@ package taskMan.util;
  */
 public interface Dependant {
 	
-	public boolean updateDependency(Prerequisite preTask); 
+	public boolean updateDependency(Task preTask); 
 	// TODO kan ook "heyDependant,I'mFinishedSoGoAhead()" noemen
 
 }
