@@ -391,32 +391,43 @@ public class Task implements Dependant {
 //	}
 
 	public TimeSpan getMaxDelayChain() {
-		TimeSpan longest = new TimeSpan(0);
-		TimeSpan chain;
+		TimeSpan longest = getEstimatedDuration();
+		TimeSpan candidate;
 		for(Dependant d : dependants) {
 			try {
-				chain = ((Task) d).getEstimatedDuration().add(((Task) d).getMaxDelayChain());
-				if(chain.isLonger(longest)) {
-					longest = chain;
+				candidate = getEstimatedDuration().add(((Task) d).getMaxDelayChain());
+				if(candidate.isLonger(longest)) {
+					longest = candidate;
 				}
-			} catch(Exception e) {
+			} catch(ClassCastException e) {
 				// project is ook Dependant maar moet geen maxdelaychain kunnen geven. Lege methode maybe, maar das ook dirty
 				System.out.println("dirty."); //TODO dependant moet altijd kunnen maxDelayChain geven?
+			}
+		}
+		if(alternativeFor != null) {
+			candidate = alternativeFor.getMaxDelayChain();
+			if(candidate.isLonger(longest)) {
+				longest = candidate;
 			}
 		}
 		return longest;
 	}
 	
 	public List<Task> getTaskPrerequisites() {
-		return prerequisites;
+		ArrayList<Task> allPrerequisites = new ArrayList<Task>();
+		for(Task t : prerequisites) {
+			allPrerequisites.add(t);
+			allPrerequisites.addAll(t.getTaskPrerequisites());
+		}
+//		if(alternativeFor != null) {
+//			allPrerequisites.add(alternativeFor);
+//			//TODO als de taak is gefaald, moet deze methode ook de prereqs van de vervanger geven
+//		}
+		return allPrerequisites;
 	}
 	
 	public List<Dependant> getDependants() {
-		ArrayList<Dependant> deps = new ArrayList<Dependant>();
-		for(Dependant dt : dependants) {
-			deps.add(dt);
-		}
-		return deps;
+		return dependants;
 	}
 	
 //	/**

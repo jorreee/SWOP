@@ -992,13 +992,13 @@ public class Project implements Dependant {
 			return new TimeSpan(0).getSpan();
 		}
 
+		List<Task> availableTasks = getAvailableTasks();
 		// FOR EACH AVAILABLE TASK CALCULATE CHAIN
-		int availableBranches = getAvailableTasks().size();
+		int availableBranches = availableTasks.size();
 		TimeSpan[] timeChains = new TimeSpan[availableBranches];
-		Task testTask;
 		for(int i = 0 ; i < availableBranches ; i++) {
-			testTask = getAvailableTasks().get(i);
-			timeChains[i] = testTask.getEstimatedDuration().add(getMaxDelayChain(testTask));
+//			timeChains[i] = testTask.getEstimatedDuration().add(getMaxDelayChain(testTask));
+			timeChains[i] = availableTasks.get(i).getMaxDelayChain();
 		}
 		// FIND LONGEST CHAIN
 		TimeSpan longest = new TimeSpan(0);
@@ -1025,7 +1025,7 @@ public class Project implements Dependant {
 	 * @return	The longest chain of durations possible from the given task
 	 * 			null if the task ID isn't a valid one
 	 */
-	private TimeSpan getMaxDelayChain(Task task) {
+//	private TimeSpan getMaxDelayChain(Task task) {
 //		if(!isValidTaskID(taskID)) {
 //			return null;
 //		}
@@ -1033,7 +1033,7 @@ public class Project implements Dependant {
 //			return new TimeSpan(0);
 //		}
 		// TODO hoe nu?
-		return task.getMaxDelayChain();
+//		return task.getMaxDelayChain();
 //		List<Task> dependants = getDependants(task);
 //		TimeSpan longest = new TimeSpan(0);
 //		TimeSpan chain;
@@ -1044,7 +1044,7 @@ public class Project implements Dependant {
 //			}
 //		}
 //		return longest;
-	}
+//	}
 
 //	/** // TODO naar Task
 //	 * A method to determine if a task is a prerequisite to another task
