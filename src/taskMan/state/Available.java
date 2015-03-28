@@ -16,18 +16,38 @@ public class Available implements TaskStatus {
 	}
 
 	@Override
-	public boolean shouldBecomeAvailable(List<Prerequisite> preLists) {
+	public boolean makeAvailable(List<Prerequisite> preLists) {
 		return false;
 	}
 
 	@Override
-	public boolean canFinish(LocalDateTime beginTime, LocalDateTime endTime) {
-		return isValidTimeStamps(beginTime, endTime);
+	public boolean finish(LocalDateTime beginTime, LocalDateTime endTime) {
+		if(isValidTimeStamps(beginTime, endTime)) {
+
+			task.setBeginTime(beginTime);
+			task.setEndTime(endTime);
+			
+			task.setTaskStatus(new FinishedTask(task));
+			
+			task.notifyDependants();
+			
+			return true;
+		}
+		return false;
 	}
 
 	@Override
-	public boolean canFail(LocalDateTime beginTime, LocalDateTime endTime) {
-		return isValidTimeStamps(beginTime, endTime);
+	public boolean fail(LocalDateTime beginTime, LocalDateTime endTime) {
+		if(isValidTimeStamps(beginTime, endTime)) {
+
+			task.setBeginTime(beginTime);
+			task.setEndTime(endTime);
+			
+			task.setTaskStatus(new Failed(task));
+			
+			return true;
+		}
+		return false;
 	}
 	
 	/**
