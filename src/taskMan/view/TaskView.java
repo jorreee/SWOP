@@ -27,7 +27,6 @@ public class TaskView {
 		return task.getBeginTime();
 	}
 	
-	//TODO niet gebruikt
 	public TimeSpan getEstimatedTaskDuration() {
 		return task.getEstimatedDuration();
 	}

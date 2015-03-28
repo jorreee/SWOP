@@ -391,8 +391,20 @@ public class Task implements Dependant {
 //	}
 
 	public TimeSpan getMaxDelayChain() {
-		//TODO te doen
-		return null;
+		TimeSpan longest = new TimeSpan(0);
+		TimeSpan chain;
+		for(Dependant d : dependants) {
+			try {
+				chain = ((Task) d).getEstimatedDuration().add(((Task) d).getMaxDelayChain());
+				if(chain.isLonger(longest)) {
+					longest = chain;
+				}
+			} catch(Exception e) {
+				// project is ook Dependant maar moet geen maxdelaychain kunnen geven. Lege methode maybe, maar das ook dirty
+				System.out.println("dirty."); //TODO dependant moet altijd kunnen maxDelayChain geven?
+			}
+		}
+		return longest;
 	}
 	
 	public List<Task> getTaskPrerequisites() {
@@ -631,7 +643,6 @@ public class Task implements Dependant {
 		return true;
 	}
 	
-	//TODO wa is er nog invalid alt task?
 	private boolean isValidAlternative(Task altTask) {
 		if(altTask == null) {
 			return true;
