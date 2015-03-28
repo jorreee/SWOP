@@ -8,9 +8,9 @@ import taskMan.util.Prerequisite;
 
 public interface TaskStatus {
 
-	public boolean shouldBecomeAvailable(List<Prerequisite> preList);
-	public boolean canFinish(LocalDateTime beginTime, LocalDateTime endTime);
-	public boolean canFail(LocalDateTime beginTime, LocalDateTime endTime);
+	public boolean makeAvailable(List<Prerequisite> preList);
+	public boolean finish(LocalDateTime beginTime, LocalDateTime endTime);
+	public boolean fail(LocalDateTime beginTime, LocalDateTime endTime);
 	public boolean register(Dependant d);
 	public boolean isAvailable();
 	public boolean isUnavailable();

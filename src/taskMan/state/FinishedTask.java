@@ -16,17 +16,17 @@ public class FinishedTask implements TaskStatus {
 	}
 
 	@Override
-	public boolean shouldBecomeAvailable(List<Prerequisite> preList) {
+	public boolean makeAvailable(List<Prerequisite> preList) {
 		return false;
 	}
 
 	@Override
-	public boolean canFinish(LocalDateTime beginTime, LocalDateTime endTime) {
+	public boolean finish(LocalDateTime beginTime, LocalDateTime endTime) {
 		return false;
 	}
 
 	@Override
-	public boolean canFail(LocalDateTime beginTime, LocalDateTime endTime) {
+	public boolean fail(LocalDateTime beginTime, LocalDateTime endTime) {
 		return false;
 	}
 

@@ -4,9 +4,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import taskMan.state.Available;
-import taskMan.state.Failed;
-import taskMan.state.FinishedTask;
 import taskMan.state.TaskStatus;
 import taskMan.state.Unavailable;
 import taskMan.util.Dependant;
@@ -36,11 +33,6 @@ public class Task implements Dependant, Prerequisite {
 	private ArrayList<Dependant> dependants;
 	private ArrayList<Prerequisite> prerequisites;
 	private ArrayList<Prerequisite> unfinishedPrerequisites;
-
-	private final TaskStatus available;
-	private final TaskStatus unavailable;
-	private final TaskStatus finished;
-	private final TaskStatus failed;
 	
 	private TaskStatus state;
 	
@@ -93,13 +85,8 @@ public class Task implements Dependant, Prerequisite {
 		this.estimatedDuration = new TimeSpan(estimatedDuration);
 		this.acceptableDeviation = acceptableDeviation;
 //		this.extraTime = extraTime;
-
-		available = new Available(this);
-		unavailable = new Unavailable(this);
-		finished = new FinishedTask(this);
-		failed = new Failed(this);
 		
-		setUnavailable();
+		this.state = new Unavailable(this);
 
 		this.dependants = new ArrayList<Dependant>();
 		this.prerequisites = new ArrayList<Prerequisite>();
@@ -114,9 +101,7 @@ public class Task implements Dependant, Prerequisite {
 		}
 		removeAlternativesDependencies();
 
-		if(state.shouldBecomeAvailable(unfinishedPrerequisites)) {
-			setAvailable();
-		}
+		state.makeAvailable(unfinishedPrerequisites);
 		
 	}
 
@@ -158,16 +143,14 @@ public class Task implements Dependant, Prerequisite {
 				alternativeFor);
 		
 		if(taskStatus.equalsIgnoreCase("failed")) {
-			setAvailable();
-			setTaskFailed(beginTime, endTime);
+			state.fail(beginTime, endTime);
 		} else if(taskStatus.equalsIgnoreCase("finished")) {
-			setAvailable();
-			setTaskFinished(beginTime, endTime);
+			state.finish(beginTime, endTime);
 		} else {
 			throw new IllegalArgumentException(
 					"Time stamps are only allowed if a task is finished or failed");
 		}
-//		this.state = TaskStatus.valueOf(taskStatus); //TODO ik heb nog geen idee
+//		this.state = TaskStatus.valueOf(taskStatus);
 //		if(!isValidTimeStamps(beginTime, endTime)) {
 //			throw new IllegalArgumentException("Very bad timestamps");
 //		}
@@ -222,9 +205,7 @@ public class Task implements Dependant, Prerequisite {
 			return false;
 		}
 		unfinishedPrerequisites.remove(preIndex);
-		if(state.shouldBecomeAvailable(unfinishedPrerequisites)) {
-			setAvailable();
-		}
+		state.makeAvailable(unfinishedPrerequisites);
 		return true;
 	}
 	
@@ -522,18 +503,19 @@ public class Task implements Dependant, Prerequisite {
 	public boolean setTaskFinished(LocalDateTime beginTime,
 			LocalDateTime endTime) {
 		
-		if(state.canFinish(beginTime, endTime)) {
-			
-			setBeginTime(beginTime);
-			setEndTime(endTime);
-			setFinished();
-			
-			notifyDependants();
-			
-			return true;
-			
-		}
-		return false;
+		return state.finish(beginTime, endTime);
+//		if(state.finish(beginTime, endTime)) {
+//			
+//			setBeginTime(beginTime);
+//			setEndTime(endTime);
+//			setFinished();
+//			
+//			notifyDependants();
+//			
+//			return true;
+//			
+//		}
+//		return false;
 	}
 
 	/**
@@ -547,29 +529,18 @@ public class Task implements Dependant, Prerequisite {
 	 */
 	public boolean setTaskFailed(LocalDateTime beginTime,
 			LocalDateTime endTime) {
-		if(state.canFinish(beginTime, endTime)) {
-			setBeginTime(beginTime);
-			setEndTime(endTime);
-			setFailed();
-			return true;
-		}
-		return false;
-	}
-	
-	private void setAvailable() {
-		state = available;
+		return state.fail(beginTime, endTime);
+//		if(state.finish(beginTime, endTime)) {
+//			setBeginTime(beginTime);
+//			setEndTime(endTime);
+//			setFailed();
+//			return true;
+//		}
+//		return false;
 	}
 
-	private void setUnavailable() {
-		state = unavailable;
-	}
-
-	private void setFinished() {
-		state = finished;
-	}
-
-	private void setFailed() {
-		state = failed;
+	public void setTaskStatus(TaskStatus newStatus) {
+		this.state = newStatus;
 	}
 
 //	/**
@@ -606,7 +577,7 @@ public class Task implements Dependant, Prerequisite {
 	 * 			The deviation to check.
 	 * @return	True if deviation >= 0
 	 */
-	private boolean isValidDeviation(int deviation){
+	private boolean isValidDeviation(int deviation) {
 		return deviation >= 0;
 	}
 	

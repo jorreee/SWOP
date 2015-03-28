@@ -16,20 +16,21 @@ public class Unavailable implements TaskStatus {
 	}
 
 	@Override
-	public boolean shouldBecomeAvailable(List<Prerequisite> preList) {
+	public boolean makeAvailable(List<Prerequisite> preList) {
 		if(preList.size() == 0) {
+			task.setTaskStatus(new Available(task));
 			return true;
 		}
 		return false;
 	}
 
 	@Override
-	public boolean canFinish(LocalDateTime beginTime, LocalDateTime endTime) {
+	public boolean finish(LocalDateTime beginTime, LocalDateTime endTime) {
 		return false;
 	}
 
 	@Override
-	public boolean canFail(LocalDateTime beginTime, LocalDateTime endTime) {
+	public boolean fail(LocalDateTime beginTime, LocalDateTime endTime) {
 		return false;
 	}
 
