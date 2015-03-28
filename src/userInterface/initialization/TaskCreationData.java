@@ -1,4 +1,4 @@
-package userInterface;
+package userInterface.initialization;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -14,10 +14,11 @@ public class TaskCreationData {
 	private final TaskStatus status;
 	private final LocalDateTime startTime;
 	private final LocalDateTime endTime;
+	private PlanningCreationData planningData;
 
 	public TaskCreationData(int project, String description, int estimatedDuration,
 			int acceptableDeviation, int alternativeFor,
-			List<Integer> prerequisiteTasks, TaskStatus status, LocalDateTime startTime, LocalDateTime endTime) {
+			List<Integer> prerequisiteTasks, TaskStatus status, LocalDateTime startTime, LocalDateTime endTime, PlanningCreationData planningData) {
 		this.project = project;
 		this.description = description;
 		this.estimatedDuration = estimatedDuration;
@@ -27,6 +28,7 @@ public class TaskCreationData {
 		this.status = status;
 		this.startTime = startTime;
 		this.endTime = endTime;
+		this.planningData = planningData;
 	}
 
 	public int getProject() {
@@ -63,6 +65,10 @@ public class TaskCreationData {
 
 	public LocalDateTime getEndTime() {
 		return endTime;
+	}
+	
+	public PlanningCreationData getPlanningData() {
+		return planningData;
 	}
 
 }
