@@ -1,10 +1,11 @@
 TaskMan iteration 2 commands:
 h				Display all commands with a short description
 exit				Closes the application
+change user			Log in as a different system user
+show				Overview with additional details
 advance				Advance time to a later date
-update task			Update an available task to an end state
 create project			Create a new project
 create task			Create a new task assigned to an existing project
-show				Overview with additional details
+update task			Update an available task to an end state
 simulate			Run a simulation of the system with the possibility to rollback
-change user			Log in as a different system user
+plan task			Plan a specific task and reserve required resources

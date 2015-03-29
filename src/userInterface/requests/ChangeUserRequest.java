@@ -30,7 +30,7 @@ public class ChangeUserRequest extends Request{
 				String userInput = inputReader.readLine();
 				// Escape
 				if(userInput.equalsIgnoreCase("quit"))
-					return "User unaltered";
+					return quit();
 				
 				if(facade.changeToUser(userInput)) // Valid User
 					return "Now logged in as " + facade.getCurrentUsername();
@@ -42,4 +42,8 @@ public class ChangeUserRequest extends Request{
 		}
 	}
 
+	private String quit() {
+		return "User unaltered";
+	}
+	
 }

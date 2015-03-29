@@ -68,6 +68,8 @@ public interface IFacade {
 	public boolean createRawReservation(int resource, int project, int task,
 			LocalDateTime startTime, LocalDateTime endTime);
 
+	public List<LocalDateTime> getPossibleTaskStartingTimes(TaskView task, int amount);
+
 	/*
 	public boolean createTask(int projectID, String description, int estimatedDuration, int acceptableDeviation, String taskStatus, Integer alternativeFor, List<Integer> prerequisiteTasks, LocalDateTime startTime, LocalDateTime endTime);
 	public boolean createTask(int projectID, String description, int estimatedDuration, int acceptableDeviation, Integer alternativeFor, List<Integer> prerequisiteTasks);

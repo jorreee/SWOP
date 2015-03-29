@@ -9,6 +9,7 @@ import userInterface.requests.CreateTaskRequest;
 import userInterface.requests.ExitRequest;
 import userInterface.requests.HelpRequest;
 import userInterface.requests.InvalidRequest;
+import userInterface.requests.PlanTaskRequest;
 import userInterface.requests.Request;
 import userInterface.requests.ShowProjectsRequest;
 import userInterface.requests.SimulationRequest;
@@ -59,6 +60,12 @@ public class InputParser {
 			case "change"	:
 				if(input[1].toLowerCase().equals("user")) {
 					return new ChangeUserRequest(facade, inputReader);
+				} else {
+					throw new IllegalArgumentException();
+				}
+			case "plan" :
+				if(input[1].toLowerCase().equals("task")) {
+					return new PlanTaskRequest(facade, inputReader);
 				} else {
 					throw new IllegalArgumentException();
 				}
