@@ -13,7 +13,12 @@ public interface IFacade {
 	public boolean advanceTimeTo(LocalDateTime time);
 
 	public LocalDateTime getCurrentTime();
+	
+	public String getCurrentUsername();
+	public List<String> getPossibleUsernames();
+	public boolean changeToUser(String readLine);
 
+	
 	public boolean createProject(String name, String description,
 			LocalDateTime creationTime, LocalDateTime dueTime);
 

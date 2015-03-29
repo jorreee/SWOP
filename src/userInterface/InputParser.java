@@ -3,6 +3,7 @@ package userInterface;
 import java.io.BufferedReader;
 
 import userInterface.requests.AdvanceTimeRequest;
+import userInterface.requests.ChangeUserRequest;
 import userInterface.requests.CreateProjectRequest;
 import userInterface.requests.CreateTaskRequest;
 import userInterface.requests.ExitRequest;
@@ -55,6 +56,12 @@ public class InputParser {
 				return new ShowProjectsRequest(facade, inputReader);
 			case "simulate" :
 				return new SimulationRequest(facade, inputReader);
+			case "change"	:
+				if(input[1].toLowerCase().equals("user")) {
+					return new ChangeUserRequest(facade, inputReader);
+				} else {
+					throw new IllegalArgumentException();
+				}
 			default	: 
 				return new InvalidRequest(facade, inputReader);
 			}

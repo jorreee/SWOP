@@ -97,6 +97,9 @@ public class Main {
 		BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
 		InputParser inParser = new InputParser(facade, input);
 		while(true) {
+			// Display System status
+			System.out.println("Current System time: " + facade.getCurrentTime().toString() +
+					", logged in as: " + facade.getCurrentUsername());
 			// Ask user for input
 			System.out.println("TaskMan instruction? (h for help)");
 			// Parse user input

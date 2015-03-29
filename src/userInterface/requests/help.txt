@@ -7,3 +7,4 @@ create project			Create a new project
 create task			Create a new task assigned to an existing project
 show				Overview with additional details
 simulate			Run a simulation of the system with the possibility to rollback
+change user			Log in as a different system user

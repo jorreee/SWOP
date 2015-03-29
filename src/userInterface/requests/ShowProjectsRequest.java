@@ -20,7 +20,6 @@ public class ShowProjectsRequest extends Request {
 		while(true) {
 			try {
 				// Show List of projects with their status
-				System.out.println("Current time: " + facade.getCurrentTime().toString());
 				int projectAmount = projects.size();
 				for(int i = 0 ; i < projectAmount ; i++) {
 					System.out.println("- Project " + i + " "
