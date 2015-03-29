@@ -6,16 +6,16 @@ import java.util.List;
 import taskMan.Task;
 import taskMan.util.Dependant;
 
-public class FinishedTask implements TaskStatus {
-
+public class AvailableTask implements TaskStatus {
+	
 	private Task task;
-
-	public FinishedTask(Task t) {
+	
+	public AvailableTask(Task t) {
 		task = t;
 	}
 
 	@Override
-	public boolean makeAvailable(List<Task> preList) {
+	public boolean makeAvailable(List<Task> preLists) {
 		return false;
 	}
 
@@ -31,7 +31,7 @@ public class FinishedTask implements TaskStatus {
 
 	@Override
 	public boolean isAvailable() {
-		return false;
+		return true;
 	}
 
 	@Override
@@ -41,7 +41,7 @@ public class FinishedTask implements TaskStatus {
 
 	@Override
 	public boolean isFinished() {
-		return true;
+		return false;
 	}
 
 	@Override
@@ -50,20 +50,19 @@ public class FinishedTask implements TaskStatus {
 	}
 	
 	@Override
-	public boolean isExecuting(){
+	public boolean isExecuting() {
 		return false;
+	}
+	
+	@Override
+	public String toString() {
+		return "Available";
 	}
 
 	@Override
 	public boolean register(Dependant d) {
 		task.addDependant(d);
-		task.notifyDependants();
 		return true;
-	}
-	
-	@Override
-	public String toString() {
-		return "Finished";
 	}
 
 }
