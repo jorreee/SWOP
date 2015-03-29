@@ -73,6 +73,28 @@ public class Project implements Dependant {
 
 	}
 	
+	/**
+	 * Creates a Raw Task: A Task as issued by the input file.
+	 * 
+	 * @param 	description
+	 * 			The description of the Task.
+	 * @param 	estimatedDuration
+	 * 			The estimated duration of the Task.
+	 * @param	 acceptableDeviation
+	 * 			The acceptable deviation of the Task.
+	 * @param	prerequisiteTasks
+	 * 			The list of prerequisites of the Task.
+	 * @param 	alternativeFor
+	 * 			The alternative for the Task.
+	 * @param 	taskStatus
+	 * 			The status of the Task.
+	 * @param 	startTime
+	 * 			The start time of the Task.
+	 * @param 	endTime
+	 * 			The end time of the Task.
+	 * @return	True if and only if the creation of the Raw Task
+	 * 			was successful.
+	 */
 	public boolean createRawTask(String description, 
 			int estimatedDuration, 
 			int acceptableDeviation, 
@@ -256,16 +278,29 @@ public class Project implements Dependant {
 				null);
 	}
 	
-	private boolean isValidTaskView(TaskView t) {
-		return taskList.contains(unwrapTaskView(t));
+	/**
+	 * Checks whether the given TaskView is a valid TaskView representing a valid Task.
+	 * 
+	 * @param 	view
+	 * 			The TaskView to check.
+	 * @return	True if and only if the TaskView is a valid TaskView.
+	 */
+	private boolean isValidTaskView(TaskView view) {
+		return taskList.contains(unwrapTaskView(view));
 	}
 	
-	private boolean isValidAlternative(TaskView tv) {
-		if(tv == null) {
+	/**
+	 * Checks whether the given TaskView represents a valid Alternative for a certain Task in this Project.
+	 * @param 	view
+	 * 			The TaskView to check.
+	 * @return	True if and only if the TaskView represents a valid Alternative.
+	 */
+	private boolean isValidAlternative(TaskView view) {
+		if(view == null) {
 			return true;
 		}
-		if(isValidTaskView(tv)) {
-			Task task = unwrapTaskView(tv);
+		if(isValidTaskView(view)) {
+			Task task = unwrapTaskView(view);
 			for(Task t : taskList) {
 				if(t.getAlternativeFor() == task) {
 					return false;
@@ -281,24 +316,30 @@ public class Project implements Dependant {
 	 * 		IF the unwrapped task belongs to this project:
 	 * 				(getTaskList().contains(task)
 	 * 
-	 * @param 	
-	 * 			| the TaskView to unwrap
-	 * @return 
-	 * 			| the unwrapped Task if it belonged to this project
-	 * 			| NULL otherwise
+	 * @param 	view
+	 * 			the TaskView to unwrap
+	 * @return 	the unwrapped Task if it belonged to this project
+	 * 			NULL otherwise
 	 */
-	private Task unwrapTaskView(TaskView t) {
-		if(t == null) {
+	private Task unwrapTaskView(TaskView view) {
+		if(view == null) {
 			return null;
 		}
 		for(Task task : taskList) {
-			if (t.hasAsTask(task)) {
+			if (view.hasAsTask(task)) {
 				return task;
 			}
 		}
 		return null;
 	}
 	
+	/**
+	 * Sets the Project Status to the given Status.
+	 * 
+	 * @param 	newStatus
+	 * 			The Status to change to.
+	 * @return	True if and only if the Status change was succesful.
+	 */
 	public boolean setProjectStatus(ProjectStatus newStatus) {
 		this.state = newStatus;
 		return true;
@@ -361,6 +402,9 @@ public class Project implements Dependant {
 //		task.setAvailable();
 //	}
 
+	/**
+	 * 
+	 */
 	@Override
 	public boolean updateDependency(Task preTask) {
 		markTaskFinished(preTask);
