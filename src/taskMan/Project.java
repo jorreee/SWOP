@@ -403,12 +403,26 @@ public class Project implements Dependant {
 //	}
 
 	/**
+	 * Updates the Dependency of the Project by providing a finished Task.
+	 * The finished Task will be removed from the unfinished Task list and it's chain of alternatives as well.
+	 * The Project will also check if it can set it's status to finished.
+	 * 
+	 * @return 	True if and only if the removal of the Task and it's alternatives was successful.
 	 * 
 	 */
 	@Override
 	public boolean updateDependency(Task preTask) {
-		markTaskFinished(preTask);
-		return state.finish(unfinishedTaskList, preTask);
+		if (!preTask.isFinished()){
+			return false;
+		}
+		boolean successful = markTaskFinished(preTask);
+		if (successful){
+			state.finish(unfinishedTaskList, preTask);
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
 
 	/**
