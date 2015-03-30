@@ -412,7 +412,7 @@ public class Project implements Dependant {
 	 */
 	@Override
 	public boolean updateDependency(Task preTask) {
-		if (!preTask.isFinished()){
+		if (!preTask.hasEnded()){
 			return false;
 		}
 		boolean successful = markTaskFinished(preTask);
@@ -946,8 +946,9 @@ public class Project implements Dependant {
 			return false;
 		}
 		unfinishedTaskList.remove(taskIndex);
-		
-		return markTaskFinished(task.getAlternativeFor());
+
+		return true;
+//		return markTaskFinished(task.getAlternativeFor());
 	}
 
 	/**
