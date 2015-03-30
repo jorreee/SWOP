@@ -60,7 +60,7 @@ public class Project implements Dependant {
 		if(!isValidName(projectName)) {
 			throw new IllegalArgumentException("Invalid project name");
 		}
-		if(!isValidDescription(projectName)) {
+		if(!isValidDescription(description)) {
 			throw new IllegalArgumentException("Invalid project description");
 		}
 		if(!isValidCreationAndDueTimes(creationTime,dueTime)) {
