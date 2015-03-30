@@ -4,8 +4,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import org.junit.*;
-
 import static org.junit.Assert.*; 
+
 import taskMan.Task;
 import taskMan.util.TimeSpan;
 import taskMan.state.*;
@@ -141,7 +141,7 @@ public class TaskTest {
 	@Test
 	public void setUnavailableTest(){
 		assertTrue(defaultTest.isAvailable());
-		TaskStatus newStatus = new Unavailable(defaultTest);
+		TaskStatus newStatus = new UnavailableTask(defaultTest);
 		defaultTest.setTaskStatus(newStatus);
 		assertTrue(defaultTest.isUnavailable());
 	}
