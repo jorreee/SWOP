@@ -497,5 +497,10 @@ public class TimeSpan {
 			return false;
 		return true;
 	}
+	
+	@Override
+	public String toString() {
+		return "" + getSpanMinutes();
+	}
 }
 

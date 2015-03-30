@@ -3,12 +3,12 @@ package taskMan.state;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import taskMan.Task;
 import taskMan.util.Dependant;
-import taskMan.util.Prerequisite;
 
 public interface TaskStatus {
 
-	public boolean makeAvailable(List<Prerequisite> preList);
+	public boolean makeAvailable(List<Task> preList);
 	public boolean finish(LocalDateTime beginTime, LocalDateTime endTime);
 	public boolean fail(LocalDateTime beginTime, LocalDateTime endTime);
 	public boolean register(Dependant d);

@@ -5,7 +5,6 @@ import java.util.List;
 
 import taskMan.Task;
 import taskMan.util.Dependant;
-import taskMan.util.Prerequisite;
 
 public class Available implements TaskStatus {
 	
@@ -16,7 +15,7 @@ public class Available implements TaskStatus {
 	}
 
 	@Override
-	public boolean makeAvailable(List<Prerequisite> preLists) {
+	public boolean makeAvailable(List<Task> preLists) {
 		return false;
 	}
 

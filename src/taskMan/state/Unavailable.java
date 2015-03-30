@@ -5,7 +5,6 @@ import java.util.List;
 
 import taskMan.Task;
 import taskMan.util.Dependant;
-import taskMan.util.Prerequisite;
 
 public class Unavailable implements TaskStatus {
 
@@ -16,7 +15,7 @@ public class Unavailable implements TaskStatus {
 	}
 
 	@Override
-	public boolean makeAvailable(List<Prerequisite> preList) {
+	public boolean makeAvailable(List<Task> preList) {
 		if(preList.size() == 0) {
 			task.setTaskStatus(new Available(task));
 			return true;
