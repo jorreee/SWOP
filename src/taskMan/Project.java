@@ -541,16 +541,17 @@ public class Project implements Dependant {
 	 * 			False otherwise.
 	 */
 	public boolean isOnTime(LocalDateTime current){
-		if(endTime == null) {
-			if(current.isAfter(dueTime)) {
-				return false; //TODO berekenen
-			} else {
-				return true;
-			}
-		}
-		else{
-			return endTime.isBefore(dueTime);
-		}
+		return new TimeSpan(getEstimatedProjectDelay(current)).isZero();
+//		if(endTime == null) {
+//			if(current.isAfter(dueTime)) {
+//				return false;
+//			} else {
+//				return true;
+//			}
+//		}
+//		else{
+//			return endTime.isBefore(dueTime);
+//		}
 	}
 
 	/**
