@@ -2,34 +2,14 @@ package taskMan.resource;
 
 import java.util.List;
 
-public class ResourcePrototype implements Resource {
+public class ResourcePrototype extends Resource implements Cloneable {
 	
-	public ResourcePrototype(String name, List<ResourcePrototype> requiredResources, List<ResourcePrototype> conflictingResources) {
-		
-	}
-	
-	@Override
-	public String getName() {
-		// TODO Auto-generated method stub
-		return null;
+	public ResourcePrototype(String name, List<ResourcePrototype> requiredResources, List<ResourcePrototype> conflictingResources, boolean dailyAvailable) {
+		super(name, requiredResources, conflictingResources, dailyAvailable);
 	}
 
 	@Override
-	public List<ResourcePrototype> getRequiredResources() {
-		// TODO Auto-generated method stub
-		return null;
+	public ConcreteResource clone() {
+		return new ConcreteResource(resName, reqResourcesList, conResourcesList, dailyAvailable);
 	}
-
-	@Override
-	public List<ResourcePrototype> getConflictingResources() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean isDailyAvailable() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
 }
