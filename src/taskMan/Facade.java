@@ -1,8 +1,10 @@
 package taskMan;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
+import taskMan.util.IntPair;
 import taskMan.view.ProjectView;
 import taskMan.view.TaskView;
 import userInterface.IFacade;
@@ -10,9 +12,6 @@ import userInterface.IFacade;
 public class Facade implements IFacade {
 	private final TaskMan taskMan;
 	
-	public Facade() {
-		this.taskMan = new TaskMan();
-	}
 	
 	public Facade(LocalDateTime time) {
 		this.taskMan = new TaskMan(time);
@@ -236,6 +235,66 @@ public class Facade implements IFacade {
 	@Override
 	public void discardMemento() {
 		taskMan.discardMemento();		
+	}
+
+	@Override
+	public String getCurrentUsername() {
+		return taskMan.getCurrentUserName();
+	}
+
+	@Override
+	public List<String> getPossibleUsernames() {
+		return taskMan.getPossibleUsernames();
+	}
+
+	@Override
+	public boolean changeToUser(String name) {
+		return taskMan.changeToUser(name);
+	}
+
+	@Override
+	public boolean createRawPlannedTask(int project, String description,
+			int estimatedDuration, int acceptableDeviation,
+			List<Integer> prerequisiteTasks, int alternativeFor,
+			String statusString, LocalDateTime startTime,
+			LocalDateTime endTime, LocalDateTime planningDueTime,
+			List<Integer> plannedDevelopers, List<IntPair> plannedResources) {
+		return taskMan.createRawPlannedTask(project, description, estimatedDuration, acceptableDeviation,
+				prerequisiteTasks, alternativeFor, statusString, startTime, endTime, planningDueTime, plannedDevelopers, plannedResources);
+	}
+
+	@Override
+	public boolean declareDailyAvailability(LocalTime startTime,LocalTime endTime) {
+		return taskMan.declareDailyAvailability(startTime,endTime);
+	}
+
+	@Override
+	public boolean createResourcePrototype(String name,
+			List<Integer> requirements, List<Integer> conflicts,
+			Integer availabilityIndex) {
+		return taskMan.createResourcePrototype(name,requirements,conflicts,availabilityIndex);
+	}
+
+	@Override
+	public boolean createRawResource(String name, int typeIndex) {
+		return taskMan.createRawResource(name,typeIndex);
+	}
+
+	@Override
+	public boolean createDeveloper(String name) {
+		return taskMan.createDeveloper(name);
+	}
+
+	@Override
+	public boolean createRawReservation(int resource, int project, int task,
+			LocalDateTime startTime, LocalDateTime endTime) {
+		return taskMan.createRawReservation(resource,project,task,startTime,endTime);
+	}
+
+	@Override
+	public List<LocalDateTime> getPossibleTaskStartingTimes(ProjectView project, TaskView task,
+			int amount) {
+		return taskMan.getPossibleTaskStartingTimes(project,task,amount);
 	}
 
 }
