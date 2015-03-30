@@ -1,9 +1,13 @@
 package taskMan;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import taskMan.resource.ResourceManager;
+import taskMan.user.User;
+import taskMan.util.IntPair;
 import taskMan.view.ProjectView;
 import taskMan.view.TaskView;
 
@@ -19,17 +23,9 @@ public class TaskMan {
 	
 	private ArrayList<Project> projectList;
 	private LocalDateTime currentTime;
+	private User currentUser;
+	private ResourceManager resMan;
 	
-	/**
-	 * Creates a TaskMan system instance. 
-	 * This is the default constructor.
-	 * 
-	 * 
-	 */
-	public TaskMan(){
-		projectList = new ArrayList<>();
-		currentTime = LocalDateTime.now();
-	}
 	
 	/**
 	 * Creates a TaskMan system instance with a given time.
@@ -41,6 +37,7 @@ public class TaskMan {
 	public TaskMan(LocalDateTime time){
 		projectList = new ArrayList<>();
 		currentTime = time;
+		resMan = new ResourceManager();
 	}
 	
 	/**
@@ -796,4 +793,89 @@ public class TaskMan {
 		
 	}
 	
+	public String getCurrentUserName(){
+		return currentUser.getName();
+	}
+	
+	public boolean changeToUser(String name){
+		User user = resMan.getUser(name);
+		if (user == null){
+			return false;
+		}
+		else {
+			currentUser = user;
+			return true;
+		}
+	}
+	
+	public List<String> getPossibleUsernames(){
+		return resMan.getPossibleUsernames();
+	}
+	
+	
+	/**
+	 * Creates a Raw Planned Task as issued by the input file.
+	 * 
+	 * @param 	description
+	 * 			The description of the Task.
+	 * @param 	estimatedDuration
+	 * 			The estimated duration of the Task.
+	 * @param 	acceptableDeviation
+	 * 			The acceptable deviation of the Task.
+	 * @param 	prerequisiteTasks
+	 * 			The prerequisites of the Task.
+	 * @param 	alternativeFor
+	 * 			The alternative for the Task.
+	 * @param 	statusString
+	 * 			The status of the Task.
+	 * @param 	startTime
+	 * 			The startTime of the Task.
+	 * @param 	endTime
+	 * 			The endTime of the Task.
+	 * @param 	planningDueTime
+	 * 			The due time of the planning of the Task.
+	 * @param 	plannedDevelopers
+	 * 			The planned developers of the Task.
+	 * @param 	plannedResources
+	 * 			The planned resources of the Task.
+	 * @return	True if and only if the creation of the Raw Planned Task was succesful.
+	 */
+	public boolean createRawPlannedTask(int project, String description,
+			int estimatedDuration, int acceptableDeviation,
+			List<Integer> prerequisiteTasks, int alternativeFor,
+			String statusString, LocalDateTime startTime,
+			LocalDateTime endTime, LocalDateTime planningDueTime,
+			List<Integer> plannedDevelopers, List<IntPair> plannedResources) {
+		return projectList.get(project).createRawPlannedTask(project,description,estimatedDuration,
+				acceptableDeviation,prerequisiteTasks,alternativeFor,statusString,startTime,
+				endTime,planningDueTime,plannedDevelopers, plannedResources);
+	}
+	
+	public boolean declareDailyAvailability(LocalTime startTime,LocalTime endTime) {
+		return resMan.declareDailyAvailability(startTime,endTime);
+	}
+	
+	public boolean createResourcePrototype(String name,
+			List<Integer> requirements, List<Integer> conflicts,
+			Integer availabilityIndex) {
+		return resMan.createResourcePrototype(name,requirements,conflicts,availabilityIndex);
+	}
+	
+	public boolean createRawResource(String name, int typeIndex) {
+		return resMan.createRawResource(name,typeIndex);
+	}
+	
+	public boolean createDeveloper(String name) {
+		return resMan.createDeveloper(name);
+	}
+	
+	public boolean createRawReservation(int resource, int project, int task,
+			LocalDateTime startTime, LocalDateTime endTime) {
+		return resMan.createRawReservation(resource,project,task,startTime,endTime);
+	}
+	
+	public List<LocalDateTime> getPossibleTaskStartingTimes(ProjectView project, TaskView task,
+			int amount) {
+		return unwrapProjectView(project).getPossibleTaskStartingTimes(project,task,amount);
+	}
 }
