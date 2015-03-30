@@ -1,32 +1,75 @@
 package userInterface;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
+import taskMan.util.IntPair;
 import taskMan.view.ProjectView;
 import taskMan.view.TaskView;
 
 public interface IFacade {
 
 	public boolean advanceTimeTo(LocalDateTime time);
-	
+
 	public LocalDateTime getCurrentTime();
 	
-	public boolean createProject(String name, String description, LocalDateTime creationTime, LocalDateTime dueTime);
-	public boolean createProject(String name, String description, LocalDateTime dueTime);
+	public String getCurrentUsername();
+	public List<String> getPossibleUsernames();
+	public boolean changeToUser(String readLine);
+
 	
-	public boolean createRawTask(int project, String description, int estimatedDuration, int acceptableDeviation, List<Integer> prerequisiteTasks, int alternativeFor, String taskStatus, LocalDateTime startTime, LocalDateTime endTime);
-	public boolean createTask(ProjectView project, String description, int estimatedDuration, int acceptableDeviation, List<TaskView> prerequisiteTasks, TaskView alternativeFor);
-	
-	public boolean setTaskFinished(ProjectView projectID, TaskView taskID, LocalDateTime startTime, LocalDateTime endTime);
-	public boolean setTaskFailed(ProjectView projectID, TaskView taskID, LocalDateTime startTime, LocalDateTime endTime);
-	
+	public boolean createProject(String name, String description,
+			LocalDateTime creationTime, LocalDateTime dueTime);
+
+	public boolean createProject(String name, String description,
+			LocalDateTime dueTime);
+
+	public boolean createRawTask(int project, String description,
+			int estimatedDuration, int acceptableDeviation,
+			List<Integer> prerequisiteTasks, int alternativeFor,
+			String taskStatus, LocalDateTime startTime, LocalDateTime endTime);
+
+	public boolean createRawPlannedTask(int project, String description,
+			int estimatedDuration, int acceptableDeviation,
+			List<Integer> prerequisiteTasks, int alternativeFor,
+			String statusString, LocalDateTime startTime,
+			LocalDateTime endTime, LocalDateTime planningDueTime,
+			List<Integer> plannedDevelopers, List<IntPair> plannedResources);
+
+	public boolean createTask(ProjectView project, String description,
+			int estimatedDuration, int acceptableDeviation,
+			List<TaskView> prerequisiteTasks, TaskView alternativeFor);
+
+	public boolean setTaskFinished(ProjectView projectID, TaskView taskID,
+			LocalDateTime startTime, LocalDateTime endTime);
+
+	public boolean setTaskFailed(ProjectView projectID, TaskView taskID,
+			LocalDateTime startTime, LocalDateTime endTime);
+
 	public List<ProjectView> getProjects();
 
 	public void storeInMemento();
+
 	public void revertFromMemento();
+
 	public void discardMemento();
-	
+
+	public boolean declareDailyAvailability(LocalTime startTime, LocalTime endTime);
+
+	public boolean createResourcePrototype(String name,
+			List<Integer> requirements, List<Integer> conflicts,
+			Integer availabilityIndex);
+
+	public boolean createRawResource(String name, int typeIndex);
+
+	public boolean createDeveloper(String name);
+
+	public boolean createRawReservation(int resource, int project, int task,
+			LocalDateTime startTime, LocalDateTime endTime);
+
+	public List<LocalDateTime> getPossibleTaskStartingTimes(TaskView task, int amount);
+
 	/*
 	public boolean createTask(int projectID, String description, int estimatedDuration, int acceptableDeviation, String taskStatus, Integer alternativeFor, List<Integer> prerequisiteTasks, LocalDateTime startTime, LocalDateTime endTime);
 	public boolean createTask(int projectID, String description, int estimatedDuration, int acceptableDeviation, Integer alternativeFor, List<Integer> prerequisiteTasks);

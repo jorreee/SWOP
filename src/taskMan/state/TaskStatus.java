@@ -16,5 +16,6 @@ public interface TaskStatus {
 	public boolean isUnavailable();
 	public boolean isFinished();
 	public boolean isFailed();
+	public boolean isExecuting();
 	
 }

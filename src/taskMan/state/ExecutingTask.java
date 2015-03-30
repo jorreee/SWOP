@@ -6,11 +6,11 @@ import java.util.List;
 import taskMan.Task;
 import taskMan.util.Dependant;
 
-public class Available implements TaskStatus {
+public class ExecutingTask implements TaskStatus{
 	
 	private Task task;
 	
-	public Available(Task t) {
+	public ExecutingTask(Task t) {
 		task = t;
 	}
 
@@ -42,7 +42,7 @@ public class Available implements TaskStatus {
 			task.setBeginTime(beginTime);
 			task.setEndTime(endTime);
 			
-			task.setTaskStatus(new Failed(task));
+			task.setTaskStatus(new FailedTask(task));
 			
 			return true;
 		}
@@ -70,6 +70,11 @@ public class Available implements TaskStatus {
 
 	@Override
 	public boolean isAvailable() {
+		return false;
+	}
+	
+	@Override
+	public boolean isExecuting() {
 		return true;
 	}
 
@@ -93,10 +98,10 @@ public class Available implements TaskStatus {
 		return "Available";
 	}
 
+	//TODO needs to be specified
 	@Override
 	public boolean register(Dependant d) {
 		task.addDependant(d);
 		return true;
 	}
-
 }

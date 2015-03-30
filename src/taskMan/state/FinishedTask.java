@@ -48,6 +48,11 @@ public class FinishedTask implements TaskStatus {
 	public boolean isFailed() {
 		return false;
 	}
+	
+	@Override
+	public boolean isExecuting(){
+		return false;
+	}
 
 	@Override
 	public boolean register(Dependant d) {
