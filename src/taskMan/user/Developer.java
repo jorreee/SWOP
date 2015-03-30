@@ -1,7 +1,10 @@
 package taskMan.user;
 
-import taskMan.resource.Resource;
+public class Developer extends User {
 
-public class Developer extends User implements Resource {
-
+	public Developer(String name){
+		super(name);
+	}
+	
+	
 }
