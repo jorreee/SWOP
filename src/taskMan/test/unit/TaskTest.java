@@ -4,10 +4,11 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import org.junit.*;
-import static org.junit.Assert.*; 
 
+import static org.junit.Assert.*; 
 import taskMan.Task;
 import taskMan.util.TimeSpan;
+import taskMan.state.*;
 
 public class TaskTest {
 
@@ -111,5 +112,53 @@ public class TaskTest {
 	@Test
 	public void getStateString(){
 		assertEquals(defaultTest.getStatus().toLowerCase(),"available");
+	}
+	
+	@Test
+	public void getSetAltTest(){
+		defaultTest.setTaskFailed(LocalDateTime.of(2015, 2, 11, 16, 0),
+				LocalDateTime.of(2015, 2, 12, 16, 0));
+		Task temp = new Task(2,"test",30,0,new ArrayList<Task>(),defaultTest);
+		assertEquals(temp.getAlternativeFor(), defaultTest);
+	}
+	
+	@Test
+	public void setFinishedTest(){
+		assertFalse(defaultTest.isFinished());
+		defaultTest.setTaskFinished(LocalDateTime.of(2015, 2, 11, 16, 0),
+				LocalDateTime.of(2015, 2, 12, 16, 0));
+		assertTrue(defaultTest.isFinished());
+	}
+	
+	@Test
+	public void setFailedTest(){
+		assertFalse(defaultTest.isFailed());
+		defaultTest.setTaskFinished(LocalDateTime.of(2015, 2, 12, 16, 0),
+				LocalDateTime.of(2015, 2, 11, 16, 0));
+		assertFalse(defaultTest.isFailed());
+	}
+	
+	@Test
+	public void setUnavailableTest(){
+		assertTrue(defaultTest.isAvailable());
+		TaskStatus newStatus = new Unavailable(defaultTest);
+		defaultTest.setTaskStatus(newStatus);
+		assertTrue(defaultTest.isUnavailable());
+	}
+	
+	@Test
+	public void testHasEndedFinished(){
+		assertFalse(defaultTest.hasEnded());
+		defaultTest.setTaskFinished(LocalDateTime.of(2015, 2, 11, 16, 0),
+				LocalDateTime.of(2015, 2, 12, 16, 0));
+		assertTrue(defaultTest.hasEnded());
+	}
+	
+	@Test
+	public void testHasEndedFailed(){
+		assertFalse(defaultTest.hasEnded());
+		defaultTest.setTaskFailed(LocalDateTime.of(2015, 2, 11, 16, 0),
+				LocalDateTime.of(2015, 2, 12, 16, 0));
+		assertTrue(defaultTest.hasEnded());
 	}
 }
