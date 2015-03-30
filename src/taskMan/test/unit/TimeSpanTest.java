@@ -1,4 +1,4 @@
-package taskMan.test;
+package taskMan.test.unit;
 
 import static org.junit.Assert.*;
 
