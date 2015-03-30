@@ -719,7 +719,19 @@ public class Project implements Dependant {
 			String statusString, LocalDateTime startTime,
 			LocalDateTime endTime, LocalDateTime planningDueTime,
 			List<Integer> plannedDevelopers, List<IntPair> plannedResources) {
-		// TODO finish this
-		return false;
+	
+	}
+	
+	/**
+	 * Returns an amount of possible Task starting times for a given Task.
+	 * 
+	 * @param 	task
+	 * 			The Task to get the starting times from.
+	 * @param 	amount
+	 * 			The amount of possible starting times wanted.
+	 * @return	The possible starting times of the Task
+	 */
+	public List<String> getPossibleTaskStartingTimes(TaskView task, int amount){
+		return unwrapTaskView(task).getPossibleTaskStartingTimes(amount);
 	}
 }

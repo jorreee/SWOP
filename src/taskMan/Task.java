@@ -8,6 +8,7 @@ import taskMan.state.TaskStatus;
 import taskMan.state.UnavailableTask;
 import taskMan.util.Dependant;
 import taskMan.util.TimeSpan;
+import taskMan.view.TaskView;
 
 /**
  * The Task object. A task will have an ID, a description, an estimated duration, 
@@ -703,6 +704,17 @@ public class Task implements Dependant {
 			return (overdue/this.estimatedDuration.getSpanMinutes())*100;
 		}
 		return 0;
+	}
+	
+	/**
+	 * Returns an amount of possible Task starting times.
+	 * 
+	 * @param 	amount
+	 * 			The amount of possible starting times wanted.
+	 * @return	The possible starting times of the Task
+	 */
+	public List<String> getPossibleTaskStartingTimes(int amount){
+		
 	}
 	
 }
