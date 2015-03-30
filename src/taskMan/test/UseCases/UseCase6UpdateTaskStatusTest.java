@@ -14,7 +14,7 @@ import taskMan.view.ProjectView;
 import taskMan.view.TaskView;
 import userInterface.IFacade;
 
-public class UseCase4UpdateTaskStatusTest {
+public class UseCase6UpdateTaskStatusTest {
 
 	private IFacade taskManager;
 	private final LocalDateTime startDate = LocalDateTime.of(2015, 2, 9, 8, 0),
