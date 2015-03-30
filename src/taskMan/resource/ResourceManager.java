@@ -12,8 +12,12 @@ public class ResourceManager {
 		this.resPools = new ArrayList<>();
 	}
 	
-	public boolean addResourceType() {
-		return resPools.add(new ResourcePool());
+	public boolean createNewResourceType(String resourceName, ) {
+		
+	}
+	
+	private boolean addResourceType(ResourcePrototype resProt) {
+		return resPools.add(new ResourcePool(resProt));
 	}
 	
 }

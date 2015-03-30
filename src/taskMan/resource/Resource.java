@@ -4,16 +4,17 @@ import java.util.List;
 
 public abstract class Resource {
 	
-	private String resName;
-	private List<ResourcePrototype> reqResourcesList;
-	private List<ResourcePrototype> conResourcesList;
+	protected String resName;
+	protected List<ResourcePrototype> reqResourcesList;
+	protected List<ResourcePrototype> conResourcesList;
 	
-	private boolean dailyAvailable;
+	protected boolean dailyAvailable;
 	
-	public Resource(String resourceName, List<ResourcePrototype> requiredResourcesList, List<ResourcePrototype> conflictingResourcesList) {
+	public Resource(String resourceName, List<ResourcePrototype> requiredResourcesList, List<ResourcePrototype> conflictingResourcesList, boolean dailyAvailable) {
 		this.resName = resourceName;
 		this.reqResourcesList = requiredResourcesList;
 		this.conResourcesList = conflictingResourcesList;
+		this.dailyAvailable = dailyAvailable;
 	}
 	
 	public String getName() { return resName; }
