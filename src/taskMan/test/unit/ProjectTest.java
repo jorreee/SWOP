@@ -46,9 +46,4 @@ public class ProjectTest {
 				LocalDateTime.of(2015, 2, 11, 16, 0));
 	}
 	
-	@Test(expected = IllegalArgumentException.class)
-	public void ConstrFailDueEqualsCreation(){
-		new Project(1,"fail","fail",LocalDateTime.of(2015, 2, 12, 16, 0),
-				LocalDateTime.of(2015, 2, 12, 16, 0));
-	}
 }
