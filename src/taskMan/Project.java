@@ -105,7 +105,7 @@ public class Project implements Dependant {
 		if(creationTime == null || dueTime == null) {
 			return false;
 		}
-		if(creationTime.isAfter(dueTime)) {
+		if(!creationTime.isBefore(dueTime)) {
 			return false;
 		}
 		return true;
