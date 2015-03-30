@@ -172,23 +172,23 @@ public class TimeSpanTest {
 		int sevenDaysFourHours25Minutes = 7*8*60+4*60+25;
 		
 		assertEquals(10,TimeSpan.getDifferenceWorkingMinutes(
-				monday152980, monday1529810).getSpanMinutes());
-		assertEquals(10,TimeSpan.getDifferenceWorkingMinutes(
-				monday1529810, monday152980).getSpanMinutes());
+				monday152980, monday1529810));
 		assertEquals(0,TimeSpan.getDifferenceWorkingMinutes(
-				monday152980, monday152980).getSpanMinutes());
-		assertEquals(threeDays,TimeSpan.getDifferenceWorkingMinutes(
-				monday152980, thursday1521280).getSpanMinutes());
-		assertEquals(threeDays,TimeSpan.getDifferenceWorkingMinutes(
-				thursday1521280, monday152980).getSpanMinutes());
+				monday1529810, monday152980));
 		assertEquals(0,TimeSpan.getDifferenceWorkingMinutes(
-				friday15213160, monday1521680).getSpanMinutes());
+				monday152980, monday152980));
+		assertEquals(threeDays,TimeSpan.getDifferenceWorkingMinutes(
+				monday152980, thursday1521280));
+		assertEquals(0,TimeSpan.getDifferenceWorkingMinutes(
+				thursday1521280, monday152980));
+		assertEquals(0,TimeSpan.getDifferenceWorkingMinutes(
+				friday15213160, monday1521680));
 		assertEquals(sevenDaysFourHours25Minutes,TimeSpan.getDifferenceWorkingMinutes(
-				monday152980, wednesday152181225).getSpanMinutes());
-		assertEquals(sevenDaysFourHours25Minutes,TimeSpan.getDifferenceWorkingMinutes(
-				wednesday152181225, monday152980).getSpanMinutes());
+				monday152980, wednesday152181225));
+		assertEquals(0,TimeSpan.getDifferenceWorkingMinutes(
+				wednesday152181225, monday152980));
 		assertEquals(10,TimeSpan.getDifferenceWorkingMinutes(
-				monday15291555,tuesday1521085).getSpanMinutes());
+				monday15291555,tuesday1521085));
 	}
 	
 	@Test(expected=IllegalArgumentException.class)

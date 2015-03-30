@@ -35,8 +35,8 @@ public class TaskView {
 		return task.getAcceptableDeviation();
 	}
 	
-	public int getTaskOvertimePercentage() {
-		return task.getOverTimePercentage();
+	public int getTaskOvertimePercentage(LocalDateTime currentTime) {
+		return task.getOverTimePercentage(currentTime);
 	}
 	
 	public LocalDateTime getTaskEndTime() {
@@ -75,12 +75,12 @@ public class TaskView {
 		return task.hasEnded();
 	}
 	
-	public boolean isTaskUnacceptableOverdue() {
-		return task.isUnacceptableOverdue();
+	public boolean isTaskUnacceptableOverdue(LocalDateTime currentTime) {
+		return task.isUnacceptableOverdue(currentTime);
 	}
 	
-	public boolean isTaskOnTime() {
-		return task.isUnacceptableOverdue();
+	public boolean isTaskOnTime(LocalDateTime currentTime) {
+		return task.isOnTime(currentTime);
 	}
 	
 	public boolean hasAsTask(Task t) {

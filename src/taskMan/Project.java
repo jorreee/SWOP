@@ -629,7 +629,10 @@ public class Project implements Dependant {
 	}
 
 	/**
-	 * Returns the estimated time until the project should end
+	 * Returns the estimated time that the project will be finished over time.
+	 * 
+	 * e.g. if the due time is tomorrow and there's an estimated 2 more days needed,
+	 * 		this method will return [0,0,1,0,0]
 	 * 
 	 * @param	projectID
 	 * 			the id of the given project
@@ -640,7 +643,17 @@ public class Project implements Dependant {
 		if(!hasAvailableTasks()) {
 			return new TimeSpan(0).getSpan();
 		}
-
+		
+		LocalDateTime estimatedEndTime = TimeSpan.addSpanToLDT(currentTime, getMaxTimeChain());
+		if(dueTime.isAfter(estimatedEndTime)) {
+			return new TimeSpan(0).getSpan();
+		}
+		
+		return new TimeSpan(TimeSpan.getDifferenceWorkingMinutes(estimatedEndTime, dueTime)).getSpan();
+		
+	}
+	
+	private TimeSpan getMaxTimeChain() {
 		List<Task> availableTasks = getAvailableTasks();
 		// FOR EACH AVAILABLE TASK CALCULATE CHAIN
 		int availableBranches = availableTasks.size();
@@ -655,12 +668,7 @@ public class Project implements Dependant {
 				longest = span;
 			}
 		}
-
-		// SUBTRACT TIME UNTIL DUE TIME FROM CHAIN (5/7 week, 8 hours/day)
-		TimeSpan timeUntilDue = TimeSpan.getDifferenceWorkingMinutes(currentTime, dueTime);
-		
-		// RESULT
-		return longest.minus(timeUntilDue);
+		return longest;
 	}
 
 	/**
@@ -672,8 +680,16 @@ public class Project implements Dependant {
 	 * 			less than the time until the project due time
 	 */
 	public boolean isEstimatedOnTime(LocalDateTime currentTime) {
-		TimeSpan estimatedDuration = new TimeSpan(getEstimatedProjectDelay(currentTime));
-		return estimatedDuration.isZero();
+//		TimeSpan estimatedDuration = new TimeSpan(getEstimatedProjectDelay(currentTime));
+//		return estimatedDuration.isZero();
+		
+		if(isFinished()) {
+			return !endTime.isAfter(dueTime);
+		}
+		
+		LocalDateTime estimatedEndTime = TimeSpan.addSpanToLDT(currentTime, getMaxTimeChain());
+		
+		return !estimatedEndTime.isAfter(dueTime);
 	}
 
 	/**
