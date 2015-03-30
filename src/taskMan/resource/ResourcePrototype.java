@@ -4,8 +4,8 @@ import java.util.List;
 
 public class ResourcePrototype extends Resource implements Cloneable {
 	
-	public ResourcePrototype(String name, List<ResourcePrototype> requiredResources, List<ResourcePrototype> conflictingResources, boolean dailyAvailable) {
-		super(name, requiredResources, conflictingResources, dailyAvailable);
+	public ResourcePrototype(String name, List<ResourcePrototype> requiredResources, List<ResourcePrototype> conflictingResources, DailyAvailability dailyAvailability) {
+		super(name, requiredResources, conflictingResources, dailyAvailability);
 	}
 
 	@Override
