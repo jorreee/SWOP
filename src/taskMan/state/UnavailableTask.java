@@ -6,16 +6,20 @@ import java.util.List;
 import taskMan.Task;
 import taskMan.util.Dependant;
 
-public class Failed implements TaskStatus {
-	
+public class UnavailableTask implements TaskStatus {
+
 	private Task task;
-	
-	public Failed(Task t) {
+
+	public UnavailableTask(Task t) {
 		task = t;
 	}
 
 	@Override
 	public boolean makeAvailable(List<Task> preList) {
+		if(preList.size() == 0) {
+			task.setTaskStatus(new AvailableTask(task));
+			return true;
+		}
 		return false;
 	}
 
@@ -29,6 +33,7 @@ public class Failed implements TaskStatus {
 		return false;
 	}
 
+
 	@Override
 	public boolean isAvailable() {
 		return false;
@@ -36,7 +41,7 @@ public class Failed implements TaskStatus {
 
 	@Override
 	public boolean isUnavailable() {
-		return false;
+		return true;
 	}
 
 	@Override
@@ -46,12 +51,12 @@ public class Failed implements TaskStatus {
 
 	@Override
 	public boolean isFailed() {
-		return true;
+		return false;
 	}
 	
 	@Override
-	public String toString() {
-		return "Failed";
+	public boolean isExecuting(){
+		return false;
 	}
 
 	@Override
@@ -59,5 +64,10 @@ public class Failed implements TaskStatus {
 		task.addDependant(d);
 		return true;
 	}
-
+	
+	@Override
+	public String toString() {
+		return "Unavailable";
+	}
+	
 }

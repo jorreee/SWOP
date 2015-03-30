@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import taskMan.state.TaskStatus;
-import taskMan.state.Unavailable;
+import taskMan.state.UnavailableTask;
 import taskMan.util.Dependant;
 import taskMan.util.TimeSpan;
 
@@ -85,7 +85,7 @@ public class Task implements Dependant {
 		this.acceptableDeviation = acceptableDeviation;
 //		this.extraTime = extraTime;
 		
-		this.state = new Unavailable(this);
+		this.state = new UnavailableTask(this);
 
 		this.dependants = new ArrayList<Dependant>();
 		this.prerequisites = new ArrayList<Task>();
