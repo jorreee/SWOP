@@ -281,7 +281,7 @@ public class Task implements Dependant {
 //		}
 		TimeSpan currentTimeSpent = TimeSpan.getDifferenceWorkingMinutes(
 				this.beginTime, 
-				currentTime); //TODO kan ook variabele in Task zijn?
+				currentTime);
 		if(alternativeFor != null) {
 			currentTimeSpent = currentTimeSpent
 								.add(alternativeFor.getTimeSpent(currentTime));
@@ -385,10 +385,6 @@ public class Task implements Dependant {
 	public Task getAlternativeFor() {
 		return alternativeFor;
 	}
-	
-//	public ArrayList<Task> getTaskPrerequisites() {
-//		return null; //TODO niet meer nodig
-//	}
 
 	public TimeSpan getMaxDelayChain() {
 		TimeSpan longest = getEstimatedDuration();
@@ -414,16 +410,16 @@ public class Task implements Dependant {
 	}
 	
 	public List<Task> getTaskPrerequisites() {
-		ArrayList<Task> allPrerequisites = new ArrayList<Task>();
-		for(Task t : prerequisites) {
-			allPrerequisites.add(t);
-			allPrerequisites.addAll(t.getTaskPrerequisites());
-		}
-//		if(alternativeFor != null) {
-//			allPrerequisites.add(alternativeFor);
-//			//TODO als de taak is gefaald, moet deze methode ook de prereqs van de vervanger geven
+//		ArrayList<Task> allPrerequisites = new ArrayList<Task>();
+//		for(Task t : prerequisites) {
+//			allPrerequisites.add(t);
+//			allPrerequisites.addAll(t.getTaskPrerequisites());
 //		}
-		return allPrerequisites;
+////		if(alternativeFor != null) {
+////			allPrerequisites.add(alternativeFor);
+////		}
+//		return allPrerequisites
+		return prerequisites;
 	}
 	
 	public List<Dependant> getDependants() {
@@ -575,7 +571,7 @@ public class Task implements Dependant {
 //		
 ////		if(hasEnded() || isUnavailable()) {
 ////			return false;
-////		}//TODO STATE laten afhandelen
+////		}
 //		if(isValidTimeStamps(beginTime, endTime)) {
 //			this.beginTime = beginTime;
 //			this.endTime = endTime;
