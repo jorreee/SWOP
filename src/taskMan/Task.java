@@ -8,6 +8,7 @@ import taskMan.state.TaskStatus;
 import taskMan.state.UnavailableTask;
 import taskMan.util.Dependant;
 import taskMan.util.TimeSpan;
+import taskMan.view.TaskView;
 
 /**
  * The Task object. A task will have an ID, a description, an estimated duration, 
@@ -273,20 +274,20 @@ public class Task implements Dependant {
 	 * 			When the start time of the task is after the time given.
 	 */
 	public TimeSpan getTimeSpent(LocalDateTime currentTime) {
-//		if(beginTime == null) { //TODO geen argument meer ?
+//		if(beginTime == null) { 
 //			throw new IllegalArgumentException("Project not yet started");
 //		}
 //		if(beginTime.isAfter(currentTime)) {
 //			throw new IllegalArgumentException("Timestamp is in the past");
 //		}
-		TimeSpan currentTimeSpent = TimeSpan.getDifferenceWorkingMinutes(
+		int currentTimeSpent = TimeSpan.getDifferenceWorkingMinutes(
 				this.beginTime, 
 				currentTime);
 		if(alternativeFor != null) {
 			currentTimeSpent = currentTimeSpent
-								.add(alternativeFor.getTimeSpent(currentTime));
+								 + alternativeFor.getTimeSpent().getSpanMinutes();
 		}
-		return currentTimeSpent;
+		return new TimeSpan(currentTimeSpent);
 	}
 
 	/**
@@ -669,12 +670,18 @@ public class Task implements Dependant {
 	 * @return	True if the Task is on time.
 	 * 			False if the elapsed time is longer then the acceptable duration.
 	 */
-	public boolean isOnTime(){
-		TimeSpan acceptableSpan = this.getEstimatedDuration();
-		if(isFinished() || isFailed()) {
-			return this.getTimeSpent(this.getEndTime()).isShorter(acceptableSpan);
+	public boolean isOnTime(LocalDateTime currentTime){
+		if(beginTime == null) {
+			return false;
 		}
-		return true;
+		TimeSpan acceptableSpan = getEstimatedDuration();
+		LocalDateTime acceptableEndDate = TimeSpan.addSpanToLDT(beginTime, acceptableSpan);
+		
+		if(hasEnded()) {
+			return !endTime.isAfter(acceptableEndDate);
+		}
+		
+		return !currentTime.isAfter(acceptableEndDate);
 	}
 
 	/**
@@ -683,12 +690,19 @@ public class Task implements Dependant {
 	 * @return	True if the project is overtime beyond the deviation.
 	 * 			False otherwise.
 	 */
-	public boolean isUnacceptableOverdue() {
-		TimeSpan acceptableSpan = this.getEstimatedDuration().getAcceptableSpan(this.getAcceptableDeviation());
-		if(isFinished() || isFailed()) {
-			return this.getTimeSpent(this.getEndTime()).isLonger(acceptableSpan);
+	public boolean isUnacceptableOverdue(LocalDateTime currentTime) {
+		// interpretatie: currentTime - beginTime is de tijd die erin is gestoken so far
+		if(beginTime == null) {
+			return true;
 		}
-		return false;
+		TimeSpan acceptableSpan = estimatedDuration.getAcceptableSpan(getAcceptableDeviation());
+		LocalDateTime acceptableEndDate = TimeSpan.addSpanToLDT(beginTime, acceptableSpan);
+		
+		if(hasEnded()) {
+			return endTime.isAfter(acceptableEndDate);
+		}
+		
+		return currentTime.isAfter(acceptableEndDate);
 	}
 
 	/**
@@ -697,12 +711,23 @@ public class Task implements Dependant {
 	 * @return	The percentage of overdue.
 	 */
 	//TODO hoe?
-	public int getOverTimePercentage() {
-		if(!isOnTime()){
+	public int getOverTimePercentage(LocalDateTime currentTime) {
+		if(!isOnTime(currentTime)){
 			int overdue = 0; // this.getTimeSpent().getDifferenceMinute(estimatedDuration);
 			return (overdue/this.estimatedDuration.getSpanMinutes())*100;
 		}
 		return 0;
+	}
+	
+	/**
+	 * Returns an amount of possible Task starting times.
+	 * 
+	 * @param 	amount
+	 * 			The amount of possible starting times wanted.
+	 * @return	The possible starting times of the Task
+	 */
+	public List<String> getPossibleTaskStartingTimes(int amount){
+		
 	}
 	
 }

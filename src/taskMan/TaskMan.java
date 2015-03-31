@@ -876,6 +876,6 @@ public class TaskMan {
 	
 	public List<LocalDateTime> getPossibleTaskStartingTimes(ProjectView project, TaskView task,
 			int amount) {
-		return projectList.get(project.getID()).getPossibleTaskStartingTimes(project,task,amount);
+		return unwrapProjectView(project).getPossibleTaskStartingTimes(project,task,amount);
 	}
 }

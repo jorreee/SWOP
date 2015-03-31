@@ -541,16 +541,17 @@ public class Project implements Dependant {
 	 * 			False otherwise.
 	 */
 	public boolean isOnTime(LocalDateTime current){
-		if(endTime == null) {
-			if(current.isAfter(dueTime)) {
-				return false; //TODO berekenen
-			} else {
-				return true;
-			}
-		}
-		else{
-			return endTime.isBefore(dueTime);
-		}
+		return new TimeSpan(getEstimatedProjectDelay(current)).isZero();
+//		if(endTime == null) {
+//			if(current.isAfter(dueTime)) {
+//				return false;
+//			} else {
+//				return true;
+//			}
+//		}
+//		else{
+//			return endTime.isBefore(dueTime);
+//		}
 	}
 
 	/**
@@ -630,7 +631,10 @@ public class Project implements Dependant {
 	}
 
 	/**
-	 * Returns the estimated time until the project should end
+	 * Returns the estimated time that the project will be finished over time.
+	 * 
+	 * e.g. if the due time is tomorrow and there's an estimated 2 more days needed,
+	 * 		this method will return [0,0,1,0,0]
 	 * 
 	 * @param	projectID
 	 * 			the id of the given project
@@ -641,7 +645,17 @@ public class Project implements Dependant {
 		if(!hasAvailableTasks()) {
 			return new TimeSpan(0).getSpan();
 		}
-
+		
+		LocalDateTime estimatedEndTime = TimeSpan.addSpanToLDT(currentTime, getMaxTimeChain());
+		if(dueTime.isAfter(estimatedEndTime)) {
+			return new TimeSpan(0).getSpan();
+		}
+		
+		return new TimeSpan(TimeSpan.getDifferenceWorkingMinutes(estimatedEndTime, dueTime)).getSpan();
+		
+	}
+	
+	private TimeSpan getMaxTimeChain() {
 		List<Task> availableTasks = getAvailableTasks();
 		// FOR EACH AVAILABLE TASK CALCULATE CHAIN
 		int availableBranches = availableTasks.size();
@@ -656,12 +670,7 @@ public class Project implements Dependant {
 				longest = span;
 			}
 		}
-
-		// SUBTRACT TIME UNTIL DUE TIME FROM CHAIN (5/7 week, 8 hours/day)
-		TimeSpan timeUntilDue = TimeSpan.getDifferenceWorkingMinutes(currentTime, dueTime);
-		
-		// RESULT
-		return longest.minus(timeUntilDue);
+		return longest;
 	}
 
 	/**
@@ -673,8 +682,16 @@ public class Project implements Dependant {
 	 * 			less than the time until the project due time
 	 */
 	public boolean isEstimatedOnTime(LocalDateTime currentTime) {
-		TimeSpan estimatedDuration = new TimeSpan(getEstimatedProjectDelay(currentTime));
-		return estimatedDuration.isZero();
+//		TimeSpan estimatedDuration = new TimeSpan(getEstimatedProjectDelay(currentTime));
+//		return estimatedDuration.isZero();
+		
+		if(isFinished()) {
+			return !endTime.isAfter(dueTime);
+		}
+		
+		LocalDateTime estimatedEndTime = TimeSpan.addSpanToLDT(currentTime, getMaxTimeChain());
+		
+		return !estimatedEndTime.isAfter(dueTime);
 	}
 
 	/**
@@ -719,7 +736,19 @@ public class Project implements Dependant {
 			String statusString, LocalDateTime startTime,
 			LocalDateTime endTime, LocalDateTime planningDueTime,
 			List<Integer> plannedDevelopers, List<IntPair> plannedResources) {
-		// TODO finish this
-		return false;
+	
+	}
+	
+	/**
+	 * Returns an amount of possible Task starting times for a given Task.
+	 * 
+	 * @param 	task
+	 * 			The Task to get the starting times from.
+	 * @param 	amount
+	 * 			The amount of possible starting times wanted.
+	 * @return	The possible starting times of the Task
+	 */
+	public List<String> getPossibleTaskStartingTimes(TaskView task, int amount){
+		return unwrapTaskView(task).getPossibleTaskStartingTimes(amount);
 	}
 }
