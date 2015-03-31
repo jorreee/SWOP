@@ -165,6 +165,12 @@ public class TimeSpanTest {
 		
 	}
 	
+	@Test(expected=IllegalArgumentException.class)
+	public void constructorFromLocalDateTimeBadLDTFailTest2() {
+		new TimeSpan(null,monday152980);
+		
+	}
+	
 	@Test
 	public void GetDiffWorkingMinSuccesTest() {
 		
@@ -238,6 +244,44 @@ public class TimeSpanTest {
 		assertEquals(threeDays,result3.getSpanMinutes());
 		assertFalse(result3.isZero());
 		
+	}
+	
+	@Test
+	public void addSuccesOverBorderValueTest(){
+		TimeSpan original = new TimeSpan(50);
+		TimeSpan toAdd1 = new TimeSpan(15);
+		TimeSpan toAdd2 = new TimeSpan(60);
+		TimeSpan toAdd3 = new TimeSpan(new int[]{0,0,0,22,0});
+		TimeSpan toAdd4 = new TimeSpan(new int[]{0,0,30,0,0});
+		TimeSpan toAdd5 = new TimeSpan(new int[]{0,12,0,0,0});
+		
+		assertEquals(50, original.getMinutes());
+		TimeSpan result1 = original.add(toAdd1);
+		assertEquals(1, result1.getHours());
+		assertEquals(5, result1.getMinutes());
+		
+		TimeSpan result2 = result1.add(toAdd2);
+		assertEquals(2, result2.getHours());
+		assertEquals(5, result2.getMinutes());
+		
+		TimeSpan result3 = result2.add(toAdd3);
+		assertEquals(1,result3.getDays());
+		assertEquals(0, result3.getHours());
+		assertEquals(5, result3.getMinutes());
+		
+		TimeSpan result4 = result3.add(toAdd4);
+		assertEquals(1, result4.getMonths());
+		assertEquals(1, result4.getDays());
+		assertEquals(0,result4.getHours());
+		assertEquals(5, result4.getMinutes());
+		
+		assertEquals(0, result4.getYears());
+		TimeSpan result5 = result4.add(toAdd5);
+		assertEquals(1, result5.getYears());
+		assertEquals(1, result5.getMonths());
+		assertEquals(1, result5.getDays());
+		assertEquals(0,result5.getHours());
+		assertEquals(5, result5.getMinutes());
 	}
 	
 	@Test(expected=IllegalArgumentException.class)

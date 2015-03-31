@@ -136,11 +136,11 @@ public class TimeSpan {
 		int days = this.getDays() + newSpan.getDays();
 		int months = this.getMonths() + newSpan.getMonths();
 		int years = this.getYears() + newSpan.getYears();
-		if(minutes>60){
+		if(minutes>=60){
 			minutes -= 60;
 			hours += 1;
 		}
-		if(hours>24){
+		if(hours>=24){
 			hours -= 24;
 			days += 1;
 		}
