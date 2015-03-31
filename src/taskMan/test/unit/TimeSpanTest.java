@@ -197,9 +197,29 @@ public class TimeSpanTest {
 				monday15291555,tuesday1521085));
 	}
 	
+	@Test
+	public void GetDiffWorkingMinAfterWorkdayEndSuccesTest() {
+		LocalDateTime end = LocalDateTime.of(2015,  2, 9, 18, 0);
+		assertEquals(480,TimeSpan.getDifferenceWorkingMinutes(
+				monday152980, end));
+	}
+	
+	@Test
+	public void GetDiffWorkingMinBeforeWorkdaySuccesTest(){
+		LocalDateTime start = LocalDateTime.of(2015,  2, 9, 7, 0);
+		assertEquals(10,TimeSpan.getDifferenceWorkingMinutes(
+				start, monday1529810));
+	}
+	
 	@Test(expected=IllegalArgumentException.class)
 	public void GetDiffWorkingMinBadLDTFailTest() {
 		TimeSpan.getDifferenceWorkingMinutes(thursday1521280, null);
+		
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void GetDiffWorkingMinBadLDTFailTest2() {
+		TimeSpan.getDifferenceWorkingMinutes(null, thursday1521280);
 		
 	}
 	
@@ -366,7 +386,7 @@ public class TimeSpanTest {
 	public void getDifferenceMinuteBadArgumentFailTest() {
 		TimeSpan original = new TimeSpan(10);
 
-		assertTrue(original.getDifferenceMinute(null) < 0);
+		assertTrue(original.getDifferenceMinute(null) == -1);
 		
 	}
 	
