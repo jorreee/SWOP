@@ -1,4 +1,4 @@
-package taskMan.test;
+package taskMan.test.UseCases;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -15,7 +15,7 @@ import taskMan.view.ProjectView;
 import taskMan.view.TaskView;
 import userInterface.IFacade;
 
-public class UseCase5AdvanceTimeTest {
+public class UseCase7AdvanceTimeTest {
 
 	private IFacade taskManager;
 	private final LocalDateTime startDate = LocalDateTime.of(2015, 2, 9, 8, 0),

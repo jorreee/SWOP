@@ -6,9 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import taskMan.Task;
-import taskMan.user.Developer;
-import taskMan.user.ProjectManager;
-import taskMan.user.User;
+import taskMan.resource.user.Developer;
+import taskMan.resource.user.ProjectManager;
+import taskMan.resource.user.User;
 
 public class ResourceManager {
 	
@@ -137,8 +137,8 @@ public class ResourceManager {
 }
 
 class DailyAvailability {
-	LocalTime startTime;
-	LocalTime endTime;
+	private LocalTime startTime;
+	private LocalTime endTime;
 	
 	public DailyAvailability(LocalTime startTime, LocalTime endTime) {
 		this.startTime = startTime;

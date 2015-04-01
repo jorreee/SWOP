@@ -2,6 +2,7 @@ package userInterface;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.HashMap;
 import java.util.List;
 
 import taskMan.util.IntPair;
@@ -16,7 +17,7 @@ public interface IFacade {
 	
 	public String getCurrentUsername();
 	public List<String> getPossibleUsernames();
-	public boolean changeToUser(String readLine);
+	public boolean changeToUser(String username);
 
 	
 	public boolean createProject(String name, String description,
@@ -69,6 +70,12 @@ public interface IFacade {
 			LocalDateTime startTime, LocalDateTime endTime);
 
 	public List<LocalDateTime> getPossibleTaskStartingTimes(ProjectView project, TaskView task, int amount);
+
+	public List<String> getDeveloperList();
+
+	public HashMap<ProjectView, List<TaskView>> findConflictingDeveloperPlannings(
+			ProjectView projectID, TaskView taskID, List<String> developerNames,
+			LocalDateTime planningStartTime);
 
 	/*
 	public boolean createTask(int projectID, String description, int estimatedDuration, int acceptableDeviation, String taskStatus, Integer alternativeFor, List<Integer> prerequisiteTasks, LocalDateTime startTime, LocalDateTime endTime);

@@ -1,4 +1,4 @@
-package taskMan.user;
+package taskMan.resource.user;
 
 public class Developer extends User {
 

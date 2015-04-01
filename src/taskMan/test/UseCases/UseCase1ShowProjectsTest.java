@@ -1,4 +1,4 @@
-package taskMan.test;
+package taskMan.test.UseCases;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;

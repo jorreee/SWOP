@@ -1,4 +1,4 @@
-package taskMan.user;
+package taskMan.resource.user;
 
 public class ProjectManager extends User {
 
