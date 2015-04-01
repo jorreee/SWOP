@@ -1,18 +1,20 @@
 package userInterface.requests;
 
 import java.io.BufferedReader;
+import java.util.HashMap;
 import java.util.List;
 
+import taskMan.view.ProjectView;
 import taskMan.view.TaskView;
 import userInterface.IFacade;
 
 public class ResolvePlanningConflictRequest extends Request {
 
-	List<TaskView> conflictingTasks;
-	boolean movePlanningTask = false;
+	private HashMap<ProjectView, List<TaskView>> conflictingTasks;
+	private boolean movePlanningTask = false;
 
 	public ResolvePlanningConflictRequest(IFacade facade,
-			BufferedReader inputReader, List<TaskView> conflictingTasks) {
+			BufferedReader inputReader, HashMap<ProjectView, List<TaskView>> conflictingTasks) {
 		super(facade, inputReader);
 		this.conflictingTasks = conflictingTasks;
 	}
@@ -21,8 +23,10 @@ public class ResolvePlanningConflictRequest extends Request {
 	public String execute() {
 
 		// Show conflicting tasks
-		for(TaskView conflictingTask : conflictingTasks) {
-			System.out.println("Planning conflicts with task: " + conflictingTask.getID());
+		for(ProjectView project : conflictingTasks.keySet()) {
+			for(TaskView conflictingTask : conflictingTasks.get(project)) {
+				System.out.println("Planning conflicts with project: " + project.getID() + ", task: " + conflictingTask.getID());
+			}
 		}
 		System.out.println("Move task currently being scheduled? (Y/N)");
 
@@ -48,12 +52,14 @@ public class ResolvePlanningConflictRequest extends Request {
 		}
 		// Resolve conflict for each conflicting task
 		PlanTaskRequest planTaskRequest = new PlanTaskRequest(facade, inputReader);
-		for(TaskView conflictingTask : conflictingTasks) {
-			// Plan specific conflicting task
-			PlanningScheme newPlanning = planTaskRequest.planTask(conflictingTask);
-			// Remove planned reservations for conflicting task
-			
-			// Register newly planned reservations and assign newly planned planning to the conflicting task
+		for(ProjectView project : conflictingTasks.keySet()) {
+			for(TaskView conflictingTask : conflictingTasks.get(project)) {
+				// Plan specific conflicting task
+				PlanningScheme newPlanning = planTaskRequest.planTask(project, conflictingTask);
+				// Remove planned reservations for conflicting task
+				
+				// Register newly planned reservations and assign newly planned planning to the conflicting task
+			}
 		}
 		return "Conflict resolved";
 	}

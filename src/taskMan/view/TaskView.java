@@ -27,8 +27,8 @@ public class TaskView {
 		return task.getBeginTime();
 	}
 	
-	public TimeSpan getEstimatedTaskDuration() {
-		return task.getEstimatedDuration();
+	public int getEstimatedTaskDuration() {
+		return task.getEstimatedDuration().getSpanMinutes();
 	}
 	
 	public int getAcceptableTaskDeviation() {

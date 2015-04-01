@@ -82,4 +82,9 @@ public class ProjectView {
 		return other.hasAsProject(project);
 	}
 
+	public List<TaskView> getUnplannedTasks() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

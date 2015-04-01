@@ -2,6 +2,8 @@ package userInterface.requests;
 
 import java.io.BufferedReader;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import taskMan.view.ProjectView;
@@ -55,15 +57,8 @@ public class PlanTaskRequest extends Request {
 				}
 				
 				// PLAN TASK
-				PlanningScheme planning = planTask(task);
+				PlanningScheme planning = planTask(project, task);
 				if(planning == null) { return quit(); }
-				
-				// Show list of developers
-				
-				// User quits
-				if(input.toLowerCase().equals("quit")) { return quit(); }
-				// User selects developers
-					// If selected dev conflicts with another task planning init resolve conflict request
 				
 				// Assign developers to task, assign planning to task, reserve selected resource(types)
 				
@@ -89,17 +84,18 @@ public class PlanTaskRequest extends Request {
 	
 	// TODO dit afwerken
 	// TODO Return type? Een soort planning container met voorstellen voor het plan en de reservaties?
-	public PlanningScheme planTask(TaskView task) {
+	public PlanningScheme planTask(ProjectView project, TaskView task) {
 		
-		// show list of possible starting times
-		List<LocalDateTime> possibleStartingTimes = facade.getPossibleTaskStartingTimes(task, 3);
-		// (3 first possible (enough res and devs available))
-		for(int i = 0 ; i < possibleStartingTimes.size() ; i++) {
-			System.out.println("(" + i + ") Possible task starting time: " + possibleStartingTimes.get(i).toString());
-		}
 		// Ask user for time slot
 		while(true) {
 			try {
+				// show list of possible starting times
+				List<LocalDateTime> possibleStartingTimes = facade.getPossibleTaskStartingTimes(project, task, 3);
+				// (3 first possible (enough res and devs available))
+				for(int i = 0 ; i < possibleStartingTimes.size() ; i++) {
+					System.out.println("(" + i + ") Possible task starting time: " + possibleStartingTimes.get(i).toString());
+				}
+				
 				System.out.println("Select a time slot (type quit to exit)");
 				String input = inputReader.readLine();		
 				
@@ -127,6 +123,37 @@ public class PlanTaskRequest extends Request {
 						if(input.toLowerCase().equals("quit")) { return null; }
 					// if resource is already reserved initiate resolve conflict request
 				
+					
+					
+					// Show list of developers
+					List<String> devs = facade.getDeveloperList();
+					System.out.println("Possible developers to assign:");
+					for(int i = 0; i < devs.size() ; i++) {
+						System.out.println("(" + i + ") " + devs.get(i));
+					}
+					System.out.println("Choose the developers you wish to assign (their numbers on one line, seperated by spaces) (type quit to exit)");
+					input = inputReader.readLine();
+					// User quits
+					if(input.toLowerCase().equals("quit")) { return null; }
+					// User selects developers
+					String[] devIDs = input.split(" ");
+					List<String> devNames = new ArrayList<>();
+					for(String devID : devIDs) {
+						devNames.add(devs.get(Integer.parseInt(devID)));
+					}
+					
+					// If selected dev conflicts with another task planning init resolve conflict request
+					HashMap<ProjectView, List<TaskView>> conflictingTasks = facade.findConflictingDeveloperPlannings(project, task, devNames, timeSlotStart);
+
+					if(!conflictingTasks.isEmpty()) {
+						ResolvePlanningConflictRequest resolveConflictRequest = new ResolvePlanningConflictRequest(facade, inputReader, conflictingTasks);
+						System.out.println(resolveConflictRequest.execute());
+						// Conflict dictates that this planning should start over
+						if(resolveConflictRequest.shouldMovePlanningTask()) {
+							continue;
+						}
+					}
+					return new PlanningScheme(timeSlotStart);
 			} catch(Exception e) {
 				System.out.println("Invalid input");
 			}
@@ -137,10 +164,14 @@ public class PlanTaskRequest extends Request {
 
 class PlanningScheme {
 	
-	LocalDateTime timeSlotStartTime;
+	private LocalDateTime timeSlotStartTime;
 	
 	public PlanningScheme(LocalDateTime timeSlotStartTime) {
-		
+		this.timeSlotStartTime = timeSlotStartTime;
+	}
+	
+	public LocalDateTime getPlanningStartTime() {
+		return timeSlotStartTime;
 	}
 }
 

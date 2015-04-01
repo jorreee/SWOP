@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import taskMan.resource.ResourceManager;
-import taskMan.user.User;
+import taskMan.resource.user.User;
 import taskMan.util.IntPair;
 import taskMan.view.ProjectView;
 import taskMan.view.TaskView;
