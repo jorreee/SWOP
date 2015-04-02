@@ -12,6 +12,7 @@ import taskMan.resource.ResourceManager;
 import taskMan.resource.user.User;
 import taskMan.util.IntPair;
 import taskMan.view.ProjectView;
+import taskMan.view.ResourceView;
 import taskMan.view.TaskView;
 
 //TODO Still not done
@@ -796,7 +797,7 @@ public class TaskMan {
 		}
 	}
 	
-	public ImmutableList<String> getPossibleUsernames(){
+	public ImmutableList<ResourceView> getPossibleUsernames(){
 		return resMan.getPossibleUsernames();
 	}
 	

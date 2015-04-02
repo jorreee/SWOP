@@ -9,6 +9,7 @@ import taskMan.Task;
 import taskMan.resource.user.Developer;
 import taskMan.resource.user.ProjectManager;
 import taskMan.resource.user.User;
+import taskMan.view.ResourceView;
 
 import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.ImmutableList;
@@ -94,10 +95,10 @@ public class ResourceManager {
 		return null;
 	}
 	
-	public ImmutableList<String> getPossibleUsernames() {
-		Builder<String> usernames = ImmutableList.builder();
+	public ImmutableList<ResourceView> getPossibleUsernames() {
+		Builder<ResourceView> usernames = ImmutableList.builder();
 		for(User user : userList) {
-			usernames.add(user.getName());
+			usernames.add(new ResourceView(user));
 		}
 		return usernames.build();
 	}

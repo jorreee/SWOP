@@ -5,11 +5,12 @@ import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.List;
 
-import com.google.common.collect.ImmutableList;
-
 import taskMan.util.IntPair;
 import taskMan.view.ProjectView;
+import taskMan.view.ResourceView;
 import taskMan.view.TaskView;
+
+import com.google.common.collect.ImmutableList;
 
 public interface IFacade {
 
@@ -18,7 +19,7 @@ public interface IFacade {
 	public LocalDateTime getCurrentTime();
 	
 	public String getCurrentUsername();
-	public ImmutableList<String> getPossibleUsernames();
+	public ImmutableList<ResourceView> getPossibleUsernames();
 	public boolean changeToUser(String username);
 
 	
@@ -31,12 +32,12 @@ public interface IFacade {
 	public boolean createRawTask(int project, String description,
 			int estimatedDuration, int acceptableDeviation,
 			List<Integer> prerequisiteTasks, int alternativeFor,
-			String taskStatus, LocalDateTime startTime, LocalDateTime endTime);
+			List<IntPair> requiredResources, String taskStatus, LocalDateTime startTime, LocalDateTime endTime);
 
 	public boolean createRawPlannedTask(int project, String description,
 			int estimatedDuration, int acceptableDeviation,
 			List<Integer> prerequisiteTasks, int alternativeFor,
-			String statusString, LocalDateTime startTime,
+			List<IntPair> requiredResources, String statusString, LocalDateTime startTime,
 			LocalDateTime endTime, LocalDateTime planningDueTime,
 			List<Integer> plannedDevelopers, List<IntPair> plannedResources);
 
@@ -73,7 +74,7 @@ public interface IFacade {
 
 	public ImmutableList<LocalDateTime> getPossibleTaskStartingTimes(ProjectView project, TaskView task, int amount);
 
-	public ImmutableList<String> getDeveloperList();
+	public ImmutableList<ResourceView> getDeveloperList();
 
 	public HashMap<ProjectView, ImmutableList<TaskView>> findConflictingDeveloperPlannings(
 			ProjectView projectID, TaskView taskID, List<String> developerNames,

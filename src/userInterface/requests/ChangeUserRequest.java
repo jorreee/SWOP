@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.List;
 
+import taskMan.view.ResourceView;
 import userInterface.IFacade;
 
 public class ChangeUserRequest extends Request{
@@ -18,10 +19,10 @@ public class ChangeUserRequest extends Request{
 			// Display current user
 			System.out.println("Currently logged in as " + facade.getCurrentUsername());
 			// Display different options
-			List<String> possibleUsers = facade.getPossibleUsernames();
+			List<ResourceView> possibleUsers = facade.getPossibleUsernames();
 
-			for(String username : possibleUsers)
-				System.out.println("Possible user: " + username);
+			for(ResourceView user : possibleUsers)
+				System.out.println("Possible user: " + user.getName());
 			
 			// Ask user for username to log in as
 			System.out.println("Select a user (type quit to exit)");

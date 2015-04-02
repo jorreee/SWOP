@@ -9,6 +9,7 @@ import java.util.List;
 
 import taskMan.util.IntPair;
 import taskMan.view.ProjectView;
+import taskMan.view.ResourceView;
 import taskMan.view.TaskView;
 import userInterface.IFacade;
 
@@ -253,7 +254,7 @@ public class Facade implements IFacade {
 	}
 
 	@Override
-	public ImmutableList<String> getPossibleUsernames() {
+	public ImmutableList<ResourceView> getPossibleUsernames() {
 		return taskMan.getPossibleUsernames();
 	}
 
@@ -308,7 +309,7 @@ public class Facade implements IFacade {
 	}
 
 	@Override
-	public ImmutableList<String> getDeveloperList() {
+	public ImmutableList<ResourceView> getDeveloperList() {
 		// TODO Auto-generated method stub
 		return null;
 	}

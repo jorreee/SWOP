@@ -221,6 +221,10 @@ public class TaskManInitFileChecker extends StreamTokenizer {
 	      expectLabel("prerequisiteTasks");
 	      if (ttype == '[')
 	        prerequisiteTasks = expectIntList();
+	      expectLabel("requiredResources");
+	      List<IntPair> requiredResources = new ArrayList<>();
+	      if (ttype == '[')
+		        requiredResources = expectLabeledPairList("type","quantity");
 	      expectLabel("planning");
 	      Integer planning = null;
 	      if (ttype == TT_NUMBER)
@@ -248,7 +252,7 @@ public class TaskManInitFileChecker extends StreamTokenizer {
 	      if(planning != null)
 	    	  planningData = planningDataList.get(planning);
 	      
-	      taskDataList.add(new TaskCreationData(project, description, estimatedDuration, acceptableDeviation, alternativeFor, prerequisiteTasks, status, startTime, endTime, planningData));
+	      taskDataList.add(new TaskCreationData(project, description, estimatedDuration, acceptableDeviation, alternativeFor, prerequisiteTasks, requiredResources, status, startTime, endTime, planningData));
 	    }
 
 	    expectLabel("reservations");

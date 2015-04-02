@@ -22,7 +22,7 @@ public class TaskManCaretaker {
 
 	private final Stack<TaskManMemento> mementos;
 	private final Facade facade;
-	
+
 	public TaskManCaretaker(Facade facade) {
 		this.mementos = new Stack<>();
 		this.facade = facade;
@@ -80,16 +80,16 @@ public class TaskManCaretaker {
 				facade.createRawPlannedTask(tcd.getProject(), tcd.getDescription(),
 						tcd.getEstimatedDuration(),
 						tcd.getAcceptableDeviation(), tcd.getPrerequisiteTasks(),
-						tcd.getAlternativeFor(), statusString,
-						tcd.getStartTime(), tcd.getEndTime(),
+						tcd.getAlternativeFor(), tcd.getRequiredResources(),
+						statusString, tcd.getStartTime(), tcd.getEndTime(),
 						planning.getDueTime(), planning.getDevelopers(),
 						planning.getResources());
 			else
 				facade.createRawTask(tcd.getProject(), tcd.getDescription(),
 						tcd.getEstimatedDuration(),
 						tcd.getAcceptableDeviation(), tcd.getPrerequisiteTasks(),
-						tcd.getAlternativeFor(), statusString,
-						tcd.getStartTime(), tcd.getEndTime());
+						tcd.getAlternativeFor(), tcd.getRequiredResources(),
+						statusString, tcd.getStartTime(), tcd.getEndTime());
 		}
 		// Init reservations
 		for(ReservationCreationData rcd : reservations) {

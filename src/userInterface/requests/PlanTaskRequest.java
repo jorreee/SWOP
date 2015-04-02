@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import taskMan.view.ProjectView;
+import taskMan.view.ResourceView;
 import taskMan.view.TaskView;
 import userInterface.IFacade;
 
@@ -126,7 +127,7 @@ public class PlanTaskRequest extends Request {
 					
 					
 					// Show list of developers
-					List<String> devs = facade.getDeveloperList();
+					List<ResourceView> devs = facade.getDeveloperList();
 					System.out.println("Possible developers to assign:");
 					for(int i = 0; i < devs.size() ; i++) {
 						System.out.println("(" + i + ") " + devs.get(i));
@@ -137,7 +138,7 @@ public class PlanTaskRequest extends Request {
 					if(input.toLowerCase().equals("quit")) { return null; }
 					// User selects developers
 					String[] devIDs = input.split(" ");
-					List<String> devNames = new ArrayList<>();
+					List<ResourceView> devNames = new ArrayList<>();
 					for(String devID : devIDs) {
 						devNames.add(devs.get(Integer.parseInt(devID)));
 					}
