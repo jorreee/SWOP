@@ -52,11 +52,11 @@ public interface IFacade {
 
 	public ImmutableList<ProjectView> getProjects();
 
-	public void storeInMemento();
+	public boolean storeInMemento();
 
-	public void revertFromMemento();
+	public boolean revertFromMemento();
 
-	public void discardMemento();
+	public boolean discardMemento();
 
 	public boolean declareDailyAvailability(LocalTime startTime, LocalTime endTime);
 

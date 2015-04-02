@@ -781,21 +781,6 @@ public class TaskMan {
 		return views.build();
 	}
 
-	public void storeInMemento() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void revertFromMemento() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void discardMemento() {
-		// TODO Auto-generated method stub
-		
-	}
-	
 	public String getCurrentUserName(){
 		return currentUser.getName();
 	}

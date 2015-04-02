@@ -1,5 +1,7 @@
 package taskMan;
 
+import initSaveRestore.caretaker.TaskManCaretaker;
+
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.HashMap;
@@ -13,10 +15,15 @@ import userInterface.IFacade;
 import com.google.common.collect.ImmutableList;
 
 public class Facade implements IFacade {
-	private final TaskMan taskMan;
-	
+	private TaskMan taskMan;
+	private final TaskManCaretaker caretaker;
 	
 	public Facade(LocalDateTime time) {
+		this.taskMan = new TaskMan(time);
+		caretaker = new TaskManCaretaker(this);
+	}
+	
+	public void initializeFromMemento(LocalDateTime time) {
 		this.taskMan = new TaskMan(time);
 	}
 	
@@ -226,18 +233,18 @@ public class Facade implements IFacade {
 	}
 
 	@Override
-	public void storeInMemento() {
-		taskMan.storeInMemento();
+	public boolean storeInMemento() {
+		return caretaker.storeInMemento();
 	}
 
 	@Override
-	public void revertFromMemento() {
-		taskMan.revertFromMemento();
+	public boolean revertFromMemento() {
+		return caretaker.revertFromMemento();
 	}
 
 	@Override
-	public void discardMemento() {
-		taskMan.discardMemento();		
+	public boolean discardMemento() {
+		return caretaker.discardMemento();		
 	}
 
 	@Override
