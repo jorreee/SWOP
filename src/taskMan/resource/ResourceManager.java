@@ -31,7 +31,7 @@ public class ResourceManager {
 		this.resPools = new ArrayList<>();
 		this.dailyAvailabilityList = new ArrayList<>();
 		this.userList = new ArrayList<>();
-		userList.add(new ProjectManager());
+		userList.add(new ProjectManager("admin"));
 	}
 	
 	public boolean createResourcePrototype(String resourceName,
@@ -39,7 +39,7 @@ public class ResourceManager {
 			Integer availabilityIndex) {
 		// No nulls
 		if(resourceName == null || requirements == null
-				|| conflicts == null || availabilityIndex == null) {
+				|| conflicts == null) {
 			return false;
 		}
 		// Requirement cannot be a conflict
@@ -48,10 +48,22 @@ public class ResourceManager {
 				return false;
 			}
 		}
-		// DailyAvailability must exist
-		if(availabilityIndex < 0 || availabilityIndex > dailyAvailabilityList.size()) {
+		// If daily available, DailyAvailability must exist
+		if(availabilityIndex != null && (availabilityIndex < 0 || availabilityIndex > dailyAvailabilityList.size())) {
 			return false;
 		}
+		
+		// Create resprot (should happen before applying conflicting resources,
+		// since a resource can conflict with itself
+		boolean success = false;
+		ResourcePrototype resprot = null;
+		if(availabilityIndex == null) {
+			resprot = new ResourcePrototype(resourceName, new ArrayList<ResourcePrototype>(), new ArrayList<ResourcePrototype>(), null);
+		} else {
+			resprot = new ResourcePrototype(resourceName, new ArrayList<ResourcePrototype>(), new ArrayList<ResourcePrototype>(), dailyAvailabilityList.get(availabilityIndex));
+		}
+		success = addResourceType(resprot);
+		if(!success) { return false; }
 		
 		// Build reqList and conList
 		List<ResourcePrototype> reqList = new ArrayList<>();
@@ -60,9 +72,11 @@ public class ResourceManager {
 			reqList.add(resPools.get(requirement).getPrototype());
 		}
 		for(Integer conflict : conflicts) {
-			reqList.add(resPools.get(conflict).getPrototype());
+			conList.add(resPools.get(conflict).getPrototype());
 		}
-		return addResourceType(new ResourcePrototype(resourceName, reqList, conList, dailyAvailabilityList.get(availabilityIndex)));
+		resprot.putConflictingResources(conList);
+		resprot.putRequiredResources(reqList);
+		return true;
 	}
 	
 	public boolean declareDailyAvailability(LocalTime startTime, LocalTime endTime) {
@@ -93,6 +107,10 @@ public class ResourceManager {
 			}
 		}
 		return null;
+	}
+	
+	public User getDefaultUser() {
+		return getUser("admin");
 	}
 	
 	public ImmutableList<ResourceView> getPossibleUsernames() {

@@ -55,6 +55,7 @@ public class Facade implements IFacade {
 	public boolean createRawTask(int project, String description,
 			int estimatedDuration, int acceptableDeviation,
 			List<Integer> prerequisiteTasks, int alternativeFor,
+			List<IntPair> requiredResources,
 			String taskStatus, LocalDateTime startTime, LocalDateTime endTime) {
 		return taskMan.createRawTask(project, description, estimatedDuration, acceptableDeviation, prerequisiteTasks, alternativeFor, taskStatus, startTime, endTime);
 	}
@@ -267,6 +268,7 @@ public class Facade implements IFacade {
 	public boolean createRawPlannedTask(int project, String description,
 			int estimatedDuration, int acceptableDeviation,
 			List<Integer> prerequisiteTasks, int alternativeFor,
+			List<IntPair> requiredResources,
 			String statusString, LocalDateTime startTime,
 			LocalDateTime endTime, LocalDateTime planningDueTime,
 			List<Integer> plannedDevelopers, List<IntPair> plannedResources) {

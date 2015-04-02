@@ -42,6 +42,7 @@ public class TaskMan {
 		projectList = new ArrayList<>();
 		currentTime = time;
 		resMan = new ResourceManager();
+		currentUser = resMan.getDefaultUser();
 	}
 	
 	/**

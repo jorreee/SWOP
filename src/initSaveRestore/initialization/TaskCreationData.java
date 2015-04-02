@@ -19,9 +19,11 @@ public class TaskCreationData {
 	private final LocalDateTime endTime;
 	private PlanningCreationData planningData;
 
-	public TaskCreationData(int project, String description, int estimatedDuration,
-			int acceptableDeviation, int alternativeFor,
-			List<Integer> prerequisiteTasks, List<IntPair> requiredResources, TaskStatus status, LocalDateTime startTime, LocalDateTime endTime, PlanningCreationData planningData) {
+	public TaskCreationData(int project, String description,
+			int estimatedDuration, int acceptableDeviation, int alternativeFor,
+			List<Integer> prerequisiteTasks, List<IntPair> requiredResources,
+			TaskStatus status, LocalDateTime startTime, LocalDateTime endTime,
+			PlanningCreationData planningData) {
 		this.project = project;
 		this.description = description;
 		this.estimatedDuration = estimatedDuration;

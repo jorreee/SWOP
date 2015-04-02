@@ -2,7 +2,7 @@ package taskMan.resource.user;
 
 public class ProjectManager extends User {
 
-	public ProjectManager(){
-		super("admin");
+	public ProjectManager(String username){
+		super(username);
 	}
 }
