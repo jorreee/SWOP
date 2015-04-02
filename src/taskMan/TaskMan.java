@@ -5,6 +5,9 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableList.Builder;
+
 import taskMan.resource.ResourceManager;
 import taskMan.resource.user.User;
 import taskMan.util.IntPair;
@@ -771,11 +774,11 @@ public class TaskMan {
 	 * @return
 	 * 			| a list of ProjectViews
 	 */
-	public List<ProjectView> getProjects() {
-		ArrayList<ProjectView> views = new ArrayList<ProjectView>();
+	public ImmutableList<ProjectView> getProjects() {
+		Builder<ProjectView> views = ImmutableList.builder();
 		for(Project project : projectList)
 			views.add(new ProjectView(project));
-		return views;
+		return views.build();
 	}
 
 	public void storeInMemento() {
@@ -808,7 +811,7 @@ public class TaskMan {
 		}
 	}
 	
-	public List<String> getPossibleUsernames(){
+	public ImmutableList<String> getPossibleUsernames(){
 		return resMan.getPossibleUsernames();
 	}
 	
@@ -874,8 +877,8 @@ public class TaskMan {
 		return resMan.createRawReservation(resource,project,task,startTime,endTime);
 	}
 	
-	public List<LocalDateTime> getPossibleTaskStartingTimes(ProjectView project, TaskView task,
+	public ImmutableList<LocalDateTime> getPossibleTaskStartingTimes(ProjectView project, TaskView task,
 			int amount) {
-		return unwrapProjectView(project).getPossibleTaskStartingTimes(project,task,amount);
+		return unwrapProjectView(project).getPossibleTaskStartingTimes(task,amount);
 	}
 }

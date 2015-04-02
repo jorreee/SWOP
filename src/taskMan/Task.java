@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.collect.ImmutableList;
+
 import taskMan.state.TaskStatus;
 import taskMan.state.UnavailableTask;
 import taskMan.util.Dependant;
@@ -726,8 +728,8 @@ public class Task implements Dependant {
 	 * 			The amount of possible starting times wanted.
 	 * @return	The possible starting times of the Task
 	 */
-	public List<String> getPossibleTaskStartingTimes(int amount){
-		
+	public ImmutableList<LocalDateTime> getPossibleTaskStartingTimes(int amount){
+		return null; //TODO
 	}
 	
 }

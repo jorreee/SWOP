@@ -10,6 +10,9 @@ import taskMan.resource.user.Developer;
 import taskMan.resource.user.ProjectManager;
 import taskMan.resource.user.User;
 
+import com.google.common.collect.ImmutableList.Builder;
+import com.google.common.collect.ImmutableList;
+
 public class ResourceManager {
 	
 	// The resource manager has a list of resource pools (and users)
@@ -91,12 +94,12 @@ public class ResourceManager {
 		return null;
 	}
 	
-	public List<String> getPossibleUsernames() {
-		List<String> usernames = new ArrayList<>();
+	public ImmutableList<String> getPossibleUsernames() {
+		Builder<String> usernames = ImmutableList.builder();
 		for(User user : userList) {
 			usernames.add(user.getName());
 		}
-		return usernames;
+		return usernames.build();
 	}
 	
 	public boolean createDeveloper(String name) {
@@ -132,6 +135,12 @@ public class ResourceManager {
 			if(!secondAddSuccess) { activeReservations.remove(newReservation); return false; }
 			else return true;
 		}
+	}
+
+	public boolean createRawReservation(int resource, int project, int task,
+			LocalDateTime startTime, LocalDateTime endTime) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }
