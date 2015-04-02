@@ -2,12 +2,15 @@ package taskMan;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.HashMap;
 import java.util.List;
 
 import taskMan.util.IntPair;
 import taskMan.view.ProjectView;
 import taskMan.view.TaskView;
 import userInterface.IFacade;
+
+import com.google.common.collect.ImmutableList;
 
 public class Facade implements IFacade {
 	private final TaskMan taskMan;
@@ -218,7 +221,7 @@ public class Facade implements IFacade {
 	*/
 
 	@Override
-	public List<ProjectView> getProjects() {
+	public ImmutableList<ProjectView> getProjects() {
 		return taskMan.getProjects();
 	}
 
@@ -243,7 +246,7 @@ public class Facade implements IFacade {
 	}
 
 	@Override
-	public List<String> getPossibleUsernames() {
+	public ImmutableList<String> getPossibleUsernames() {
 		return taskMan.getPossibleUsernames();
 	}
 
@@ -292,9 +295,23 @@ public class Facade implements IFacade {
 	}
 
 	@Override
-	public List<LocalDateTime> getPossibleTaskStartingTimes(ProjectView project, TaskView task,
+	public ImmutableList<LocalDateTime> getPossibleTaskStartingTimes(ProjectView project, TaskView task,
 			int amount) {
 		return taskMan.getPossibleTaskStartingTimes(project,task,amount);
+	}
+
+	@Override
+	public ImmutableList<String> getDeveloperList() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public HashMap<ProjectView, ImmutableList<TaskView>> findConflictingDeveloperPlannings(
+			ProjectView projectID, TaskView taskID,
+			List<String> developerNames, LocalDateTime planningStartTime) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

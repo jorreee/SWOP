@@ -5,6 +5,8 @@ import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.List;
 
+import com.google.common.collect.ImmutableList;
+
 import taskMan.util.IntPair;
 import taskMan.view.ProjectView;
 import taskMan.view.TaskView;
@@ -16,7 +18,7 @@ public interface IFacade {
 	public LocalDateTime getCurrentTime();
 	
 	public String getCurrentUsername();
-	public List<String> getPossibleUsernames();
+	public ImmutableList<String> getPossibleUsernames();
 	public boolean changeToUser(String username);
 
 	
@@ -48,7 +50,7 @@ public interface IFacade {
 	public boolean setTaskFailed(ProjectView projectID, TaskView taskID,
 			LocalDateTime startTime, LocalDateTime endTime);
 
-	public List<ProjectView> getProjects();
+	public ImmutableList<ProjectView> getProjects();
 
 	public void storeInMemento();
 
@@ -69,11 +71,11 @@ public interface IFacade {
 	public boolean createRawReservation(int resource, int project, int task,
 			LocalDateTime startTime, LocalDateTime endTime);
 
-	public List<LocalDateTime> getPossibleTaskStartingTimes(ProjectView project, TaskView task, int amount);
+	public ImmutableList<LocalDateTime> getPossibleTaskStartingTimes(ProjectView project, TaskView task, int amount);
 
-	public List<String> getDeveloperList();
+	public ImmutableList<String> getDeveloperList();
 
-	public HashMap<ProjectView, List<TaskView>> findConflictingDeveloperPlannings(
+	public HashMap<ProjectView, ImmutableList<TaskView>> findConflictingDeveloperPlannings(
 			ProjectView projectID, TaskView taskID, List<String> developerNames,
 			LocalDateTime planningStartTime);
 
