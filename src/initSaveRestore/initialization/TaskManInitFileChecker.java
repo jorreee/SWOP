@@ -1,4 +1,4 @@
-package userInterface.initialization;
+package initSaveRestore.initialization;
 
 import java.io.IOException;
 import java.io.Reader;
