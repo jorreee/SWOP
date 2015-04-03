@@ -11,7 +11,6 @@ import taskMan.state.UnavailableTask;
 import taskMan.util.Dependant;
 import taskMan.util.TimeSpan;
 import taskMan.view.ResourceView;
-import taskMan.view.TaskView;
 
 import com.google.common.collect.ImmutableList;
 
@@ -164,9 +163,13 @@ public class Task implements Dependant {
 				alternativeFor);
 		
 		if(taskStatus.equalsIgnoreCase("failed")) {
-			state.fail(beginTime, endTime);
+			if(!state.fail(beginTime, endTime)) {
+				throw new IllegalArgumentException("Very bad timeStamps");
+			}
 		} else if(taskStatus.equalsIgnoreCase("finished")) {
-			state.finish(beginTime, endTime);
+			if(!state.finish(beginTime, endTime)) {
+				throw new IllegalArgumentException("Very bad timeStamps");
+			}
 		} else {
 			throw new IllegalArgumentException(
 					"Time stamps are only allowed if a task is finished or failed");
