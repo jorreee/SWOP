@@ -67,7 +67,6 @@ public class ProjectView {
 	
 	public boolean hasAsProject(Project p) {
 		return project == p;
-//		return project.equals(p); ?
 	}
 
 	@Override
