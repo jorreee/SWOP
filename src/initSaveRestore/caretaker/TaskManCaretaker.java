@@ -40,45 +40,75 @@ public class TaskManCaretaker {
 	}
 
 	private String buildMemento() {
-		StringBuilder taskman = new StringBuilder();
+		StringBuilder tman = new StringBuilder();
 		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 		DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
 
 		// SystemTime
-		taskman.append("systemTime: \"" + facade.getCurrentTime().format(dateTimeFormatter) +"\"");
+		tman.append("systemTime: \"" + facade.getCurrentTime().format(dateTimeFormatter) +"\"");
 		
 		// DailyAvailability
-		taskman.append("\ndailyAvailability :");
+		tman.append("\ndailyAvailability :");
 		ImmutableList<DailyAvailability> dailyAvailabilities = facade.getPossibleDailyAvailabilities();
 		if(!dailyAvailability.isEmpty()) {
 			for(DailyAvailability dailyAvailability : dailyAvailabilities) {
-				taskman.append("\n  - startTime : \"" + dailyAvailability.getStartTime().format(timeFormatter) + "\"\n"
+				tman.append("\n  - startTime : \"" + dailyAvailability.getStartTime().format(timeFormatter) + "\"\n"
 						+ "    endTime   : \"" + dailyAvailability.getEndTime().format(timeFormatter) + "\"");
 			}
 		}
 		
 		// resourceType
-		taskman.append("\nresourceTypes:");
+		tman.append("\nresourceTypes:");
 		ImmutableList<ResourceView> resprots = facade.getResourcePrototypes();
 		for(ResourceView resprot : resprots) {
-			taskman.append("\n  - name              : \"" + resprot.getName() + "\"");
-			taskman.append("\n    requires          : [");
+			tman.append("\n  - name              : \"" + resprot.getName() + "\""); // name
+			tman.append("\n    requires          : [");
 			Iterator<ResourceView> requiredProts = facade.getResourceRequirements(resprot).listIterator();
 			while(requiredProts.hasNext()) {
-				taskman.append(resprots.indexOf(requiredProts.next()));
-				if(requiredProts.hasNext()) { taskman.append(","); }
+				tman.append(resprots.indexOf(requiredProts.next())); // requires
+				if(requiredProts.hasNext()) { tman.append(","); }
 			}
-			taskman.append("]");
-			taskman.append("\n    conflictsWith     : [");
+			tman.append("]");
+			tman.append("\n    conflictsWith     : [");
 			Iterator<ResourceView> conflictingProts = facade.getResourceConflicts(resprot).listIterator();
 			while(conflictingProts.hasNext()) {
-				taskman.append(resprots.indexOf(conflictingProts.next()));
-				if(conflictingProts.hasNext()) { taskman.append(","); }
+				tman.append(resprots.indexOf(conflictingProts.next())); // conflicts
+				if(conflictingProts.hasNext()) { tman.append(","); }
 			}
-			taskman.append("]");
+			tman.append("]");
+			tman.append("\n    dailyAvailability :");
+			if(facade.isResourceDailyAvailable(resprot)) {
+				tman.append(" " + dailyAvailabilities.indexOf(facade.getDailyAvailability(resprot)));
+			}
+		}
+		
+		// resources
+		tman.append("\nresources:");
+		ImmutableList<ResourceView> conresources = facade.getAllConcreteResources();
+		for(ResourceView conres : conresources) {
+			tman.append("\n  - name: \"" + conres.getName() + "\"");
+			tman.append("\n    type: " + resprots.indexOf(facade.getPrototypeOf(conres)));
 		}
 
-		return taskman.toString();
+		// developers
+		tman.append("\ndevelopers:");
+		ImmutableList<ResourceView> devs = facade.getDeveloperList();
+		for(ResourceView dev : devs) {
+			tman.append("  - name : \"" + dev.getName() + "\"");
+		}
+		
+		// currentUser
+		tman.append("\ncurrentUser:");
+		tman.append("  - name: \"" + facade.getCurrentUsername() + "\"");
+		
+		// projects
+		
+		// plannings
+		
+		// tasks
+		
+		// reservations
+		return tman.toString();
 	}
 
 	public boolean revertFromMemento() {

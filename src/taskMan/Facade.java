@@ -353,4 +353,24 @@ public class Facade implements IFacade {
 		return null;
 	}
 
+	@Override
+	public boolean isResourceDailyAvailable(ResourceView resprot) {
+		return false;
+	}
+
+	public DailyAvailability getDailyAvailability(ResourceView resprot) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ImmutableList<ResourceView> getAllConcreteResources() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ResourceView getPrototypeOf(ResourceView conres) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
