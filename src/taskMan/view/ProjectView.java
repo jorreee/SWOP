@@ -3,6 +3,8 @@ package taskMan.view;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.google.common.collect.ImmutableList;
+
 import taskMan.Project;
 
 public class ProjectView {
@@ -41,11 +43,11 @@ public class ProjectView {
 		return project.getProjectStatus();
 	}
 
-	public List<TaskView> getTasks() {
+	public ImmutableList<TaskView> getTasks() {
 		return project.getTasks();
 	}
 
-	public List<TaskView> getAvailableTasks() {
+	public ImmutableList<TaskView> getAvailableTasks() {
 		return project.getAvailableTaskViews();
 	}
 	
@@ -81,7 +83,7 @@ public class ProjectView {
 		return other.hasAsProject(project);
 	}
 
-	public List<TaskView> getUnplannedTasks() {
+	public ImmutableList<TaskView> getUnplannedTasks() {
 		// TODO Auto-generated method stub
 		return null;
 	}
