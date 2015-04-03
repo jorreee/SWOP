@@ -2,6 +2,7 @@ package taskMan.view;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import taskMan.Task;
@@ -92,6 +93,10 @@ public class TaskView {
 	
 	public boolean hasAsTask(Task t) {
 		return task == t;
+	}
+	
+	public HashMap<ResourceView,Integer> getRequiredResources(){
+		return task.getRequiredResources();
 	}
 
 	@Override

@@ -733,8 +733,5 @@ public class Project implements Dependant {
 	public ImmutableList<LocalDateTime> getPossibleTaskStartingTimes(TaskView task, int amount){
 		return unwrapTaskView(task).getPossibleTaskStartingTimes(amount);
 	}
-	
-	public HashMap<ResourceView,Integer> getRequiredResources(TaskView task){
-		return this.unwrapTaskView(task).getRequiredResources();
-	}
+
 }

@@ -870,7 +870,4 @@ public class TaskMan {
 		return unwrapProjectView(project).getPossibleTaskStartingTimes(task,amount);
 	}
 	
-	public HashMap<ResourceView,Integer> getRequiredResources(ProjectView project, TaskView task){
-		return this.unwrapProjectView(project).getRequiredResources(task);
-	}
 }
