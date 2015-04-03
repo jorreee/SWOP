@@ -343,10 +343,6 @@ public class Facade implements IFacade {
 		return null;
 	}
 	
-	@Override
-	public HashMap<ResourceView,Integer> getRequiredResources(ProjectView project, TaskView task){
-		return taskMan.getRequiredResources(project,task);
-	}
 
 	@Override
 	public ImmutableList<ResourceView> getResourceConflicts(ResourceView resprot) {

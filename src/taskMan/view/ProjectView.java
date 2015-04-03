@@ -5,6 +5,8 @@ import java.util.List;
 
 import taskMan.Project;
 
+import com.google.common.collect.ImmutableList;
+
 public class ProjectView {
 
 	private final Project project;
@@ -42,11 +44,15 @@ public class ProjectView {
 	}
 
 	public List<TaskView> getTasks() {
-		return project.getTasks();
+		ImmutableList.Builder<TaskView> tasks = ImmutableList.builder();
+		tasks.addAll(project.getTaskViews());
+		return tasks.build();
 	}
 
 	public List<TaskView> getAvailableTasks() {
-		return project.getAvailableTaskViews();
+		ImmutableList.Builder<TaskView> tasks = ImmutableList.builder();
+		tasks.addAll(project.getAvailableTaskViews());
+		return tasks.build();
 	}
 	
 	public int[] getCurrentProjectDelay(LocalDateTime time) {
@@ -67,7 +73,6 @@ public class ProjectView {
 	
 	public boolean hasAsProject(Project p) {
 		return project == p;
-//		return project.equals(p); ?
 	}
 
 	@Override

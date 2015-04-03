@@ -19,7 +19,9 @@ import java.util.List;
 import java.util.Stack;
 
 import taskMan.Facade;
+import taskMan.view.ProjectView;
 import taskMan.view.ResourceView;
+import taskMan.view.TaskView;
 
 import com.google.common.collect.ImmutableList;
 
@@ -94,19 +96,46 @@ public class TaskManCaretaker {
 		tman.append("\ndevelopers:");
 		ImmutableList<ResourceView> devs = facade.getDeveloperList();
 		for(ResourceView dev : devs) {
-			tman.append("  - name : \"" + dev.getName() + "\"");
+			tman.append("\n  - name : \"" + dev.getName() + "\"");
 		}
 		
 		// currentUser
 		tman.append("\ncurrentUser:");
-		tman.append("  - name: \"" + facade.getCurrentUsername() + "\"");
+		tman.append("\n  - name: \"" + facade.getCurrentUsername() + "\"");
 		
 		// projects
+		tman.append("\nprojects:");
+		ImmutableList<ProjectView> projects = facade.getProjects();
+		for(ProjectView project : projects) {
+			tman.append("\n  - name         : \"" + project.getProjectName() + "\"" // name
+					+ "\n    description  : \"" + project.getProjectDescription() + "\"" // description
+					+ "\n    creationTime : \"" + project.getProjectCreationTime().format(dateTimeFormatter) + "\"" // creationTime
+					+ "\n    dueTime      : \"" + project.getProjectDueTime().format(dateTimeFormatter) + "\"");// dueTime
+		}
 		
 		// plannings
+		tman.append("\nplannings:");
+		// TODO hoe zit dees zelfs bij ons in elkaar?
 		
 		// tasks
-		
+		tman.append("\ntasksk:");
+		for(ProjectView project : projects) {
+			ImmutableList<TaskView> tasks = project.getTasks();
+			for(TaskView task : tasks) {
+				tman.append("\n  - project            : " + projects.indexOf(project) // project
+						+ "\n    description        : \"" + task.getTaskDescription()// description
+						// estimatedDuration
+						// acceptableDeviation
+						// alternativeFor
+						// prerequisiteTasks
+						// requiredResources
+						// planning
+						// status
+						// startTime
+						// endTime
+						);
+			}
+		}
 		// reservations
 		return tman.toString();
 	}

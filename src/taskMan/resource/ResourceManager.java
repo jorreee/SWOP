@@ -128,12 +128,14 @@ public class ResourceManager {
 		return userList.add(new Developer(name));
 	}
 	
-	public boolean createRawReservation(int resourceTypeIndex, int concreteResourceIndex, Task reservingTask,
+	//TODO idem zie onder, maar RAW request
+	private boolean createRawReservation(int resourceTypeIndex, int concreteResourceIndex, Task reservingTask,
 			LocalDateTime startTime, LocalDateTime endTime, LocalDateTime currentTime) {
 		return createNewReservation(resPools.get(resourceTypeIndex).getConcreteResourceByIndex(concreteResourceIndex), reservingTask, startTime, endTime, currentTime);
 	}
 	
-	public boolean createNewReservation(Resource reservedResource, Task reservingTask, LocalDateTime startTime, LocalDateTime endTime, LocalDateTime currentTime) {
+	//TODO enkel resMan gaat dit kunnen doen. Er wordt een REQUEST naar hem gestuurd en hij CREATE een reservatie
+	private boolean createNewReservation(ConcreteResource reservedResource, Task reservingTask, LocalDateTime startTime, LocalDateTime endTime, LocalDateTime currentTime) {
 		if(reservedResource == null || reservingTask == null ||
 				startTime == null || endTime == null || currentTime == null) {
 			return false;
@@ -160,6 +162,11 @@ public class ResourceManager {
 			LocalDateTime startTime, LocalDateTime endTime) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+	
+	
+	public ImmutableList<ResourceView> getPossibleResourceInstances(ResourceView resourceType){
+		return null; //TODO implement
 	}
 
 }

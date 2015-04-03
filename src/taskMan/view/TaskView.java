@@ -1,10 +1,12 @@
 package taskMan.view;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import taskMan.Task;
+
+import com.google.common.collect.ImmutableList;
 
 public class TaskView {
 	
@@ -47,11 +49,11 @@ public class TaskView {
 	}
 	
 	public List<TaskView> getTaskPrerequisites() {
-		List<TaskView> taskPrereqs = new ArrayList<TaskView>();
+		ImmutableList.Builder<TaskView> taskPrereqs = ImmutableList.builder();
 		for(Task t : task.getTaskPrerequisites()) {
 			taskPrereqs.add(new TaskView(t));
 		}
-		return taskPrereqs;
+		return taskPrereqs.build();
 	}
 	
 	public TaskView getTaskAlternativeTo() {
@@ -92,7 +94,14 @@ public class TaskView {
 	
 	public boolean hasAsTask(Task t) {
 		return task == t;
-//		return task.equals(t); ?
+	}
+	
+	public HashMap<ResourceView,Integer> getRequiredResources(){
+		return task.getRequiredResources();
+	}
+	
+	public List<ResourceView> getPossibleResourceInstances(ResourceView resourceType){
+		return task.getPossibleResourceInstances(resourceType);
 	}
 
 	@Override

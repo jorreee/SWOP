@@ -7,10 +7,10 @@ import taskMan.Task;
 
 public class FinishedProject implements ProjectStatus {
 	
-	private Project project;
+//	private Project project;
 	
 	public FinishedProject(Project p) {
-		this.project = p;
+//		this.project = p;
 	}
 
 	@Override
