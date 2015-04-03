@@ -80,6 +80,12 @@ public interface IFacade {
 			ProjectView projectID, TaskView taskID, List<String> developerNames,
 			LocalDateTime planningStartTime);
 
+	public ImmutableList<ResourceView> getResourcePrototypes();
+	public ImmutableList<ResourceView> getResourceRequirements(
+			ResourceView resource);
+
+	public ImmutableList<ResourceView> getResourceConflicts(ResourceView resource);
+	
 	/*
 	public boolean createTask(int projectID, String description, int estimatedDuration, int acceptableDeviation, String taskStatus, Integer alternativeFor, List<Integer> prerequisiteTasks, LocalDateTime startTime, LocalDateTime endTime);
 	public boolean createTask(int projectID, String description, int estimatedDuration, int acceptableDeviation, Integer alternativeFor, List<Integer> prerequisiteTasks);
