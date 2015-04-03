@@ -3,9 +3,9 @@ package taskMan.view;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.google.common.collect.ImmutableList;
-
 import taskMan.Project;
+
+import com.google.common.collect.ImmutableList;
 
 public class ProjectView {
 
@@ -43,12 +43,16 @@ public class ProjectView {
 		return project.getProjectStatus();
 	}
 
-	public ImmutableList<TaskView> getTasks() {
-		return project.getTasks();
+	public List<TaskView> getTasks() {
+		ImmutableList.Builder<TaskView> tasks = ImmutableList.builder();
+		tasks.addAll(project.getTaskViews());
+		return tasks.build();
 	}
 
-	public ImmutableList<TaskView> getAvailableTasks() {
-		return project.getAvailableTaskViews();
+	public List<TaskView> getAvailableTasks() {
+		ImmutableList.Builder<TaskView> tasks = ImmutableList.builder();
+		tasks.addAll(project.getAvailableTaskViews());
+		return tasks.build();
 	}
 	
 	public int[] getCurrentProjectDelay(LocalDateTime time) {
@@ -83,7 +87,7 @@ public class ProjectView {
 		return other.hasAsProject(project);
 	}
 
-	public ImmutableList<TaskView> getUnplannedTasks() {
+	public List<TaskView> getUnplannedTasks() {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -1,10 +1,11 @@
 package taskMan.view;
 
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import taskMan.resource.Resource;
+
+import com.google.common.collect.ImmutableList;
 
 public class ResourceView {
 
@@ -19,19 +20,19 @@ public class ResourceView {
 	}
 	
 	public List<ResourceView> getRequiredResources() {
-		List<ResourceView> reqRes = new ArrayList<>();
+		ImmutableList.Builder<ResourceView> reqRes = ImmutableList.builder();
 		for(Resource res : resource.getRequiredResources()) {
 			reqRes.add(new ResourceView(res));
 		}
-		return reqRes;
+		return reqRes.build();
 	}
 	
 	public List<ResourceView> getConflictingResources() {
-		List<ResourceView> conRes = new ArrayList<>();
+		ImmutableList.Builder<ResourceView> conRes = ImmutableList.builder();
 		for(Resource res : resource.getConflictingResources()) {
 			conRes.add(new ResourceView(res));
 		}
-		return conRes;
+		return conRes.build();
 	}
 	
 	public boolean isDailyAvailable() { 
