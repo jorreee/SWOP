@@ -1,19 +1,30 @@
 package taskMan;
 
+import initSaveRestore.caretaker.TaskManCaretaker;
+
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.HashMap;
 import java.util.List;
 
 import taskMan.util.IntPair;
 import taskMan.view.ProjectView;
+import taskMan.view.ResourceView;
 import taskMan.view.TaskView;
 import userInterface.IFacade;
 
+import com.google.common.collect.ImmutableList;
+
 public class Facade implements IFacade {
-	private final TaskMan taskMan;
-	
+	private TaskMan taskMan;
+	private final TaskManCaretaker caretaker;
 	
 	public Facade(LocalDateTime time) {
+		this.taskMan = new TaskMan(time);
+		caretaker = new TaskManCaretaker(this);
+	}
+	
+	public void initializeFromMemento(LocalDateTime time) {
 		this.taskMan = new TaskMan(time);
 	}
 	
@@ -44,6 +55,7 @@ public class Facade implements IFacade {
 	public boolean createRawTask(int project, String description,
 			int estimatedDuration, int acceptableDeviation,
 			List<Integer> prerequisiteTasks, int alternativeFor,
+			List<IntPair> requiredResources,
 			String taskStatus, LocalDateTime startTime, LocalDateTime endTime) {
 		return taskMan.createRawTask(project, description, estimatedDuration, acceptableDeviation, prerequisiteTasks, alternativeFor, taskStatus, startTime, endTime);
 	}
@@ -218,23 +230,23 @@ public class Facade implements IFacade {
 	*/
 
 	@Override
-	public List<ProjectView> getProjects() {
+	public ImmutableList<ProjectView> getProjects() {
 		return taskMan.getProjects();
 	}
 
 	@Override
-	public void storeInMemento() {
-		taskMan.storeInMemento();
+	public boolean storeInMemento() {
+		return caretaker.storeInMemento();
 	}
 
 	@Override
-	public void revertFromMemento() {
-		taskMan.revertFromMemento();
+	public boolean revertFromMemento() {
+		return caretaker.revertFromMemento();
 	}
 
 	@Override
-	public void discardMemento() {
-		taskMan.discardMemento();		
+	public boolean discardMemento() {
+		return caretaker.discardMemento();		
 	}
 
 	@Override
@@ -243,7 +255,7 @@ public class Facade implements IFacade {
 	}
 
 	@Override
-	public List<String> getPossibleUsernames() {
+	public ImmutableList<ResourceView> getPossibleUsernames() {
 		return taskMan.getPossibleUsernames();
 	}
 
@@ -256,6 +268,7 @@ public class Facade implements IFacade {
 	public boolean createRawPlannedTask(int project, String description,
 			int estimatedDuration, int acceptableDeviation,
 			List<Integer> prerequisiteTasks, int alternativeFor,
+			List<IntPair> requiredResources,
 			String statusString, LocalDateTime startTime,
 			LocalDateTime endTime, LocalDateTime planningDueTime,
 			List<Integer> plannedDevelopers, List<IntPair> plannedResources) {
@@ -292,9 +305,23 @@ public class Facade implements IFacade {
 	}
 
 	@Override
-	public List<LocalDateTime> getPossibleTaskStartingTimes(ProjectView project, TaskView task,
+	public ImmutableList<LocalDateTime> getPossibleTaskStartingTimes(ProjectView project, TaskView task,
 			int amount) {
 		return taskMan.getPossibleTaskStartingTimes(project,task,amount);
+	}
+
+	@Override
+	public ImmutableList<ResourceView> getDeveloperList() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public HashMap<ProjectView, ImmutableList<TaskView>> findConflictingDeveloperPlannings(
+			ProjectView projectID, TaskView taskID,
+			List<String> developerNames, LocalDateTime planningStartTime) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

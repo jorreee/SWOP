@@ -12,4 +12,12 @@ public class ResourcePrototype extends Resource implements Cloneable {
 	public ConcreteResource clone() {
 		return new ConcreteResource(resName, reqResourcesList, conResourcesList, dailyAvailable);
 	}
+	
+	public boolean putRequiredResources(List<ResourcePrototype> requiredResources) {
+		return reqResourcesList.addAll(requiredResources);
+	}
+	
+	public boolean putConflictingResources(List<ResourcePrototype> conflictingResources) {
+		return conResourcesList.addAll(conflictingResources);
+	}
 }

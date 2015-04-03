@@ -6,9 +6,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import taskMan.Task;
-import taskMan.user.Developer;
-import taskMan.user.ProjectManager;
-import taskMan.user.User;
+import taskMan.resource.user.Developer;
+import taskMan.resource.user.ProjectManager;
+import taskMan.resource.user.User;
+import taskMan.view.ResourceView;
+
+import com.google.common.collect.ImmutableList.Builder;
+import com.google.common.collect.ImmutableList;
 
 public class ResourceManager {
 	
@@ -27,7 +31,7 @@ public class ResourceManager {
 		this.resPools = new ArrayList<>();
 		this.dailyAvailabilityList = new ArrayList<>();
 		this.userList = new ArrayList<>();
-		userList.add(new ProjectManager());
+		userList.add(new ProjectManager("admin"));
 	}
 	
 	public boolean createResourcePrototype(String resourceName,
@@ -35,7 +39,7 @@ public class ResourceManager {
 			Integer availabilityIndex) {
 		// No nulls
 		if(resourceName == null || requirements == null
-				|| conflicts == null || availabilityIndex == null) {
+				|| conflicts == null) {
 			return false;
 		}
 		// Requirement cannot be a conflict
@@ -44,10 +48,22 @@ public class ResourceManager {
 				return false;
 			}
 		}
-		// DailyAvailability must exist
-		if(availabilityIndex < 0 || availabilityIndex > dailyAvailabilityList.size()) {
+		// If daily available, DailyAvailability must exist
+		if(availabilityIndex != null && (availabilityIndex < 0 || availabilityIndex > dailyAvailabilityList.size())) {
 			return false;
 		}
+		
+		// Create resprot (should happen before applying conflicting resources,
+		// since a resource can conflict with itself
+		boolean success = false;
+		ResourcePrototype resprot = null;
+		if(availabilityIndex == null) {
+			resprot = new ResourcePrototype(resourceName, new ArrayList<ResourcePrototype>(), new ArrayList<ResourcePrototype>(), null);
+		} else {
+			resprot = new ResourcePrototype(resourceName, new ArrayList<ResourcePrototype>(), new ArrayList<ResourcePrototype>(), dailyAvailabilityList.get(availabilityIndex));
+		}
+		success = addResourceType(resprot);
+		if(!success) { return false; }
 		
 		// Build reqList and conList
 		List<ResourcePrototype> reqList = new ArrayList<>();
@@ -56,9 +72,11 @@ public class ResourceManager {
 			reqList.add(resPools.get(requirement).getPrototype());
 		}
 		for(Integer conflict : conflicts) {
-			reqList.add(resPools.get(conflict).getPrototype());
+			conList.add(resPools.get(conflict).getPrototype());
 		}
-		return addResourceType(new ResourcePrototype(resourceName, reqList, conList, dailyAvailabilityList.get(availabilityIndex)));
+		resprot.putConflictingResources(conList);
+		resprot.putRequiredResources(reqList);
+		return true;
 	}
 	
 	public boolean declareDailyAvailability(LocalTime startTime, LocalTime endTime) {
@@ -91,12 +109,16 @@ public class ResourceManager {
 		return null;
 	}
 	
-	public List<String> getPossibleUsernames() {
-		List<String> usernames = new ArrayList<>();
+	public User getDefaultUser() {
+		return getUser("admin");
+	}
+	
+	public ImmutableList<ResourceView> getPossibleUsernames() {
+		Builder<ResourceView> usernames = ImmutableList.builder();
 		for(User user : userList) {
-			usernames.add(user.getName());
+			usernames.add(new ResourceView(user));
 		}
-		return usernames;
+		return usernames.build();
 	}
 	
 	public boolean createDeveloper(String name) {
@@ -134,11 +156,17 @@ public class ResourceManager {
 		}
 	}
 
+	public boolean createRawReservation(int resource, int project, int task,
+			LocalDateTime startTime, LocalDateTime endTime) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }
 
 class DailyAvailability {
-	LocalTime startTime;
-	LocalTime endTime;
+	private LocalTime startTime;
+	private LocalTime endTime;
 	
 	public DailyAvailability(LocalTime startTime, LocalTime endTime) {
 		this.startTime = startTime;

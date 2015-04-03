@@ -5,10 +5,14 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableList.Builder;
+
 import taskMan.resource.ResourceManager;
-import taskMan.user.User;
+import taskMan.resource.user.User;
 import taskMan.util.IntPair;
 import taskMan.view.ProjectView;
+import taskMan.view.ResourceView;
 import taskMan.view.TaskView;
 
 //TODO Still not done
@@ -38,6 +42,7 @@ public class TaskMan {
 		projectList = new ArrayList<>();
 		currentTime = time;
 		resMan = new ResourceManager();
+		currentUser = resMan.getDefaultUser();
 	}
 	
 	/**
@@ -771,28 +776,13 @@ public class TaskMan {
 	 * @return
 	 * 			| a list of ProjectViews
 	 */
-	public List<ProjectView> getProjects() {
-		ArrayList<ProjectView> views = new ArrayList<ProjectView>();
+	public ImmutableList<ProjectView> getProjects() {
+		Builder<ProjectView> views = ImmutableList.builder();
 		for(Project project : projectList)
 			views.add(new ProjectView(project));
-		return views;
+		return views.build();
 	}
 
-	public void storeInMemento() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void revertFromMemento() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void discardMemento() {
-		// TODO Auto-generated method stub
-		
-	}
-	
 	public String getCurrentUserName(){
 		return currentUser.getName();
 	}
@@ -808,7 +798,7 @@ public class TaskMan {
 		}
 	}
 	
-	public List<String> getPossibleUsernames(){
+	public ImmutableList<ResourceView> getPossibleUsernames(){
 		return resMan.getPossibleUsernames();
 	}
 	
@@ -874,8 +864,8 @@ public class TaskMan {
 		return resMan.createRawReservation(resource,project,task,startTime,endTime);
 	}
 	
-	public List<LocalDateTime> getPossibleTaskStartingTimes(ProjectView project, TaskView task,
+	public ImmutableList<LocalDateTime> getPossibleTaskStartingTimes(ProjectView project, TaskView task,
 			int amount) {
-		return unwrapProjectView(project).getPossibleTaskStartingTimes(project,task,amount);
+		return unwrapProjectView(project).getPossibleTaskStartingTimes(task,amount);
 	}
 }

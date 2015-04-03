@@ -1,4 +1,4 @@
-package userInterface.initialization;
+package initSaveRestore.initialization;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -213,7 +213,7 @@ public class TaskManInitFileChecker extends StreamTokenizer {
 	      String description = expectStringField("description");
 	      int estimatedDuration = expectIntField("estimatedDuration");
 	      int acceptableDeviation = expectIntField("acceptableDeviation");
-	      Integer alternativeFor = null;
+	      int alternativeFor = -1;
 	      expectLabel("alternativeFor");
 	      if (ttype == TT_NUMBER)
 	        alternativeFor = expectInt();
@@ -221,6 +221,10 @@ public class TaskManInitFileChecker extends StreamTokenizer {
 	      expectLabel("prerequisiteTasks");
 	      if (ttype == '[')
 	        prerequisiteTasks = expectIntList();
+	      expectLabel("requiredResources");
+	      List<IntPair> requiredResources = new ArrayList<>();
+	      if (ttype == '[')
+		        requiredResources = expectLabeledPairList("type","quantity");
 	      expectLabel("planning");
 	      Integer planning = null;
 	      if (ttype == TT_NUMBER)
@@ -248,7 +252,7 @@ public class TaskManInitFileChecker extends StreamTokenizer {
 	      if(planning != null)
 	    	  planningData = planningDataList.get(planning);
 	      
-	      taskDataList.add(new TaskCreationData(project, description, estimatedDuration, acceptableDeviation, alternativeFor, prerequisiteTasks, status, startTime, endTime, planningData));
+	      taskDataList.add(new TaskCreationData(project, description, estimatedDuration, acceptableDeviation, alternativeFor, prerequisiteTasks, requiredResources, status, startTime, endTime, planningData));
 	    }
 
 	    expectLabel("reservations");

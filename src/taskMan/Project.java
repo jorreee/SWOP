@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.collect.ImmutableList;
+
 import taskMan.state.OngoingProject;
 import taskMan.state.ProjectStatus;
 import taskMan.util.Dependant;
@@ -736,7 +738,7 @@ public class Project implements Dependant {
 			String statusString, LocalDateTime startTime,
 			LocalDateTime endTime, LocalDateTime planningDueTime,
 			List<Integer> plannedDevelopers, List<IntPair> plannedResources) {
-	
+		return false; //TODO
 	}
 	
 	/**
@@ -748,7 +750,7 @@ public class Project implements Dependant {
 	 * 			The amount of possible starting times wanted.
 	 * @return	The possible starting times of the Task
 	 */
-	public List<String> getPossibleTaskStartingTimes(TaskView task, int amount){
+	public ImmutableList<LocalDateTime> getPossibleTaskStartingTimes(TaskView task, int amount){
 		return unwrapTaskView(task).getPossibleTaskStartingTimes(amount);
 	}
 }

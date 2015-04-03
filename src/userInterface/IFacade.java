@@ -2,11 +2,15 @@ package userInterface;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.HashMap;
 import java.util.List;
 
 import taskMan.util.IntPair;
 import taskMan.view.ProjectView;
+import taskMan.view.ResourceView;
 import taskMan.view.TaskView;
+
+import com.google.common.collect.ImmutableList;
 
 public interface IFacade {
 
@@ -15,8 +19,8 @@ public interface IFacade {
 	public LocalDateTime getCurrentTime();
 	
 	public String getCurrentUsername();
-	public List<String> getPossibleUsernames();
-	public boolean changeToUser(String readLine);
+	public ImmutableList<ResourceView> getPossibleUsernames();
+	public boolean changeToUser(String username);
 
 	
 	public boolean createProject(String name, String description,
@@ -28,12 +32,12 @@ public interface IFacade {
 	public boolean createRawTask(int project, String description,
 			int estimatedDuration, int acceptableDeviation,
 			List<Integer> prerequisiteTasks, int alternativeFor,
-			String taskStatus, LocalDateTime startTime, LocalDateTime endTime);
+			List<IntPair> requiredResources, String taskStatus, LocalDateTime startTime, LocalDateTime endTime);
 
 	public boolean createRawPlannedTask(int project, String description,
 			int estimatedDuration, int acceptableDeviation,
 			List<Integer> prerequisiteTasks, int alternativeFor,
-			String statusString, LocalDateTime startTime,
+			List<IntPair> requiredResources, String statusString, LocalDateTime startTime,
 			LocalDateTime endTime, LocalDateTime planningDueTime,
 			List<Integer> plannedDevelopers, List<IntPair> plannedResources);
 
@@ -47,13 +51,13 @@ public interface IFacade {
 	public boolean setTaskFailed(ProjectView projectID, TaskView taskID,
 			LocalDateTime startTime, LocalDateTime endTime);
 
-	public List<ProjectView> getProjects();
+	public ImmutableList<ProjectView> getProjects();
 
-	public void storeInMemento();
+	public boolean storeInMemento();
 
-	public void revertFromMemento();
+	public boolean revertFromMemento();
 
-	public void discardMemento();
+	public boolean discardMemento();
 
 	public boolean declareDailyAvailability(LocalTime startTime, LocalTime endTime);
 
@@ -68,7 +72,13 @@ public interface IFacade {
 	public boolean createRawReservation(int resource, int project, int task,
 			LocalDateTime startTime, LocalDateTime endTime);
 
-	public List<LocalDateTime> getPossibleTaskStartingTimes(ProjectView project, TaskView task, int amount);
+	public ImmutableList<LocalDateTime> getPossibleTaskStartingTimes(ProjectView project, TaskView task, int amount);
+
+	public ImmutableList<ResourceView> getDeveloperList();
+
+	public HashMap<ProjectView, ImmutableList<TaskView>> findConflictingDeveloperPlannings(
+			ProjectView projectID, TaskView taskID, List<String> developerNames,
+			LocalDateTime planningStartTime);
 
 	/*
 	public boolean createTask(int projectID, String description, int estimatedDuration, int acceptableDeviation, String taskStatus, Integer alternativeFor, List<Integer> prerequisiteTasks, LocalDateTime startTime, LocalDateTime endTime);
