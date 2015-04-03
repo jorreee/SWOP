@@ -174,12 +174,7 @@ public class Task implements Dependant {
 			throw new IllegalArgumentException(
 					"Time stamps are only allowed if a task is finished or failed");
 		}
-//		this.state = TaskStatus.valueOf(taskStatus);
-//		if(!isValidTimeStamps(beginTime, endTime)) {
-//			throw new IllegalArgumentException("Very bad timestamps");
-//		}
-//		this.beginTime = beginTime;
-//		this.endTime = endTime;
+		
 	}
 
 	public boolean register(Dependant t) {
@@ -255,7 +250,15 @@ public class Task implements Dependant {
 	}
 	
 	public boolean hasFinishedEndpoint() {
-		return isFinished() || (isFailed() && replacement.hasFinishedEndpoint());
+		if(isFinished()) {
+			return true;
+		}
+		if(isFailed()) {
+			if(replacement != null) {
+				return replacement.hasFinishedEndpoint();
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -305,7 +308,7 @@ public class Task implements Dependant {
 	}
 
 	/**
-	 * Compares the start time of the project with a given time and calculates the
+	 * Compares the start time of the task with a given time and calculates the
 	 * elapsed time in working time.
 	 * 
 	 * @param 	currentTime 
@@ -315,25 +318,33 @@ public class Task implements Dependant {
 	 * 			When the start time of the task is after the time given.
 	 */
 	public TimeSpan getTimeSpent(LocalDateTime currentTime) {
-//		if(beginTime == null) { 
-//			throw new IllegalArgumentException("Project not yet started");
-//		}
-//		if(beginTime.isAfter(currentTime)) {
-//			throw new IllegalArgumentException("Timestamp is in the past");
-//		}
+		if(beginTime == null) {
+			return new TimeSpan(0);
+		}
+		if(currentTime == null) {
+			return new TimeSpan(0);
+		}
+		if(beginTime.isAfter(currentTime)) {
+			return new TimeSpan(0);
+		}
+		if(hasEnded()) {
+			return new TimeSpan(TimeSpan.getDifferenceWorkingMinutes(beginTime, endTime));
+		}
+		
 		int currentTimeSpent = TimeSpan.getDifferenceWorkingMinutes(
-				this.beginTime, 
+				beginTime, 
 				currentTime);
+		
 		if(alternativeFor != null) {
 			currentTimeSpent = currentTimeSpent
-								 + alternativeFor.getTimeSpent().getSpanMinutes();
+							 + alternativeFor.getTimeSpent().getSpanMinutes();
 		}
+		
 		return new TimeSpan(currentTimeSpent);
 	}
 
 	/**
-	 * Returns the time elapsed since the start of the project and 
-	 * the end of the project. 
+	 * Returns the time spent on the task
 	 * 
 	 * @return 	time elapsed between the start time and end time
 	 * @throws 	IllegalStateException 
@@ -460,9 +471,9 @@ public class Task implements Dependant {
 //			allPrerequisites.add(t);
 //			allPrerequisites.addAll(t.getTaskPrerequisites());
 //		}
-////		if(alternativeFor != null) {
-////			allPrerequisites.add(alternativeFor);
-////		}
+//		if(alternativeFor != null) {
+//			allPrerequisites.add(alternativeFor);
+//		}
 //		return allPrerequisites
 		return prerequisites;
 	}
@@ -470,43 +481,6 @@ public class Task implements Dependant {
 	public List<Dependant> getDependants() {
 		return dependants;
 	}
-	
-//	/**
-//	 * Set the status of this Task on available.
-//	 * 
-//	 * @return	True is the operation was successful.
-//	 * 			False if the status was already failed or finished.
-//	 */
-//	public boolean setAvailable(){
-//		if(this.taskStatus == TaskStatus.FAILED || this.taskStatus == TaskStatus.FINISHED) {
-//			return false;
-//		}
-//		this.taskStatus = TaskStatus.AVAILABLE;
-//		return true;
-//	}
-
-//	/**
-//	 * Set the status of this Task on unavailable.
-//	 * 
-//	 * @return	True is the operation was successful.
-//	 * 			False if the status was already failed or finished.
-//	 */
-//	public boolean setUnavailable(){
-//		if(this.taskStatus == TaskStatus.FAILED || this.taskStatus == TaskStatus.FINISHED) {
-//			return false;
-//		}
-//		this.taskStatus = TaskStatus.UNAVAILABLE;
-//		return true;
-//	}
-
-//	/**
-//	 * Returns the current status of the Task.
-//	 * 
-//	 * @return	The current status of the Task.
-//	 */
-//	private TaskStatus getTaskStatus() {
-//		return taskStatus;
-//	}
 
 	/**
 	 * Returns the status of the Task as a String.
@@ -515,26 +489,6 @@ public class Task implements Dependant {
 	 */
 	public String getStatus(){
 		return state.toString();
-//		TaskStatus stat = this.getTaskStatus();
-//		String status ="";
-//		switch(stat){
-//		case FAILED:
-//			status = "failed";
-//			break;
-//		case FINISHED:
-//			status = "finished";
-//			break;
-//		case AVAILABLE:
-//			status = "available";
-//			break;
-//		case UNAVAILABLE:
-//			status = "unavailable";
-//			break;
-//		default:
-//			status ="ERROR";
-//			break;
-//		}
-//		return status;
 
 	}
 
@@ -765,13 +719,12 @@ public class Task implements Dependant {
 	 * 
 	 * @return	The percentage of overdue.
 	 */
-	//TODO hoe?
 	public int getOverTimePercentage(LocalDateTime currentTime) {
-		if(!isOnTime(currentTime)){
-			int overdue = 0; // this.getTimeSpent().getDifferenceMinute(estimatedDuration);
-			return (overdue/this.estimatedDuration.getSpanMinutes())*100;
+		if(isOnTime(currentTime)) {
+			return 0;
 		}
-		return 0;
+		int overdue = this.getTimeSpent(currentTime).getDifferenceMinute(estimatedDuration);
+		return ( overdue / estimatedDuration.getSpanMinutes() ) * 100;
 	}
 	
 	/**

@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Stack;
 
 import taskMan.Facade;
+import taskMan.resource.DailyAvailability;
 import taskMan.view.ProjectView;
 import taskMan.view.ResourceView;
 import taskMan.view.TaskView;
@@ -51,8 +52,8 @@ public class TaskManCaretaker {
 		
 		// DailyAvailability
 		tman.append("\ndailyAvailability :");
-		ImmutableList<DailyAvailability> dailyAvailabilities = facade.getPossibleDailyAvailabilities();
-		if(!dailyAvailability.isEmpty()) {
+		List<DailyAvailability> dailyAvailabilities = facade.getPossibleDailyAvailabilities();
+		if(!dailyAvailabilities.isEmpty()) {
 			for(DailyAvailability dailyAvailability : dailyAvailabilities) {
 				tman.append("\n  - startTime : \"" + dailyAvailability.getStartTime().format(timeFormatter) + "\"\n"
 						+ "    endTime   : \"" + dailyAvailability.getEndTime().format(timeFormatter) + "\"");
@@ -120,7 +121,7 @@ public class TaskManCaretaker {
 		// tasks
 		tman.append("\ntasksk:");
 		for(ProjectView project : projects) {
-			ImmutableList<TaskView> tasks = project.getTasks();
+			List<TaskView> tasks = project.getTasks();
 			for(TaskView task : tasks) {
 				tman.append("\n  - project            : " + projects.indexOf(project) // project
 						+ "\n    description        : \"" + task.getTaskDescription()// description

@@ -11,8 +11,8 @@ import taskMan.resource.user.ProjectManager;
 import taskMan.resource.user.User;
 import taskMan.view.ResourceView;
 
-import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableList.Builder;
 
 public class ResourceManager {
 	
@@ -169,17 +169,4 @@ public class ResourceManager {
 		return null; //TODO implement
 	}
 
-}
-
-class DailyAvailability {
-	private LocalTime startTime;
-	private LocalTime endTime;
-	
-	public DailyAvailability(LocalTime startTime, LocalTime endTime) {
-		this.startTime = startTime;
-		this.endTime = endTime;
-	}
-	
-	public LocalTime getStartTime() { return startTime; }
-	public LocalTime getEndTime() { return endTime; }
 }

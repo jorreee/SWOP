@@ -15,7 +15,6 @@ import taskMan.Facade;
 import taskMan.Project;
 import taskMan.Task;
 import taskMan.resource.ResourceManager;
-import taskMan.util.TimeSpan;
 import taskMan.view.ProjectView;
 import taskMan.view.TaskView;
 import userInterface.IFacade;
@@ -69,7 +68,7 @@ public class UseCase3CreateTaskTest {
 		TaskView t = p0tasks.get(0);
 		
 		assertTrue(t.getTaskDescription().equals("A new TASK"));
-		assertEquals(t.getEstimatedTaskDuration(), new TimeSpan(newTaskDur));
+		assertEquals(t.getEstimatedTaskDuration(), newTaskDur);
 		assertEquals(t.getAcceptableTaskDeviation(),newTaskDev);
 		assertFalse(t.isTaskAlternative());
 		assertFalse(t.hasTaskPrerequisites());
@@ -100,7 +99,7 @@ public class UseCase3CreateTaskTest {
 		TaskView t01 = p0tasks.get(1);
 		
 		assertTrue(t01.getTaskDescription().equals("A new TASK"));
-		assertEquals(t01.getEstimatedTaskDuration(), new TimeSpan(newTaskDur));
+		assertEquals(t01.getEstimatedTaskDuration(), newTaskDur);
 		assertEquals(t01.getAcceptableTaskDeviation(),newTaskDev);
 		assertTrue(t01.isTaskAlternative());
 		assertEquals(t01.getTaskAlternativeTo(),t00);					//
@@ -134,7 +133,7 @@ public class UseCase3CreateTaskTest {
 		TaskView t01 = p0tasks.get(1);
 		
 		assertTrue(t01.getTaskDescription().equals("A new TASK"));
-		assertEquals(t01.getEstimatedTaskDuration(), new TimeSpan(newTaskDur));
+		assertEquals(t01.getEstimatedTaskDuration(), newTaskDur);
 		assertEquals(t01.getAcceptableTaskDeviation(),newTaskDev);
 		assertFalse(t01.isTaskAlternative());
 		assertTrue(t01.hasTaskPrerequisites());
@@ -172,7 +171,7 @@ public class UseCase3CreateTaskTest {
 		TaskView t01 = p0tasks.get(1);
 		
 		assertTrue(t01.getTaskDescription().equals("A new TASK"));
-		assertEquals(t01.getEstimatedTaskDuration(), new TimeSpan(newTaskDur));
+		assertEquals(t01.getEstimatedTaskDuration(), newTaskDur);
 		assertEquals(t01.getAcceptableTaskDeviation(), newTaskDev);
 		assertFalse(t01.isTaskAlternative());
 		assertTrue(t01.hasTaskPrerequisites());
@@ -232,31 +231,45 @@ public class UseCase3CreateTaskTest {
 	}
 
 	@Test
-	public void flow4aUnknownAltTest() {
+	public void flow4aBadResManTest() {
 		List<ProjectView> projects = taskManager.getProjects();
 		assertTrue(projects.size() == 1);
 		ProjectView project0 = projects.get(0);
 		
-		// Kan zichzelf niet als ALT nemen
-		
 		// Step 1 and 2 are implicit
 		// Step 3
-//		assertFalse(taskManager.createTask(project0, "A new TASK", newTaskDur, newTaskDev, newTaskDependencies, )); // TODO hoe testen?
+		assertFalse(taskManager.createTask(project0, "A new TASK", newTaskDur, newTaskDev, newTaskDependencies, null)); // TODO hoe testen?
 		// Step 4
 		List<TaskView> p0tasks = project0.getTasks();
 		assertEquals(p0tasks.size(),0);
-		
+	}
+
+	@Test
+	public void flow4aUnknownAltTest() {
+		List<ProjectView> projects = taskManager.getProjects();
+		assertTrue(projects.size() == 1);
+		ProjectView project0 = projects.get(0);
+
+		// Kan zichzelf niet als ALT nemen
+
+		// Step 1 and 2 are implicit
+		// Step 3
+//			assertFalse(taskManager.createTask(project0, "A new TASK", newTaskDur, newTaskDev, newTaskDependencies, )); // TODO hoe testen?
+		// Step 4
+		List<TaskView> p0tasks = project0.getTasks();
+		assertEquals(p0tasks.size(),0);
+
 		//--------------------------------------------------------------------------------------
 		// Onbestaande task kan geen ALT nemen
 		Task unexistent = new Task(10, "Very bad", 50, 10, new ResourceManager(), new ArrayList<Task>(), null);
-		
+
 		// Step 1 and 2 are implicit
 		// Step 3
 		assertFalse(taskManager.createTask(project0, "A new TASK", newTaskDur, newTaskDev, newTaskDependencies, new TaskView(unexistent)));
 		// Step 4
 		p0tasks = project0.getTasks();
 		assertEquals(p0tasks.size(),0);
-		
+
 	}
 
 	@Test
