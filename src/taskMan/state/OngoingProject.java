@@ -14,13 +14,15 @@ public class OngoingProject implements ProjectStatus {
 	}
 
 	@Override
-	public boolean finish(List<Task> pre, Task lastTask) {
-		if(pre.size() == 0) {
-			project.setProjectStatus(new FinishedProject(project));
-			project.setEndTime(lastTask.getEndTime());
-			return true;
+	public boolean finish(List<Task> tasks, Task lastTask) {
+		for (Task t : tasks) {
+			if(!t.hasFinishedEndpoint()) {
+				return false;
+			}
 		}
-		return false;
+		project.setProjectStatus(new FinishedProject(project));
+		project.setEndTime(lastTask.getEndTime());
+		return true;
 	}
 
 	@Override

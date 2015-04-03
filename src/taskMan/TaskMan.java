@@ -3,6 +3,7 @@ package taskMan;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import com.google.common.collect.ImmutableList;
@@ -180,7 +181,7 @@ public class TaskMan {
 			LocalDateTime startTime, 
 			LocalDateTime endTime) {
 		if(isValidProjectID(project)) {
-			return projectList.get(project).createRawTask(description, estimatedDuration, acceptableDeviation, prerequisiteTasks, alternativeFor, taskStatus, startTime, endTime);
+			return projectList.get(project).createRawTask(description, estimatedDuration, acceptableDeviation, resMan, prerequisiteTasks, alternativeFor, taskStatus, startTime, endTime);
 		} else {
 			return false;
 		}
@@ -214,7 +215,7 @@ public class TaskMan {
 		if(p == null) {
 			return false;
 		}
-		return p.createTask(description, estimatedDuration, acceptableDeviation, prerequisiteTasks, alternativeFor);
+		return p.createTask(description, estimatedDuration, acceptableDeviation, resMan, prerequisiteTasks, alternativeFor);
 	}
 	
 //	/** // TODO remove this
@@ -867,5 +868,9 @@ public class TaskMan {
 	public ImmutableList<LocalDateTime> getPossibleTaskStartingTimes(ProjectView project, TaskView task,
 			int amount) {
 		return unwrapProjectView(project).getPossibleTaskStartingTimes(task,amount);
+	}
+	
+	public HashMap<ResourceView,Integer> getRequiredResources(ProjectView project, TaskView task){
+		return this.unwrapProjectView(project).getRequiredResources(task);
 	}
 }

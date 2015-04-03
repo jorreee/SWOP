@@ -62,6 +62,9 @@ public class Main {
 		for(DeveloperCreationData dev : developers) {
 			facade.createDeveloper(dev.getName());
 		}
+		
+		// Init current user
+		facade.changeToUser(fileChecker.getCurrentUser());
 			// Init projects
 		for(ProjectCreationData pcd : projectData) {
 			facade.createProject(pcd.getName(), pcd.getDescription(), pcd.getCreationTime(), pcd.getDueTime());

@@ -14,6 +14,7 @@ import org.junit.Test;
 import taskMan.Facade;
 import taskMan.Project;
 import taskMan.Task;
+import taskMan.resource.ResourceManager;
 import taskMan.util.TimeSpan;
 import taskMan.view.ProjectView;
 import taskMan.view.TaskView;
@@ -247,7 +248,7 @@ public class UseCase3CreateTaskTest {
 		
 		//--------------------------------------------------------------------------------------
 		// Onbestaande task kan geen ALT nemen
-		Task unexistent = new Task(10, "Very bad", 50, 10, new ArrayList<Task>(), null);
+		Task unexistent = new Task(10, "Very bad", 50, 10, new ResourceManager(), new ArrayList<Task>(), null);
 		
 		// Step 1 and 2 are implicit
 		// Step 3
@@ -355,7 +356,7 @@ public class UseCase3CreateTaskTest {
 		
 		//--------------------------------------------------------------------------------------
 		// Onbestaande task kan geen ALT nemen
-		Task unexistent = new Task(10, "Very bad", 50, 10, new ArrayList<Task>(), null);
+		Task unexistent = new Task(10, "Very bad", 50, 10, new ResourceManager(), new ArrayList<Task>(), null);
 
 //		newTaskDependencies.remove(0);
 		newTaskDependencies.add(new TaskView(unexistent));

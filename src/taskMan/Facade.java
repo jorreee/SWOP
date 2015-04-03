@@ -1,11 +1,13 @@
 package taskMan;
 
 import initSaveRestore.caretaker.TaskManCaretaker;
+import initSaveRestore.caretaker.TaskManMemento;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Vector;
 
 import taskMan.util.IntPair;
 import taskMan.view.ProjectView;
@@ -320,6 +322,53 @@ public class Facade implements IFacade {
 	public HashMap<ProjectView, ImmutableList<TaskView>> findConflictingDeveloperPlannings(
 			ProjectView projectID, TaskView taskID,
 			List<String> developerNames, LocalDateTime planningStartTime) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ImmutableList<DailyAvailablity> getPossibleDailyAvailabilities() {
+		return taskMan.getPossibleDailyAvailabilities();		
+	}
+
+	@Override
+	public ImmutableList<ResourceView> getResourcePrototypes() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ImmutableList<ResourceView> getResourceRequirements(
+			ResourceView resource) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public HashMap<ResourceView,Integer> getRequiredResources(ProjectView project, TaskView task){
+		return taskMan.getRequiredResources(project,task);
+	}
+
+	@Override
+	public ImmutableList<ResourceView> getResourceConflicts(ResourceView resprot) {
+		return null;
+	}
+
+	@Override
+	public boolean isResourceDailyAvailable(ResourceView resprot) {
+		return false;
+	}
+
+	public DailyAvailability getDailyAvailability(ResourceView resprot) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ImmutableList<ResourceView> getAllConcreteResources() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ResourceView getPrototypeOf(ResourceView conres) {
 		// TODO Auto-generated method stub
 		return null;
 	}

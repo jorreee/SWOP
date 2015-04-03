@@ -65,6 +65,10 @@ developers:
   - name : "Tom Hawk"
   - name : "Bob Grylls"
 
+# A system will have a user logged in at init
+currentUser:
+  - name : "admin"
+
 projects:
   - name         : "project x"
     description  : "a project description"

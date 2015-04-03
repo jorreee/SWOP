@@ -59,6 +59,7 @@ public interface IFacade {
 
 	public boolean discardMemento();
 
+	//TODO guys.
 	public boolean declareDailyAvailability(LocalTime startTime, LocalTime endTime);
 
 	public boolean createResourcePrototype(String name,
@@ -80,6 +81,15 @@ public interface IFacade {
 			ProjectView projectID, TaskView taskID, List<String> developerNames,
 			LocalDateTime planningStartTime);
 
+	public ImmutableList<ResourceView> getResourcePrototypes();
+	public ImmutableList<ResourceView> getResourceRequirements(
+			ResourceView resource);
+
+	public ImmutableList<ResourceView> getResourceConflicts(ResourceView resource);
+
+	boolean isResourceDailyAvailable(ResourceView resprot);
+	public ImmutableList<ResourceView> getAllConcreteResources();
+	public ResourceView getPrototypeOf(ResourceView resource);
 	/*
 	public boolean createTask(int projectID, String description, int estimatedDuration, int acceptableDeviation, String taskStatus, Integer alternativeFor, List<Integer> prerequisiteTasks, LocalDateTime startTime, LocalDateTime endTime);
 	public boolean createTask(int projectID, String description, int estimatedDuration, int acceptableDeviation, Integer alternativeFor, List<Integer> prerequisiteTasks);

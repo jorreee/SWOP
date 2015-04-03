@@ -18,6 +18,7 @@ public class TaskManInitFileChecker extends StreamTokenizer {
 	  DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
 	  
 	  LocalDateTime systemTime = LocalDateTime.now();
+	  String currentUser;
 	  
 	  List<ProjectCreationData> projectDataList = new ArrayList<>();
 	  List<TaskCreationData> taskDataList = new ArrayList<>();
@@ -184,6 +185,11 @@ public class TaskManInitFileChecker extends StreamTokenizer {
 	      String name = expectStringField("name");
 	      developerDataList.add(new DeveloperCreationData(name));	      
 	    }
+	    
+	    expectLabel("currentUser");
+	    expectChar('-');
+	    currentUser = expectStringField("name");
+	    
 
 	    expectLabel("projects");
 	    while (ttype == '-') {
@@ -295,6 +301,10 @@ public class TaskManInitFileChecker extends StreamTokenizer {
 
 	public List<DeveloperCreationData> getDeveloperDataList() {
 		return developerDataList;
+	}
+	
+	public String getCurrentUser() {
+		return currentUser;
 	}
 
 	public List<ReservationCreationData> getReservationDataList() {

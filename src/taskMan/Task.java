@@ -2,6 +2,7 @@ package taskMan;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import taskMan.resource.ResourceManager;
@@ -9,6 +10,8 @@ import taskMan.state.TaskStatus;
 import taskMan.state.UnavailableTask;
 import taskMan.util.Dependant;
 import taskMan.util.TimeSpan;
+import taskMan.view.ResourceView;
+import taskMan.view.TaskView;
 
 import com.google.common.collect.ImmutableList;
 
@@ -32,9 +35,12 @@ public class Task implements Dependant {
 	private LocalDateTime endTime;
 	
 	private final Task alternativeFor;
+	private Task replacement;
 	private ArrayList<Dependant> dependants;
 	private ArrayList<Task> prerequisites;
-	private ArrayList<Task> unfinishedPrerequisites;
+//	private ArrayList<Task> unfinishedPrerequisites;
+
+	private HashMap<ResourceView,Integer> requiredResources;
 	
 	private TaskStatus state;
 	
@@ -60,6 +66,7 @@ public class Task implements Dependant {
 			String taskDescription, 
 			int estimatedDuration,
 			int acceptableDeviation, 
+			ResourceManager resMan, 
 			List<Task> prerequisiteTasks,
 			Task alternativeFor) throws IllegalArgumentException {
 		
@@ -84,28 +91,36 @@ public class Task implements Dependant {
 		if(prerequisiteTasks.contains(alternativeFor)) {
 			throw new IllegalArgumentException("Alt can't be a prerequisite");
 		}
+		if(!isValidResourceManager(resMan)) {
+			throw new IllegalArgumentException("Invalid resource manager");
+		}
 		this.taskID = taskID;
 		this.description = taskDescription;
 		this.estimatedDuration = new TimeSpan(estimatedDuration);
 		this.acceptableDeviation = acceptableDeviation;
-//		this.extraTime = extraTime;
+		this.resMan = resMan;
 		
 		this.state = new UnavailableTask(this);
 
 		this.dependants = new ArrayList<Dependant>();
 		this.prerequisites = new ArrayList<Task>();
-		this.unfinishedPrerequisites = new ArrayList<Task>();
+//		this.unfinishedPrerequisites = new ArrayList<Task>();
 		
 		this.alternativeFor = alternativeFor;
+		if(alternativeFor != null) {
+			alternativeFor.replaceWith(this);
+		}
+		replacement = null;
 
 		for(Task t : prerequisiteTasks) {
 			t.register(this);
 			this.prerequisites.add(t);
-			this.unfinishedPrerequisites.add(t);
+//			this.unfinishedPrerequisites.add(t);
 		}
 		removeAlternativesDependencies();
 
-		state.makeAvailable(unfinishedPrerequisites);
+		state.makeAvailable(prerequisites);
+//		state.makeAvailable(unfinishedPrerequisites);
 		
 	}
 
@@ -133,6 +148,7 @@ public class Task implements Dependant {
 			String taskDescription, 
 			int estimatedDuration,
 			int acceptableDeviation, 
+			ResourceManager resMan, 
 			List<Task> prerequisiteTasks,
 			Task alternativeFor,
 			String taskStatus,
@@ -143,6 +159,7 @@ public class Task implements Dependant {
 				taskDescription, 
 				estimatedDuration, 
 				acceptableDeviation, 
+				resMan, 
 				prerequisiteTasks,
 				alternativeFor);
 		
@@ -201,12 +218,15 @@ public class Task implements Dependant {
 
 	@Override
 	public boolean updateDependency(Task preTask) {
-		int preIndex = unfinishedPrerequisites.indexOf(preTask);
+		int preIndex = prerequisites.indexOf(preTask);
+//		int preIndex = unfinishedPrerequisites.indexOf(preTask);
 		if(preIndex < 0) {
 			return false;
 		}
-		unfinishedPrerequisites.remove(preIndex);
-		state.makeAvailable(unfinishedPrerequisites);
+		prerequisites.remove(preIndex);
+//		unfinishedPrerequisites.remove(preIndex);
+		state.makeAvailable(prerequisites);
+//		state.makeAvailable(unfinishedPrerequisites);
 		return true;
 	}
 	
@@ -230,6 +250,10 @@ public class Task implements Dependant {
 	public boolean isFinished() {
 		return state.isFinished();
 	}
+	
+	public boolean hasFinishedEndpoint() {
+		return isFinished() || (isFailed() && replacement.hasFinishedEndpoint());
+	}
 
 	/**
 	 * Checks whether the the Task has failed.
@@ -238,6 +262,16 @@ public class Task implements Dependant {
 	 */
 	public boolean isFailed(){
 		return state.isFailed();
+	}
+	
+	public boolean canBeReplaced() {
+		if(!isFailed()) {
+			return false;
+		}
+		if(getReplacement() != null) {
+			return false;
+		}
+		return true;
 	}
 
 	/**
@@ -390,6 +424,10 @@ public class Task implements Dependant {
 	public Task getAlternativeFor() {
 		return alternativeFor;
 	}
+	
+	public Task getReplacement() {
+		return replacement;
+	}
 
 	public TimeSpan getMaxDelayChain() {
 		TimeSpan longest = getEstimatedDuration();
@@ -401,8 +439,7 @@ public class Task implements Dependant {
 					longest = candidate;
 				}
 			} catch(ClassCastException e) {
-				// project is ook Dependant maar moet geen maxdelaychain kunnen geven. Lege methode maybe, maar das ook dirty
-				System.out.println("dirty."); //TODO dependant moet altijd kunnen maxDelayChain geven?
+				System.out.println("dirty."); //TODO
 			}
 		}
 		if(alternativeFor != null) {
@@ -546,13 +583,14 @@ public class Task implements Dependant {
 	public boolean setTaskFailed(LocalDateTime beginTime,
 			LocalDateTime endTime) {
 		return state.fail(beginTime, endTime);
-//		if(state.finish(beginTime, endTime)) {
-//			setBeginTime(beginTime);
-//			setEndTime(endTime);
-//			setFailed();
-//			return true;
-//		}
-//		return false;
+	}
+	
+	public boolean replaceWith(Task t) {
+		if(!canBeReplaced()) {
+			return false;
+		}
+		this.replacement = t;
+		return true;
 	}
 
 	public void setTaskStatus(TaskStatus newStatus) {
@@ -665,6 +703,16 @@ public class Task implements Dependant {
 		if(!altTask.isFailed()) {
 			return false;
 		}
+		if(!altTask.canBeReplaced()) {
+			return false;
+		}
+		return true;
+	}
+	
+	private boolean isValidResourceManager(ResourceManager resMan) {
+		if(resMan == null) {
+			return false;
+		}
 		return true;
 	}
 	
@@ -732,6 +780,10 @@ public class Task implements Dependant {
 	 */
 	public ImmutableList<LocalDateTime> getPossibleTaskStartingTimes(int amount){
 		return null; //TODO
+	}
+	
+	public HashMap<ResourceView,Integer> getRequiredResources(){
+		return requiredResources;
 	}
 	
 }
