@@ -65,6 +65,11 @@ public class TaskTest {
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
+	public void createTAskConstr1FailResMan(){
+		new Task(1,"test",30,5,null,new ArrayList<Task>(),null);
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
 	public void createTaskConstr1FailPrerequisitesContainsAlt(){
 		defaultTest.setTaskFailed(LocalDateTime.of(2015, 2, 11, 16, 0), 
 				LocalDateTime.of(2015, 2, 12, 16, 0));
@@ -168,5 +173,25 @@ public class TaskTest {
 		defaultTest.setTaskFailed(LocalDateTime.of(2015, 2, 11, 16, 0),
 				LocalDateTime.of(2015, 2, 12, 16, 0));
 		assertTrue(defaultTest.hasEnded());
+	}
+	
+	@Test
+	public void finishedEndpointSelf(){
+		assertFalse(defaultTest.hasFinishedEndpoint());
+		defaultTest.setTaskFinished(LocalDateTime.of(2015, 2, 11, 16, 0), 
+				LocalDateTime.of(2015, 2, 12, 16, 0));
+		assertTrue(defaultTest.hasFinishedEndpoint());
+	}
+	
+	@Test
+	public void finishedEndpointOther(){
+		assertFalse(defaultTest.hasFinishedEndpoint());
+		defaultTest.setTaskFailed(LocalDateTime.of(2015, 2, 11, 16, 0), 
+				LocalDateTime.of(2015, 2, 12, 16, 0));
+		Task alt = new Task(2, "alternative", 80, 5, resMan, defaultTest.getTaskPrerequisites(), defaultTest);
+		alt.setTaskFinished(LocalDateTime.of(2015, 2, 13, 16, 0), 
+				LocalDateTime.of(2015, 2, 14, 16, 0));
+		System.out.println(defaultTest.isFinished());
+		assertTrue(defaultTest.hasFinishedEndpoint());
 	}
 }
