@@ -59,6 +59,7 @@ public interface IFacade {
 
 	public boolean discardMemento();
 
+	//TODO guys.
 	public boolean declareDailyAvailability(LocalTime startTime, LocalTime endTime);
 
 	public boolean createResourcePrototype(String name,
