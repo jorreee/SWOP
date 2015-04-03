@@ -70,7 +70,7 @@ public class UseCase1ShowProjectsTest {
 	 * 		task 0 FINISHED
 	 * 		task 1 FAILED
 	 * 		task 2 <- 0, 1
-	 * 		task 3 ALT 0
+	 * 		task 3 ALT 1
 	 * 
 	 * - project 2 START 13 feb 16u DUE 
 	 * 		task 0 
@@ -84,58 +84,69 @@ public class UseCase1ShowProjectsTest {
 	public final void initialize() {
 		// INIT systeem en maak het eerste project aan, samen met zijn TASK
 		taskManager = new Facade(startDate);
-			assertTrue(taskManager.createProject("Project 0", "Describing proj 0", project0DueDate));
-			ProjectView project0 = taskManager.getProjects().get(0);
-			
-				assertTrue(taskManager.createTask(project0, "TASK 00", task00EstDur, task00Dev, task00Dependencies, null));		// 00 AVAILABLE
+		assertTrue(taskManager.createProject("Project 0", "Describing proj 0", project0DueDate));
+		ProjectView project0 = taskManager.getProjects().get(0);
+		// 00 AVAILABLE
+		assertTrue(taskManager.createTask(project0, "TASK 00", task00EstDur, task00Dev, task00Dependencies, null));		
 				
 		// Stap verder:
 		// maak het tweede project aan en maak zijn TASK lijst
 		assertTrue(taskManager.advanceTimeTo(workdate1));
-			assertTrue(taskManager.createProject("Project 1", "Describing proj 1", project1DueDate));
-			ProjectView project1 = taskManager.getProjects().get(1);
-			
-				assertTrue(taskManager.createTask(project1, "TASK 10", task10EstDur, task10Dev, task10Dependencies, null));			// 10 AVAILABLE
-				assertTrue(taskManager.createTask(project1, "TASK 11", task11EstDur, task11Dev, task11Dependencies, null));			// 11 AVAILABLE
+		assertTrue(taskManager.createProject("Project 1", "Describing proj 1", project1DueDate));
+		ProjectView project1 = taskManager.getProjects().get(1);
+		
+		// 10 AVAILABLE
+		assertTrue(taskManager.createTask(project1, "TASK 10", task10EstDur, task10Dev, task10Dependencies, null));			
+		// 11 AVAILABLE
+		assertTrue(taskManager.createTask(project1, "TASK 11", task11EstDur, task11Dev, task11Dependencies, null));			
 				
-				TaskView task00 = project0.getTasks().get(0);
-				TaskView task10 = project1.getTasks().get(0);
-				TaskView task11 = project1.getTasks().get(1);
+		TaskView task00 = project0.getTasks().get(0);
+		TaskView task10 = project1.getTasks().get(0);
+		TaskView task11 = project1.getTasks().get(1);
 				
-				assertTrue(task12Dependencies.add(task10)); 
-				assertTrue(task12Dependencies.add(task11));
-				assertTrue(taskManager.createTask(project1, "TASK 12", task12EstDur, task12Dev, task12Dependencies, null));			// 12 UNAVAILABLE
+		assertTrue(task12Dependencies.add(task10)); 
+		assertTrue(task12Dependencies.add(task11));
+		// 12 UNAVAILABLE
+		assertTrue(taskManager.createTask(project1, "TASK 12", task12EstDur, task12Dev, task12Dependencies, null));			
 		
 		// Stap verder:
 		// maak het derde project aan, samen met zijn TASK
 		assertTrue(taskManager.advanceTimeTo(workdate2));
-			assertTrue(taskManager.createProject("Project 2", "Describing proj 2", project2DueDate));
-			ProjectView project2 = taskManager.getProjects().get(2);
-				assertTrue(taskManager.createTask(project2, "TASK 20", task20EstDur, task20Dev, task20Dependencies, null));		// 20 AVAILABLE
+		assertTrue(taskManager.createProject("Project 2", "Describing proj 2", project2DueDate));
+		ProjectView project2 = taskManager.getProjects().get(2);
+		// 20 AVAILABLE
+		assertTrue(taskManager.createTask(project2, "TASK 20", task20EstDur, task20Dev, task20Dependencies, null));		
 					
 		// Stap verder:
 		// maak TASK 0,0 af -> project 0 is finished
 		// update project 1
 		assertTrue(taskManager.advanceTimeTo(workdate3));
-			assertTrue(taskManager.setTaskFinished(project0, task00, task00Start, task00End));										// 00 FINISHED
-			//----------------------------------------------------
-			assertTrue(taskManager.setTaskFinished(project1, task10, task10Start, task10End));										// 10 FINISHED
-			assertTrue(taskManager.setTaskFailed(project1, task11, task11Start, task11End));										// 11 FAILED
-			assertTrue(taskManager.createTask(project1, "TASK 13", task13EstDur, task13Dev, task13Dependencies, task11));			// 13 AVAILABLE
+		// 00 FINISHED
+		assertTrue(taskManager.setTaskFinished(project0, task00, task00Start, task00End));										
+		//----------------------------------------------------
+		// 10 FINISHED
+		assertTrue(taskManager.setTaskFinished(project1, task10, task10Start, task10End));
+		// 11 FAILED
+		assertTrue(taskManager.setTaskFailed(project1, task11, task11Start, task11End));
+		// 13 AVAILABLE
+		assertTrue(taskManager.createTask(project1, "TASK 13", task13EstDur, task13Dev, task13Dependencies, task11));			
 			
 		// Stap verder:
 		// maak het vierde project aan en maak zijn TASK lijst
 		assertTrue(taskManager.advanceTimeTo(workdate4));
-			assertTrue(taskManager.createProject("Project 3", "Describing proj 3", project3DueDate));
-			ProjectView project3 = taskManager.getProjects().get(3);
-				assertTrue(taskManager.createTask(project3, "TASK 30", task30EstDur, task30Dev, task30Dependencies, null));		// 30 AVAILABLE
-				assertTrue(taskManager.createTask(project3, "TASK 31", task31EstDur, task31Dev, task31Dependencies, null));		// 31 AVAILABLE
+		assertTrue(taskManager.createProject("Project 3", "Describing proj 3", project3DueDate));
+		ProjectView project3 = taskManager.getProjects().get(3);
+		// 30 AVAILABLE
+		assertTrue(taskManager.createTask(project3, "TASK 30", task30EstDur, task30Dev, task30Dependencies, null));	
+		// 31 AVAILABLE
+		assertTrue(taskManager.createTask(project3, "TASK 31", task31EstDur, task31Dev, task31Dependencies, null));		
 				
 		// Stap verder:
 		// maak task 3,0 FAILED
 		assertTrue(taskManager.advanceTimeTo(workdate5));
 		TaskView task30 = project3.getTasks().get(0);
-			assertTrue(taskManager.setTaskFailed(project3, task30, task30Start, task30End));										// 30 FAILED DELAYED
+		// 30 FAILED DELAYED
+		assertTrue(taskManager.setTaskFailed(project3, task30, task30Start, task30End));										
 
 	}
 	
@@ -146,6 +157,8 @@ public class UseCase1ShowProjectsTest {
 		int numOfProj = taskManager.getProjects().size();
 		assertEquals(numOfProj,4);
 		// Stap 3
+		
+		//Check project0 details
 		ProjectView project0 = taskManager.getProjects().get(0);
 		assertTrue(project0.getProjectDescription().equals("Describing proj 0"));
 		assertEquals(project0.getProjectDueTime(),project0DueDate);
@@ -157,6 +170,7 @@ public class UseCase1ShowProjectsTest {
 		assertEquals(project0.getProjectCreationTime(),startDate);
 		assertTrue(project0.isProjectEstimatedOnTime(taskManager.getCurrentTime()));
 
+		//Check project1 details
 		ProjectView project1 = taskManager.getProjects().get(1);
 		assertTrue(project1.getProjectDescription().equals("Describing proj 1"));
 		assertEquals(project1.getProjectDueTime(),project1DueDate);
@@ -168,6 +182,7 @@ public class UseCase1ShowProjectsTest {
 		assertEquals(project1.getProjectCreationTime(),workdate1);
 		assertFalse(project1.isProjectEstimatedOnTime(taskManager.getCurrentTime()));
 
+		//Check project2 details
 		ProjectView project2 = taskManager.getProjects().get(2);
 		assertTrue(project2.getProjectDescription().equals("Describing proj 2"));
 		assertEquals(project2.getProjectDueTime(),project2DueDate);
@@ -179,6 +194,7 @@ public class UseCase1ShowProjectsTest {
 		assertEquals(project2.getProjectCreationTime(),workdate2);
 		assertFalse(project2.isProjectEstimatedOnTime(taskManager.getCurrentTime())); // DELAYED
 
+		//Check project3 details
 		ProjectView project3 = taskManager.getProjects().get(3);
 		assertTrue(project3.getProjectDescription().equals("Describing proj 3"));
 		assertEquals(project3.getProjectDueTime(),project3DueDate);
@@ -197,6 +213,7 @@ public class UseCase1ShowProjectsTest {
 		TaskView task00 = project0.getTasks().get(0);
 		assertTrue(task00.getTaskDescription().equals("TASK 00"));
 		assertTrue(task00.hasEnded());
+		assertEquals("finished", task00.getTaskStatusAsString().toLowerCase());
 		assertEquals(task00.getTaskStartTime(),task00Start);
 		assertEquals(task00.getTaskEndTime(),task00End);
 		assertTrue(task00.isTaskOnTime(taskManager.getCurrentTime()));
@@ -209,6 +226,7 @@ public class UseCase1ShowProjectsTest {
 		TaskView task10 = project1.getTasks().get(0);
 		assertTrue(task10.getTaskDescription().equals("TASK 10"));
 		assertTrue(task10.hasEnded());
+		assertEquals("finished", task10.getTaskStatusAsString().toLowerCase());
 		assertEquals(task10.getTaskStartTime(),task10Start);
 		assertEquals(task10.getTaskEndTime(),task10End);
 		assertFalse(task10.isTaskUnacceptableOverdue(taskManager.getCurrentTime()));
@@ -217,6 +235,7 @@ public class UseCase1ShowProjectsTest {
 		TaskView task11 = project1.getTasks().get(1);
 		assertTrue(task11.getTaskDescription().equals("TASK 11"));
 		assertTrue(task11.hasEnded());
+		assertEquals("failed", task11.getTaskStatusAsString().toLowerCase());
 		assertEquals(task11.getTaskStartTime(),task11Start);
 		assertEquals(task11.getTaskEndTime(),task11End);
 		assertFalse(task11.isTaskUnacceptableOverdue(taskManager.getCurrentTime()));		// !!!!!!!
@@ -225,6 +244,7 @@ public class UseCase1ShowProjectsTest {
 		TaskView task12 = project1.getTasks().get(2);
 		assertTrue(task12.getTaskDescription().equals("TASK 12"));
 		assertFalse(task12.hasEnded());
+		assertEquals("unavailable", task12.getTaskStatusAsString().toLowerCase());
 		assertEquals(task12.getTaskStartTime(),null);
 		assertEquals(task12.getTaskEndTime(),null);
 		assertFalse(task12.isTaskOnTime(taskManager.getCurrentTime()));
@@ -234,11 +254,12 @@ public class UseCase1ShowProjectsTest {
 		TaskView task13 = project1.getTasks().get(3);
 		assertTrue(task13.getTaskDescription().equals("TASK 13"));
 		assertFalse(task13.hasEnded());
+		assertEquals("available", task13.getTaskStatusAsString().toLowerCase());
 		assertEquals(task13.getTaskStartTime(),null);
 		assertEquals(task13.getTaskEndTime(),null);
-//		assertTrue(task13.isTaskOnTime(taskManager.getCurrentTime()));
-//		assertFalse(task13.isTaskUnacceptableOverdue(taskManager.getCurrentTime()));
-//		assertEquals(task13.getTaskOvertimePercentage(taskManager.getCurrentTime()),0);
+		assertTrue(task13.isTaskOnTime(taskManager.getCurrentTime()));
+		assertFalse(task13.isTaskUnacceptableOverdue(taskManager.getCurrentTime()));
+		assertEquals(task13.getTaskOvertimePercentage(taskManager.getCurrentTime()),0);
 		
 		//--------------------------------------------------------------------------
 		// Test Project 2 tasks
@@ -248,9 +269,9 @@ public class UseCase1ShowProjectsTest {
 		assertFalse(task20.hasEnded());
 		assertEquals(task20.getTaskStartTime(),null);
 		assertEquals(task20.getTaskEndTime(),null);
-//		assertTrue(task20.isTaskOnTime(taskManager.getCurrentTime()));
-//		assertFalse(task20.isTaskUnacceptableOverdue(taskManager.getCurrentTime()));			// !!!!!
-//		assertEquals(task20.getTaskOvertimePercentage(taskManager.getCurrentTime()),0);
+		assertTrue(task20.isTaskOnTime(taskManager.getCurrentTime()));
+		assertFalse(task20.isTaskUnacceptableOverdue(taskManager.getCurrentTime()));			// !!!!!
+		assertEquals(task20.getTaskOvertimePercentage(taskManager.getCurrentTime()),0);
 		
 		//--------------------------------------------------------------------------
 		// Test Project 3 tasks
@@ -268,9 +289,9 @@ public class UseCase1ShowProjectsTest {
 		assertFalse(task31.hasEnded());
 		assertEquals(task31.getTaskStartTime(),null);
 		assertEquals(task31.getTaskEndTime(),null);
-//		assertTrue(task31.isTaskOnTime(taskManager.getCurrentTime()));
-//		assertFalse(task31.isTaskUnacceptableOverdue(taskManager.getCurrentTime()));
-//		assertEquals(task31.getTaskOvertimePercentage(taskManager.getCurrentTime()),0);
+		assertTrue(task31.isTaskOnTime(taskManager.getCurrentTime()));
+		assertFalse(task31.isTaskUnacceptableOverdue(taskManager.getCurrentTime()));
+		assertEquals(task31.getTaskOvertimePercentage(taskManager.getCurrentTime()),0);
 		
 	}
 	
