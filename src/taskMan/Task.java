@@ -32,6 +32,7 @@ public class Task implements Dependant {
 	private LocalDateTime endTime;
 	
 	private final Task alternativeFor;
+	private Task replacement;
 	private ArrayList<Dependant> dependants;
 	private ArrayList<Task> prerequisites;
 	private ArrayList<Task> unfinishedPrerequisites;
@@ -88,7 +89,6 @@ public class Task implements Dependant {
 		this.description = taskDescription;
 		this.estimatedDuration = new TimeSpan(estimatedDuration);
 		this.acceptableDeviation = acceptableDeviation;
-//		this.extraTime = extraTime;
 		
 		this.state = new UnavailableTask(this);
 
@@ -97,6 +97,10 @@ public class Task implements Dependant {
 		this.unfinishedPrerequisites = new ArrayList<Task>();
 		
 		this.alternativeFor = alternativeFor;
+		if(alternativeFor != null) {
+			alternativeFor.replaceWith(this);
+		}
+		replacement = null;
 
 		for(Task t : prerequisiteTasks) {
 			t.register(this);
@@ -230,6 +234,10 @@ public class Task implements Dependant {
 	public boolean isFinished() {
 		return state.isFinished();
 	}
+	
+	public boolean hasFinishedEndpoint() {
+		return isFinished() || (isFailed() && replacement.hasFinishedEndpoint());
+	}
 
 	/**
 	 * Checks whether the the Task has failed.
@@ -238,6 +246,16 @@ public class Task implements Dependant {
 	 */
 	public boolean isFailed(){
 		return state.isFailed();
+	}
+	
+	public boolean canBeReplaced() {
+		if(!isFailed()) {
+			return false;
+		}
+		if(getReplacement() != null) {
+			return false;
+		}
+		return true;
 	}
 
 	/**
@@ -390,6 +408,10 @@ public class Task implements Dependant {
 	public Task getAlternativeFor() {
 		return alternativeFor;
 	}
+	
+	public Task getReplacement() {
+		return replacement;
+	}
 
 	public TimeSpan getMaxDelayChain() {
 		TimeSpan longest = getEstimatedDuration();
@@ -401,8 +423,7 @@ public class Task implements Dependant {
 					longest = candidate;
 				}
 			} catch(ClassCastException e) {
-				// project is ook Dependant maar moet geen maxdelaychain kunnen geven. Lege methode maybe, maar das ook dirty
-				System.out.println("dirty."); //TODO dependant moet altijd kunnen maxDelayChain geven?
+				System.out.println("dirty."); //TODO
 			}
 		}
 		if(alternativeFor != null) {
@@ -546,13 +567,17 @@ public class Task implements Dependant {
 	public boolean setTaskFailed(LocalDateTime beginTime,
 			LocalDateTime endTime) {
 		return state.fail(beginTime, endTime);
-//		if(state.finish(beginTime, endTime)) {
-//			setBeginTime(beginTime);
-//			setEndTime(endTime);
-//			setFailed();
-//			return true;
-//		}
-//		return false;
+	}
+	
+	public boolean replaceWith(Task t) {
+		if(replacement != null) {
+			return false;
+		}
+		if(!isFailed()) {
+			return false;
+		}
+		this.replacement = t;
+		return true;
 	}
 
 	public void setTaskStatus(TaskStatus newStatus) {
@@ -663,6 +688,9 @@ public class Task implements Dependant {
 			return false;
 		}
 		if(!altTask.isFailed()) {
+			return false;
+		}
+		if(!altTask.canBeReplaced()) {
 			return false;
 		}
 		return true;

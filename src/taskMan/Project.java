@@ -36,7 +36,6 @@ public class Project implements Dependant {
 	private ProjectStatus state;
 
 	private ArrayList<Task> taskList;
-	private ArrayList<Task> unfinishedTaskList;
 
 	/**
 	 * Creates a new Project.
@@ -77,7 +76,6 @@ public class Project implements Dependant {
 		this.projectID = projectID;
 		
 		this.taskList = new ArrayList<Task>();
-		this.unfinishedTaskList = new ArrayList<Task>();
 		
 		this.state = new OngoingProject(this);
 
@@ -212,16 +210,6 @@ public class Project implements Dependant {
 						LocalDateTime endTime) {
 
 		int newTaskID = taskList.size();
-//		if(prerequisiteTasks.contains(alternativeFor)) {
-//			return false;
-//		}
-		
-//		if(!isValidAlternative(alternativeFor, newTaskID)) {
-//			return false;
-//		}
-//		if(!isValidPrerequisites(newTaskID, prerequisiteTasks)) {
-//			return false;
-//		}
 		if(isFinished()) {
 			return false;
 		}
@@ -240,7 +228,6 @@ public class Project implements Dependant {
 		}
 		
 		Task newTask = null;
-//		TimeSpan extraTime = getExtraTime(alternativeFor);
 		
 		try{
 			if(taskStatus != null) {
@@ -265,22 +252,10 @@ public class Project implements Dependant {
 						altFor);
 			}
 		} catch(IllegalArgumentException e) {
-//			System.out.println(e.getMessage());
-//			e.printStackTrace();
 			return false;
 		}
 		
-//		if(!addAlternative(alternativeFor, newTaskID)) {
-//			return false;
-//		}
-//		if(!addPrerequisites(newTaskID, prerequisiteTasks)) {
-//			return false;
-//		}
-		
-//		updateTaskStatus(newTask);
-		
 		boolean success = taskList.add(newTask);
-		unfinishedTaskList.add(newTask);
 		
 		if(success) {
 			newTask.register(this);
@@ -399,14 +374,7 @@ public class Project implements Dependant {
 		if (!preTask.hasEnded()){
 			return false;
 		}
-		boolean successful = markTaskFinished(preTask);
-		if (successful){
-			state.finish(unfinishedTaskList, preTask);
-			return true;
-		}
-		else {
-			return false;
-		}
+		return state.finish(taskList, preTask);
 	}
 
 	/**
@@ -584,19 +552,19 @@ public class Project implements Dependant {
 		return unwrapTaskView(t).setTaskFinished(startTime, endTime);
 	}
 	
-	private boolean markTaskFinished(Task task) {
-		if(task == null) {
-			return true;
-		}
-		int taskIndex = unfinishedTaskList.indexOf(task);
-		if(taskIndex < 0) {
-			return false;
-		}
-		unfinishedTaskList.remove(taskIndex);
-
-		return true;
-//		return markTaskFinished(task.getAlternativeFor());
-	}
+//	private boolean markTaskFinished(Task task) {
+//		if(task == null) {
+//			return true;
+//		}
+//		int taskIndex = unfinishedTaskList.indexOf(task);
+//		if(taskIndex < 0) {
+//			return false;
+//		}
+//		unfinishedTaskList.remove(taskIndex);
+//
+//		return true;
+////		return markTaskFinished(task.getAlternativeFor());
+//	}
 
 	/**
 	 * Sets the task with the given task id to failed
@@ -659,12 +627,14 @@ public class Project implements Dependant {
 	
 	private TimeSpan getMaxTimeChain() {
 		List<Task> availableTasks = getAvailableTasks();
+		
 		// FOR EACH AVAILABLE TASK CALCULATE CHAIN
 		int availableBranches = availableTasks.size();
 		TimeSpan[] timeChains = new TimeSpan[availableBranches];
 		for(int i = 0 ; i < availableBranches ; i++) {
 			timeChains[i] = availableTasks.get(i).getMaxDelayChain();
 		}
+		
 		// FIND LONGEST CHAIN
 		TimeSpan longest = new TimeSpan(0);
 		for(TimeSpan span : timeChains) {

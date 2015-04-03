@@ -6,7 +6,7 @@ import taskMan.Task;
 
 public interface ProjectStatus {
 	
-	public boolean finish(List<Task> pre, Task lastTask);
+	public boolean finish(List<Task> tasks, Task lastTask);
 	public boolean isFinished();
 	public boolean isOngoing();
 	
