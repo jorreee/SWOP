@@ -2,6 +2,7 @@ package taskMan;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import taskMan.resource.ResourceManager;
@@ -9,6 +10,8 @@ import taskMan.state.TaskStatus;
 import taskMan.state.UnavailableTask;
 import taskMan.util.Dependant;
 import taskMan.util.TimeSpan;
+import taskMan.view.ResourceView;
+import taskMan.view.TaskView;
 
 import com.google.common.collect.ImmutableList;
 
@@ -35,6 +38,7 @@ public class Task implements Dependant {
 	private ArrayList<Dependant> dependants;
 	private ArrayList<Task> prerequisites;
 	private ArrayList<Task> unfinishedPrerequisites;
+	private HashMap<ResourceView,Integer> requiredResources;
 	
 	private TaskStatus state;
 	
@@ -732,6 +736,10 @@ public class Task implements Dependant {
 	 */
 	public ImmutableList<LocalDateTime> getPossibleTaskStartingTimes(int amount){
 		return null; //TODO
+	}
+	
+	public HashMap<ResourceView,Integer> getRequiredResources(){
+		return requiredResources;
 	}
 	
 }

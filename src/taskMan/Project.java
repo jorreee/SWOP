@@ -2,6 +2,7 @@ package taskMan;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import com.google.common.collect.ImmutableList;
@@ -11,6 +12,8 @@ import taskMan.state.ProjectStatus;
 import taskMan.util.Dependant;
 import taskMan.util.IntPair;
 import taskMan.util.TimeSpan;
+import taskMan.view.ProjectView;
+import taskMan.view.ResourceView;
 import taskMan.view.TaskView;
 
 /**
@@ -752,5 +755,9 @@ public class Project implements Dependant {
 	 */
 	public ImmutableList<LocalDateTime> getPossibleTaskStartingTimes(TaskView task, int amount){
 		return unwrapTaskView(task).getPossibleTaskStartingTimes(amount);
+	}
+	
+	public HashMap<ResourceView,Integer> getRequiredResources(TaskView task){
+		return this.unwrapTaskView(task).getRequiredResources();
 	}
 }

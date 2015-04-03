@@ -3,6 +3,7 @@ package taskMan;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import com.google.common.collect.ImmutableList;
@@ -867,5 +868,9 @@ public class TaskMan {
 	public ImmutableList<LocalDateTime> getPossibleTaskStartingTimes(ProjectView project, TaskView task,
 			int amount) {
 		return unwrapProjectView(project).getPossibleTaskStartingTimes(task,amount);
+	}
+	
+	public HashMap<ResourceView,Integer> getRequiredResources(ProjectView project, TaskView task){
+		return this.unwrapProjectView(project).getRequiredResources(task);
 	}
 }
