@@ -85,7 +85,10 @@ public interface IFacade {
 			ResourceView resource);
 
 	public ImmutableList<ResourceView> getResourceConflicts(ResourceView resource);
-	
+
+	boolean isResourceDailyAvailable(ResourceView resprot);
+	public ImmutableList<ResourceView> getAllConcreteResources();
+	public ResourceView getPrototypeOf(ResourceView resource);
 	/*
 	public boolean createTask(int projectID, String description, int estimatedDuration, int acceptableDeviation, String taskStatus, Integer alternativeFor, List<Integer> prerequisiteTasks, LocalDateTime startTime, LocalDateTime endTime);
 	public boolean createTask(int projectID, String description, int estimatedDuration, int acceptableDeviation, Integer alternativeFor, List<Integer> prerequisiteTasks);
