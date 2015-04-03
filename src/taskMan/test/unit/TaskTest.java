@@ -1,59 +1,67 @@
 package taskMan.test.unit;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
-import org.junit.*;
-import static org.junit.Assert.*; 
+import org.junit.Before;
+import org.junit.Test;
 
 import taskMan.Task;
+import taskMan.resource.ResourceManager;
+import taskMan.state.TaskStatus;
+import taskMan.state.UnavailableTask;
 import taskMan.util.TimeSpan;
-import taskMan.state.*;
 
 public class TaskTest {
 
 	private Task defaultTest;
 	
+	private ResourceManager resMan = new ResourceManager();
+	
 	@Before
 	public final void initialize(){
-		defaultTest = new Task(1,"test",30,5,new ArrayList<Task>(),null);
+		defaultTest = new Task(1,"test",30,5,resMan,new ArrayList<Task>(),null);
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void createTaskConstr1FailID(){
-		new Task(-1,"test",30,5,new ArrayList<Task>(),null);
+		new Task(-1,"test",30,5,resMan,new ArrayList<Task>(),null);
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void createTaskConstr1FailDescription(){
-		new Task(1,null,30,5,new ArrayList<Task>(),null);
+		new Task(1,null,30,5,resMan,new ArrayList<Task>(),null);
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void createTaskConstr1FailDurationNegative(){
-		new Task(1,"test",-5,5,new ArrayList<Task>(),null);
+		new Task(1,"test",-5,5,resMan,new ArrayList<Task>(),null);
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void createTaskConstr1FailDurationZero(){
-		new Task(1,"test",0,5,new ArrayList<Task>(),null);
+		new Task(1,"test",0,5,resMan,new ArrayList<Task>(),null);
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void createTaskConstr1FailDeviation(){
-		new Task(1,"test",30,-5,new ArrayList<Task>(),null);
+		new Task(1,"test",30,-5,resMan,new ArrayList<Task>(),null);
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void createTaskConstr1FailPrerequisitesNull(){
-		new Task(1,"test",30,5,null,null);
+		new Task(1,"test",30,5,resMan,null,null);
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void createTaskConstr1FailPrerequisitesNullInList(){
 		ArrayList<Task> temp = new ArrayList<>();
 		temp.add(null);
-		new Task(1,"test",30,5,temp,null);
+		new Task(1,"test",30,5,resMan,temp,null);
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
@@ -62,30 +70,30 @@ public class TaskTest {
 				LocalDateTime.of(2015, 2, 12, 16, 0));
 		ArrayList<Task> temp = new ArrayList<>();
 		temp.add(defaultTest);
-		new Task(2, "aboutToFail", 30, 5, temp, defaultTest);
+		new Task(2, "aboutToFail", 30, 5, resMan,temp, defaultTest);
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void createTaskConstr1FailAlternativeNotFailed(){
-		Task temp = new Task(1,"test",30,5,new ArrayList<Task>(),null);
-		new Task(1,"test",30,5,new ArrayList<Task>(),temp);
+		Task temp = new Task(1,"test",30,5,resMan,new ArrayList<Task>(),null);
+		new Task(1,"test",30,5,resMan,new ArrayList<Task>(),temp);
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void createTaskConstr2FailBadStatus(){
-		new Task(1,"test",30,5,new ArrayList<Task>(),null,"fail",
+		new Task(1,"test",30,5,resMan,new ArrayList<Task>(),null,"fail",
 				LocalDateTime.of(2015, 2, 11, 16, 0),LocalDateTime.of(2015, 2, 12, 16, 0));
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void createTaskConstr2FailBadTime(){
-		new Task(1,"test",30,5,new ArrayList<Task>(),null,"failed",
+		new Task(1,"test",30,5,resMan,new ArrayList<Task>(),null,"failed",
 				LocalDateTime.of(2015, 2, 12, 16, 0),LocalDateTime.of(2015, 2, 11, 16, 0));
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void createTaskConstr2FailBadTime2(){
-		new Task(1,"test",30,5,new ArrayList<Task>(),null,"finished",
+		new Task(1,"test",30,5,resMan,new ArrayList<Task>(),null,"finished",
 				LocalDateTime.of(2015, 2, 12, 16, 0),LocalDateTime.of(2015, 2, 11, 16, 0));
 	}
 	
@@ -118,7 +126,7 @@ public class TaskTest {
 	public void getSetAltTest(){
 		defaultTest.setTaskFailed(LocalDateTime.of(2015, 2, 11, 16, 0),
 				LocalDateTime.of(2015, 2, 12, 16, 0));
-		Task temp = new Task(2,"test",30,0,new ArrayList<Task>(),defaultTest);
+		Task temp = new Task(2,"test",30,0,resMan,new ArrayList<Task>(),defaultTest);
 		assertEquals(temp.getAlternativeFor(), defaultTest);
 	}
 	
