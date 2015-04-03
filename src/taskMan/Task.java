@@ -789,4 +789,8 @@ public class Task implements Dependant {
 		return requiredResources;
 	}
 	
+	public ImmutableList<ResourceView> getPossibleResourceInstances(ResourceView resourceType){
+		return resMan.getPossibleResourceInstances(resourceType);
+	}
+	
 }

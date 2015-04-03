@@ -161,6 +161,11 @@ public class ResourceManager {
 		// TODO Auto-generated method stub
 		return false;
 	}
+	
+	
+	public ImmutableList<ResourceView> getPossibleResourceInstances(ResourceView resourceType){
+		return null; //TODO implement
+	}
 
 }
 

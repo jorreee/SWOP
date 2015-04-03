@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import com.google.common.collect.ImmutableList;
+
 import taskMan.Task;
 
 public class TaskView {
@@ -97,6 +99,10 @@ public class TaskView {
 	
 	public HashMap<ResourceView,Integer> getRequiredResources(){
 		return task.getRequiredResources();
+	}
+	
+	public ImmutableList<ResourceView> getPossibleResourceInstances(ResourceView resourceType){
+		return task.getPossibleResourceInstances(resourceType);
 	}
 
 	@Override
