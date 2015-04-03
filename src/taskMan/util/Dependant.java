@@ -10,7 +10,6 @@ import taskMan.Task;
  */
 public interface Dependant {
 	
-	public boolean updateDependency(Task preTask); 
-	// TODO kan ook "heyDependant,I'mFinishedSoGoAhead()" noemen
+	public boolean updateDependency(Task preTask);
 
 }

@@ -105,8 +105,7 @@ public class PlanTaskRequest extends Request {
 				
 				// Confirm time slot
 				LocalDateTime timeSlotStart = possibleStartingTimes.get(Integer.parseInt(input));
-				System.out.println("Time slot selected from " + timeSlotStart.toString() + " unti " + timeSlotStart.plusMinutes(task.getEstimatedTaskDuration()).toString()); // TODO TaskView.getEstimatedTaskDuration should be int
-				
+				System.out.println("Time slot selected from " + timeSlotStart.toString() + " until " + timeSlotStart.plusMinutes(task.getEstimatedDuration()).toString());
 				// Show each required resource
 				
 				// Ask user fot input

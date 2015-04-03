@@ -36,11 +36,11 @@ public class UseCase2CreateProjectTest {
 		ProjectView project0 = taskManager.getProjects().get(0);
 
 		// Stap 4
-		assertTrue(project0.getProjectName().equals("Test1"));
-		assertTrue(project0.getProjectDescription().equals("testing 1"));
+		assertTrue(project0.getName().equals("Test1"));
+		assertTrue(project0.getDescription().equals("testing 1"));
 		assertEquals(project0.getAvailableTasks().size(),0);
-		assertEquals(project0.getProjectDueTime(),project0DueDateGood);
-		assertFalse(project0.isProjectFinished());
+		assertEquals(project0.getDueTime(),project0DueDateGood);
+		assertFalse(project0.isFinished());
 		assertEquals(taskManager.getProjects().size(),1);
 		
 	}

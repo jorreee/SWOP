@@ -63,34 +63,34 @@ public class ProjectTest {
 	
 	@Test
 	public void getIDTest(){
-		assertEquals(1, defaultProject.getProjectID());
+		assertEquals(1, defaultProject.getID());
 	}
 	
 	@Test
 	public void getNameTest(){
-		assertEquals("defaultproject", defaultProject.getProjectName().toLowerCase());
+		assertEquals("defaultproject", defaultProject.getName().toLowerCase());
 	}
 	
 	@Test
 	public void getDescriptionTest(){
-		assertEquals("default", defaultProject.getProjectDescription().toLowerCase());
+		assertEquals("default", defaultProject.getDescription().toLowerCase());
 	}
 	
 	@Test
 	public void getCreationTimeTest(){
 		assertEquals(LocalDateTime.of(2015, 2, 11, 16, 0), 
-				defaultProject.getProjectCreationTime());
+				defaultProject.getCreationTime());
 	}
 	
 	@Test
 	public void getDueTimeTest(){
 		assertEquals(LocalDateTime.of(2015, 2, 17, 16, 0), 
-				defaultProject.getProjectDueTime());
+				defaultProject.getDueTime());
 	}
 	
 	@Test
 	public void getStateTest(){
-		assertEquals("ongoing", defaultProject.getProjectStatus().toLowerCase());
+		assertEquals("ongoing", defaultProject.getStatus().toLowerCase());
 	}
 	
 	@Test

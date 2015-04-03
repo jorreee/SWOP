@@ -22,7 +22,6 @@ import com.google.common.collect.ImmutableList.Builder;
  * @author Tim Van den Broecke, Joran Van de Woestijne, Vincent Van Gestel, Eli Vangrieken
  *
  */
-//TODO getProjectFromView(ProjectView p), private?
 public class TaskMan {
 	
 	private ArrayList<Project> projectList;
@@ -547,7 +546,6 @@ public class TaskMan {
 //	 * @return	the prerequisites for the task 
 //	 * 			null if the project ID isn't a valid one
 //	 */
-//	//TODO NOOIT null teruggeven
 //	public List<Integer> getTaskPrerequisitesFor(int projectID, int taskID) {
 //		if(!isValidProjectID(projectID)) {
 //			return null;

@@ -16,31 +16,31 @@ public class ProjectView {
 	}
 	
 	public int getID() {
-		return project.getProjectID();
+		return project.getID();
 	}
 
-	public String getProjectName() {
-		return project.getProjectName();
+	public String getName() {
+		return project.getName();
 	}
 
-	public String getProjectDescription() {
-		return project.getProjectDescription();
+	public String getDescription() {
+		return project.getDescription();
 	}
 
-	public LocalDateTime getProjectCreationTime() {
-		return project.getProjectCreationTime();
+	public LocalDateTime getCreationTime() {
+		return project.getCreationTime();
 	}
 
-	public LocalDateTime getProjectDueTime() {
-		return project.getProjectDueTime();
+	public LocalDateTime getDueTime() {
+		return project.getDueTime();
 	}
 
-	public LocalDateTime getProjectEndTime() {
-		return project.getProjectEndTime();
+	public LocalDateTime getEndTime() {
+		return project.getEndTime();
 	}
 
-	public String getProjectStatusAsString() {
-		return project.getProjectStatus();
+	public String getStatusAsString() {
+		return project.getStatus();
 	}
 
 	public List<TaskView> getTasks() {
@@ -55,19 +55,19 @@ public class ProjectView {
 		return tasks.build();
 	}
 	
-	public int[] getCurrentProjectDelay(LocalDateTime time) {
+	public int[] getCurrentDelay(LocalDateTime time) {
 		return project.getDelay(time);
 	}
 	
-	public int[] getEstimatedProjectDelay(LocalDateTime time) {
-		return project.getEstimatedProjectDelay(time);
+	public int[] getEstimatedDelay(LocalDateTime time) {
+		return project.getEstimatedDelay(time);
 	}
 	
-	public boolean isProjectEstimatedOnTime(LocalDateTime time) {
+	public boolean isEstimatedOnTime(LocalDateTime time) {
 		return project.isEstimatedOnTime(time);
 	}
 	
-	public boolean isProjectFinished() {
+	public boolean isFinished() {
 		return project.isFinished();
 	}
 	

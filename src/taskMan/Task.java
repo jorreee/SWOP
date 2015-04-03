@@ -465,7 +465,7 @@ public class Task implements Dependant {
 		return longest;
 	}
 	
-	public List<Task> getTaskPrerequisites() {
+	public List<Task> getPrerequisites() {
 //		ArrayList<Task> allPrerequisites = new ArrayList<Task>();
 //		for(Task t : prerequisites) {
 //			allPrerequisites.add(t);
@@ -497,7 +497,7 @@ public class Task implements Dependant {
 	 * 
 	 * @return	The ID of this Task.
 	 */
-	public int getTaskID() { 
+	public int getID() { 
 		return taskID; 
 	}
 
@@ -510,7 +510,7 @@ public class Task implements Dependant {
 	 * 			The new end time of the Task.
 	 * @return	True if and only if the updates succeeds.
 	 */
-	public boolean setTaskFinished(LocalDateTime beginTime,
+	public boolean setFinished(LocalDateTime beginTime,
 			LocalDateTime endTime) {
 		
 		return state.finish(beginTime, endTime);
@@ -537,7 +537,7 @@ public class Task implements Dependant {
 	 * 			The new end time of the Task.
 	 * @return	True if and only if the updates succeeds.
 	 */
-	public boolean setTaskFailed(LocalDateTime beginTime,
+	public boolean setFailed(LocalDateTime beginTime,
 			LocalDateTime endTime) {
 		return state.fail(beginTime, endTime);
 	}

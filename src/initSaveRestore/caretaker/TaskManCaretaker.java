@@ -13,6 +13,7 @@ import initSaveRestore.initialization.TaskStatus;
 import java.io.StringReader;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.EmptyStackException;
 import java.util.Iterator;
 import java.util.List;
@@ -108,10 +109,10 @@ public class TaskManCaretaker {
 		tman.append("\nprojects:");
 		ImmutableList<ProjectView> projects = facade.getProjects();
 		for(ProjectView project : projects) {
-			tman.append("\n  - name         : \"" + project.getProjectName() + "\"" // name
-					+ "\n    description  : \"" + project.getProjectDescription() + "\"" // description
-					+ "\n    creationTime : \"" + project.getProjectCreationTime().format(dateTimeFormatter) + "\"" // creationTime
-					+ "\n    dueTime      : \"" + project.getProjectDueTime().format(dateTimeFormatter) + "\"");// dueTime
+			tman.append("\n  - name         : \"" + project.getName() + "\"" // name
+					+ "\n    description  : \"" + project.getDescription() + "\"" // description
+					+ "\n    creationTime : \"" + project.getCreationTime().format(dateTimeFormatter) + "\"" // creationTime
+					+ "\n    dueTime      : \"" + project.getDueTime().format(dateTimeFormatter) + "\"");// dueTime
 		}
 		
 		// plannings
@@ -124,7 +125,7 @@ public class TaskManCaretaker {
 			List<TaskView> tasks = project.getTasks();
 			for(TaskView task : tasks) {
 				tman.append("\n  - project            : " + projects.indexOf(project) // project
-						+ "\n    description        : \"" + task.getTaskDescription()// description
+						+ "\n    description        : \"" + task.getDescription()// description
 						// estimatedDuration
 						// acceptableDeviation
 						// alternativeFor

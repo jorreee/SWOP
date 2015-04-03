@@ -74,10 +74,10 @@ public class UseCase7AdvanceTimeTest {
 		assertTrue(taskManager.advanceTimeTo(newDateNoChanges));
 		assertEquals(taskManager.getCurrentTime(),newDateNoChanges);
 		// Step 4
-		assertTrue(task00.getTaskStatusAsString().equalsIgnoreCase("available"));
-		assertTrue(task01.getTaskStatusAsString().equalsIgnoreCase("unavailable"));
-		assertTrue(task02.getTaskStatusAsString().equalsIgnoreCase("unavailable"));
-		assertTrue(task03.getTaskStatusAsString().equalsIgnoreCase("unavailable"));
+		assertTrue(task00.getStatusAsString().equalsIgnoreCase("available"));
+		assertTrue(task01.getStatusAsString().equalsIgnoreCase("unavailable"));
+		assertTrue(task02.getStatusAsString().equalsIgnoreCase("unavailable"));
+		assertTrue(task03.getStatusAsString().equalsIgnoreCase("unavailable"));
 	}
 
 	@Test
@@ -92,10 +92,10 @@ public class UseCase7AdvanceTimeTest {
 		assertTrue(taskManager.advanceTimeTo(newDateWithChanges));
 		assertEquals(taskManager.getCurrentTime(),newDateWithChanges);
 		// Step 4
-		assertTrue(task00.getTaskStatusAsString().equalsIgnoreCase("available"));
-		assertTrue(task01.getTaskStatusAsString().equalsIgnoreCase("unavailable"));
-		assertTrue(task02.getTaskStatusAsString().equalsIgnoreCase("unavailable"));
-		assertTrue(task03.getTaskStatusAsString().equalsIgnoreCase("unavailable"));
+		assertTrue(task00.getStatusAsString().equalsIgnoreCase("available"));
+		assertTrue(task01.getStatusAsString().equalsIgnoreCase("unavailable"));
+		assertTrue(task02.getStatusAsString().equalsIgnoreCase("unavailable"));
+		assertTrue(task03.getStatusAsString().equalsIgnoreCase("unavailable"));
 	}
 
 	@Test
@@ -110,10 +110,10 @@ public class UseCase7AdvanceTimeTest {
 		assertFalse(taskManager.advanceTimeTo(newDateVeryBad1));
 		assertEquals(taskManager.getCurrentTime(),startDate);
 		// Step 4
-		assertTrue(task00.getTaskStatusAsString().equalsIgnoreCase("available"));
-		assertTrue(task01.getTaskStatusAsString().equalsIgnoreCase("unavailable"));
-		assertTrue(task02.getTaskStatusAsString().equalsIgnoreCase("unavailable"));
-		assertTrue(task03.getTaskStatusAsString().equalsIgnoreCase("unavailable"));
+		assertTrue(task00.getStatusAsString().equalsIgnoreCase("available"));
+		assertTrue(task01.getStatusAsString().equalsIgnoreCase("unavailable"));
+		assertTrue(task02.getStatusAsString().equalsIgnoreCase("unavailable"));
+		assertTrue(task03.getStatusAsString().equalsIgnoreCase("unavailable"));
 	}
 
 	@Test
@@ -128,20 +128,20 @@ public class UseCase7AdvanceTimeTest {
 		assertFalse(taskManager.advanceTimeTo(newDateVeryBad2));
 		assertEquals(taskManager.getCurrentTime(),startDate);
 		// Step 4
-		assertTrue(task00.getTaskStatusAsString().equalsIgnoreCase("available"));
-		assertTrue(task01.getTaskStatusAsString().equalsIgnoreCase("unavailable"));
-		assertTrue(task02.getTaskStatusAsString().equalsIgnoreCase("unavailable"));
-		assertTrue(task03.getTaskStatusAsString().equalsIgnoreCase("unavailable"));
+		assertTrue(task00.getStatusAsString().equalsIgnoreCase("available"));
+		assertTrue(task01.getStatusAsString().equalsIgnoreCase("unavailable"));
+		assertTrue(task02.getStatusAsString().equalsIgnoreCase("unavailable"));
+		assertTrue(task03.getStatusAsString().equalsIgnoreCase("unavailable"));
 
 		//-----------------------------------------------------------
 
 		assertFalse(taskManager.advanceTimeTo(newDateVeryBad3));
 		assertEquals(taskManager.getCurrentTime(),startDate);
 		// Step 4
-		assertTrue(task00.getTaskStatusAsString().equalsIgnoreCase("available"));
-		assertTrue(task01.getTaskStatusAsString().equalsIgnoreCase("unavailable"));
-		assertTrue(task02.getTaskStatusAsString().equalsIgnoreCase("unavailable"));
-		assertTrue(task03.getTaskStatusAsString().equalsIgnoreCase("unavailable"));
+		assertTrue(task00.getStatusAsString().equalsIgnoreCase("available"));
+		assertTrue(task01.getStatusAsString().equalsIgnoreCase("unavailable"));
+		assertTrue(task02.getStatusAsString().equalsIgnoreCase("unavailable"));
+		assertTrue(task03.getStatusAsString().equalsIgnoreCase("unavailable"));
 	}
 
 }

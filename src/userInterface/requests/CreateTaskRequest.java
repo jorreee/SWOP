@@ -18,7 +18,7 @@ public class CreateTaskRequest extends Request {
 	public String execute() {
 		List<ProjectView> projects = facade.getProjects();
 		for(ProjectView project : projects) {
-			System.out.println("Project " + project.getProjectName() + " ID: " + project.getID());
+			System.out.println("Project " + project.getName() + " ID: " + project.getID());
 		}
 		
 		while(true) {

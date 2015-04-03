@@ -131,7 +131,7 @@ public class ResourceManager {
 	//TODO idem zie onder, maar RAW request
 	private boolean createRawReservation(int resourceTypeIndex, int concreteResourceIndex, Task reservingTask,
 			LocalDateTime startTime, LocalDateTime endTime, LocalDateTime currentTime) {
-		return createNewReservation(resPools.get(resourceTypeIndex).getConcreteResourceByIndex(concreteResourceIndex), reservingTask, startTime, endTime, currentTime);
+		return createNewReservation((ConcreteResource) resPools.get(resourceTypeIndex).getConcreteResourceByIndex(concreteResourceIndex), reservingTask, startTime, endTime, currentTime);
 	}
 	
 	//TODO enkel resMan gaat dit kunnen doen. Er wordt een REQUEST naar hem gestuurd en hij CREATE een reservatie

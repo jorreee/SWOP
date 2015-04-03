@@ -67,11 +67,11 @@ public class UseCase3CreateTaskTest {
 		assertTrue(p0tasks.size() == 1);
 		TaskView t = p0tasks.get(0);
 		
-		assertTrue(t.getTaskDescription().equals("A new TASK"));
-		assertEquals(t.getEstimatedTaskDuration(), newTaskDur);
-		assertEquals(t.getAcceptableTaskDeviation(),newTaskDev);
-		assertFalse(t.isTaskAlternative());
-		assertFalse(t.hasTaskPrerequisites());
+		assertTrue(t.getDescription().equals("A new TASK"));
+		assertEquals(t.getEstimatedDuration(), newTaskDur);
+		assertEquals(t.getAcceptableDeviation(),newTaskDev);
+		assertFalse(t.isAlternative());
+		assertFalse(t.hasPrerequisites());
 		assertEquals(project0.getAvailableTasks().size(),1);
 	}
 
@@ -98,13 +98,13 @@ public class UseCase3CreateTaskTest {
 		assertTrue(p0tasks.size() == 2);
 		TaskView t01 = p0tasks.get(1);
 		
-		assertTrue(t01.getTaskDescription().equals("A new TASK"));
-		assertEquals(t01.getEstimatedTaskDuration(), newTaskDur);
-		assertEquals(t01.getAcceptableTaskDeviation(),newTaskDev);
-		assertTrue(t01.isTaskAlternative());
-		assertEquals(t01.getTaskAlternativeTo(),t00);					//
-		assertFalse(t01.hasTaskPrerequisites());
-		assertTrue(t01.getTaskStatusAsString().equals("Available"));
+		assertTrue(t01.getDescription().equals("A new TASK"));
+		assertEquals(t01.getEstimatedDuration(), newTaskDur);
+		assertEquals(t01.getAcceptableDeviation(),newTaskDev);
+		assertTrue(t01.isAlternative());
+		assertEquals(t01.getAlternativeTo(),t00);					//
+		assertFalse(t01.hasPrerequisites());
+		assertTrue(t01.getStatusAsString().equals("Available"));
 		assertEquals(project0.getAvailableTasks().size(),1);
 		
 	}
@@ -121,7 +121,7 @@ public class UseCase3CreateTaskTest {
 		List<TaskView> p0tasks = project0.getTasks();
 		assertTrue(p0tasks.size() == 1);
 		TaskView t00 = p0tasks.get(0);
-		assertTrue(t00.getTaskStatusAsString().equals("Available"));
+		assertTrue(t00.getStatusAsString().equals("Available"));
 
 		// Step 1 and 2 are implicit
 		// Step 3
@@ -132,15 +132,15 @@ public class UseCase3CreateTaskTest {
 		assertTrue(p0tasks.size() == 2);
 		TaskView t01 = p0tasks.get(1);
 		
-		assertTrue(t01.getTaskDescription().equals("A new TASK"));
-		assertEquals(t01.getEstimatedTaskDuration(), newTaskDur);
-		assertEquals(t01.getAcceptableTaskDeviation(),newTaskDev);
-		assertFalse(t01.isTaskAlternative());
-		assertTrue(t01.hasTaskPrerequisites());
-		assertFalse(t01.isTaskAlternative());
-		assertTrue(t01.hasTaskPrerequisites());
-		assertTrue(t01.getTaskPrerequisites().contains(t00));				//
-		assertTrue(t01.getTaskStatusAsString().equals("Unavailable"));
+		assertTrue(t01.getDescription().equals("A new TASK"));
+		assertEquals(t01.getEstimatedDuration(), newTaskDur);
+		assertEquals(t01.getAcceptableDeviation(),newTaskDev);
+		assertFalse(t01.isAlternative());
+		assertTrue(t01.hasPrerequisites());
+		assertFalse(t01.isAlternative());
+		assertTrue(t01.hasPrerequisites());
+		assertTrue(t01.getPrerequisites().contains(t00));				//
+		assertTrue(t01.getStatusAsString().equals("Unavailable"));
 		assertEquals(project0.getAvailableTasks().size(),1);
 		
 	}
@@ -157,9 +157,9 @@ public class UseCase3CreateTaskTest {
 		List<TaskView> p0tasks = project0.getTasks();
 		assertTrue(p0tasks.size() == 1);
 		TaskView t00 = p0tasks.get(0);
-		assertEquals(t00.getTaskStatusAsString(),"Available");
+		assertEquals(t00.getStatusAsString(),"Available");
 		assertTrue(taskManager.setTaskFailed(project0, t00, startDate, altTaskEndDate));
-		assertEquals(t00.getTaskStatusAsString(),"Failed");
+		assertEquals(t00.getStatusAsString(),"Failed");
 
 		// Step 1 and 2 are implicit
 		// Step 3
@@ -170,12 +170,12 @@ public class UseCase3CreateTaskTest {
 		assertTrue(p0tasks.size() == 2);
 		TaskView t01 = p0tasks.get(1);
 		
-		assertTrue(t01.getTaskDescription().equals("A new TASK"));
-		assertEquals(t01.getEstimatedTaskDuration(), newTaskDur);
-		assertEquals(t01.getAcceptableTaskDeviation(), newTaskDev);
-		assertFalse(t01.isTaskAlternative());
-		assertTrue(t01.hasTaskPrerequisites());
-		assertTrue(t01.getTaskStatusAsString().equals("Unavailable"));
+		assertTrue(t01.getDescription().equals("A new TASK"));
+		assertEquals(t01.getEstimatedDuration(), newTaskDur);
+		assertEquals(t01.getAcceptableDeviation(), newTaskDev);
+		assertFalse(t01.isAlternative());
+		assertTrue(t01.hasPrerequisites());
+		assertTrue(t01.getStatusAsString().equals("Unavailable"));
 		assertEquals(project0.getAvailableTasks().size(),0);
 	}
 	
@@ -192,15 +192,15 @@ public class UseCase3CreateTaskTest {
 		assertTrue(p0tasks.size() == 1);
 		TaskView t00 = p0tasks.get(0);
 		
-		assertEquals(t00.getTaskStatusAsString(),"Available");
+		assertEquals(t00.getStatusAsString(),"Available");
 		assertTrue(taskManager.setTaskFailed(project0, t00, startDate, task00EndDateGood));
-		assertEquals(t00.getTaskStatusAsString(),"Failed");
+		assertEquals(t00.getStatusAsString(),"Failed");
 
 		assertTrue(taskManager.createTask(project0, "Implement native", task01EstDur, task01Dev, task01Dependencies, t00));
 		p0tasks = project0.getTasks();
 		assertTrue(p0tasks.size() == 2);
 		TaskView t01 = p0tasks.get(1);
-		assertEquals(t01.getTaskStatusAsString(),"Available");
+		assertEquals(t01.getStatusAsString(),"Available");
 
 		// Step 1 and 2 are implicit
 		// Step 3
@@ -211,13 +211,13 @@ public class UseCase3CreateTaskTest {
 		assertTrue(p0tasks.size() == 3);
 		TaskView nt = p0tasks.get(2);
 		
-		assertTrue(nt.hasTaskPrerequisites());
-		assertTrue(nt.getTaskPrerequisites().contains(t00));
-		assertFalse(nt.getTaskPrerequisites().contains(t01));				// NIET 0 !!!!!
-		assertEquals(nt.getTaskStatusAsString(),"Unavailable");
+		assertTrue(nt.hasPrerequisites());
+		assertTrue(nt.getPrerequisites().contains(t00));
+		assertFalse(nt.getPrerequisites().contains(t01));				// NIET 0 !!!!!
+		assertEquals(nt.getStatusAsString(),"Unavailable");
 		assertTrue(taskManager.setTaskFinished(project0, t01, task01StartDateGood, task01EndDateGood));
 		
-		assertEquals(nt.getTaskStatusAsString(),"Available");
+		assertEquals(nt.getStatusAsString(),"Available");
 	}
 
 	@Test
@@ -231,35 +231,11 @@ public class UseCase3CreateTaskTest {
 	}
 
 	@Test
-	public void flow4aBadResManTest() {
-		List<ProjectView> projects = taskManager.getProjects();
-		assertTrue(projects.size() == 1);
-		ProjectView project0 = projects.get(0);
-		
-		// Step 1 and 2 are implicit
-		// Step 3
-		assertFalse(taskManager.createTask(project0, "A new TASK", newTaskDur, newTaskDev, newTaskDependencies, null)); // TODO hoe testen?
-		// Step 4
-		List<TaskView> p0tasks = project0.getTasks();
-		assertEquals(p0tasks.size(),0);
-	}
-
-	@Test
 	public void flow4aUnknownAltTest() {
 		List<ProjectView> projects = taskManager.getProjects();
 		assertTrue(projects.size() == 1);
 		ProjectView project0 = projects.get(0);
-
-		// Kan zichzelf niet als ALT nemen
-
-		// Step 1 and 2 are implicit
-		// Step 3
-//			assertFalse(taskManager.createTask(project0, "A new TASK", newTaskDur, newTaskDev, newTaskDependencies, )); // TODO hoe testen?
-		// Step 4
-		List<TaskView> p0tasks = project0.getTasks();
-		assertEquals(p0tasks.size(),0);
-
-		//--------------------------------------------------------------------------------------
+		
 		// Onbestaande task kan geen ALT nemen
 		Task unexistent = new Task(10, "Very bad", 50, 10, new ResourceManager(), new ArrayList<Task>(), null);
 
@@ -267,7 +243,7 @@ public class UseCase3CreateTaskTest {
 		// Step 3
 		assertFalse(taskManager.createTask(project0, "A new TASK", newTaskDur, newTaskDev, newTaskDependencies, new TaskView(unexistent)));
 		// Step 4
-		p0tasks = project0.getTasks();
+		List<TaskView> p0tasks = project0.getTasks();
 		assertEquals(p0tasks.size(),0);
 
 	}
@@ -283,13 +259,13 @@ public class UseCase3CreateTaskTest {
 		List<TaskView> p0tasks = project0.getTasks();
 		assertTrue(p0tasks.size() == 1);
 		TaskView t00 = p0tasks.get(0);
-		assertEquals(t00.getTaskStatusAsString(),"Available");
+		assertEquals(t00.getStatusAsString(),"Available");
 		task01Dependencies.add(t00);
 		assertTrue(taskManager.createTask(project0, "Implement Native", task01EstDur, task01Dev, task01Dependencies, null));
 		p0tasks = project0.getTasks();
 		assertTrue(p0tasks.size() == 2);
 		TaskView t01 = p0tasks.get(1);
-		assertEquals(t01.getTaskStatusAsString(),"Unavailable");
+		assertEquals(t01.getStatusAsString(),"Unavailable");
 		
 		// AVAILABLE task kan geen ALT krijgen
 		
@@ -339,7 +315,7 @@ public class UseCase3CreateTaskTest {
 		p0tasks = project0.getTasks();
 		assertTrue(p0tasks.size() == 2);
 		TaskView t01 = p0tasks.get(1);
-		assertEquals(t01.getTaskStatusAsString(),"Available");
+		assertEquals(t01.getStatusAsString(),"Available");
 		
 		// Geen twee ALT tasks voor een failed task mogelijk
 		
@@ -357,21 +333,12 @@ public class UseCase3CreateTaskTest {
 		assertTrue(projects.size() == 1);
 		ProjectView project0 = projects.get(0);
 		
-		// Kan zichzelf niet als DEP nemen
-		
-//		newTaskDependencies.add(); // TODO hoe testen?
-		// Step 1 and 2 are implicit
-		// Step 3
-//		assertFalse(taskManager.createTask(project0, "A new TASK", newTaskDur, newTaskDev, newTaskDependencies, null));
-		// Step 4
 		List<TaskView> p0tasks = project0.getTasks();
 		assertTrue(p0tasks.size() == 0);
 		
-		//--------------------------------------------------------------------------------------
 		// Onbestaande task kan geen ALT nemen
 		Task unexistent = new Task(10, "Very bad", 50, 10, new ResourceManager(), new ArrayList<Task>(), null);
 
-//		newTaskDependencies.remove(0);
 		newTaskDependencies.add(new TaskView(unexistent));
 		// Step 1 and 2 are implicit
 		// Step 3
@@ -393,9 +360,9 @@ public class UseCase3CreateTaskTest {
 		List<TaskView> p0tasks = project0.getTasks();
 		assertTrue(p0tasks.size() == 1);
 		TaskView t00 = p0tasks.get(0);
-		assertEquals(t00.getTaskStatusAsString(),"Available");
+		assertEquals(t00.getStatusAsString(),"Available");
 		assertTrue(taskManager.setTaskFailed(project0, t00, startDate, altTaskEndDate));
-		assertEquals(t00.getTaskStatusAsString(),"Failed");
+		assertEquals(t00.getStatusAsString(),"Failed");
 		
 		// Task kan geen PreReq zijn voor zijn ALT
 
@@ -418,7 +385,7 @@ public class UseCase3CreateTaskTest {
 		List<TaskView> p0tasks = project0.getTasks();
 		assertTrue(p0tasks.size() == 1);
 		TaskView t00 = p0tasks.get(0);
-		assertEquals(t00.getTaskStatusAsString(),"Available");
+		assertEquals(t00.getStatusAsString(),"Available");
 
 		// Step 1 and 2 are implicit
 		// Step 3
@@ -461,9 +428,9 @@ public class UseCase3CreateTaskTest {
 		List<TaskView> p0tasks = project0.getTasks();
 		assertTrue(p0tasks.size() == 1);
 		TaskView t00 = p0tasks.get(0);
-		assertEquals(t00.getTaskStatusAsString(),"Available");
+		assertEquals(t00.getStatusAsString(),"Available");
 		assertTrue(taskManager.setTaskFinished(project0, t00, task00StartDateGood, task00EndDateGood));
-		assertTrue(project0.isProjectFinished());
+		assertTrue(project0.isFinished());
 		
 		// Step 1 and 2 are implicit
 		// Step 3

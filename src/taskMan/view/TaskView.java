@@ -17,46 +17,46 @@ public class TaskView {
 	}
 	
 	public int getID() {
-		return task.getTaskID();
+		return task.getID();
 	}
 	
-	public String getTaskDescription() {
+	public String getDescription() {
 		return task.getDescription();
 	}
 	
-	public LocalDateTime getTaskStartTime() {
+	public LocalDateTime getStartTime() {
 		return task.getBeginTime();
 	}
 	
-	public int getEstimatedTaskDuration() {
+	public int getEstimatedDuration() {
 		return task.getEstimatedDuration().getSpanMinutes();
 	}
 	
-	public int getAcceptableTaskDeviation() {
+	public int getAcceptableDeviation() {
 		return task.getAcceptableDeviation();
 	}
 	
-	public int getTaskOvertimePercentage(LocalDateTime currentTime) {
+	public int getOvertimePercentage(LocalDateTime currentTime) {
 		return task.getOverTimePercentage(currentTime);
 	}
 	
-	public LocalDateTime getTaskEndTime() {
+	public LocalDateTime getEndTime() {
 		return task.getEndTime();
 	}
 	
-	public String getTaskStatusAsString() {
+	public String getStatusAsString() {
 		return task.getStatus();
 	}
 	
-	public List<TaskView> getTaskPrerequisites() {
+	public List<TaskView> getPrerequisites() {
 		ImmutableList.Builder<TaskView> taskPrereqs = ImmutableList.builder();
-		for(Task t : task.getTaskPrerequisites()) {
+		for(Task t : task.getPrerequisites()) {
 			taskPrereqs.add(new TaskView(t));
 		}
 		return taskPrereqs.build();
 	}
 	
-	public TaskView getTaskAlternativeTo() {
+	public TaskView getAlternativeTo() {
 		Task alt = task.getAlternativeFor();
 		if(alt == null) {
 			return null;
@@ -64,7 +64,7 @@ public class TaskView {
 		return new TaskView(alt);
 	}
 	
-	public TaskView getTaskReplacement() {
+	public TaskView getReplacement() {
 		Task rep = task.getReplacement();
 		if(rep == null) {
 			return null;
@@ -72,23 +72,23 @@ public class TaskView {
 		return new TaskView(rep);
 	}
 	
-	public boolean hasTaskPrerequisites() {
-		return !getTaskPrerequisites().isEmpty();
+	public boolean hasPrerequisites() {
+		return !getPrerequisites().isEmpty();
 	}
 	
-	public boolean isTaskAlternative() {
-		return getTaskAlternativeTo() != null;
+	public boolean isAlternative() {
+		return getAlternativeTo() != null;
 	}
 	
 	public boolean hasEnded() {
 		return task.hasEnded();
 	}
 	
-	public boolean isTaskUnacceptableOverdue(LocalDateTime currentTime) {
+	public boolean isUnacceptableOverdue(LocalDateTime currentTime) {
 		return task.isUnacceptableOverdue(currentTime);
 	}
 	
-	public boolean isTaskOnTime(LocalDateTime currentTime) {
+	public boolean isOnTime(LocalDateTime currentTime) {
 		return task.isOnTime(currentTime);
 	}
 	

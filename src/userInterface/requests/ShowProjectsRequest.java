@@ -23,8 +23,8 @@ public class ShowProjectsRequest extends Request {
 				int projectAmount = projects.size();
 				for(int i = 0 ; i < projectAmount ; i++) {
 					System.out.println("- Project " + i + " "
-							+ projects.get(i).getProjectName() + ": "
-							+ projects.get(i).getProjectStatusAsString()); // PRINT PROJECT i HEADER
+							+ projects.get(i).getName() + ": "
+							+ projects.get(i).getStatusAsString()); // PRINT PROJECT i HEADER
 				}
 
 				// Ask user for project selection
@@ -46,22 +46,22 @@ public class ShowProjectsRequest extends Request {
 				// Show overview of project details including list of tasks and their status
 				StringBuilder projectHeader = new StringBuilder(); // build project details
 				projectHeader.append("- Project " + projectID + " "
-						+ project.getProjectName() + ": "
-						+ project.getProjectStatusAsString() + ", ");
+						+ project.getName() + ": "
+						+ project.getStatusAsString() + ", ");
 				
 				int[] delay = null;
-				if(!project.isProjectFinished()) {
-					if(project.isProjectEstimatedOnTime(facade.getCurrentTime())) {
+				if(!project.isFinished()) {
+					if(project.isEstimatedOnTime(facade.getCurrentTime())) {
 						projectHeader.append("is estimated on time");
 					} else {
 						projectHeader.append("is estimated over time");
-						delay = project.getEstimatedProjectDelay(facade.getCurrentTime());
+						delay = project.getEstimatedDelay(facade.getCurrentTime());
 					}
 				} else {
-					delay = project.getCurrentProjectDelay(facade.getCurrentTime());
+					delay = project.getCurrentDelay(facade.getCurrentTime());
 				}
 				projectHeader.append(" (Due "
-						+ project.getProjectDueTime().toLocalDate().toString());
+						+ project.getDueTime().toLocalDate().toString());
 
 				if(delay != null) {
 					projectHeader.append("(");
@@ -75,7 +75,7 @@ public class ShowProjectsRequest extends Request {
 				projectHeader.append(")");
 
 				System.out.println(projectHeader.toString());
-				System.out.println("\"" + project.getProjectDescription() + "\""); // PRINT SELECTED PROJECT HEADER
+				System.out.println("\"" + project.getDescription() + "\""); // PRINT SELECTED PROJECT HEADER
 
 				List<TaskView> tasks = project.getTasks();
 				
@@ -83,13 +83,13 @@ public class ShowProjectsRequest extends Request {
 				for(int i = 0 ; i < taskAmount ; i++) {
 					StringBuilder taskiHead = new StringBuilder();
 					taskiHead.append("  *");
-					if(tasks.get(i).isTaskUnacceptableOverdue(facade.getCurrentTime()))
+					if(tasks.get(i).isUnacceptableOverdue(facade.getCurrentTime()))
 						taskiHead.append("!");
-					taskiHead.append(" Task " + i + ":" + tasks.get(i).getTaskStatusAsString());
-					if(tasks.get(i).isTaskOnTime(facade.getCurrentTime())) {
+					taskiHead.append(" Task " + i + ":" + tasks.get(i).getStatusAsString());
+					if(tasks.get(i).isOnTime(facade.getCurrentTime())) {
 						taskiHead.append(", on time");
 					} else {
-						taskiHead.append(", over time by " + tasks.get(i).getTaskOvertimePercentage(facade.getCurrentTime()) + "%");
+						taskiHead.append(", over time by " + tasks.get(i).getOvertimePercentage(facade.getCurrentTime()) + "%");
 					}
 					System.out.println(taskiHead.toString()); // PRINT TASK i FROM SELECTED PROJECT HEADER
 				}
@@ -113,22 +113,22 @@ public class ShowProjectsRequest extends Request {
 				// Show overview of task details
 				StringBuilder taskHeader = new StringBuilder(); // Build task details
 				taskHeader.append("  *");
-				if(task.isTaskUnacceptableOverdue(facade.getCurrentTime()));
+				if(task.isUnacceptableOverdue(facade.getCurrentTime()));
 					taskHeader.append("!");
 				taskHeader.append(" Task " + taskID + " "
-						+ task.getTaskStatusAsString() + ": "
-						+ task.getTaskDescription() + ", "
-						+ task.getEstimatedTaskDuration() + " minutes, "
-						+ task.getAcceptableTaskDeviation() + "% margin");
+						+ task.getStatusAsString() + ": "
+						+ task.getDescription() + ", "
+						+ task.getEstimatedDuration() + " minutes, "
+						+ task.getAcceptableDeviation() + "% margin");
 
-				if(task.isTaskOnTime(facade.getCurrentTime()))
+				if(task.isOnTime(facade.getCurrentTime()))
 					taskHeader.append(", on time");
 				else {
-					taskHeader.append(", over time by " + task.getTaskOvertimePercentage(facade.getCurrentTime()) + "%");
+					taskHeader.append(", over time by " + task.getOvertimePercentage(facade.getCurrentTime()) + "%");
 				}
 
-				if(task.hasTaskPrerequisites()) {
-					List<TaskView> prereqs = task.getTaskPrerequisites();
+				if(task.hasPrerequisites()) {
+					List<TaskView> prereqs = task.getPrerequisites();
 					taskHeader.append(", depends on");
 					for(int i = 0 ; i < prereqs.size() ; i++) {
 						if(i == 0)
@@ -139,10 +139,10 @@ public class ShowProjectsRequest extends Request {
 							taskHeader.append(" and ");
 					}
 				}
-				if(task.isTaskAlternative())
-					taskHeader.append(", alternative to task " + task.getTaskAlternativeTo().getID());
+				if(task.isAlternative())
+					taskHeader.append(", alternative to task " + task.getAlternativeTo().getID());
 				if(task.hasEnded())
-					taskHeader.append(", started " + task.getTaskStartTime().toString() + " , finished " + task.getTaskEndTime().toString());
+					taskHeader.append(", started " + task.getStartTime().toString() + " , finished " + task.getEndTime().toString());
 				System.out.println(taskHeader.toString()); // PRINT SELECTED TASK HEADER
 
 			} catch(Exception e) {

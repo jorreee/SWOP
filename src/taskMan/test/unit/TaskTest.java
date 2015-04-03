@@ -71,7 +71,7 @@ public class TaskTest {
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void createTaskConstr1FailPrerequisitesContainsAlt(){
-		defaultTest.setTaskFailed(LocalDateTime.of(2015, 2, 11, 16, 0), 
+		defaultTest.setFailed(LocalDateTime.of(2015, 2, 11, 16, 0), 
 				LocalDateTime.of(2015, 2, 12, 16, 0));
 		ArrayList<Task> temp = new ArrayList<>();
 		temp.add(defaultTest);
@@ -104,7 +104,7 @@ public class TaskTest {
 	
 	@Test
 	public void getIDTest(){
-		assertEquals(defaultTest.getTaskID(),1);
+		assertEquals(defaultTest.getID(),1);
 	}
 	
 	@Test
@@ -129,7 +129,7 @@ public class TaskTest {
 	
 	@Test
 	public void getSetAltTest(){
-		defaultTest.setTaskFailed(LocalDateTime.of(2015, 2, 11, 16, 0),
+		defaultTest.setFailed(LocalDateTime.of(2015, 2, 11, 16, 0),
 				LocalDateTime.of(2015, 2, 12, 16, 0));
 		Task temp = new Task(2,"test",30,0,resMan,new ArrayList<Task>(),defaultTest);
 		assertEquals(temp.getAlternativeFor(), defaultTest);
@@ -138,7 +138,7 @@ public class TaskTest {
 	@Test
 	public void setFinishedTest(){
 		assertFalse(defaultTest.isFinished());
-		defaultTest.setTaskFinished(LocalDateTime.of(2015, 2, 11, 16, 0),
+		defaultTest.setFinished(LocalDateTime.of(2015, 2, 11, 16, 0),
 				LocalDateTime.of(2015, 2, 12, 16, 0));
 		assertTrue(defaultTest.isFinished());
 	}
@@ -146,7 +146,7 @@ public class TaskTest {
 	@Test
 	public void setFailedTest(){
 		assertFalse(defaultTest.isFailed());
-		defaultTest.setTaskFinished(LocalDateTime.of(2015, 2, 12, 16, 0),
+		defaultTest.setFinished(LocalDateTime.of(2015, 2, 12, 16, 0),
 				LocalDateTime.of(2015, 2, 11, 16, 0));
 		assertFalse(defaultTest.isFailed());
 	}
@@ -162,7 +162,7 @@ public class TaskTest {
 	@Test
 	public void testHasEndedFinished(){
 		assertFalse(defaultTest.hasEnded());
-		defaultTest.setTaskFinished(LocalDateTime.of(2015, 2, 11, 16, 0),
+		defaultTest.setFinished(LocalDateTime.of(2015, 2, 11, 16, 0),
 				LocalDateTime.of(2015, 2, 12, 16, 0));
 		assertTrue(defaultTest.hasEnded());
 	}
@@ -170,7 +170,7 @@ public class TaskTest {
 	@Test
 	public void testHasEndedFailed(){
 		assertFalse(defaultTest.hasEnded());
-		defaultTest.setTaskFailed(LocalDateTime.of(2015, 2, 11, 16, 0),
+		defaultTest.setFailed(LocalDateTime.of(2015, 2, 11, 16, 0),
 				LocalDateTime.of(2015, 2, 12, 16, 0));
 		assertTrue(defaultTest.hasEnded());
 	}
@@ -178,7 +178,7 @@ public class TaskTest {
 	@Test
 	public void finishedEndpointSelf(){
 		assertFalse(defaultTest.hasFinishedEndpoint());
-		defaultTest.setTaskFinished(LocalDateTime.of(2015, 2, 11, 16, 0), 
+		defaultTest.setFinished(LocalDateTime.of(2015, 2, 11, 16, 0), 
 				LocalDateTime.of(2015, 2, 12, 16, 0));
 		assertTrue(defaultTest.hasFinishedEndpoint());
 	}
@@ -186,10 +186,10 @@ public class TaskTest {
 	@Test
 	public void finishedEndpointOther(){
 		assertFalse(defaultTest.hasFinishedEndpoint());
-		defaultTest.setTaskFailed(LocalDateTime.of(2015, 2, 11, 16, 0), 
+		defaultTest.setFailed(LocalDateTime.of(2015, 2, 11, 16, 0), 
 				LocalDateTime.of(2015, 2, 12, 16, 0));
-		Task alt = new Task(2, "alternative", 80, 5, resMan, defaultTest.getTaskPrerequisites(), defaultTest);
-		alt.setTaskFinished(LocalDateTime.of(2015, 2, 13, 16, 0), 
+		Task alt = new Task(2, "alternative", 80, 5, resMan, defaultTest.getPrerequisites(), defaultTest);
+		alt.setFinished(LocalDateTime.of(2015, 2, 13, 16, 0), 
 				LocalDateTime.of(2015, 2, 14, 16, 0));
 		System.out.println(defaultTest.isFinished());
 		assertTrue(defaultTest.hasFinishedEndpoint());

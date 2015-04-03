@@ -37,6 +37,7 @@ public class Project implements Dependant {
 	private ProjectStatus state;
 
 	private ArrayList<Task> taskList;
+	private int nextTaskID;
 
 	/**
 	 * Creates a new Project.
@@ -77,6 +78,7 @@ public class Project implements Dependant {
 		this.projectID = projectID;
 		
 		this.taskList = new ArrayList<Task>();
+		nextTaskID = 0;
 		
 		this.state = new OngoingProject(this);
 
@@ -174,7 +176,7 @@ public class Project implements Dependant {
 	 */
 	private Task findTask(int taskID) {
 		for(Task t : taskList) {
-			if(t.getTaskID() == taskID)
+			if(t.getID() == taskID)
 				return t;
 		}
 		return null;
@@ -212,7 +214,8 @@ public class Project implements Dependant {
 						LocalDateTime startTime, 
 						LocalDateTime endTime) {
 
-		int newTaskID = taskList.size();
+		int newTaskID = nextTaskID;
+		nextTaskID++;
 		if(isFinished()) {
 			return false;
 		}
@@ -396,7 +399,7 @@ public class Project implements Dependant {
 		if(endTime==null) {
 			throw new IllegalArgumentException("The new endTime is null");
 		}
-		if(getProjectEndTime()!=null) {
+		if(getEndTime()!=null) {
 			throw new IllegalArgumentException("The endtime is already set");
 		}
 		this.endTime = endTime;
@@ -407,7 +410,7 @@ public class Project implements Dependant {
 	 * 
 	 * @return	The ID of the Project.
 	 */
-	public int getProjectID() {
+	public int getID() {
 		return projectID;
 	}
 	
@@ -416,7 +419,7 @@ public class Project implements Dependant {
 	 * 
 	 * @return	The name of this Project.
 	 */
-	public String getProjectName() { 
+	public String getName() { 
 		return projectName; 
 	}
 
@@ -425,7 +428,7 @@ public class Project implements Dependant {
 	 * 
 	 * @return	The description of this Project.
 	 */
-	public String getProjectDescription() {	
+	public String getDescription() {	
 		return description;	
 	}
 
@@ -434,7 +437,7 @@ public class Project implements Dependant {
 	 * 
 	 * @return	The creation time of this Project.
 	 */
-	public LocalDateTime getProjectCreationTime() { 
+	public LocalDateTime getCreationTime() { 
 		return creationTime; 
 	}
 
@@ -443,7 +446,7 @@ public class Project implements Dependant {
 	 * 
 	 * @return	The due time of this Project.
 	 */
-	public LocalDateTime getProjectDueTime() { 
+	public LocalDateTime getDueTime() { 
 		return dueTime; 
 	}
 
@@ -452,7 +455,7 @@ public class Project implements Dependant {
 	 * 
 	 * @return	The end time of this Project.
 	 */
-	public LocalDateTime getProjectEndTime() { 
+	public LocalDateTime getEndTime() { 
 		return endTime; 
 	}
 
@@ -461,7 +464,7 @@ public class Project implements Dependant {
 	 * 
 	 * @return	The status of this Project.
 	 */
-	public String getProjectStatus() { 
+	public String getStatus() { 
 		return state.toString();
 	}
 
@@ -516,7 +519,7 @@ public class Project implements Dependant {
 	 * 			False otherwise.
 	 */
 	public boolean isOnTime(LocalDateTime current){
-		return new TimeSpan(getEstimatedProjectDelay(current)).isZero();
+		return new TimeSpan(getEstimatedDelay(current)).isZero();
 //		if(endTime == null) {
 //			if(current.isAfter(dueTime)) {
 //				return false;
@@ -554,7 +557,7 @@ public class Project implements Dependant {
 		if(startTime.isBefore(creationTime)) {
 			return false;
 		}
-		return unwrapTaskView(t).setTaskFinished(startTime, endTime);
+		return unwrapTaskView(t).setFinished(startTime, endTime);
 	}
 	
 //	private boolean markTaskFinished(Task task) {
@@ -593,7 +596,7 @@ public class Project implements Dependant {
 		if(startTime.isBefore(creationTime)) {
 			return false;
 		}
-		return unwrapTaskView(t).setTaskFailed(startTime, endTime);
+		return unwrapTaskView(t).setFailed(startTime, endTime);
 	}
 
 	/**
@@ -616,7 +619,7 @@ public class Project implements Dependant {
 	 * @return	The amount of years, months, days, hours and minutes
 	 * 			that are estimated to be required to finish the project
 	 */
-	public int[] getEstimatedProjectDelay(LocalDateTime currentTime) {
+	public int[] getEstimatedDelay(LocalDateTime currentTime) {
 		if(!hasAvailableTasks()) {
 			return new TimeSpan(0).getSpan();
 		}
