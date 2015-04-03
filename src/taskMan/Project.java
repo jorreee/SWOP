@@ -4,14 +4,15 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.common.collect.ImmutableList;
-
+import taskMan.resource.ResourceManager;
 import taskMan.state.OngoingProject;
 import taskMan.state.ProjectStatus;
 import taskMan.util.Dependant;
 import taskMan.util.IntPair;
 import taskMan.util.TimeSpan;
 import taskMan.view.TaskView;
+
+import com.google.common.collect.ImmutableList;
 
 /**
  * The project class used by TaskMan. A project will always have a unique
@@ -137,6 +138,7 @@ public class Project implements Dependant {
 	public boolean createRawTask(String description, 
 			int estimatedDuration, 
 			int acceptableDeviation, 
+			ResourceManager resMan, 
 			List<Integer> prerequisiteTasks, 
 			int alternativeFor, 
 			String taskStatus,
@@ -159,7 +161,7 @@ public class Project implements Dependant {
 			altTaskView = new TaskView(findTask(alternativeFor));
 		}
 		
-		return createTask(description, estimatedDuration, acceptableDeviation,
+		return createTask(description, estimatedDuration, acceptableDeviation, resMan, 
 				prereqTaskViews, altTaskView, taskStatus, startTime, endTime);
 	}
 	
@@ -203,6 +205,7 @@ public class Project implements Dependant {
 	public boolean createTask(String description, 
 						int estimatedDuration, 
 						int acceptableDeviation, 
+						ResourceManager resMan, 
 						List<TaskView> prerequisiteTasks, 
 						TaskView alternativeFor, 
 						String taskStatus,
@@ -236,6 +239,7 @@ public class Project implements Dependant {
 						description, 
 						estimatedDuration, 
 						acceptableDeviation, 
+						resMan, 
 						prereqTasks,
 						altFor,
 						taskStatus, 
@@ -248,6 +252,7 @@ public class Project implements Dependant {
 						description, 
 						estimatedDuration, 
 						acceptableDeviation, 
+						resMan, 
 						prereqTasks,
 						altFor);
 			}
@@ -280,13 +285,15 @@ public class Project implements Dependant {
 	 */
 	public boolean createTask(String description, 
 			int estimatedDuration, 
-			int acceptableDeviation,
+			int acceptableDeviation, 
+			ResourceManager resMan, 
 			List<TaskView> prerequisiteTasks,
 			TaskView alternativeFor) {
 		
 		return createTask(description, 
 				estimatedDuration, 
 				acceptableDeviation, 
+				resMan, 
 				prerequisiteTasks,
 				alternativeFor, 
 				null,

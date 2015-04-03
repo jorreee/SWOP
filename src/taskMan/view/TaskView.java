@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import taskMan.Task;
-import taskMan.util.TimeSpan;
 
 public class TaskView {
 	
@@ -60,7 +59,15 @@ public class TaskView {
 		if(alt == null) {
 			return null;
 		}
-		return new TaskView(task.getAlternativeFor());
+		return new TaskView(alt);
+	}
+	
+	public TaskView getTaskReplacement() {
+		Task rep = task.getReplacement();
+		if(rep == null) {
+			return null;
+		}
+		return new TaskView(rep);
 	}
 	
 	public boolean hasTaskPrerequisites() {

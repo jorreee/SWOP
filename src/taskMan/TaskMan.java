@@ -180,7 +180,7 @@ public class TaskMan {
 			LocalDateTime startTime, 
 			LocalDateTime endTime) {
 		if(isValidProjectID(project)) {
-			return projectList.get(project).createRawTask(description, estimatedDuration, acceptableDeviation, prerequisiteTasks, alternativeFor, taskStatus, startTime, endTime);
+			return projectList.get(project).createRawTask(description, estimatedDuration, acceptableDeviation, resMan, prerequisiteTasks, alternativeFor, taskStatus, startTime, endTime);
 		} else {
 			return false;
 		}
@@ -214,7 +214,7 @@ public class TaskMan {
 		if(p == null) {
 			return false;
 		}
-		return p.createTask(description, estimatedDuration, acceptableDeviation, prerequisiteTasks, alternativeFor);
+		return p.createTask(description, estimatedDuration, acceptableDeviation, resMan, prerequisiteTasks, alternativeFor);
 	}
 	
 //	/** // TODO remove this

@@ -35,7 +35,7 @@ public class Task implements Dependant {
 	private Task replacement;
 	private ArrayList<Dependant> dependants;
 	private ArrayList<Task> prerequisites;
-	private ArrayList<Task> unfinishedPrerequisites;
+//	private ArrayList<Task> unfinishedPrerequisites;
 	
 	private TaskStatus state;
 	
@@ -61,6 +61,7 @@ public class Task implements Dependant {
 			String taskDescription, 
 			int estimatedDuration,
 			int acceptableDeviation, 
+			ResourceManager resMan, 
 			List<Task> prerequisiteTasks,
 			Task alternativeFor) throws IllegalArgumentException {
 		
@@ -85,16 +86,20 @@ public class Task implements Dependant {
 		if(prerequisiteTasks.contains(alternativeFor)) {
 			throw new IllegalArgumentException("Alt can't be a prerequisite");
 		}
+		if(!isValidResourceManager(resMan)) {
+			throw new IllegalArgumentException("Invalid resource manager");
+		}
 		this.taskID = taskID;
 		this.description = taskDescription;
 		this.estimatedDuration = new TimeSpan(estimatedDuration);
 		this.acceptableDeviation = acceptableDeviation;
+		this.resMan = resMan;
 		
 		this.state = new UnavailableTask(this);
 
 		this.dependants = new ArrayList<Dependant>();
 		this.prerequisites = new ArrayList<Task>();
-		this.unfinishedPrerequisites = new ArrayList<Task>();
+//		this.unfinishedPrerequisites = new ArrayList<Task>();
 		
 		this.alternativeFor = alternativeFor;
 		if(alternativeFor != null) {
@@ -105,11 +110,12 @@ public class Task implements Dependant {
 		for(Task t : prerequisiteTasks) {
 			t.register(this);
 			this.prerequisites.add(t);
-			this.unfinishedPrerequisites.add(t);
+//			this.unfinishedPrerequisites.add(t);
 		}
 		removeAlternativesDependencies();
 
-		state.makeAvailable(unfinishedPrerequisites);
+		state.makeAvailable(prerequisites);
+//		state.makeAvailable(unfinishedPrerequisites);
 		
 	}
 
@@ -137,6 +143,7 @@ public class Task implements Dependant {
 			String taskDescription, 
 			int estimatedDuration,
 			int acceptableDeviation, 
+			ResourceManager resMan, 
 			List<Task> prerequisiteTasks,
 			Task alternativeFor,
 			String taskStatus,
@@ -147,6 +154,7 @@ public class Task implements Dependant {
 				taskDescription, 
 				estimatedDuration, 
 				acceptableDeviation, 
+				resMan, 
 				prerequisiteTasks,
 				alternativeFor);
 		
@@ -205,12 +213,15 @@ public class Task implements Dependant {
 
 	@Override
 	public boolean updateDependency(Task preTask) {
-		int preIndex = unfinishedPrerequisites.indexOf(preTask);
+		int preIndex = prerequisites.indexOf(preTask);
+//		int preIndex = unfinishedPrerequisites.indexOf(preTask);
 		if(preIndex < 0) {
 			return false;
 		}
-		unfinishedPrerequisites.remove(preIndex);
-		state.makeAvailable(unfinishedPrerequisites);
+		prerequisites.remove(preIndex);
+//		unfinishedPrerequisites.remove(preIndex);
+		state.makeAvailable(prerequisites);
+//		state.makeAvailable(unfinishedPrerequisites);
 		return true;
 	}
 	
@@ -570,10 +581,7 @@ public class Task implements Dependant {
 	}
 	
 	public boolean replaceWith(Task t) {
-		if(replacement != null) {
-			return false;
-		}
-		if(!isFailed()) {
+		if(!canBeReplaced()) {
 			return false;
 		}
 		this.replacement = t;
@@ -691,6 +699,13 @@ public class Task implements Dependant {
 			return false;
 		}
 		if(!altTask.canBeReplaced()) {
+			return false;
+		}
+		return true;
+	}
+	
+	private boolean isValidResourceManager(ResourceManager resMan) {
+		if(resMan == null) {
 			return false;
 		}
 		return true;

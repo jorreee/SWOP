@@ -14,7 +14,7 @@ public class FinishedProject implements ProjectStatus {
 	}
 
 	@Override
-	public boolean finish(List<Task> pre, Task lastTask) {
+	public boolean finish(List<Task> tasks, Task lastTask) {
 		return false;
 	}
 
@@ -25,7 +25,7 @@ public class FinishedProject implements ProjectStatus {
 
 	@Override
 	public boolean isOngoing() {
-		return !isFinished();
+		return false;
 	}
 	
 	@Override

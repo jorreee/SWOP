@@ -16,11 +16,13 @@ public class UnavailableTask implements TaskStatus {
 
 	@Override
 	public boolean makeAvailable(List<Task> preList) {
-		if(preList.size() == 0) {
-			task.setTaskStatus(new AvailableTask(task));
-			return true;
+		for(Task t : preList) {
+			if(!t.hasFinishedEndpoint()) {
+				return false;
+			}
 		}
-		return false;
+		task.setTaskStatus(new AvailableTask(task));
+		return true;
 	}
 
 	@Override
