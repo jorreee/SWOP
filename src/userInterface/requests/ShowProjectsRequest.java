@@ -83,9 +83,10 @@ public class ShowProjectsRequest extends Request {
 				for(int i = 0 ; i < taskAmount ; i++) {
 					StringBuilder taskiHead = new StringBuilder();
 					taskiHead.append("  *");
-					if(tasks.get(i).isUnacceptableOverdue(facade.getCurrentTime()))
+					if(tasks.get(i).isUnacceptableOverdue(facade.getCurrentTime())) {
 						taskiHead.append("!");
-					taskiHead.append(" Task " + i + ":" + tasks.get(i).getStatusAsString());
+					}
+					taskiHead.append(" Task " + i + ": " + tasks.get(i).getStatusAsString());
 					if(tasks.get(i).isOnTime(facade.getCurrentTime())) {
 						taskiHead.append(", on time");
 					} else {

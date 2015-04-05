@@ -493,6 +493,7 @@ public class Task implements Dependant {
 		return prerequisites;
 	}
 	
+	//TODO moet private?
 	public List<Dependant> getDependants() {
 		return dependants;
 	}
@@ -529,18 +530,6 @@ public class Task implements Dependant {
 			LocalDateTime endTime) {
 		
 		return state.finish(beginTime, endTime);
-//		if(state.finish(beginTime, endTime)) {
-//			
-//			setBeginTime(beginTime);
-//			setEndTime(endTime);
-//			setFinished();
-//			
-//			notifyDependants();
-//			
-//			return true;
-//			
-//		}
-//		return false;
 	}
 
 	/**
@@ -568,33 +557,6 @@ public class Task implements Dependant {
 	public void setTaskStatus(TaskStatus newStatus) {
 		this.state = newStatus;
 	}
-
-//	/**
-//	 * End the task finished or failed
-//	 * 
-//	 * @param 	beginTime
-//	 * 			The new begin time of the Task.
-//	 * @param 	endTime
-//	 * 			The new end time of the Task.
-//	 * @param	status
-//	 * 			The new status of the Task.
-//	 * @return	True if and only if the updates succeeds.
-//	 */
-//	private boolean setTaskStatus(LocalDateTime beginTime,
-//			LocalDateTime endTime, 
-//			TaskStatus status) {
-//		
-////		if(hasEnded() || isUnavailable()) {
-////			return false;
-////		}
-//		if(isValidTimeStamps(beginTime, endTime)) {
-//			this.beginTime = beginTime;
-//			this.endTime = endTime;
-////			taskStatus = status;
-//			return true;
-//		}
-//		return false;
-//	}
 	
 	/**
 	 * Checks whether the deviation is a valid one.
@@ -689,10 +651,10 @@ public class Task implements Dependant {
 	}
 	
 	/**
-	 * Returns whether the current Task in on time.
+	 * Returns whether the current Task is on time, depending on the estimated duration
 	 * 
 	 * @return	True if the Task is on time.
-	 * 			False if the elapsed time is longer then the acceptable duration.
+	 * 			False if the current date false after beginTime + EstimatedDur (in working minutes)
 	 */
 	public boolean isOnTime(LocalDateTime currentTime){
 		if(beginTime == null) {
@@ -709,13 +671,13 @@ public class Task implements Dependant {
 	}
 
 	/**
-	 * Returns whether the current task in unacceptably overdue.
+	 * Returns whether the current is unacceptably overdue, depending on the estimated
+	 * duration and acceptable deviation of the task.
 	 * 
 	 * @return	True if the project is overtime beyond the deviation.
 	 * 			False otherwise.
 	 */
 	public boolean isUnacceptableOverdue(LocalDateTime currentTime) {
-		// interpretatie: currentTime - beginTime is de tijd die erin is gestoken so far
 		if(beginTime == null) {
 			return true;
 		}
@@ -730,15 +692,18 @@ public class Task implements Dependant {
 	}
 
 	/**
-	 * Get the percentage of the overdue.
+	 * Returns the percentage of overdueness of the task, depending on the 
+	 * estimated duration of the task. Returns 0 if the task
+	 * is well on time.
 	 * 
 	 * @return	The percentage of overdue.
-	 */
+	 */ //TODO we kunnen ook stellen dat een taak enkel overtime is wanneer hij voorbij
+		// de unacceptable delay is.
 	public int getOverTimePercentage(LocalDateTime currentTime) {
 		if(isOnTime(currentTime)) {
 			return 0;
 		}
-		int overdue = this.getTimeSpent(currentTime).getDifferenceMinute(estimatedDuration);
+		int overdue = getTimeSpent(currentTime).getDifferenceMinute(estimatedDuration);
 		return ( overdue / estimatedDuration.getSpanMinutes() ) * 100;
 	}
 	
