@@ -493,7 +493,6 @@ public class Task implements Dependant {
 		return prerequisites;
 	}
 	
-	//TODO moet private?
 	public List<Dependant> getDependants() {
 		return dependants;
 	}
@@ -650,62 +649,62 @@ public class Task implements Dependant {
 		return true;
 	}
 	
-	/**
-	 * Returns whether the current Task is on time, depending on the estimated duration
-	 * 
-	 * @return	True if the Task is on time.
-	 * 			False if the current date false after beginTime + EstimatedDur (in working minutes)
-	 */
-	public boolean isOnTime(LocalDateTime currentTime){
-		if(beginTime == null) {
-			return false;
-		}
-		TimeSpan acceptableSpan = getEstimatedDuration();
-		LocalDateTime acceptableEndDate = TimeSpan.addSpanToLDT(beginTime, acceptableSpan);
-		
-		if(hasEnded()) {
-			return !endTime.isAfter(acceptableEndDate);
-		}
-		
-		return !currentTime.isAfter(acceptableEndDate);
-	}
-
-	/**
-	 * Returns whether the current is unacceptably overdue, depending on the estimated
-	 * duration and acceptable deviation of the task.
-	 * 
-	 * @return	True if the project is overtime beyond the deviation.
-	 * 			False otherwise.
-	 */
-	public boolean isUnacceptableOverdue(LocalDateTime currentTime) {
-		if(beginTime == null) {
-			return true;
-		}
-		TimeSpan acceptableSpan = estimatedDuration.getAcceptableSpan(getAcceptableDeviation());
-		LocalDateTime acceptableEndDate = TimeSpan.addSpanToLDT(beginTime, acceptableSpan);
-		
-		if(hasEnded()) {
-			return endTime.isAfter(acceptableEndDate);
-		}
-		
-		return currentTime.isAfter(acceptableEndDate);
-	}
-
-	/**
-	 * Returns the percentage of overdueness of the task, depending on the 
-	 * estimated duration of the task. Returns 0 if the task
-	 * is well on time.
-	 * 
-	 * @return	The percentage of overdue.
-	 */ //TODO we kunnen ook stellen dat een taak enkel overtime is wanneer hij voorbij
-		// de unacceptable delay is.
-	public int getOverTimePercentage(LocalDateTime currentTime) {
-		if(isOnTime(currentTime)) {
-			return 0;
-		}
-		int overdue = getTimeSpent(currentTime).getDifferenceMinute(estimatedDuration);
-		return ( overdue / estimatedDuration.getSpanMinutes() ) * 100;
-	}
+//	/**
+//	 * Returns whether the current Task is on time, depending on the estimated duration
+//	 * 
+//	 * @return	True if the Task is on time.
+//	 * 			False if the current date false after beginTime + EstimatedDur (in working minutes)
+//	 */
+//	public boolean isOnTime(LocalDateTime currentTime){
+//		if(beginTime == null) {
+//			return false;
+//		}
+//		TimeSpan acceptableSpan = getEstimatedDuration();
+//		LocalDateTime acceptableEndDate = TimeSpan.addSpanToLDT(beginTime, acceptableSpan);
+//		
+//		if(hasEnded()) {
+//			return !endTime.isAfter(acceptableEndDate);
+//		}
+//		
+//		return !currentTime.isAfter(acceptableEndDate);
+//	}
+//
+//	/**
+//	 * Returns whether the current is unacceptably overdue, depending on the estimated
+//	 * duration and acceptable deviation of the task.
+//	 * 
+//	 * @return	True if the project is overtime beyond the deviation.
+//	 * 			False otherwise.
+//	 */
+//	public boolean isUnacceptableOverdue(LocalDateTime currentTime) {
+//		if(beginTime == null) {
+//			return true;
+//		}
+//		TimeSpan acceptableSpan = estimatedDuration.getAcceptableSpan(getAcceptableDeviation());
+//		LocalDateTime acceptableEndDate = TimeSpan.addSpanToLDT(beginTime, acceptableSpan);
+//		
+//		if(hasEnded()) {
+//			return endTime.isAfter(acceptableEndDate);
+//		}
+//		
+//		return currentTime.isAfter(acceptableEndDate);
+//	}
+//
+//	/**
+//	 * Returns the percentage of overdueness of the task, depending on the 
+//	 * estimated duration of the task. Returns 0 if the task
+//	 * is well on time.
+//	 * 
+//	 * @return	The percentage of overdue.
+//	 */ //TODO we kunnen ook stellen dat een taak enkel overtime is wanneer hij voorbij
+//		// de unacceptable delay is.
+//	public int getOverTimePercentage(LocalDateTime currentTime) {
+//		if(isOnTime(currentTime)) {
+//			return 0;
+//		}
+//		int overdue = getTimeSpent(currentTime).getDifferenceMinute(estimatedDuration);
+//		return ( overdue / estimatedDuration.getSpanMinutes() ) * 100;
+//	}
 	
 	/**
 	 * Returns an amount of possible Task starting times.
