@@ -188,20 +188,29 @@ public class Task implements Dependant {
 		dependants.add(d);
 	}
 
-	public boolean unregister(Dependant t) {
-		if(!isValidDependant(t)) {
-			return false;
-		}
-		int depIndex = dependants.indexOf(t);
-		if(depIndex < 0) {
-			return false;
-		}
-		dependants.remove(depIndex);
-		return true;
-	}
+	//TODO met huidig ontwerp wordt dit nooit gebruikt. Kan 
+	// gebruikt worden om dependencies van gefaalde tasks over 
+	// te plaatsen wanneer die wordt vervangen.
+//	public boolean unregister(Dependant t) {
+//		if(!isValidDependant(t)) {
+//			return false;
+//		}
+//		int depIndex = dependants.indexOf(t);
+//		if(depIndex < 0) {
+//			return false;
+//		}
+//		dependants.remove(depIndex);
+//		return true;
+//	}
 	
 	private boolean isValidDependant(Dependant t) {
-		return t != this;
+		if(t == this) {
+			return false;
+		}
+		if(t == null) {
+			return false;
+		}
+		return true;
 	}
 
 	public boolean notifyDependants() {
@@ -270,7 +279,7 @@ public class Task implements Dependant {
 		return state.isFailed();
 	}
 	
-	public boolean canBeReplaced() {
+	private boolean canBeReplaced() {
 		if(!isFailed()) {
 			return false;
 		}
@@ -293,7 +302,7 @@ public class Task implements Dependant {
 	 * Checks whether the Task is unavailable.
 	 * 
 	 * @return	True if and only the Task is unavailable.
-	 */
+	 */ //TODO moet dit bestaan?
 	public boolean isUnavailable(){
 		return state.isUnavailable();
 	}
@@ -308,15 +317,19 @@ public class Task implements Dependant {
 	}
 
 	/**
-	 * Compares the start time of the task with a given time and calculates the
-	 * elapsed time in working time.
+	 * Returns the time spent on the task. 
+	 * If the task is still being worked on, this method will return the 
+	 * time in working time elapsed between the start time and current time.
+	 * If the task has concluded (hasEnded() = true), this method will return
+	 * the time in working time elapsed between the start- and end time of
+	 * the task.
 	 * 
 	 * @param 	currentTime 
-	 * 			The time with which the start time of the task must be compared with.
-	 * @return	time spent on this project in working time
+	 * 			The current time
+	 * @return	time spent on this task in working time
 	 * @throws 	IllegalArgumentException 
 	 * 			When the start time of the task is after the time given.
-	 */
+	 */ //TODO geeft TimeSpan object terug, ça marche?
 	public TimeSpan getTimeSpent(LocalDateTime currentTime) {
 		if(beginTime == null) {
 			return new TimeSpan(0);
@@ -337,22 +350,24 @@ public class Task implements Dependant {
 		
 		if(alternativeFor != null) {
 			currentTimeSpent = currentTimeSpent
-							 + alternativeFor.getTimeSpent().getSpanMinutes();
+							 + alternativeFor.getTimeSpent(currentTime).getSpanMinutes();
 		}
 		
 		return new TimeSpan(currentTimeSpent);
 	}
 
-	/**
-	 * Returns the time spent on the task
-	 * 
-	 * @return 	time elapsed between the start time and end time
-	 * @throws 	IllegalStateException 
-	 * 			whenever the end time is not yet determined
-	 */
-	public TimeSpan getTimeSpent() {
-		return getTimeSpent(endTime);
-	}
+//	/**
+//	 * Assumes the task is concluded (hasEnded() == true) and returns the time
+//	 * in working minutes that was spent on this task.
+//	 * 
+//	 * @return 	time elapsed between the start time and end time of the task.
+//	 * 			
+//	 * @throws 	IllegalStateException 
+//	 * 			whenever the end time is not yet determined
+//	 */ //TODO moet eigenlijk niet bestaan
+//	public TimeSpan getTimeSpent() {
+//		return getTimeSpent(endTime);
+//	}
 
 	/**
 	 * Returns the start time of the Task.

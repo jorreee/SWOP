@@ -36,16 +36,16 @@ public class TaskView {
 		return task.getAcceptableDeviation();
 	}
 	
-	public int getOvertimePercentage(LocalDateTime currentTime) {
-		return task.getOverTimePercentage(currentTime);
-	}
-	
 	public LocalDateTime getEndTime() {
 		return task.getEndTime();
 	}
 	
 	public String getStatusAsString() {
 		return task.getStatus();
+	}
+	
+	public boolean hasPrerequisites() {
+		return !getPrerequisites().isEmpty();
 	}
 	
 	public List<TaskView> getPrerequisites() {
@@ -56,12 +56,8 @@ public class TaskView {
 		return taskPrereqs.build();
 	}
 	
-	public TaskView getAlternativeTo() {
-		Task alt = task.getAlternativeFor();
-		if(alt == null) {
-			return null;
-		}
-		return new TaskView(alt);
+	public boolean hasReplacement() {
+		return getReplacement() != null;
 	}
 	
 	public TaskView getReplacement() {
@@ -72,12 +68,16 @@ public class TaskView {
 		return new TaskView(rep);
 	}
 	
-	public boolean hasPrerequisites() {
-		return !getPrerequisites().isEmpty();
-	}
-	
 	public boolean isAlternative() {
 		return getAlternativeTo() != null;
+	}
+	
+	public TaskView getAlternativeTo() {
+		Task alt = task.getAlternativeFor();
+		if(alt == null) {
+			return null;
+		}
+		return new TaskView(alt);
 	}
 	
 	public boolean hasEnded() {
@@ -90,6 +90,10 @@ public class TaskView {
 	
 	public boolean isOnTime(LocalDateTime currentTime) {
 		return task.isOnTime(currentTime);
+	}
+	
+	public int getOvertimePercentage(LocalDateTime currentTime) {
+		return task.getOverTimePercentage(currentTime);
 	}
 	
 	public boolean hasAsTask(Task t) {
