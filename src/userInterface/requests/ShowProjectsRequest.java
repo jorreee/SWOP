@@ -38,8 +38,9 @@ public class ShowProjectsRequest extends Request {
 				// Parse input
 				int projectID = Integer.parseInt(input);
 				
-				if(projectID < 0 || projectID > projectAmount)
+				if(projectID < 0 || projectID > projectAmount) {
 					throw new IllegalArgumentException();
+				}
 				
 				ProjectView project = projects.get(projectID);
 				
@@ -58,7 +59,7 @@ public class ShowProjectsRequest extends Request {
 						delay = project.getEstimatedDelay(facade.getCurrentTime());
 					}
 				} else {
-					delay = project.getRealDelay(facade.getCurrentTime()); //TODO bad
+					delay = project.getRealDelay(facade.getCurrentTime());
 				}
 				projectHeader.append(" (Due "
 						+ project.getDueTime().toLocalDate().toString());
