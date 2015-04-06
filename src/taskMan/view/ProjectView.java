@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import taskMan.Project;
+import taskMan.util.TimeSpan;
 
 import com.google.common.collect.ImmutableList;
 
@@ -49,22 +50,58 @@ public class ProjectView {
 		return tasks.build();
 	}
 
+	/**
+	 * Returns a list of the id's of the available tasks of the project
+	 * 
+	 * @return	a list of the available tasks
+	 */
 	public List<TaskView> getAvailableTasks() {
-		ImmutableList.Builder<TaskView> tasks = ImmutableList.builder();
-		tasks.addAll(project.getAvailableTaskViews());
-		return tasks.build();
+		ImmutableList.Builder<TaskView> availableTasks = ImmutableList.builder();
+		for(TaskView task : project.getTaskViews()) {
+			if(task.isAvailable()) {
+				availableTasks.add(task);
+			}
+		}
+		return availableTasks.build();
 	}
 	
-	public int[] getCurrentDelay(LocalDateTime time) {
-		return project.getDelay(time);
+	public int[] getRealDelay(LocalDateTime time) {
+		if(!project.getEndTime().isAfter(project.getDueTime())) {
+			return new int[]{ 0,0,0,0,0 };
+		}
+		return new TimeSpan(project.getDueTime(),project.getEndTime()).getSpan();
 	}
-	
-	public int[] getEstimatedDelay(LocalDateTime time) {
-		return project.getEstimatedDelay(time);
+
+	/**
+	 * Returns the estimated time in working minutes that the project 
+	 * will be finished over time.
+	 * 
+	 * @param	projectID
+	 * 			the id of the given project
+	 * @return	The amount of years, months, days, hours and minutes
+	 * 			that are estimated to be required to finish the project
+	 */
+	public int[] getEstimatedDelay(LocalDateTime currentTime) {
+		LocalDateTime estimatedEndTime = project.getEstimatedEndTime(currentTime);
+		
+		if(project.getDueTime().isAfter(estimatedEndTime)) {
+			return new TimeSpan(0).getSpan();
+		}
+		
+		return new TimeSpan(TimeSpan.getDifferenceWorkingMinutes(estimatedEndTime, project.getDueTime())).getSpan();
+		
 	}
-	
-	public boolean isEstimatedOnTime(LocalDateTime time) {
-		return project.isEstimatedOnTime(time);
+
+	/**
+	 * A check to determine if the project will end on time
+	 * 
+	 * @param	currentTime
+	 * 			The current time of the system
+	 * @return	True if the estimated required time to finish all tasks is
+	 * 			less than the time until the project due time
+	 */
+	public boolean isEstimatedOnTime(LocalDateTime currentTime) {		
+		return !project.getEstimatedEndTime(currentTime).isAfter(project.getDueTime());
 	}
 	
 	public boolean isFinished() {

@@ -468,7 +468,7 @@ public class Task implements Dependant {
 					longest = candidate;
 				}
 			} catch(ClassCastException e) {
-				System.out.println("dirty."); //TODO
+				System.out.println("dirty."); //TODO niet doen
 			}
 		}
 		if(alternativeFor != null) {

@@ -480,26 +480,13 @@ public class Project implements Dependant {
 		}
 		return tasks;
 	}
-
-	/**
-	 * Returns a list of the id's of the available tasks of the project
-	 * 
-	 * @return	a list of the availabke tasks
-	 */
-	public ArrayList<TaskView> getAvailableTaskViews() {
-		ArrayList<TaskView> availableTasks = new ArrayList<TaskView>();
-		for(Task task : getAvailableTasks()) {
-			availableTasks.add(new TaskView(task));
-		}
-		return availableTasks;
-	}
 	
 	/**
 	 * Returns a list of the id's of the available tasks of the project
 	 * 
-	 * @return	a list of the availabke tasks' id's
+	 * @return	a list of the available tasks' id's
 	 */
-	private ArrayList<Task> getAvailableTasks() {
+	private List<Task> getAvailableTasks() {
 		ArrayList<Task> availableTasks = new ArrayList<Task>();
 		for(Task task : taskList) {
 			if(task.isAvailable()) {
@@ -509,17 +496,17 @@ public class Project implements Dependant {
 		return availableTasks;
 	}
 
-	/**
-	 * Returns whether the project is on time;
-	 * 
-	 * @param 	current
-	 * 			The current time to compare with.
-	 * @return	True if the end time comes before the due time
-	 * 			True if the project has not yet finished
-	 * 			False otherwise.
-	 */
-	public boolean isOnTime(LocalDateTime current){
-		return new TimeSpan(getEstimatedDelay(current)).isZero();
+//	/**
+//	 * Returns whether the project is on time;
+//	 * 
+//	 * @param 	current
+//	 * 			The current time to compare with.
+//	 * @return	True if the end time comes before the due time
+//	 * 			True if the project has not yet finished
+//	 * 			False otherwise.
+//	 */
+//	public boolean isOnTime(LocalDateTime current){
+//		return new TimeSpan(getEstimatedDelay(current)).isZero();
 //		if(endTime == null) {
 //			if(current.isAfter(dueTime)) {
 //				return false;
@@ -530,25 +517,25 @@ public class Project implements Dependant {
 //		else{
 //			return endTime.isBefore(dueTime);
 //		}
-	}
-
-	/**
-	 * Returns the real-time delay of the project. It compares the current time to the
-	 * due date of the project.
-	 * 
-	 * @param 	current
-	 * 			The current time to check with.
-	 * @return	The delay of the project
-	 * 			a zero array if there isn't any.
-	 */
-	public int[] getDelay(LocalDateTime current){
-		if (current.isBefore(dueTime)) {
-			return new int[] { 0,0,0,0,0};		
-		} 
-		TimeSpan delay = new TimeSpan(dueTime, current);
-		return delay.getSpan();
-		
-	}
+//	}
+//
+//	/**
+//	 * Returns the real-time delay of the project. It compares the current time to the
+//	 * due date of the project.
+//	 * 
+//	 * @param 	current
+//	 * 			The current time to check with.
+//	 * @return	The delay of the project
+//	 * 			a zero array if there isn't any.
+//	 */
+//	public int[] getDelay(LocalDateTime current){
+//		if (current.isBefore(dueTime)) {
+//			return new int[] { 0,0,0,0,0 };		
+//		} 
+//		TimeSpan delay = new TimeSpan(dueTime, current);
+//		return delay.getSpan();
+//		
+//	}
 	
 	public boolean setTaskFinished(TaskView t, LocalDateTime startTime, LocalDateTime endTime) {
 		if(!isValidTaskView(t)) {
@@ -607,81 +594,81 @@ public class Project implements Dependant {
 	public boolean isFinished() {
 		return state.isFinished();
 	}
-
-	/**
-	 * Returns the estimated time that the project will be finished over time.
-	 * 
-	 * e.g. if the due time is tomorrow and there's an estimated 2 more days needed,
-	 * 		this method will return [0,0,1,0,0]
-	 * 
-	 * @param	projectID
-	 * 			the id of the given project
-	 * @return	The amount of years, months, days, hours and minutes
-	 * 			that are estimated to be required to finish the project
-	 */
-	public int[] getEstimatedDelay(LocalDateTime currentTime) {
-		if(!hasAvailableTasks()) {
-			return new TimeSpan(0).getSpan();
-		}
-		
-		LocalDateTime estimatedEndTime = TimeSpan.addSpanToLDT(currentTime, getMaxTimeChain());
-		if(dueTime.isAfter(estimatedEndTime)) {
-			return new TimeSpan(0).getSpan();
-		}
-		
-		return new TimeSpan(TimeSpan.getDifferenceWorkingMinutes(estimatedEndTime, dueTime)).getSpan();
-		
-	}
 	
-	private TimeSpan getMaxTimeChain() {
-		List<Task> availableTasks = getAvailableTasks();
-		
-		// FOR EACH AVAILABLE TASK CALCULATE CHAIN
-		int availableBranches = availableTasks.size();
-		TimeSpan[] timeChains = new TimeSpan[availableBranches];
-		for(int i = 0 ; i < availableBranches ; i++) {
-			timeChains[i] = availableTasks.get(i).getMaxDelayChain();
+	/**
+	 * Calculate the estimated end time of the project, depending on
+	 * the task that has the longest delay chain. If no tasks are
+	 * currently available it will return the current Time. 
+	 * 
+	 * @return The estimated end date of the project. Will always be 
+	 */
+	public LocalDateTime getEstimatedEndTime(LocalDateTime currentTime) {
+		if(isFinished()) {
+			return endTime;
 		}
+		List<Task> availableTasks = getAvailableTasks();
+		LocalDateTime furthestEndDate = currentTime;
 		
-		// FIND LONGEST CHAIN
-		TimeSpan longest = new TimeSpan(0);
-		for(TimeSpan span : timeChains) {
-			if(span.isLonger(longest)) {
-				longest = span;
+		if(availableTasks.size() == 0) {
+			return furthestEndDate;
+		}
+		LocalDateTime candidate = furthestEndDate;
+		for(Task t : availableTasks) {
+			candidate = TimeSpan.addSpanToLDT(t.getBeginTime(), t.getMaxDelayChain());
+			if(candidate.isAfter(furthestEndDate)) {
+				furthestEndDate = candidate;
 			}
 		}
-		return longest;
-	}
-
-	/**
-	 * A check to determine if the project will end on time
-	 * 
-	 * @param	currentTime
-	 * 			The current time of the system
-	 * @return	True if the estimated required time to finish all tasks is
-	 * 			less than the time until the project due time
-	 */
-	public boolean isEstimatedOnTime(LocalDateTime currentTime) {
-//		TimeSpan estimatedDuration = new TimeSpan(getEstimatedProjectDelay(currentTime));
-//		return estimatedDuration.isZero();
 		
-		if(isFinished()) {
-			return !endTime.isAfter(dueTime);
-		}
+		return furthestEndDate;
 		
-		LocalDateTime estimatedEndTime = TimeSpan.addSpanToLDT(currentTime, getMaxTimeChain());
-		
-		return !estimatedEndTime.isAfter(dueTime);
 	}
-
-	/**
-	 * Returns whether or not this project has any tasks available
-	 * 
-	 * @return	True if there is a task assigned to this project which is available
-	 */
-	private boolean hasAvailableTasks() {
-		return getAvailableTasks().size() > 0;
-	}
+//
+//	/**
+//	 * Returns the estimated time that the project will be finished over time.
+//	 * 
+//	 * e.g. if the due time is tomorrow and there's an estimated 2 more days needed,
+//	 * 		this method will return [0,0,1,0,0]
+//	 * 
+//	 * @param	projectID
+//	 * 			the id of the given project
+//	 * @return	The amount of years, months, days, hours and minutes
+//	 * 			that are estimated to be required to finish the project
+//	 */
+//	public int[] getEstimatedDelay(LocalDateTime currentTime) {
+//		if(getAvailableTasks().size() == 0) {
+//			return new TimeSpan(0).getSpan();
+//		}
+//
+//		LocalDateTime estimatedEndTime = getEstimatedEndTime(currentTime);
+////		LocalDateTime estimatedEndTime = TimeSpan.addSpanToLDT(currentTime, getMaxTimeChainTask());
+//		if(dueTime.isAfter(estimatedEndTime)) {
+//			return new TimeSpan(0).getSpan();
+//		}
+//		
+//		return new TimeSpan(TimeSpan.getDifferenceWorkingMinutes(estimatedEndTime, dueTime)).getSpan();
+//		
+//	}
+	
+//	private TimeSpan getMaxTimeChainTask() {
+//		List<Task> availableTasks = getAvailableTasks();
+//		
+//		// FOR EACH AVAILABLE TASK CALCULATE CHAIN
+//		int availableBranches = availableTasks.size();
+//		TimeSpan[] timeChains = new TimeSpan[availableBranches];
+//		for(int i = 0 ; i < availableBranches ; i++) {
+//			timeChains[i] = availableTasks.get(i).getMaxDelayChain();
+//		}
+//		
+//		// FIND LONGEST CHAIN
+//		TimeSpan longest = new TimeSpan(0);
+//		for(TimeSpan span : timeChains) {
+//			if(span.isLonger(longest)) {
+//				longest = span;
+//			}
+//		}
+//		return longest;
+//	}
 	
 	/**
 	 * Creates a Raw Planned Task as issued by the input file.

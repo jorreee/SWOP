@@ -58,12 +58,12 @@ public class ShowProjectsRequest extends Request {
 						delay = project.getEstimatedDelay(facade.getCurrentTime());
 					}
 				} else {
-					delay = project.getCurrentDelay(facade.getCurrentTime());
+					delay = project.getRealDelay(facade.getCurrentTime()); //TODO bad
 				}
 				projectHeader.append(" (Due "
 						+ project.getDueTime().toLocalDate().toString());
 
-				if(delay != null) {
+				if(delay != null) { //TODO very bad
 					projectHeader.append("(");
 					if(delay[0] != 0) projectHeader.append(delay[0] + " working years "); // years
 					if(delay[1] != 0) projectHeader.append(delay[1] + " working months "); // months
@@ -90,7 +90,7 @@ public class ShowProjectsRequest extends Request {
 					if(tasks.get(i).isOnTime(facade.getCurrentTime())) {
 						taskiHead.append(", on time");
 					} else {
-						taskiHead.append(", over time by " + tasks.get(i).getOvertimePercentage(facade.getCurrentTime()) + "%");
+						taskiHead.append(", over time by " + tasks.get(i).getOverTimePercentage(facade.getCurrentTime()) + "%");
 					}
 					System.out.println(taskiHead.toString()); // PRINT TASK i FROM SELECTED PROJECT HEADER
 				}
@@ -125,7 +125,7 @@ public class ShowProjectsRequest extends Request {
 				if(task.isOnTime(facade.getCurrentTime()))
 					taskHeader.append(", on time");
 				else {
-					taskHeader.append(", over time by " + task.getOvertimePercentage(facade.getCurrentTime()) + "%");
+					taskHeader.append(", over time by " + task.getOverTimePercentage(facade.getCurrentTime()) + "%");
 				}
 
 				if(task.hasPrerequisites()) {

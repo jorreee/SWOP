@@ -81,6 +81,10 @@ public class TaskView {
 		return new TaskView(alt);
 	}
 	
+	public boolean isAvailable() {
+		return task.isAvailable();
+	}
+	
 	public boolean hasEnded() {
 		return task.hasEnded();
 	}
