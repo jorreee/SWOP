@@ -3,6 +3,7 @@ package taskMan.state;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import taskMan.Planning;
 import taskMan.Task;
 import taskMan.util.Dependant;
 
@@ -16,6 +17,11 @@ public class FinishedTask implements TaskStatus {
 
 	@Override
 	public boolean makeAvailable(List<Task> preList) {
+		return false;
+	}
+	
+	@Override
+	public boolean execute(Planning plan) {
 		return false;
 	}
 

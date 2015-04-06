@@ -3,6 +3,7 @@ package taskMan.state;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import taskMan.Planning;
 import taskMan.Task;
 import taskMan.util.Dependant;
 
@@ -23,6 +24,11 @@ public class UnavailableTask implements TaskStatus {
 		}
 		task.setTaskStatus(new AvailableTask(task));
 		return true;
+	}
+	
+	@Override
+	public boolean execute(Planning plan) {
+		return false;
 	}
 
 	@Override
