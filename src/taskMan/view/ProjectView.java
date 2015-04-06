@@ -65,12 +65,12 @@ public class ProjectView {
 		return availableTasks.build();
 	}
 	
-	public int[] getRealDelay(LocalDateTime time) {
-		if(!project.getEndTime().isAfter(project.getDueTime())) {
-			return new int[]{ 0,0,0,0,0 };
-		}
-		return new TimeSpan(project.getDueTime(),project.getEndTime()).getSpan();
-	}
+//	public int[] getRealDelay(LocalDateTime time) {
+//		if(!project.getEndTime().isAfter(project.getDueTime())) {
+//			return new int[]{ 0,0,0,0,0 };
+//		}
+//		return new TimeSpan(project.getDueTime(),project.getEndTime()).getSpan();
+//	}
 
 	/**
 	 * Returns the estimated time in working minutes that the project 
@@ -81,14 +81,14 @@ public class ProjectView {
 	 * @return	The amount of years, months, days, hours and minutes
 	 * 			that are estimated to be required to finish the project
 	 */
-	public int[] getEstimatedDelay(LocalDateTime currentTime) {
+	public int[] getDelay(LocalDateTime currentTime) {
 		LocalDateTime estimatedEndTime = project.getEstimatedEndTime(currentTime);
 		
 		if(project.getDueTime().isAfter(estimatedEndTime)) {
 			return new TimeSpan(0).getSpan();
 		}
 		
-		return new TimeSpan(TimeSpan.getDifferenceWorkingMinutes(estimatedEndTime, project.getDueTime())).getSpan();
+		return new TimeSpan(TimeSpan.getDifferenceWorkingMinutes(project.getDueTime(), estimatedEndTime)).getSpan();
 		
 	}
 
