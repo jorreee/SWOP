@@ -218,7 +218,7 @@ public class UseCase1ShowProjectsTest {
 		assertEquals(task00.getEndTime(),task00End);
 		assertTrue(task00.isOnTime(taskManager.getCurrentTime()));
 		assertFalse(task00.isUnacceptableOverdue(taskManager.getCurrentTime()));
-		assertEquals(task00.getOvertimePercentage(taskManager.getCurrentTime()),0);
+		assertEquals(task00.getOverTimePercentage(taskManager.getCurrentTime()),0);
 		
 		//--------------------------------------------------------------------------
 		// Test Project 1 tasks
@@ -230,7 +230,7 @@ public class UseCase1ShowProjectsTest {
 		assertEquals(task10.getStartTime(),task10Start);
 		assertEquals(task10.getEndTime(),task10End);
 		assertFalse(task10.isUnacceptableOverdue(taskManager.getCurrentTime()));
-		assertEquals(task10.getOvertimePercentage(taskManager.getCurrentTime()),0);
+		assertEquals(task10.getOverTimePercentage(taskManager.getCurrentTime()),0);
 		
 		TaskView task11 = project1.getTasks().get(1);
 		assertTrue(task11.getDescription().equals("TASK 11"));
@@ -239,7 +239,7 @@ public class UseCase1ShowProjectsTest {
 		assertEquals(task11.getStartTime(),task11Start);
 		assertEquals(task11.getEndTime(),task11End);
 		assertFalse(task11.isUnacceptableOverdue(taskManager.getCurrentTime()));		// !!!!!!!
-		assertEquals(task11.getOvertimePercentage(taskManager.getCurrentTime()),0);		// !!!!!!!
+		assertEquals(task11.getOverTimePercentage(taskManager.getCurrentTime()),0);		// !!!!!!!
 		
 		TaskView task12 = project1.getTasks().get(2);
 		assertTrue(task12.getDescription().equals("TASK 12"));
@@ -249,7 +249,7 @@ public class UseCase1ShowProjectsTest {
 		assertEquals(task12.getEndTime(),null);
 		assertFalse(task12.isOnTime(taskManager.getCurrentTime()));
 		assertTrue(task12.isUnacceptableOverdue(taskManager.getCurrentTime()));
-		assertTrue(task12.getOvertimePercentage(taskManager.getCurrentTime()) > 0);
+		assertTrue(task12.getOverTimePercentage(taskManager.getCurrentTime()) > 0);
 
 		TaskView task13 = project1.getTasks().get(3);
 		assertTrue(task13.getDescription().equals("TASK 13"));
@@ -258,7 +258,7 @@ public class UseCase1ShowProjectsTest {
 		assertEquals(task13.getStartTime(),null);
 		assertEquals(task13.getEndTime(),null);
 		assertTrue(task13.isUnacceptableOverdue(taskManager.getCurrentTime()));
-		assertTrue(task13.getOvertimePercentage(taskManager.getCurrentTime()) > 0);
+		assertTrue(task13.getOverTimePercentage(taskManager.getCurrentTime()) > 0);
 		
 		//--------------------------------------------------------------------------
 		// Test Project 2 tasks
