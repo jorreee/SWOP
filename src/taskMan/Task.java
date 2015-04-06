@@ -27,10 +27,11 @@ public class Task implements Dependant {
 
 	private final int taskID;
 	private final String description;
-	private final TimeSpan estimatedDuration;
-	private final int acceptableDeviation;
+//	private final TimeSpan estimatedDuration;
+//	private final int acceptableDeviation;
 	
-	private LocalDateTime beginTime;
+//	private LocalDateTime beginTime;
+	private Planning plan;
 	private LocalDateTime endTime;
 	
 	private final Task alternativeFor;
@@ -95,8 +96,9 @@ public class Task implements Dependant {
 		}
 		this.taskID = taskID;
 		this.description = taskDescription;
-		this.estimatedDuration = new TimeSpan(estimatedDuration);
-		this.acceptableDeviation = acceptableDeviation;
+		this.plan = new Planning(estimatedDuration, acceptableDeviation);
+//		this.estimatedDuration = new TimeSpan(estimatedDuration);
+//		this.acceptableDeviation = acceptableDeviation;
 		this.resMan = resMan;
 		
 		this.state = new UnavailableTask(this);
@@ -331,21 +333,21 @@ public class Task implements Dependant {
 	 * 			When the start time of the task is after the time given.
 	 */ //TODO geeft TimeSpan object terug, ça marche?
 	public TimeSpan getTimeSpent(LocalDateTime currentTime) {
-		if(beginTime == null) {
+		if(getBeginTime() == null) {
 			return new TimeSpan(0);
 		}
 		if(currentTime == null) {
 			return new TimeSpan(0);
 		}
-		if(beginTime.isAfter(currentTime)) {
+		if(getBeginTime().isAfter(currentTime)) {
 			return new TimeSpan(0);
 		}
 		if(hasEnded()) {
-			return new TimeSpan(TimeSpan.getDifferenceWorkingMinutes(beginTime, endTime));
+			return new TimeSpan(TimeSpan.getDifferenceWorkingMinutes(getBeginTime(), endTime));
 		}
 		
 		int currentTimeSpent = TimeSpan.getDifferenceWorkingMinutes(
-				beginTime, 
+				getBeginTime(), 
 				currentTime);
 		
 		if(alternativeFor != null) {
@@ -375,7 +377,7 @@ public class Task implements Dependant {
 	 * @return	The start time of the Task.
 	 */
 	public LocalDateTime getBeginTime() {
-		return beginTime;
+		return plan.getBeginTime();
 	}
 
 	/**
@@ -387,13 +389,7 @@ public class Task implements Dependant {
 	 * 			If the new begin time is null or the old begin time is already set. 
 	 */
 	public void setBeginTime(LocalDateTime beginTime) throws IllegalArgumentException{
-		if(beginTime==null) {
-			throw new IllegalArgumentException("The new beginTime is null");
-		}
-		if(getBeginTime()!=null) {
-			throw new IllegalArgumentException("The beginTime is already set");
-		}
-		this.beginTime = beginTime;
+		plan.setBeginTime(beginTime);
 	}
 
 	/**
@@ -438,7 +434,7 @@ public class Task implements Dependant {
 	 * @return	The estimated duration of the Task.
 	 */
 	public TimeSpan getEstimatedDuration() {
-		return estimatedDuration;
+		return plan.getEstimatedDuration();
 	}
 
 	/**
@@ -447,7 +443,7 @@ public class Task implements Dependant {
 	 * @return	The acceptable deviation of the Task.
 	 */
 	public int getAcceptableDeviation() {
-		return acceptableDeviation;
+		return plan.getAcceptableDeviation();
 	}
 	
 	public Task getAlternativeFor() {
