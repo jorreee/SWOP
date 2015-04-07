@@ -68,7 +68,7 @@ public class Planning {
 		}
 		
 		int currentTimeSpent = TimeSpan.getDifferenceWorkingMinutes(
-				getBeginTime(), 
+				beginTime, 
 				currentTime);
 		
 		return new TimeSpan(currentTimeSpent);
