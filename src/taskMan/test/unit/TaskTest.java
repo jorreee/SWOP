@@ -279,16 +279,17 @@ public class TaskTest {
 	}
 	
 	@Test
-	public void removeAlternativesDep(){
+	public void removeAlternativesDepTest(){
 		TaskAsPrerequisite.setFailed(LocalDateTime.of(2015, 2, 11, 16, 0), 
 				LocalDateTime.of(2015, 2, 12, 16, 0));
 		Task temp = new Task(4, "temp", 50, 3, resMan, 
 				TaskAsPrerequisite.getPrerequisites(), TaskAsPrerequisite);
 		assertEquals(temp,TaskAsPrerequisite.getReplacement());
-		System.out.println(TaskAsPrerequisite.getDependants().size());
-		System.out.println(temp.getDependants().size());
-		System.out.println(TaskDep1.getPrerequisites().get(0).getDescription());
-		assertTrue(TaskAsPrerequisite.getDependants().isEmpty());
+		assertTrue(temp.getDependants().isEmpty());
+		temp.addDependant(TaskDep1);
+		assertEquals(1,temp.getDependants().size());
+		temp.removeAlternativesDependencies();
+		assertTrue(temp.getDependants().isEmpty());
 	}
 	
 }
