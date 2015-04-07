@@ -1,7 +1,6 @@
 package taskMan.state;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import taskMan.Task;
 import taskMan.util.Dependant;
@@ -15,7 +14,7 @@ public class AvailableTask implements TaskStatus {
 	}
 
 	@Override
-	public boolean makeAvailable(List<Task> preLists) {
+	public boolean makeAvailable() {
 		return false;
 	}
 

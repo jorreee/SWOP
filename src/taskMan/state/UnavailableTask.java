@@ -1,7 +1,6 @@
 package taskMan.state;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import taskMan.Task;
 import taskMan.util.Dependant;
@@ -15,8 +14,8 @@ public class UnavailableTask implements TaskStatus {
 	}
 
 	@Override
-	public boolean makeAvailable(List<Task> preList) {
-		for(Task t : preList) {
+	public boolean makeAvailable() {
+		for(Task t : task.getPrerequisites()) {
 			if(!t.hasFinishedEndpoint()) {
 				return false;
 			}

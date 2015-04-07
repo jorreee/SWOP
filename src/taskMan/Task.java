@@ -32,7 +32,7 @@ public class Task implements Dependant {
 	
 //	private LocalDateTime beginTime;
 	private Planning plan;
-	private LocalDateTime endTime;
+//	private LocalDateTime endTime;
 	
 	private final Task alternativeFor;
 	private Task replacement;
@@ -120,7 +120,7 @@ public class Task implements Dependant {
 		}
 		removeAlternativesDependencies();
 
-		state.makeAvailable(prerequisites);
+		state.makeAvailable();
 //		state.makeAvailable(unfinishedPrerequisites);
 		
 	}
@@ -234,7 +234,7 @@ public class Task implements Dependant {
 		}
 		prerequisites.remove(preIndex);
 //		unfinishedPrerequisites.remove(preIndex);
-		state.makeAvailable(prerequisites);
+		state.makeAvailable();
 //		state.makeAvailable(unfinishedPrerequisites);
 		return true;
 	}
@@ -333,29 +333,11 @@ public class Task implements Dependant {
 	 * 			When the start time of the task is after the time given.
 	 */ //TODO geeft TimeSpan object terug, ça marche?
 	public TimeSpan getTimeSpent(LocalDateTime currentTime) {
-		if(getBeginTime() == null) {
-			return new TimeSpan(0);
+		TimeSpan taskTimeSpent = plan.getTimeSpent(currentTime);
+		if(alternativeFor == null) {
+			return taskTimeSpent;
 		}
-		if(currentTime == null) {
-			return new TimeSpan(0);
-		}
-		if(getBeginTime().isAfter(currentTime)) {
-			return new TimeSpan(0);
-		}
-		if(hasEnded()) {
-			return new TimeSpan(TimeSpan.getDifferenceWorkingMinutes(getBeginTime(), endTime));
-		}
-		
-		int currentTimeSpent = TimeSpan.getDifferenceWorkingMinutes(
-				getBeginTime(), 
-				currentTime);
-		
-		if(alternativeFor != null) {
-			currentTimeSpent = currentTimeSpent
-							 + alternativeFor.getTimeSpent(currentTime).getSpanMinutes();
-		}
-		
-		return new TimeSpan(currentTimeSpent);
+		return taskTimeSpent.add(alternativeFor.getTimeSpent(currentTime));
 	}
 
 //	/**
@@ -398,7 +380,7 @@ public class Task implements Dependant {
 	 * @return	The end time of the Task.
 	 */
 	public LocalDateTime getEndTime() {
-		return endTime;
+		return plan.getEndTime();
 	}
 
 	/**
@@ -410,13 +392,14 @@ public class Task implements Dependant {
 	 * 			If the new end time is null or the old end time is already set. 
 	 */
 	public void setEndTime(LocalDateTime endTime) throws IllegalArgumentException {
-		if(endTime==null) {
-			throw new IllegalArgumentException("The new endTime is null");
-		}
-		if(getEndTime()!=null) {
-			throw new IllegalArgumentException("The endtime is already set");
-		}
-		this.endTime = endTime;
+//		if(endTime==null) {
+//			throw new IllegalArgumentException("The new endTime is null");
+//		}
+//		if(getEndTime()!=null) {
+//			throw new IllegalArgumentException("The endtime is already set");
+//		}
+//		this.endTime = endTime;
+		plan.setEndTime(endTime);
 	}
 
 	/**
@@ -692,8 +675,7 @@ public class Task implements Dependant {
 //	 * is well on time.
 //	 * 
 //	 * @return	The percentage of overdue.
-//	 */ //TODO we kunnen ook stellen dat een taak enkel overtime is wanneer hij voorbij
-//		// de unacceptable delay is.
+//	 */
 //	public int getOverTimePercentage(LocalDateTime currentTime) {
 //		if(isOnTime(currentTime)) {
 //			return 0;
