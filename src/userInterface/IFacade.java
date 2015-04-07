@@ -5,6 +5,7 @@ import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.List;
 
+import taskMan.resource.Resource;
 import taskMan.util.IntPair;
 import taskMan.view.ProjectView;
 import taskMan.view.ResourceView;
@@ -29,10 +30,17 @@ public interface IFacade {
 	public boolean createProject(String name, String description,
 			LocalDateTime dueTime);
 
-	public boolean createRawTask(int project, String description,
-			int estimatedDuration, int acceptableDeviation,
-			List<Integer> prerequisiteTasks, int alternativeFor,
-			List<IntPair> requiredResources, String taskStatus, LocalDateTime startTime, LocalDateTime endTime);
+	public boolean createRawTask(int project, 
+			String description,
+			int estimatedDuration, 
+			int acceptableDeviation,
+			List<Integer> prerequisiteTasks, 
+			List<Resource> requiredResources, 
+			int alternativeFor, 
+//			List<IntPair> requiredResources, TODO
+			String taskStatus, 
+			LocalDateTime startTime, 
+			LocalDateTime endTime);
 
 	public boolean createRawPlannedTask(int project, String description,
 			int estimatedDuration, int acceptableDeviation,
@@ -43,7 +51,7 @@ public interface IFacade {
 
 	public boolean createTask(ProjectView project, String description,
 			int estimatedDuration, int acceptableDeviation,
-			List<TaskView> prerequisiteTasks, TaskView alternativeFor);
+			List<TaskView> prerequisiteTasks, List<Resource> requiredResources, TaskView alternativeFor);
 
 	public boolean setTaskFinished(ProjectView projectID, TaskView taskID,
 			LocalDateTime startTime, LocalDateTime endTime);

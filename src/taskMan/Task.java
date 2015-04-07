@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import taskMan.resource.Resource;
 import taskMan.resource.ResourceManager;
 import taskMan.state.TaskStatus;
 import taskMan.state.UnavailableTask;
@@ -68,6 +69,7 @@ public class Task implements Dependant {
 			int acceptableDeviation, 
 			ResourceManager resMan, 
 			List<Task> prerequisiteTasks,
+			List<Resource> requiredResources, 
 			Task alternativeFor) throws IllegalArgumentException {
 		
 		if(!isValidTaskID(taskID)) {
@@ -106,6 +108,9 @@ public class Task implements Dependant {
 		this.dependants = new ArrayList<Dependant>();
 		this.prerequisites = new ArrayList<Task>();
 //		this.unfinishedPrerequisites = new ArrayList<Task>();
+		for(Resource r : requiredResources) {
+			resMan.reserve(r, this);
+		}
 		
 		this.alternativeFor = alternativeFor;
 		if(alternativeFor != null) {
@@ -151,6 +156,7 @@ public class Task implements Dependant {
 			int acceptableDeviation, 
 			ResourceManager resMan, 
 			List<Task> prerequisiteTasks,
+			List<Resource> requiredResources, 
 			Task alternativeFor,
 			String taskStatus,
 			LocalDateTime beginTime, 
@@ -162,6 +168,7 @@ public class Task implements Dependant {
 				acceptableDeviation, 
 				resMan, 
 				prerequisiteTasks,
+				requiredResources, 
 				alternativeFor);
 		
 		if(taskStatus.equalsIgnoreCase("failed")) {
@@ -362,17 +369,17 @@ public class Task implements Dependant {
 		return plan.getBeginTime();
 	}
 
-	/**
-	 * Sets the start time of the Task.
-	 * 
-	 * @param 	beginTime
-	 * 			The new start time for the Task.
-	 * @throws	IllegalArgumentException
-	 * 			If the new begin time is null or the old begin time is already set. 
-	 */
-	public void setBeginTime(LocalDateTime beginTime) throws IllegalArgumentException{
-		plan.setBeginTime(beginTime);
-	}
+//	/**
+//	 * Sets the start time of the Task.
+//	 * 
+//	 * @param 	beginTime
+//	 * 			The new start time for the Task.
+//	 * @throws	IllegalArgumentException
+//	 * 			If the new begin time is null or the old begin time is already set. 
+//	 */
+//	public void setBeginTime(LocalDateTime beginTime) throws IllegalArgumentException{
+//		plan.setBeginTime(beginTime);
+//	}
 
 	/**
 	 * Returns the end time of the Task.
@@ -683,6 +690,14 @@ public class Task implements Dependant {
 //		int overdue = getTimeSpent(currentTime).getDifferenceMinute(estimatedDuration);
 //		return ( overdue / estimatedDuration.getSpanMinutes() ) * 100;
 //	}
+	
+	public boolean plan(LocalDateTime startTime) {
+		if(getBeginTime() != null) {
+			return false;
+		}
+		plan.setBeginTime(startTime);
+		return true;
+	}
 	
 	/**
 	 * Returns an amount of possible Task starting times.

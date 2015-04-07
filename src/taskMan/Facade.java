@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import taskMan.resource.DailyAvailability;
+import taskMan.resource.Resource;
 import taskMan.util.IntPair;
 import taskMan.view.ProjectView;
 import taskMan.view.ResourceView;
@@ -48,16 +49,29 @@ public class Facade implements IFacade {
 	@Override
 	public boolean createTask(ProjectView project, String description,
 			int estimatedDuration, int acceptableDeviation,
-			List<TaskView> prerequisiteTasks, TaskView alternativeFor) {
-		return taskMan.createTask(project, description, estimatedDuration, acceptableDeviation, prerequisiteTasks, alternativeFor);
+			List<TaskView> prerequisiteTasks, List<Resource> requiredResources,
+			TaskView alternativeFor) {
+		return taskMan.createTask(project, 
+				description, 
+				estimatedDuration, 
+				acceptableDeviation, 
+				prerequisiteTasks, 
+				requiredResources,
+				alternativeFor);
 	}
 
 	@Override
-	public boolean createRawTask(int project, String description,
-			int estimatedDuration, int acceptableDeviation,
-			List<Integer> prerequisiteTasks, int alternativeFor,
+	public boolean createRawTask(int project, 
+			String description,
+			int estimatedDuration, 
+			int acceptableDeviation,
+			List<Integer> prerequisiteTasks, 
+			List<Resource> requiredResources, 
+			int alternativeFor,
 			List<IntPair> requiredResources,
-			String taskStatus, LocalDateTime startTime, LocalDateTime endTime) {
+			String taskStatus, 
+			LocalDateTime startTime, 
+			LocalDateTime endTime) {
 		return taskMan.createRawTask(project, description, estimatedDuration, acceptableDeviation, prerequisiteTasks, alternativeFor, taskStatus, startTime, endTime);
 	}
 

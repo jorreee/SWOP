@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import taskMan.resource.Resource;
 import taskMan.resource.ResourceManager;
 import taskMan.state.OngoingProject;
 import taskMan.state.ProjectStatus;
@@ -142,6 +143,7 @@ public class Project implements Dependant {
 			int acceptableDeviation, 
 			ResourceManager resMan, 
 			List<Integer> prerequisiteTasks, 
+			List<Resource> requiredResources, 
 			int alternativeFor, 
 			String taskStatus,
 			LocalDateTime startTime, 
@@ -164,7 +166,7 @@ public class Project implements Dependant {
 		}
 		
 		return createTask(description, estimatedDuration, acceptableDeviation, resMan, 
-				prereqTaskViews, altTaskView, taskStatus, startTime, endTime);
+				prereqTaskViews, requiredResources, altTaskView, taskStatus, startTime, endTime);
 	}
 	
 	/**
@@ -209,6 +211,7 @@ public class Project implements Dependant {
 						int acceptableDeviation, 
 						ResourceManager resMan, 
 						List<TaskView> prerequisiteTasks, 
+						List<Resource> requiredResources, 
 						TaskView alternativeFor, 
 						String taskStatus,
 						LocalDateTime startTime, 
@@ -244,6 +247,7 @@ public class Project implements Dependant {
 						acceptableDeviation, 
 						resMan, 
 						prereqTasks,
+						requiredResources, 
 						altFor,
 						taskStatus, 
 						startTime, 
@@ -257,6 +261,7 @@ public class Project implements Dependant {
 						acceptableDeviation, 
 						resMan, 
 						prereqTasks,
+						requiredResources, 
 						altFor);
 			}
 		} catch(IllegalArgumentException e) {
@@ -290,7 +295,8 @@ public class Project implements Dependant {
 			int estimatedDuration, 
 			int acceptableDeviation, 
 			ResourceManager resMan, 
-			List<TaskView> prerequisiteTasks,
+			List<TaskView> prerequisiteTasks, 
+			List<Resource> requiredResources, 
 			TaskView alternativeFor) {
 		
 		return createTask(description, 
@@ -298,6 +304,7 @@ public class Project implements Dependant {
 				acceptableDeviation, 
 				resMan, 
 				prerequisiteTasks,
+				requiredResources, 
 				alternativeFor, 
 				null,
 				null, 

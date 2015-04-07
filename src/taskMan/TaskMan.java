@@ -5,6 +5,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import taskMan.resource.Resource;
 import taskMan.resource.ResourceManager;
 import taskMan.resource.user.User;
 import taskMan.util.IntPair;
@@ -174,12 +175,23 @@ public class TaskMan {
 			int estimatedDuration, 
 			int acceptableDeviation,
 			List<Integer> prerequisiteTasks, 
+			List<Resource> requiredResources, 
 			int alternativeFor, 
 			String taskStatus,
 			LocalDateTime startTime, 
 			LocalDateTime endTime) {
 		if(isValidProjectID(project)) {
-			return projectList.get(project).createRawTask(description, estimatedDuration, acceptableDeviation, resMan, prerequisiteTasks, alternativeFor, taskStatus, startTime, endTime);
+			return projectList.get(project).createRawTask(
+					description, 
+					estimatedDuration, 
+					acceptableDeviation, 
+					resMan, 
+					prerequisiteTasks, 
+					requiredResources, 
+					alternativeFor, 
+					taskStatus, 
+					startTime, 
+					endTime);
 		} else {
 			return false;
 		}
@@ -207,13 +219,20 @@ public class TaskMan {
 			int estimatedDuration, 
 			int acceptableDeviation,
 			List<TaskView> prerequisiteTasks, 
+			List<Resource> requiredResources, 
 			TaskView alternativeFor) {
 		
 		Project p = unwrapProjectView(project);
 		if(p == null) {
 			return false;
 		}
-		return p.createTask(description, estimatedDuration, acceptableDeviation, resMan, prerequisiteTasks, alternativeFor);
+		return p.createTask(description, 
+				estimatedDuration, 
+				acceptableDeviation, 
+				resMan, 
+				prerequisiteTasks, 
+				requiredResources, 
+				alternativeFor);
 	}
 	
 //	/** // TODO remove this

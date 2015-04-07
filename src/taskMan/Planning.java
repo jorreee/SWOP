@@ -36,11 +36,14 @@ public class Planning {
 	}
 	
 	public void setEndTime(LocalDateTime endTime) throws IllegalArgumentException {
-		if(endTime==null) {
-			throw new IllegalArgumentException("The new beginTime is null");
+		if(getBeginTime() == null) {
+			throw new IllegalArgumentException("The plan hasn't even started yet");
 		}
-		if(getEndTime()!=null) {
-			throw new IllegalArgumentException("The beginTime is already set");
+		if(endTime == null) {
+			throw new IllegalArgumentException("The new endTime is null");
+		}
+		if(getEndTime() != null) {
+			throw new IllegalArgumentException("The endTime is already set");
 		}
 		this.endTime = endTime;
 	}
