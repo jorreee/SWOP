@@ -2,6 +2,7 @@ package taskMan.state;
 
 import java.time.LocalDateTime;
 
+import taskMan.Planning;
 import taskMan.Task;
 import taskMan.util.Dependant;
 
@@ -17,54 +18,21 @@ public class AvailableTask implements TaskStatus {
 	public boolean makeAvailable() {
 		return false;
 	}
+	
+	@Override
+	public boolean execute(Planning plan) {
+		//TODO work out executing transition
+		return false;
+	}
 
 	@Override
 	public boolean finish(LocalDateTime beginTime, LocalDateTime endTime) {
-		if(isValidTimeStamps(beginTime, endTime)) {
-
-			task.setBeginTime(beginTime);
-			task.setEndTime(endTime);
-			
-			task.setTaskStatus(new FinishedTask(task));
-			
-			task.notifyDependants();
-			
-			return true;
-		}
 		return false;
 	}
 
 	@Override
 	public boolean fail(LocalDateTime beginTime, LocalDateTime endTime) {
-		if(isValidTimeStamps(beginTime, endTime)) {
-
-			task.setBeginTime(beginTime);
-			task.setEndTime(endTime);
-			
-			task.setTaskStatus(new FailedTask(task));
-			
-			return true;
-		}
 		return false;
-	}
-	
-	/**
-	 * Checks whether the given timestamps are valid as start- and endtimes
-	 * 
-	 * @param 	beginTime
-	 * 			The new begin time of the Task.
-	 * @param 	endTime
-	 * 			The new end time of the Task.
-	 * @return	True if and only if the timestamps are valid start- and endtimes.
-	 */
-	private boolean isValidTimeStamps(LocalDateTime beginTime, LocalDateTime endTime) {
-		if(beginTime == null || endTime == null) {
-			return false;
-		}
-		if(endTime.isBefore(beginTime)) {
-			return false;
-		}
-		return true;
 	}
 
 	@Override

@@ -2,6 +2,7 @@ package taskMan.state;
 
 import java.time.LocalDateTime;
 
+import taskMan.Planning;
 import taskMan.Task;
 import taskMan.util.Dependant;
 
@@ -15,6 +16,11 @@ public class FailedTask implements TaskStatus {
 
 	@Override
 	public boolean makeAvailable() {
+		return false;
+	}
+	
+	@Override
+	public boolean execute(Planning plan) {
 		return false;
 	}
 

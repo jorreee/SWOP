@@ -2,11 +2,13 @@ package taskMan.state;
 
 import java.time.LocalDateTime;
 
+import taskMan.Planning;
 import taskMan.util.Dependant;
 
 public interface TaskStatus {
 
 	public boolean makeAvailable();
+	public boolean execute(Planning plan);
 	public boolean finish(LocalDateTime beginTime, LocalDateTime endTime);
 	public boolean fail(LocalDateTime beginTime, LocalDateTime endTime);
 	public boolean register(Dependant d);
