@@ -285,6 +285,8 @@ public class TaskTest {
 		Task temp = new Task(4, "temp", 50, 3, resMan, 
 				TaskAsPrerequisite.getPrerequisites(), TaskAsPrerequisite);
 		assertEquals(temp,TaskAsPrerequisite.getReplacement());
+		System.out.println(TaskAsPrerequisite.getDependants().size());
+		System.out.println(temp.getDependants().size());
 		System.out.println(TaskDep1.getPrerequisites().get(0).getDescription());
 		assertTrue(TaskAsPrerequisite.getDependants().isEmpty());
 	}
