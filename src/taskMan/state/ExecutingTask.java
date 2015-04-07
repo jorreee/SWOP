@@ -25,10 +25,10 @@ public class ExecutingTask implements TaskStatus{
 	}
 
 	@Override
-	public boolean finish(LocalDateTime beginTime, LocalDateTime endTime) {
-		if(isValidTimeStamps(beginTime, endTime)) {
+	public boolean finish(LocalDateTime endTime) {
+		if(isValidTimeStamps(task.getBeginTime(), endTime)) {
 
-			task.setBeginTime(beginTime);
+//			task.setBeginTime(beginTime);
 			task.setEndTime(endTime);
 			
 			task.setTaskStatus(new FinishedTask(task));
@@ -41,10 +41,10 @@ public class ExecutingTask implements TaskStatus{
 	}
 
 	@Override
-	public boolean fail(LocalDateTime beginTime, LocalDateTime endTime) {
-		if(isValidTimeStamps(beginTime, endTime)) {
+	public boolean fail(LocalDateTime endTime) {
+		if(isValidTimeStamps(task.getBeginTime(), endTime)) {
 
-			task.setBeginTime(beginTime);
+//			task.setBeginTime(beginTime);
 			task.setEndTime(endTime);
 			
 			task.setTaskStatus(new FailedTask(task));

@@ -25,12 +25,12 @@ public class FinishedTask implements TaskStatus {
 	}
 
 	@Override
-	public boolean finish(LocalDateTime beginTime, LocalDateTime endTime) {
+	public boolean finish(LocalDateTime endTime) {
 		return false;
 	}
 
 	@Override
-	public boolean fail(LocalDateTime beginTime, LocalDateTime endTime) {
+	public boolean fail(LocalDateTime endTime) {
 		return false;
 	}
 
