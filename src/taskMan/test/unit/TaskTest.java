@@ -19,12 +19,21 @@ import taskMan.util.TimeSpan;
 public class TaskTest {
 
 	private Task defaultTest;
+	private Task TaskAsPrerequisite;
+	//These Task are dependent of the previous Task
+	private Task TaskDep1;
+	private Task TaskDep2;
 	
 	private ResourceManager resMan = new ResourceManager();
 	
 	@Before
 	public final void initialize(){
 		defaultTest = new Task(1,"test",30,5,resMan,new ArrayList<Task>(),null);
+		TaskAsPrerequisite = new Task(1,"PreTask",30,5,resMan,new ArrayList<Task>(),null);
+		ArrayList<Task> pre = new ArrayList<>();
+		pre.add(TaskAsPrerequisite);
+		TaskDep1 = new Task(2,"Dep1",30,5,resMan,pre,null);
+		TaskDep2 = new Task(3,"Dep2",30,5,resMan,pre,null);
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
@@ -176,7 +185,7 @@ public class TaskTest {
 	}
 	
 	@Test
-	public void finishedEndpointSelf(){
+	public void finishedEndpointTestSelf(){
 		assertFalse(defaultTest.hasFinishedEndpoint());
 		defaultTest.setFinished(LocalDateTime.of(2015, 2, 11, 16, 0), 
 				LocalDateTime.of(2015, 2, 12, 16, 0));
@@ -184,14 +193,100 @@ public class TaskTest {
 	}
 	
 	@Test
-	public void finishedEndpointOther(){
+	public void finishedEndpointTestOther(){
 		assertFalse(defaultTest.hasFinishedEndpoint());
 		defaultTest.setFailed(LocalDateTime.of(2015, 2, 11, 16, 0), 
 				LocalDateTime.of(2015, 2, 12, 16, 0));
 		Task alt = new Task(2, "alternative", 80, 5, resMan, defaultTest.getPrerequisites(), defaultTest);
+		assertFalse(defaultTest.hasFinishedEndpoint());
 		alt.setFinished(LocalDateTime.of(2015, 2, 13, 16, 0), 
 				LocalDateTime.of(2015, 2, 14, 16, 0));
-		System.out.println(defaultTest.isFinished());
 		assertTrue(defaultTest.hasFinishedEndpoint());
 	}
+	
+	@Test
+	public void finishedEndpointTestNoReplacement(){
+		assertFalse(defaultTest.hasFinishedEndpoint());
+		defaultTest.setFailed(LocalDateTime.of(2015, 2, 11, 16, 0), 
+				LocalDateTime.of(2015, 2, 12, 16, 0));
+		assertFalse(defaultTest.hasFinishedEndpoint());
+	}
+	
+	@Test
+	public void replaceWithTestNotFailed(){
+		Task temp = new Task(2,"temp",20,3,new ResourceManager(),new ArrayList<>(),null);
+		assertFalse(defaultTest.isFailed());
+		assertFalse(defaultTest.replaceWith(temp));
+	}
+	
+	@Test
+	public void replaceWithTestNull(){
+		defaultTest.setFailed(LocalDateTime.of(2015, 2, 11, 16, 0), 
+				LocalDateTime.of(2015, 2, 12, 16, 0));
+		Task temp = new Task(2,"temp",20,3,new ResourceManager(),new ArrayList<>(),null);
+		Task temp2 = new Task(3,"temp",20,3,new ResourceManager(),new ArrayList<>(),null);
+		assertTrue(defaultTest.replaceWith(temp));
+		assertFalse(defaultTest.replaceWith(temp2));
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void setBeginTimeTestNull(){
+		defaultTest.setBeginTime(null);
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void setBeginTimeTestAlreadySet(){
+		defaultTest.setFailed(LocalDateTime.of(2015, 2, 11, 16, 0), 
+				LocalDateTime.of(2015, 2, 12, 16, 0));
+		defaultTest.setBeginTime(LocalDateTime.of(2015, 2, 14, 16, 0));
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void setEndTimeTestNull(){
+		defaultTest.setEndTime(null);
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void setEndTimeTestAlreadySet(){
+		defaultTest.setFailed(LocalDateTime.of(2015, 2, 11, 16, 0), 
+				LocalDateTime.of(2015, 2, 12, 16, 0));
+		defaultTest.setEndTime(LocalDateTime.of(2015, 2, 14, 16, 0));
+	}
+	
+	@Test
+	public void registerTestSelf(){
+		assertFalse(defaultTest.register(defaultTest));
+	}
+	
+	@Test
+	public void registerTestNull(){
+		assertFalse(defaultTest.register(null));
+	}
+	
+	@Test
+	public void registerTestValid(){
+		Task temp = new Task(2,"temp",20,3,new ResourceManager(),new ArrayList<>(),null);
+		assertTrue(defaultTest.register(temp));
+	}
+	
+	@Test
+	public void createTaskWithPrerequisites(){
+		ArrayList<Task> pre = new ArrayList<>();
+		pre.add(defaultTest);
+		Task temp = new Task(2,"temp",20,3,new ResourceManager(),pre,null);
+		assertEquals(1, temp.getPrerequisites().size());
+		assertTrue(temp.getPrerequisites().contains(defaultTest));
+	}
+	
+	@Test
+	public void removeAlternativesDep(){
+		TaskAsPrerequisite.setFailed(LocalDateTime.of(2015, 2, 11, 16, 0), 
+				LocalDateTime.of(2015, 2, 12, 16, 0));
+		Task temp = new Task(4, "temp", 50, 3, resMan, 
+				TaskAsPrerequisite.getPrerequisites(), TaskAsPrerequisite);
+		assertEquals(temp,TaskAsPrerequisite.getReplacement());
+		System.out.println(TaskDep1.getPrerequisites().get(0).getDescription());
+		assertTrue(TaskAsPrerequisite.getDependants().isEmpty());
+	}
+	
 }
