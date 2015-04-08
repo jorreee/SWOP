@@ -21,7 +21,7 @@ public class ResourceManager {
 	private List<User> userList;
 	
 	// A list of availabilities
-	private List<DailyAvailability> dailyAvailabilityList;
+	private List<AvailabilityPeriod> availabilityPeriodList;
 	
 	// A list of (active) reservations
 	private List<Reservation> activeReservations;
@@ -29,7 +29,7 @@ public class ResourceManager {
 	
 	public ResourceManager() {
 		this.resPools = new ArrayList<>();
-		this.dailyAvailabilityList = new ArrayList<>();
+		this.availabilityPeriodList = new ArrayList<>();
 		this.userList = new ArrayList<>();
 		userList.add(new ProjectManager("admin"));
 	}
@@ -49,7 +49,7 @@ public class ResourceManager {
 			}
 		}
 		// If daily available, DailyAvailability must exist
-		if(availabilityIndex != null && (availabilityIndex < 0 || availabilityIndex > dailyAvailabilityList.size())) {
+		if(availabilityIndex != null && (availabilityIndex < 0 || availabilityIndex > availabilityPeriodList.size())) {
 			return false;
 		}
 		
@@ -60,7 +60,7 @@ public class ResourceManager {
 		if(availabilityIndex == null) {
 			resprot = new ResourcePrototype(resourceName, new ArrayList<ResourcePrototype>(), new ArrayList<ResourcePrototype>(), null);
 		} else {
-			resprot = new ResourcePrototype(resourceName, new ArrayList<ResourcePrototype>(), new ArrayList<ResourcePrototype>(), dailyAvailabilityList.get(availabilityIndex));
+			resprot = new ResourcePrototype(resourceName, new ArrayList<ResourcePrototype>(), new ArrayList<ResourcePrototype>(), availabilityPeriodList.get(availabilityIndex));
 		}
 		success = addResourceType(resprot);
 		if(!success) { return false; }
@@ -79,14 +79,14 @@ public class ResourceManager {
 		return true;
 	}
 	
-	public boolean declareDailyAvailability(LocalTime startTime, LocalTime endTime) {
+	public boolean declareAvailabilityPeriod(LocalTime startTime, LocalTime endTime) {
 		if(startTime == null || endTime == null) {
 			return false;
 		}
 		if(endTime.isBefore(startTime)) {
 			return false;
 		}
-		return dailyAvailabilityList.add(new DailyAvailability(startTime, endTime));
+		return availabilityPeriodList.add(new AvailabilityPeriod(startTime, endTime));
 	}
 	
 	private boolean addResourceType(ResourcePrototype resProt) {

@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Stack;
 
 import taskMan.Facade;
-import taskMan.resource.DailyAvailability;
+import taskMan.resource.AvailabilityPeriod;
 import taskMan.view.ProjectView;
 import taskMan.view.ResourceView;
 import taskMan.view.TaskView;
@@ -53,9 +53,9 @@ public class TaskManCaretaker {
 		
 		// DailyAvailability
 		tman.append("\ndailyAvailability :");
-		List<DailyAvailability> dailyAvailabilities = facade.getPossibleDailyAvailabilities();
+		List<AvailabilityPeriod> dailyAvailabilities = facade.getPossibleDailyAvailabilities();
 		if(!dailyAvailabilities.isEmpty()) {
-			for(DailyAvailability dailyAvailability : dailyAvailabilities) {
+			for(AvailabilityPeriod dailyAvailability : dailyAvailabilities) {
 				tman.append("\n  - startTime : \"" + dailyAvailability.getStartTime().format(timeFormatter) + "\"\n"
 						+ "    endTime   : \"" + dailyAvailability.getEndTime().format(timeFormatter) + "\"");
 			}

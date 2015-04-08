@@ -2,11 +2,11 @@ package taskMan.resource;
 
 import java.time.LocalTime;
 
-public class DailyAvailability {
+public class AvailabilityPeriod {
 	private LocalTime startTime;
 	private LocalTime endTime;
 
-	public DailyAvailability(LocalTime startTime, LocalTime endTime) {
+	public AvailabilityPeriod(LocalTime startTime, LocalTime endTime) {
 		this.startTime = startTime;
 		this.endTime = endTime;
 	}

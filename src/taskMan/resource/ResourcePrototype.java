@@ -4,7 +4,7 @@ import java.util.List;
 
 public class ResourcePrototype extends Resource implements Cloneable {
 	
-	public ResourcePrototype(String name, List<ResourcePrototype> requiredResources, List<ResourcePrototype> conflictingResources, DailyAvailability dailyAvailability) {
+	public ResourcePrototype(String name, List<ResourcePrototype> requiredResources, List<ResourcePrototype> conflictingResources, AvailabilityPeriod dailyAvailability) {
 		super(name, requiredResources, conflictingResources, dailyAvailability);
 	}
 

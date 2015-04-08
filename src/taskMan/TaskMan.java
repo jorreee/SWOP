@@ -5,7 +5,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import taskMan.resource.DailyAvailability;
+import taskMan.resource.AvailabilityPeriod;
 import taskMan.resource.Resource;
 import taskMan.resource.ResourceManager;
 import taskMan.resource.user.User;
@@ -860,7 +860,7 @@ public class TaskMan {
 	}
 	
 	public boolean declareAvailabilityPeriod(LocalTime startTime,LocalTime endTime) {
-		return resMan.declareDailyAvailability(startTime,endTime);
+		return resMan.declareAvailabilityPeriod(startTime,endTime);
 	}
 	
 	public boolean createResourcePrototype(String name,
@@ -887,7 +887,7 @@ public class TaskMan {
 		return unwrapProjectView(project).getPossibleTaskStartingTimes(task,amount);
 	}
 
-	public List<DailyAvailability> getPossibleDailyAvailabilities() {
+	public List<AvailabilityPeriod> getPossibleDailyAvailabilities() {
 		// TODO Auto-generated method stub
 		return null;
 	}

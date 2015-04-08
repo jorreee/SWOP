@@ -9,9 +9,9 @@ public abstract class Resource {
 	protected List<ResourcePrototype> reqResourcesList;
 	protected List<ResourcePrototype> conResourcesList;
 	
-	protected DailyAvailability dailyAvailable = null;
+	protected AvailabilityPeriod dailyAvailable = null;
 	
-	public Resource(String resourceName, List<ResourcePrototype> requiredResourcesList, List<ResourcePrototype> conflictingResourcesList, DailyAvailability dailyAvailability) {
+	public Resource(String resourceName, List<ResourcePrototype> requiredResourcesList, List<ResourcePrototype> conflictingResourcesList, AvailabilityPeriod dailyAvailability) {
 		this.resName = resourceName;
 		this.reqResourcesList = requiredResourcesList;
 		this.conResourcesList = conflictingResourcesList;

@@ -7,7 +7,7 @@ import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.List;
 
-import taskMan.resource.DailyAvailability;
+import taskMan.resource.AvailabilityPeriod;
 import taskMan.resource.Resource;
 import taskMan.util.IntPair;
 import taskMan.view.ProjectView;
@@ -197,7 +197,7 @@ public class Facade implements IFacade {
 		return null;
 	}
 
-	public List<DailyAvailability> getPossibleDailyAvailabilities() {
+	public List<AvailabilityPeriod> getPossibleDailyAvailabilities() {
 		return taskMan.getPossibleDailyAvailabilities();		
 	}
 
@@ -225,7 +225,7 @@ public class Facade implements IFacade {
 		return false;
 	}
 
-	public DailyAvailability getDailyAvailability(ResourceView resprot) {
+	public AvailabilityPeriod getDailyAvailability(ResourceView resprot) {
 		// TODO Auto-generated method stub
 		return null;
 	}
