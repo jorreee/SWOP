@@ -80,13 +80,20 @@ public class ResourceManager {
 	}
 	
 	public boolean declareAvailabilityPeriod(LocalTime startTime, LocalTime endTime) {
-		if(startTime == null || endTime == null) {
-			return false;
-		}
-		if(endTime.isBefore(startTime)) {
+		if(!isValidPeriod(startTime,endTime)) {
 			return false;
 		}
 		return availabilityPeriodList.add(new AvailabilityPeriod(startTime, endTime));
+	}
+	
+	private boolean isValidPeriod(LocalTime start, LocalTime end) {
+		if(start == null || end == null) {
+			return false;
+		}
+		if(end.isBefore(start)) {
+			return false;
+		}
+		return true;
 	}
 	
 	private boolean addResourceType(ResourcePrototype resProt) {
@@ -131,11 +138,11 @@ public class ResourceManager {
 	//TODO idem zie onder, maar RAW request
 	private boolean createRawReservation(int resourceTypeIndex, int concreteResourceIndex, Task reservingTask,
 			LocalDateTime startTime, LocalDateTime endTime, LocalDateTime currentTime) {
-		return createNewReservation((ConcreteResource) resPools.get(resourceTypeIndex).getConcreteResourceByIndex(concreteResourceIndex), reservingTask, startTime, endTime, currentTime);
+		return reserve((ConcreteResource) resPools.get(resourceTypeIndex).getConcreteResourceByIndex(concreteResourceIndex), reservingTask, startTime, endTime, currentTime);
 	}
 	
 	//TODO enkel resMan gaat dit kunnen doen. Er wordt een REQUEST naar hem gestuurd en hij CREATE een reservatie
-	private boolean createNewReservation(ConcreteResource reservedResource, Task reservingTask, LocalDateTime startTime, LocalDateTime endTime, LocalDateTime currentTime) {
+	public boolean reserve(ConcreteResource reservedResource, Task reservingTask, LocalDateTime startTime, LocalDateTime endTime, LocalDateTime currentTime) {
 		if(reservedResource == null || reservingTask == null ||
 				startTime == null || endTime == null || currentTime == null) {
 			return false;

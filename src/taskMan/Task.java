@@ -108,9 +108,6 @@ public class Task implements Dependant {
 		this.dependants = new ArrayList<Dependant>();
 		this.prerequisites = new ArrayList<Task>();
 //		this.unfinishedPrerequisites = new ArrayList<Task>();
-		for(Resource r : requiredResources) {
-			resMan.reserve(r, this);
-		}
 		
 		this.alternativeFor = alternativeFor;
 		if(alternativeFor != null) {
