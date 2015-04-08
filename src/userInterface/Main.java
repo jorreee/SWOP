@@ -48,12 +48,22 @@ public class Main {
 		
 		// Initialize system through a facade
 			// Init daily availability
-		facade.declareDailyAvailability(fileChecker.getDailyAvailabilityTime()[0],
+		facade.declareAvailabilityPeriod(fileChecker.getDailyAvailabilityTime()[0],
 				fileChecker.getDailyAvailabilityTime()[1]);
 			// Init resource prototypes
 		for(ResourcePrototypeCreationData rprot : resourcePrototypes) {
 			facade.createResourcePrototype(rprot.getName(), rprot.getRequirements(), rprot.getConflicts(), rprot.getAvailabilityIndex());
+//			facade.createResourcePrototype(rprot.getName(), rprot.getAvailabilityIndex());
+//			//, rprot.getRequirements(), rprot.getConflicts(), rprot.getAvailabilityIndex());
 		}
+//		for(ResourcePrototypeCreationData rprot : resourcePrototypes) {
+//			facade.setResourcePrototypeRequirements(rprot.getName(), rprot.getRequirements());
+//			//, rprot.getConflicts(), rprot.getAvailabilityIndex());
+//		}
+//		for(ResourcePrototypeCreationData rprot : resourcePrototypes) {
+//			facade.setResourcePrototypeConflicts(rprot.getName(), rprot.getConflicts());
+//			//, rprot.getAvailabilityIndex());
+//		}
 			// Init concrete resources
 		for(ConcreteResourceCreationData cres : concreteResources) {
 			facade.createRawResource(cres.getName(), cres.getTypeIndex());

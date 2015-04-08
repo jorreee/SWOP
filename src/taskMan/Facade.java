@@ -68,11 +68,20 @@ public class Facade implements IFacade {
 			List<Integer> prerequisiteTasks, 
 			List<Resource> requiredResources, 
 			int alternativeFor,
-			List<IntPair> requiredResources,
 			String taskStatus, 
 			LocalDateTime startTime, 
 			LocalDateTime endTime) {
-		return taskMan.createRawTask(project, description, estimatedDuration, acceptableDeviation, prerequisiteTasks, alternativeFor, taskStatus, startTime, endTime);
+		
+		return taskMan.createRawTask(project, 
+				description, 
+				estimatedDuration, 
+				acceptableDeviation, 
+				prerequisiteTasks, 
+				requiredResources, 
+				alternativeFor, 
+				taskStatus, 
+				startTime, 
+				endTime);
 	}
 
 	@Override
@@ -83,14 +92,14 @@ public class Facade implements IFacade {
 
 	@Override
 	public boolean setTaskFinished(ProjectView projectID, TaskView taskID,
-			LocalDateTime startTime, LocalDateTime endTime) {
-		return taskMan.setTaskFinished(projectID, taskID, startTime, endTime);
+			LocalDateTime endTime) {
+		return taskMan.setTaskFinished(projectID, taskID, endTime);
 	}
 
 	@Override
 	public boolean setTaskFailed(ProjectView projectID, TaskView taskID,
-			LocalDateTime startTime, LocalDateTime endTime) {
-		return taskMan.setTaskFailed(projectID, taskID,startTime,endTime);
+			LocalDateTime endTime) {
+		return taskMan.setTaskFailed(projectID, taskID, endTime);
 	}
 
 	@Override
@@ -141,8 +150,8 @@ public class Facade implements IFacade {
 	}
 
 	@Override
-	public boolean declareDailyAvailability(LocalTime startTime,LocalTime endTime) {
-		return taskMan.declareDailyAvailability(startTime,endTime);
+	public boolean declareAvailabilityPeriod(LocalTime startTime,LocalTime endTime) {
+		return taskMan.declareAvailabilityPeriod(startTime,endTime);
 	}
 
 	@Override
@@ -181,9 +190,9 @@ public class Facade implements IFacade {
 	}
 
 	@Override
-	public HashMap<ProjectView, ImmutableList<TaskView>> findConflictingDeveloperPlannings(
+	public HashMap<ProjectView, List<TaskView>> findConflictingDeveloperPlannings(
 			ProjectView projectID, TaskView taskID,
-			List<String> developerNames, LocalDateTime planningStartTime) {
+			List<ResourceView> developerNames, LocalDateTime planningStartTime) {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -35,9 +35,9 @@ public interface IFacade {
 			int estimatedDuration, 
 			int acceptableDeviation,
 			List<Integer> prerequisiteTasks, 
+//			List<IntPair> requiredResources, TODO
 			List<Resource> requiredResources, 
 			int alternativeFor, 
-//			List<IntPair> requiredResources, TODO
 			String taskStatus, 
 			LocalDateTime startTime, 
 			LocalDateTime endTime);
@@ -54,10 +54,10 @@ public interface IFacade {
 			List<TaskView> prerequisiteTasks, List<Resource> requiredResources, TaskView alternativeFor);
 
 	public boolean setTaskFinished(ProjectView projectID, TaskView taskID,
-			LocalDateTime startTime, LocalDateTime endTime);
+			LocalDateTime endTime);
 
 	public boolean setTaskFailed(ProjectView projectID, TaskView taskID,
-			LocalDateTime startTime, LocalDateTime endTime);
+			 LocalDateTime endTime);
 
 	public ImmutableList<ProjectView> getProjects();
 
@@ -68,7 +68,7 @@ public interface IFacade {
 	public boolean discardMemento();
 
 	//TODO guys.
-	public boolean declareDailyAvailability(LocalTime startTime, LocalTime endTime);
+	public boolean declareAvailabilityPeriod(LocalTime startTime, LocalTime endTime);
 
 	public boolean createResourcePrototype(String name,
 			List<Integer> requirements, List<Integer> conflicts,
@@ -85,8 +85,8 @@ public interface IFacade {
 
 	public ImmutableList<ResourceView> getDeveloperList();
 
-	public HashMap<ProjectView, ImmutableList<TaskView>> findConflictingDeveloperPlannings(
-			ProjectView projectID, TaskView taskID, List<String> developerNames,
+	public HashMap<ProjectView, List<TaskView>> findConflictingDeveloperPlannings(
+			ProjectView projectID, TaskView taskID, List<ResourceView> developerNames,
 			LocalDateTime planningStartTime);
 
 	public ImmutableList<ResourceView> getResourcePrototypes();

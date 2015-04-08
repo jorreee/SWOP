@@ -66,15 +66,15 @@ public class UpdateTaskStatusRequest extends Request {
 					if(status.toLowerCase().equals("quit"))
 						return quit();	
 
-					System.out.println("Start Time? (Format: Y M D H M)");
-					String startTime = inputReader.readLine();
-
-					// User quits
-					if(startTime.toLowerCase().equals("quit"))
-						return quit();
-
-					String[] startBits = startTime.split(" ");
-					LocalDateTime start = LocalDateTime.of(Integer.parseInt(startBits[0]), Integer.parseInt(startBits[1]), Integer.parseInt(startBits[2]), Integer.parseInt(startBits[3]), Integer.parseInt(startBits[4]));
+//					System.out.println("Start Time? (Format: Y M D H M)");
+//					String startTime = inputReader.readLine();
+//
+//					// User quits
+//					if(startTime.toLowerCase().equals("quit"))
+//						return quit();
+//
+//					String[] startBits = startTime.split(" ");
+//					LocalDateTime start = LocalDateTime.of(Integer.parseInt(startBits[0]), Integer.parseInt(startBits[1]), Integer.parseInt(startBits[2]), Integer.parseInt(startBits[3]), Integer.parseInt(startBits[4]));
 
 
 					System.out.println("End Time? (Format: Y M D H M)");
@@ -89,9 +89,9 @@ public class UpdateTaskStatusRequest extends Request {
 
 					// System updates details
 					if(status.toLowerCase().equals("finished"))
-						success = facade.setTaskFinished(project, task, start, end);
+						success = facade.setTaskFinished(project, task, end);
 					if(status.toLowerCase().equals("failed"))
-						success = facade.setTaskFailed(project, task, start, end);
+						success = facade.setTaskFailed(project, task, end);
 					// Invalid details
 					if(!success)
 						System.out.println("Invalid input");

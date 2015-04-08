@@ -544,14 +544,14 @@ public class Project implements Dependant {
 //		
 //	}
 	
-	public boolean setTaskFinished(TaskView t, LocalDateTime startTime, LocalDateTime endTime) {
+	public boolean setTaskFinished(TaskView t, LocalDateTime endTime) {
 		if(!isValidTaskView(t)) {
 			return false;
 		}
-		if(startTime.isBefore(creationTime)) {
-			return false;
-		}
-		return unwrapTaskView(t).setFinished(startTime, endTime);
+//		if(startTime.isBefore(creationTime)) {
+//			return false;
+//		}
+		return unwrapTaskView(t).setFinished(endTime);
 	}
 	
 //	private boolean markTaskFinished(Task task) {
@@ -583,14 +583,14 @@ public class Project implements Dependant {
 	 * 			False if the start time is null
 	 * 			False if the start time is before creation time
 	 */
-	public boolean setTaskFailed(TaskView t, LocalDateTime startTime, LocalDateTime endTime) {
+	public boolean setTaskFailed(TaskView t, LocalDateTime endTime) {
 		if(!isValidTaskView(t)) {
 			return false;
 		}
-		if(startTime.isBefore(creationTime)) {
-			return false;
-		}
-		return unwrapTaskView(t).setFailed(startTime, endTime);
+//		if(startTime.isBefore(creationTime)) {
+//			return false;
+//		}
+		return unwrapTaskView(t).setFailed(endTime);
 	}
 
 	/**

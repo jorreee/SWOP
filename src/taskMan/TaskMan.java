@@ -5,6 +5,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import taskMan.resource.DailyAvailability;
 import taskMan.resource.Resource;
 import taskMan.resource.ResourceManager;
 import taskMan.resource.user.User;
@@ -625,8 +626,8 @@ public class TaskMan {
 	 * 			False if it was unsuccessful
 	 * 			false if the project ID isn't a valid one
 	 */
-	public boolean setTaskFinished(ProjectView project, TaskView taskID, LocalDateTime startTime, LocalDateTime endTime) {
-		if(startTime == null || endTime == null) {
+	public boolean setTaskFinished(ProjectView project, TaskView taskID, LocalDateTime endTime) {
+		if(endTime == null) { // || startTime == null) {
 			return false;
 		}
 		if(endTime.isAfter(currentTime)) {
@@ -636,7 +637,7 @@ public class TaskMan {
 		if(p == null) {
 			return false;
 		}
-		return p.setTaskFinished(taskID,startTime,endTime);
+		return p.setTaskFinished(taskID,endTime);
 	}
 	
 	/**
@@ -656,8 +657,8 @@ public class TaskMan {
 	 * 			False if the project ID isn't a valid one.
 	 * 			False if the end time is null or the end time comes after the current time.
 	 */
-	public boolean setTaskFailed(ProjectView project, TaskView taskID, LocalDateTime startTime, LocalDateTime endTime) {
-		if(startTime == null || endTime == null) {
+	public boolean setTaskFailed(ProjectView project, TaskView taskID, LocalDateTime endTime) {
+		if(endTime == null) { // || startTime == null) {
 			return false;
 		}
 		if(endTime.isAfter(currentTime)) {
@@ -667,7 +668,7 @@ public class TaskMan {
 		if(p == null) {
 			return false;
 		}
-		return p.setTaskFailed(taskID,startTime, endTime);
+		return p.setTaskFailed(taskID, endTime);
 	}
 
 //	/** // TODO remove this
@@ -858,7 +859,7 @@ public class TaskMan {
 				endTime,planningDueTime,plannedDevelopers, plannedResources);
 	}
 	
-	public boolean declareDailyAvailability(LocalTime startTime,LocalTime endTime) {
+	public boolean declareAvailabilityPeriod(LocalTime startTime,LocalTime endTime) {
 		return resMan.declareDailyAvailability(startTime,endTime);
 	}
 	
@@ -884,6 +885,11 @@ public class TaskMan {
 	public ImmutableList<LocalDateTime> getPossibleTaskStartingTimes(ProjectView project, TaskView task,
 			int amount) {
 		return unwrapProjectView(project).getPossibleTaskStartingTimes(task,amount);
+	}
+
+	public List<DailyAvailability> getPossibleDailyAvailabilities() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

@@ -159,7 +159,7 @@ public class TaskManCaretaker {
 		// Set system time
 		facade.initializeFromMemento(systemTime);
 		// Init daily availability
-		facade.declareDailyAvailability(fileChecker.getDailyAvailabilityTime()[0],
+		facade.declareAvailabilityPeriod(fileChecker.getDailyAvailabilityTime()[0],
 				fileChecker.getDailyAvailabilityTime()[1]);
 		// Init resource prototypes
 		for(ResourcePrototypeCreationData rprot : resourcePrototypes) {

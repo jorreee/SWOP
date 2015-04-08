@@ -172,11 +172,13 @@ public class Task implements Dependant {
 				alternativeFor);
 		
 		if(taskStatus.equalsIgnoreCase("failed")) {
-			if(!state.fail(beginTime, endTime)) {
+			plan.setBeginTime(beginTime);
+			if(!state.fail(endTime)) {
 				throw new IllegalArgumentException("Very bad timeStamps");
 			}
 		} else if(taskStatus.equalsIgnoreCase("finished")) {
-			if(!state.finish(beginTime, endTime)) {
+			plan.setBeginTime(beginTime);
+			if(!state.finish(endTime)) {
 				throw new IllegalArgumentException("Very bad timeStamps");
 			}
 		} else {
@@ -511,10 +513,9 @@ public class Task implements Dependant {
 	 * 			The new end time of the Task.
 	 * @return	True if and only if the updates succeeds.
 	 */
-	public boolean setFinished(LocalDateTime beginTime,
-			LocalDateTime endTime) {
+	public boolean setFinished(LocalDateTime endTime) {
 		
-		return state.finish(beginTime, endTime);
+		return state.finish(endTime);
 	}
 
 	/**
@@ -526,9 +527,8 @@ public class Task implements Dependant {
 	 * 			The new end time of the Task.
 	 * @return	True if and only if the updates succeeds.
 	 */
-	public boolean setFailed(LocalDateTime beginTime,
-			LocalDateTime endTime) {
-		return state.fail(beginTime, endTime);
+	public boolean setFailed(LocalDateTime endTime) {
+		return state.fail(endTime);
 	}
 	
 	public boolean replaceWith(Task t) {
@@ -692,9 +692,9 @@ public class Task implements Dependant {
 //	}
 	
 	public boolean plan(LocalDateTime startTime) {
-		if(getBeginTime() != null) {
-			return false;
-		}
+//		if(getBeginTime() != null) {
+//			return false;
+//		}
 		plan.setBeginTime(startTime);
 		return true;
 	}
