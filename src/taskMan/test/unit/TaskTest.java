@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import taskMan.Task;
 import taskMan.resource.ResourceManager;
+import taskMan.state.ExecutingTask;
 import taskMan.state.TaskStatus;
 import taskMan.state.UnavailableTask;
 import taskMan.util.TimeSpan;
@@ -290,6 +291,98 @@ public class TaskTest {
 		assertEquals(1,temp.getDependants().size());
 		temp.removeAlternativesDependencies();
 		assertTrue(temp.getDependants().isEmpty());
+	}
+	
+	@Test
+	public void getTimeSpentTestTaskNotStarted(){
+		LocalDateTime currentTime = LocalDateTime.of(2015, 2, 11, 16, 0);
+		assertEquals(new TimeSpan(0),defaultTest.getTimeSpent(currentTime));
+	}
+	
+	@Test
+	public void getTimeSpentTestNoCurrentTime(){
+		LocalDateTime beginTime = LocalDateTime.of(2015, 2, 11, 15, 0);
+		defaultTest.setBeginTime(beginTime);
+		assertEquals(new TimeSpan(0),defaultTest.getTimeSpent(null));
+	}
+	
+	@Test
+	public void getTimeSpentTestStartTimeAfterCurrentTime(){
+		LocalDateTime beginTime = LocalDateTime.of(2015, 2, 11, 15, 0);
+		LocalDateTime currentTime = LocalDateTime.of(2015, 2, 11, 14, 0);
+		defaultTest.setBeginTime(beginTime);
+		assertEquals(new TimeSpan(0),defaultTest.getTimeSpent(currentTime));
+	}
+	
+	@Test
+	public void getTimeSpentTestTaskHasEnded(){
+		LocalDateTime beginTime = LocalDateTime.of(2015, 2, 11, 14, 0);
+		LocalDateTime endTime = LocalDateTime.of(2015, 2, 11, 15, 30);
+		LocalDateTime currentTime = LocalDateTime.of(2015, 2, 12, 14, 0);
+		defaultTest.setFinished(beginTime, endTime);
+		assertEquals(new TimeSpan(90),defaultTest.getTimeSpent(currentTime));
+	}
+	
+	@Test
+	public void getTimeSpentTestTaskExecuting(){
+		//TODO reminder: misschien moet er een methode setexcuting komen zoals setfailed
+		LocalDateTime beginTime = LocalDateTime.of(2015, 2, 11, 14, 0);
+		LocalDateTime currentTime = LocalDateTime.of(2015, 2, 11, 15, 0);
+		defaultTest.setTaskStatus(new ExecutingTask(defaultTest));
+		defaultTest.setBeginTime(beginTime);
+		assertEquals(new TimeSpan(60),defaultTest.getTimeSpent(currentTime));
+	}
+	
+	@Test
+	public void getTimeSpentTestTaskIsAlternativeAndFinsihed(){
+		LocalDateTime beginTimeDef = LocalDateTime.of(2015, 2, 11, 14, 0);
+		LocalDateTime endTimeDef = LocalDateTime.of(2015, 2, 11, 15, 30);
+		LocalDateTime currentTime = LocalDateTime.of(2015, 2, 12, 16, 0);
+		defaultTest.setFailed(beginTimeDef, endTimeDef);
+		assertEquals(new TimeSpan(90),defaultTest.getTimeSpent(currentTime));
+		
+		Task alt = new Task(5,"alt",60,3,resMan,new ArrayList<Task>(),defaultTest);
+		assertEquals(defaultTest, alt.getAlternativeFor());
+		LocalDateTime beginTimeAlt = LocalDateTime.of(2015, 2, 12, 14, 0);
+		LocalDateTime endTimeAlt = LocalDateTime.of(2015, 2, 12, 15, 0);
+		alt.setFinished(beginTimeAlt, endTimeAlt);
+		assertEquals(defaultTest, alt.getAlternativeFor());
+		assertEquals(new TimeSpan(150),alt.getTimeSpent(currentTime));
+	}
+	
+	@Test
+	public void getTimeSpentTestTaskIsAlternativeAndExecuting(){
+		LocalDateTime beginTimeDef = LocalDateTime.of(2015, 2, 11, 14, 0);
+		LocalDateTime endTimeDef = LocalDateTime.of(2015, 2, 11, 15, 30);
+		LocalDateTime currentTime = LocalDateTime.of(2015, 2, 12, 14, 30);
+		defaultTest.setFailed(beginTimeDef, endTimeDef);
+		assertEquals(new TimeSpan(90),defaultTest.getTimeSpent(currentTime));
+		
+		Task alt = new Task(5,"alt",60,3,resMan,new ArrayList<Task>(),defaultTest);
+		assertEquals(defaultTest, alt.getAlternativeFor());
+		LocalDateTime beginTimeAlt = LocalDateTime.of(2015, 2, 12, 14, 0);
+		alt.setTaskStatus(new ExecutingTask(alt));
+		alt.setBeginTime(beginTimeAlt);
+		assertEquals(defaultTest, alt.getAlternativeFor());
+		assertEquals(new TimeSpan(120),alt.getTimeSpent(currentTime));
+	}
+	
+	@Test
+	public void possibleStartTimesTest(){
+		//TODO
+		defaultTest.getPossibleTaskStartingTimes(3);
+	}
+	
+	@Test
+	public void requiredResourcesTest(){
+		//TODO
+		defaultTest.getRequiredResources();
+	}
+	
+	@Test
+	public void getResourceInstancesTest(){
+		//TODO
+		defaultTest.getPossibleResourceInstances(null);
 	}
 	
 }

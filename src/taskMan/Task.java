@@ -341,7 +341,11 @@ public class Task implements Dependant {
 			return new TimeSpan(0);
 		}
 		if(hasEnded()) {
-			return new TimeSpan(TimeSpan.getDifferenceWorkingMinutes(beginTime, endTime));
+			int timeSpent = TimeSpan.getDifferenceWorkingMinutes(beginTime, endTime);
+			if(alternativeFor != null) {
+				timeSpent += alternativeFor.getTimeSpent(currentTime).getSpanMinutes();
+			}
+			return new TimeSpan(timeSpent);
 		}
 		
 		int currentTimeSpent = TimeSpan.getDifferenceWorkingMinutes(
