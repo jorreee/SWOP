@@ -165,14 +165,23 @@ public class ResourceManager {
 		return userList.add(new Developer(name));
 	}
 	
-	//TODO idem zie onder, maar RAW request
-	private boolean createRawReservation(int resourceTypeIndex, int concreteResourceIndex, Task reservingTask,
-			LocalDateTime startTime, LocalDateTime endTime, LocalDateTime currentTime) {
-		return reserve((ConcreteResource) resPools.get(resourceTypeIndex).getConcreteResourceByIndex(concreteResourceIndex), reservingTask, startTime, endTime, currentTime);
-	}
+//	private boolean createRawReservation(
+//			int resourceTypeIndex, 
+//			int concreteResourceIndex, 
+//			Task reservingTask,
+//			LocalDateTime startTime, 
+//			LocalDateTime endTime, 
+//			LocalDateTime currentTime) {
+//		return reserve(resPools.get(resourceTypeIndex).getConcreteResourceByIndex(concreteResourceIndex), reservingTask, startTime, endTime, currentTime);
+//	}
 	
-	//TODO enkel resMan gaat dit kunnen doen. Er wordt een REQUEST naar hem gestuurd en hij CREATE een reservatie
-	public boolean reserve(ConcreteResource reservedResource, Task reservingTask, LocalDateTime startTime, LocalDateTime endTime, LocalDateTime currentTime) {
+	public boolean reserve(
+			ConcreteResource reservedResource, 
+			Task reservingTask, 
+			LocalDateTime startTime, 
+			LocalDateTime endTime, 
+			LocalDateTime currentTime) {
+		
 		if(reservedResource == null || reservingTask == null ||
 				startTime == null || endTime == null || currentTime == null) {
 			return false;
@@ -195,11 +204,11 @@ public class ResourceManager {
 		}
 	}
 
-	public boolean createRawReservation(int resource, int project, int task,
-			LocalDateTime startTime, LocalDateTime endTime) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+//	public boolean createRawReservation(int resource, int project, int task,
+//			LocalDateTime startTime, LocalDateTime endTime) {
+//		// TODO Auto-generated method stub
+//		return false;
+//	}
 	
 	
 	public ImmutableList<ResourceView> getPossibleResourceInstances(ResourceView resourceType){

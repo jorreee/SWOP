@@ -19,7 +19,7 @@ public class CreateTaskRequest extends Request {
 	public String execute() {
 		List<ProjectView> projects = facade.getProjects();
 		for(ProjectView project : projects) {
-			System.out.println("Project " + project.getName() + " ID: " + project.getID());
+			System.out.println("(ID: " + project.getID() + "Project " + project.getName());
 		}
 		
 		while(true) {
@@ -28,7 +28,8 @@ public class CreateTaskRequest extends Request {
 						"Estimated Duration (in minutes)",
 						"Acceptable Deviation (a precentage)",
 						"Alternative For (-1 for no alternative)",
-						"Prerequisite Tasks (Seperated by spaces, nothing for no prerequisite)" };
+						"Prerequisite Tasks (Seperated by spaces, nothing for no prerequisites)",
+						"Desired resources (Separated by spaces, nothing for no resources)"};
 				String[] input = new String[6];
 				for(int i=0 ; i < 6 ; i++) {
 					// Show task creation form
@@ -86,7 +87,7 @@ public class CreateTaskRequest extends Request {
 
 			} catch(Exception e) {
 				e.printStackTrace();
-				System.out.println("Invalid input");
+				System.out.println("Invalid input\n");
 			}
 			return null;
 		}

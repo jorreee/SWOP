@@ -17,11 +17,15 @@ public class ShowProjectsRequest extends Request {
 	@Override
 	public String execute() {
 		List<ProjectView> projects = facade.getProjects();
-		
+
 		while(true) {
 			try {
 				// Show List of projects with their status
 				int projectAmount = projects.size();
+				if(projectAmount == 0) {
+					System.out.println("No projects are present in the system yet. ");
+					return quit();
+				}
 				for(int i = 0 ; i < projectAmount ; i++) {
 					System.out.println("- Project " + i + " "
 							+ projects.get(i).getName() + ": "
@@ -38,29 +42,29 @@ public class ShowProjectsRequest extends Request {
 
 				// Parse input
 				int projectID = Integer.parseInt(input);
-				
+
 				if(projectID < 0 || projectID > projectAmount) {
 					throw new IllegalArgumentException();
 				}
-				
+
 				ProjectView project = projects.get(projectID);
-				
+
 				// Show overview of project details including list of tasks and their status
 				StringBuilder projectHeader = new StringBuilder(); // build project details
 				projectHeader.append("- Project " + projectID + " "
 						+ project.getName() + ": "
 						+ project.getStatusAsString() + ", ");
-				
+
 				int[] delay = null;
-//				if(!project.isFinished()) {
+				//				if(!project.isFinished()) {
 				if(project.isEstimatedOnTime(facade.getCurrentTime())) {
 					projectHeader.append("is estimated on time");
 				} else {
 					projectHeader.append("is estimated over time");
 				}
-//				}
+				//				}
 				delay = project.getDelay(facade.getCurrentTime());
-				
+
 				projectHeader.append(" (Due "
 						+ project.getDueTime().toLocalDate().toString());
 
@@ -79,9 +83,9 @@ public class ShowProjectsRequest extends Request {
 				System.out.println("   \"" + project.getDescription() + "\""); // PRINT SELECTED PROJECT HEADER
 
 				List<TaskView> tasks = project.getTasks();
-				
+
 				int taskAmount = tasks.size();
-				if(taskAmount < 0) {
+				if(taskAmount > 0) {
 					for(int i = 0 ; i < taskAmount ; i++) {
 						StringBuilder taskiHead = new StringBuilder();
 						taskiHead.append("  *");
@@ -108,45 +112,50 @@ public class ShowProjectsRequest extends Request {
 					// Parse input
 					int taskID = Integer.parseInt(input);
 
-					if(taskID < 0 || taskID > taskAmount)
+					if(taskID < 0 || taskID > taskAmount) {
 						throw new IllegalArgumentException();
+					}
 
 					TaskView task = tasks.get(taskID);
 
 					// Show overview of task details
 					StringBuilder taskHeader = new StringBuilder(); // Build task details
 					taskHeader.append("  *");
-					if(task.isUnacceptableOverdue(facade.getCurrentTime()));
-					taskHeader.append("!");
+					if(task.isUnacceptableOverdue(facade.getCurrentTime())) {
+						taskHeader.append("!");
+					}
 					taskHeader.append(" Task " + taskID + " "
 							+ task.getStatusAsString() + ": "
 							+ task.getDescription() + ", "
 							+ task.getEstimatedDuration() + " minutes, "
 							+ task.getAcceptableDeviation() + "% margin");
 
-					if(task.isOnTime(facade.getCurrentTime()))
+					if(task.isOnTime(facade.getCurrentTime())) {
 						taskHeader.append(", on time");
-				else {
-					taskHeader.append(", over time by " + task.getOverTimePercentage(facade.getCurrentTime()) + "%");
-				}
-
-				if(task.hasPrerequisites()) {
-					List<TaskView> prereqs = task.getPrerequisites();
-					taskHeader.append(", depends on");
-					for(int i = 0 ; i < prereqs.size() ; i++) {
-						if(i == 0)
-							taskHeader.append(" task " + prereqs.get(i).getID());
-						else
-							taskHeader.append(prereqs.get(i).getID());
-						if(i < prereqs.size() - 1)
-							taskHeader.append(" and ");
 					}
-				}
-				if(task.isAlternative())
-					taskHeader.append(", alternative to task " + task.getAlternativeTo().getID());
-				if(task.hasEnded())
-					taskHeader.append(", started " + task.getStartTime().toString() + " , finished " + task.getEndTime().toString());
-				System.out.println(taskHeader.toString()); // PRINT SELECTED TASK HEADER
+					else {
+						taskHeader.append(", over time by " + task.getOverTimePercentage(facade.getCurrentTime()) + "%");
+					}
+
+					if(task.hasPrerequisites()) {
+						List<TaskView> prereqs = task.getPrerequisites();
+						taskHeader.append(", depends on");
+						for(int i = 0 ; i < prereqs.size() ; i++) {
+							if(i == 0)
+								taskHeader.append(" task " + prereqs.get(i).getID());
+							else
+								taskHeader.append(prereqs.get(i).getID());
+							if(i < prereqs.size() - 1)
+								taskHeader.append(" and ");
+						}
+					}
+					if(task.isAlternative()) {
+						taskHeader.append(", alternative to task " + task.getAlternativeTo().getID());
+					}
+					if(task.hasEnded()){
+						taskHeader.append(", started " + task.getStartTime().toString() + " , finished " + task.getEndTime().toString());
+					}
+					System.out.println(taskHeader.toString()); // PRINT SELECTED TASK HEADER
 
 				} else {
 					System.out.println("This project doesn't have any tasks yet. \n");

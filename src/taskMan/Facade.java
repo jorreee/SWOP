@@ -66,8 +66,9 @@ public class Facade implements IFacade {
 			int estimatedDuration, 
 			int acceptableDeviation,
 			List<Integer> prerequisiteTasks, 
-			List<Resource> requiredResources, 
 			int alternativeFor,
+			List<IntPair> requiredResources, 
+//			List<Resource> requiredResources, 
 			String taskStatus, 
 			LocalDateTime startTime, 
 			LocalDateTime endTime) {
@@ -76,9 +77,9 @@ public class Facade implements IFacade {
 				description, 
 				estimatedDuration, 
 				acceptableDeviation, 
-				prerequisiteTasks, 
-				requiredResources, 
+				prerequisiteTasks,  
 				alternativeFor, 
+				requiredResources,
 				taskStatus, 
 				startTime, 
 				endTime);

@@ -37,11 +37,11 @@ public class CreateProjectRequest extends Request {
 				if(success) {
 					return "Project Created";
 				} else {
-					System.out.println("Invalid input");
+					System.out.println("Something went wrong... Check input and try again\n");
 				}
 
 			} catch(Exception e) {
-				System.out.println("Invalid input");
+				System.out.println("Invalid input\n");
 			}
 			return null;
 		}

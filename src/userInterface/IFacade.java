@@ -35,9 +35,9 @@ public interface IFacade {
 			int estimatedDuration, 
 			int acceptableDeviation,
 			List<Integer> prerequisiteTasks, 
-//			List<IntPair> requiredResources, TODO
-			List<Resource> requiredResources, 
 			int alternativeFor, 
+			List<IntPair> requiredResources, //TODO
+//			List<Resource> requiredResources, 
 			String taskStatus, 
 			LocalDateTime startTime, 
 			LocalDateTime endTime);

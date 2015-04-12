@@ -11,15 +11,14 @@ import initSaveRestore.initialization.TaskManInitFileChecker;
 import initSaveRestore.initialization.TaskStatus;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import taskMan.Facade;
-import taskMan.view.ResourceView;
 import userInterface.requests.Request;
 /**
  * Main class of the User Interface of the project TaskMan.
@@ -28,13 +27,46 @@ import userInterface.requests.Request;
 public class Main {
 		
 	public static void main(String[] args) throws IOException {
-		System.out.println("~~~~~~~~~~~~~~~ TASKMAN ~~~~~~~~~~~~~~~");
+		System.out.println("~~~~~~~~~~~~~~~ TASKMAN ~~~~~~~~~~~~~~~");		
+//		if (args.length < 1) {
+//			System.err.println("Error: First command line argument must be filename.");
+//			return;
+//		}
+		
+		IFacade facade;
+		if(args.length < 1) {
+			facade = new Facade(LocalDateTime.now());
+		} else {
+			facade = initialize(args[0]);
+		}
+		
+		// Start accepting user input
+		BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
+		InputParser inParser = new InputParser(facade, input);
+		while(true) {
+			// Display System status
+			System.out.println("Current System time: " + facade.getCurrentTime().toString() +
+					", logged in as: " + facade.getCurrentUsername());
+			// Ask user for input
+			System.out.println("TaskMan instruction? (h for help)");
+			// Parse user input
+			Request request = inParser.parse(input.readLine());
+			
+			// Execute request
+			String response = request.execute();
+			
+			// Display the response of the previous request
+			System.out.println(response);
+
+		} // Repeat
+	}
+	
+	private static IFacade initialize(String fileLocation) throws FileNotFoundException {
+
 		// Initialize variables from file
 		TaskManInitFileChecker fileChecker;
 		
-		if (args.length < 1)
-			System.err.println("Error: First command line argument must be filename.");
-		fileChecker = new TaskManInitFileChecker(new FileReader(args[0]));
+		fileChecker = new TaskManInitFileChecker(new FileReader(fileLocation));
 		fileChecker.checkFile();
 		
 		LocalDateTime systemTime = fileChecker.getSystemTime();
@@ -68,13 +100,16 @@ public class Main {
 		for(ConcreteResourceCreationData cres : concreteResources) {
 			facade.declareConcreteResource(cres.getName(), cres.getTypeIndex());
 		}
+		// -------------------------- TODO
 			// Init developers
 		for(DeveloperCreationData dev : developers) {
 			facade.createDeveloper(dev.getName());
 		}
 		
-		// Init current user
+			// Init current user
 		facade.changeToUser(fileChecker.getCurrentUser());
+		// --------------------------------
+		
 			// Init projects
 		for(ProjectCreationData pcd : projectData) {
 			facade.createProject(pcd.getName(), pcd.getDescription(), pcd.getCreationTime(), pcd.getDueTime());
@@ -87,45 +122,45 @@ public class Main {
 				statusString = status.name();
 			PlanningCreationData planning = tcd.getPlanningData();
 			if(planning != null)
-				facade.createRawPlannedTask(tcd.getProject(), tcd.getDescription(),
+				facade.createRawPlannedTask(
+						tcd.getProject(), 
+						tcd.getDescription(),
 						tcd.getEstimatedDuration(),
-						tcd.getAcceptableDeviation(), tcd.getPrerequisiteTasks(),
-						tcd.getAlternativeFor(), tcd.getRequiredResources(),
-						statusString, tcd.getStartTime(), tcd.getEndTime(),
-						planning.getDueTime(), planning.getDevelopers(),
+						tcd.getAcceptableDeviation(), 
+						tcd.getPrerequisiteTasks(),
+						tcd.getAlternativeFor(), 
+						tcd.getRequiredResources(),
+						statusString, 
+						tcd.getStartTime(), 
+						tcd.getEndTime(),
+						planning.getDueTime(), 		//TODO wtf is due time voor task ineens?
+						planning.getDevelopers(),
 						planning.getResources());
 			else
-				facade.createRawTask(tcd.getProject(), tcd.getDescription(),
-					tcd.getEstimatedDuration(),
-					tcd.getAcceptableDeviation(), tcd.getPrerequisiteTasks(),
-					tcd.getAlternativeFor(), tcd.getRequiredResources(),
-					statusString, tcd.getStartTime(), tcd.getEndTime());
+				facade.createRawTask(
+						tcd.getProject(), 
+						tcd.getDescription(),
+						tcd.getEstimatedDuration(),
+						tcd.getAcceptableDeviation(), 
+						tcd.getPrerequisiteTasks(),
+						tcd.getAlternativeFor(), 
+						tcd.getRequiredResources(),
+						statusString, 
+						tcd.getStartTime(), 
+						tcd.getEndTime());
 		}
 			// Init reservations
 		for(ReservationCreationData rcd : reservations) {
-			facade.createRawReservation(rcd.getResource(), taskData.get(rcd.getTask()).getProject(), rcd.getTask(), rcd.getStartTime(), rcd.getEndTime());
+			facade.createRawReservation(
+					rcd.getResource(), 
+					taskData.get(rcd.getTask()).getProject(), 
+					rcd.getTask(), 
+					rcd.getStartTime(), 
+					rcd.getEndTime());
 		}
 		// End initialization
 		
-		// Start accepting user input
-		BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
-		InputParser inParser = new InputParser(facade, input);
-		while(true) {
-			// Display System status
-			System.out.println("Current System time: " + facade.getCurrentTime().toString() +
-					", logged in as: " + facade.getCurrentUsername());
-			// Ask user for input
-			System.out.println("TaskMan instruction? (h for help)");
-			// Parse user input
-			Request request = inParser.parse(input.readLine());
-			
-			// Execute request
-			String response = request.execute();
-			
-			// Display the response of the previous request
-			System.out.println(response);
-
-		} // Repeat
+		return facade;
 	}
 
 }

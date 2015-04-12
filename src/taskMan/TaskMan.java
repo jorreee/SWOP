@@ -27,6 +27,7 @@ import com.google.common.collect.ImmutableList.Builder;
 public class TaskMan {
 	
 	private ArrayList<Project> projectList;
+	private int nextProjectID;
 	private LocalDateTime currentTime;
 	private User currentUser;
 	private ResourceManager resMan;
@@ -41,6 +42,7 @@ public class TaskMan {
 	 */
 	public TaskMan(LocalDateTime time){
 		projectList = new ArrayList<>();
+		nextProjectID = 0;
 		currentTime = time;
 		resMan = new ResourceManager();
 		currentUser = resMan.getDefaultUser();
@@ -126,10 +128,11 @@ public class TaskMan {
 	public boolean createProject(String name, String description, LocalDateTime creationTime, LocalDateTime dueTime) {
 		Project project = null;
 		try{
-			 project = new Project(projectList.size(), name, description, creationTime, dueTime);
+			 project = new Project(nextProjectID, name, description, creationTime, dueTime);
 		} catch(IllegalArgumentException e) {
 			return false;
 		}
+		nextProjectID++;
 		return projectList.add(project);
 	}
 	
@@ -176,8 +179,9 @@ public class TaskMan {
 			int estimatedDuration, 
 			int acceptableDeviation,
 			List<Integer> prerequisiteTasks, 
-			List<Resource> requiredResources, 
 			int alternativeFor, 
+			List<IntPair> requiredResources, 
+//			List<Resource> requiredResources, 
 			String taskStatus,
 			LocalDateTime startTime, 
 			LocalDateTime endTime) {
@@ -188,7 +192,8 @@ public class TaskMan {
 					acceptableDeviation, 
 					resMan, 
 					prerequisiteTasks, 
-					requiredResources, 
+					new ArrayList<Resource>(),
+//					requiredResources, 
 					alternativeFor, 
 					taskStatus, 
 					startTime, 
@@ -881,7 +886,9 @@ public class TaskMan {
 	
 	public boolean createRawReservation(int resource, int project, int task,
 			LocalDateTime startTime, LocalDateTime endTime) {
-		return resMan.createRawReservation(resource,project,task,startTime,endTime);
+		return false;
+		//TODO dit kan via de rare "raw plan" data worden geinitialiseerd
+//		return resMan.createRawReservation(resource,project,task,startTime,endTime);
 	}
 	
 	public ImmutableList<LocalDateTime> getPossibleTaskStartingTimes(ProjectView project, TaskView task,
