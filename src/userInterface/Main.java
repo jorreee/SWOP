@@ -15,9 +15,11 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import taskMan.Facade;
+import taskMan.view.ResourceView;
 import userInterface.requests.Request;
 /**
  * Main class of the User Interface of the project TaskMan.
@@ -48,25 +50,23 @@ public class Main {
 		
 		// Initialize system through a facade
 			// Init daily availability
-		facade.declareAvailabilityPeriod(fileChecker.getDailyAvailabilityTime()[0],
-				fileChecker.getDailyAvailabilityTime()[1]);
+//		facade.declareAvailabilityPeriod(fileChecker.getDailyAvailabilityTime()[0],
+//				fileChecker.getDailyAvailabilityTime()[1]);
 			// Init resource prototypes
+		
 		for(ResourcePrototypeCreationData rprot : resourcePrototypes) {
-			facade.createResourcePrototype(rprot.getName(), rprot.getRequirements(), rprot.getConflicts(), rprot.getAvailabilityIndex());
-//			facade.createResourcePrototype(rprot.getName(), rprot.getAvailabilityIndex());
-//			//, rprot.getRequirements(), rprot.getConflicts(), rprot.getAvailabilityIndex());
+//			facade.createResourcePrototype(rprot.getName(), rprot.getRequirements(), rprot.getConflicts(), rprot.getAvailabilityIndex());
+			facade.createResourcePrototype(
+					rprot.getName(), 
+					rprot.getConflicts(),
+					rprot.getRequirements(), 
+					fileChecker.getDailyAvailabilityTime()[0],
+					fileChecker.getDailyAvailabilityTime()[1]);
+			//, rprot.getRequirements(), rprot.getConflicts(), rprot.getAvailabilityIndex());
 		}
-//		for(ResourcePrototypeCreationData rprot : resourcePrototypes) {
-//			facade.setResourcePrototypeRequirements(rprot.getName(), rprot.getRequirements());
-//			//, rprot.getConflicts(), rprot.getAvailabilityIndex());
-//		}
-//		for(ResourcePrototypeCreationData rprot : resourcePrototypes) {
-//			facade.setResourcePrototypeConflicts(rprot.getName(), rprot.getConflicts());
-//			//, rprot.getAvailabilityIndex());
-//		}
 			// Init concrete resources
 		for(ConcreteResourceCreationData cres : concreteResources) {
-			facade.createRawResource(cres.getName(), cres.getTypeIndex());
+			facade.declareConcreteResource(cres.getName(), cres.getTypeIndex());
 		}
 			// Init developers
 		for(DeveloperCreationData dev : developers) {

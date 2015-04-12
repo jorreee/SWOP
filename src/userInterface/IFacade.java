@@ -68,13 +68,15 @@ public interface IFacade {
 	public boolean discardMemento();
 
 	//TODO guys.
-	public boolean declareAvailabilityPeriod(LocalTime startTime, LocalTime endTime);
+//	public boolean declareAvailabilityPeriod(LocalTime startTime, LocalTime endTime);
 
 	public boolean createResourcePrototype(String name,
-			List<Integer> requirements, List<Integer> conflicts,
-			Integer availabilityIndex);
+			List<Integer> requirements, 
+			List<Integer> conflicts,
+			LocalTime availabilityStart,
+			LocalTime availabilityEnd);
 
-	public boolean createRawResource(String name, int typeIndex);
+	public boolean declareConcreteResource(String name, int typeIndex);
 
 	public boolean createDeveloper(String name);
 
@@ -90,14 +92,13 @@ public interface IFacade {
 			LocalDateTime planningStartTime);
 
 	public ImmutableList<ResourceView> getResourcePrototypes();
-	public ImmutableList<ResourceView> getResourceRequirements(
-			ResourceView resource);
-
-	public ImmutableList<ResourceView> getResourceConflicts(ResourceView resource);
-
-	boolean isResourceDailyAvailable(ResourceView resprot);
 	public ImmutableList<ResourceView> getAllConcreteResources();
-	public ResourceView getPrototypeOf(ResourceView resource);
+//	public ImmutableList<ResourceView> getResourceRequirements(ResourceView resource); TODO in ResourceView
+
+//	public ImmutableList<ResourceView> getResourceConflicts(ResourceView resource); TODO in ResourceView
+
+//	boolean isResourceDailyAvailable(ResourceView resprot); TODO in ResourceView
+//	public ResourceView getPrototypeOf(ResourceView resource); TODO in ResourceView
 	/*
 	public boolean createTask(int projectID, String description, int estimatedDuration, int acceptableDeviation, String taskStatus, Integer alternativeFor, List<Integer> prerequisiteTasks, LocalDateTime startTime, LocalDateTime endTime);
 	public boolean createTask(int projectID, String description, int estimatedDuration, int acceptableDeviation, Integer alternativeFor, List<Integer> prerequisiteTasks);

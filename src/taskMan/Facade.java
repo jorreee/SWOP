@@ -148,22 +148,24 @@ public class Facade implements IFacade {
 		return taskMan.createRawPlannedTask(project, description, estimatedDuration, acceptableDeviation,
 				prerequisiteTasks, alternativeFor, statusString, startTime, endTime, planningDueTime, plannedDevelopers, plannedResources);
 	}
-
-	@Override
-	public boolean declareAvailabilityPeriod(LocalTime startTime,LocalTime endTime) {
-		return taskMan.declareAvailabilityPeriod(startTime,endTime);
-	}
+//
+//	@Override
+//	public boolean declareAvailabilityPeriod(LocalTime startTime,LocalTime endTime) {
+//		return taskMan.declareAvailabilityPeriod(startTime,endTime);
+//	}
 
 	@Override
 	public boolean createResourcePrototype(String name,
-			List<Integer> requirements, List<Integer> conflicts,
-			Integer availabilityIndex) {
-		return taskMan.createResourcePrototype(name,requirements,conflicts,availabilityIndex);
+			List<Integer> requirements, 
+			List<Integer> conflicts,
+			LocalTime availabilityStart,
+			LocalTime availabilityEnd) {
+		return taskMan.createResourcePrototype(name,requirements,conflicts,availabilityStart,availabilityEnd);
 	}
 
 	@Override
-	public boolean createRawResource(String name, int typeIndex) {
-		return taskMan.createRawResource(name,typeIndex);
+	public boolean declareConcreteResource(String name, int typeIndex) {
+		return taskMan.declareConcreteResource(name,typeIndex);
 	}
 
 	@Override
@@ -206,24 +208,24 @@ public class Facade implements IFacade {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-	@Override
-	public ImmutableList<ResourceView> getResourceRequirements(
-			ResourceView resource) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-
-	@Override
-	public ImmutableList<ResourceView> getResourceConflicts(ResourceView resprot) {
-		return null;
-	}
-
-	@Override
-	public boolean isResourceDailyAvailable(ResourceView resprot) {
-		return false;
-	}
+//
+//	@Override
+//	public ImmutableList<ResourceView> getResourceRequirements(
+//			ResourceView resource) {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
+//	
+//
+//	@Override
+//	public ImmutableList<ResourceView> getResourceConflicts(ResourceView resprot) {
+//		return null;
+//	}
+//
+//	@Override
+//	public boolean isResourceDailyAvailable(ResourceView resprot) {
+//		return false;
+//	}
 
 	public AvailabilityPeriod getDailyAvailability(ResourceView resprot) {
 		// TODO Auto-generated method stub

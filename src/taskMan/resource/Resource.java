@@ -9,7 +9,7 @@ public abstract class Resource {
 	protected List<ResourcePrototype> reqResourcesList;
 	protected List<ResourcePrototype> conResourcesList;
 	
-	protected AvailabilityPeriod dailyAvailable = null;
+	protected AvailabilityPeriod dailyAvailable;
 	
 	public Resource(String resourceName, List<ResourcePrototype> requiredResourcesList, List<ResourcePrototype> conflictingResourcesList, AvailabilityPeriod dailyAvailability) {
 		this.resName = resourceName;

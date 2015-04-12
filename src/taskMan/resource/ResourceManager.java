@@ -19,9 +19,10 @@ public class ResourceManager {
 	// The resource manager has a list of resource pools (and users)
 	private List<ResourcePool> resPools;
 	private List<User> userList;
+	private int nextCreationIndex;
 	
-	// A list of availabilities
-	private List<AvailabilityPeriod> availabilityPeriodList;
+//	// A list of availabilities
+//	private List<AvailabilityPeriod> availabilityPeriodList;
 	
 	// A list of (active) reservations
 	private List<Reservation> activeReservations;
@@ -29,17 +30,22 @@ public class ResourceManager {
 	
 	public ResourceManager() {
 		this.resPools = new ArrayList<>();
-		this.availabilityPeriodList = new ArrayList<>();
+//		this.availabilityPeriodList = new ArrayList<>();
 		this.userList = new ArrayList<>();
 		userList.add(new ProjectManager("admin"));
+		nextCreationIndex = 0;
 	}
 	
+	//TODO kunnen ook lijsten van Strings zijn of zelfs lijsten van ResourceViews
 	public boolean createResourcePrototype(String resourceName,
 			List<Integer> requirements, List<Integer> conflicts,
-			Integer availabilityIndex) {
+			LocalTime availabilityStart, LocalTime availabilityEnd) {
+		
+		if(!isValidPeriod(availabilityStart, availabilityEnd)) {
+			return false;
+		}
 		// No nulls
-		if(resourceName == null || requirements == null
-				|| conflicts == null) {
+		if(resourceName == null) {
 			return false;
 		}
 		// Requirement cannot be a conflict
@@ -48,60 +54,84 @@ public class ResourceManager {
 				return false;
 			}
 		}
-		// If daily available, DailyAvailability must exist
-		if(availabilityIndex != null && (availabilityIndex < 0 || availabilityIndex > availabilityPeriodList.size())) {
-			return false;
-		}
+		// If daily available, availabilityPeriod must exist
+//		if(availabilityIndex != null && (availabilityIndex < 0 || availabilityIndex > availabilityPeriodList.size())) {
+//			return false;
+//		}
 		
 		// Create resprot (should happen before applying conflicting resources,
 		// since a resource can conflict with itself
 		boolean success = false;
 		ResourcePrototype resprot = null;
-		if(availabilityIndex == null) {
-			resprot = new ResourcePrototype(resourceName, new ArrayList<ResourcePrototype>(), new ArrayList<ResourcePrototype>(), null);
+		if(availabilityStart == null && availabilityEnd == null) {
+			resprot = new ResourcePrototype(resourceName, null, nextCreationIndex);
+//			resprot = new ResourcePrototype(resourceName, new ArrayList<ResourcePrototype>(), new ArrayList<ResourcePrototype>(), null);
 		} else {
-			resprot = new ResourcePrototype(resourceName, new ArrayList<ResourcePrototype>(), new ArrayList<ResourcePrototype>(), availabilityPeriodList.get(availabilityIndex));
+			resprot = new ResourcePrototype(resourceName, new AvailabilityPeriod(availabilityStart, availabilityEnd), nextCreationIndex);
+//			resprot = new ResourcePrototype(resourceName, new ArrayList<ResourcePrototype>(), new ArrayList<ResourcePrototype>(), availabilityPeriodList.get(availabilityIndex));
 		}
 		success = addResourceType(resprot);
-		if(!success) { return false; }
+		if(!success) {
+			return false;
+		}
 		
-		// Build reqList and conList
-		List<ResourcePrototype> reqList = new ArrayList<>();
-		List<ResourcePrototype> conList = new ArrayList<>();
+//		List<ResourcePrototype> reqList = new ArrayList<ResourcePrototype>();
+//		List<ResourcePrototype> conList = new ArrayList<ResourcePrototype>();
 		for(Integer requirement : requirements) {
-			reqList.add(resPools.get(requirement).getPrototype());
+			for(ResourcePool resPool : resPools) {
+				if(resPool.getPrototype().isCreationIndex(requirement)) {
+					resprot.addRequiredResource(resPool.getPrototype());
+				}
+			}
 		}
 		for(Integer conflict : conflicts) {
-			conList.add(resPools.get(conflict).getPrototype());
+			for(ResourcePool resPool : resPools) {
+				if(resPool.getPrototype().isCreationIndex(conflict)) {
+					resprot.addConflictingResource(resPool.getPrototype());
+				}
+			}
 		}
-		resprot.putConflictingResources(conList);
-		resprot.putRequiredResources(reqList);
+//		resprot.putConflictingResources(conList);
+//		resprot.putRequiredResources(reqList);
+		nextCreationIndex++;
 		return true;
 	}
-	
-	public boolean declareAvailabilityPeriod(LocalTime startTime, LocalTime endTime) {
-		if(!isValidPeriod(startTime,endTime)) {
-			return false;
-		}
-		return availabilityPeriodList.add(new AvailabilityPeriod(startTime, endTime));
-	}
+//	
+//	public boolean declareAvailabilityPeriod(LocalTime startTime, LocalTime endTime) {
+//		if(!isValidPeriod(startTime,endTime)) {
+//			return false;
+//		}
+//		return availabilityPeriodList.add(new AvailabilityPeriod(startTime, endTime));
+//	}
 	
 	private boolean isValidPeriod(LocalTime start, LocalTime end) {
-		if(start == null || end == null) {
+		if(start == null && end != null) {
 			return false;
 		}
-		if(end.isBefore(start)) {
+		if(start != null && end == null) {
 			return false;
 		}
-		return true;
+		if(start == null && end == null) {
+			return true;
+		}
+		return !end.isBefore(start);
 	}
 	
 	private boolean addResourceType(ResourcePrototype resProt) {
 		return resPools.add(new ResourcePool(resProt));
 	}
 	
-	public boolean createRawResource(String resName, int typeIndex) {
-		return resPools.get(typeIndex).createResourceInstance(resName);
+	public boolean declareConcreteResource(String resName, int typeIndex) {
+		ResourcePool resPool = null;
+		for(ResourcePool rp : resPools) {
+			if(rp.getPrototype().isCreationIndex(typeIndex)) {
+				resPool = rp;
+			}
+		}
+		if(resPool == null) {
+			return false;
+		}
+		return resPool.createResourceInstance(resName);
 	}
 	
 	public User getUser(String username) {

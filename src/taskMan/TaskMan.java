@@ -858,19 +858,21 @@ public class TaskMan {
 				acceptableDeviation,prerequisiteTasks,alternativeFor,statusString,startTime,
 				endTime,planningDueTime,plannedDevelopers, plannedResources);
 	}
-	
-	public boolean declareAvailabilityPeriod(LocalTime startTime,LocalTime endTime) {
-		return resMan.declareAvailabilityPeriod(startTime,endTime);
-	}
+//	
+//	public boolean declareAvailabilityPeriod(LocalTime startTime,LocalTime endTime) {
+//		return resMan.declareAvailabilityPeriod(startTime,endTime);
+//	}
 	
 	public boolean createResourcePrototype(String name,
-			List<Integer> requirements, List<Integer> conflicts,
-			Integer availabilityIndex) {
-		return resMan.createResourcePrototype(name,requirements,conflicts,availabilityIndex);
+			List<Integer> requirements, 
+			List<Integer> conflicts,
+			LocalTime availabilityStart,
+			LocalTime availabilityEnd) {
+		return resMan.createResourcePrototype(name,requirements,conflicts,availabilityStart,availabilityEnd);
 	}
 	
-	public boolean createRawResource(String name, int typeIndex) {
-		return resMan.createRawResource(name,typeIndex);
+	public boolean declareConcreteResource(String name, int typeIndex) {
+		return resMan.declareConcreteResource(name,typeIndex);
 	}
 	
 	public boolean createDeveloper(String name) {

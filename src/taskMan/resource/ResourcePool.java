@@ -21,8 +21,7 @@ public class ResourcePool {
 	}
 
 	public boolean createResourceInstance(String resName) {
-		ConcreteResource conRes = resProt.clone();
-		conRes.setName(resName);
+		ConcreteResource conRes = resProt.instantiate(resName);
 		return concreteResList.add(conRes);
 	}
 

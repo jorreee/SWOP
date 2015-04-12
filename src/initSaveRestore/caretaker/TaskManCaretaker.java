@@ -167,7 +167,7 @@ public class TaskManCaretaker {
 		}
 		// Init concrete resources
 		for(ConcreteResourceCreationData cres : concreteResources) {
-			facade.createRawResource(cres.getName(), cres.getTypeIndex());
+			facade.declareConcreteResource(cres.getName(), cres.getTypeIndex());
 		}
 		// Init developers
 		for(DeveloperCreationData dev : developers) {
