@@ -4,9 +4,9 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
-import taskMan.resource.Resource;
 import taskMan.util.IntPair;
 import taskMan.view.ProjectView;
 import taskMan.view.ResourceView;
@@ -52,7 +52,7 @@ public interface IFacade {
 
 	public boolean createTask(ProjectView project, String description,
 			int estimatedDuration, int acceptableDeviation,
-			List<TaskView> prerequisiteTasks, List<Resource> requiredResources, TaskView alternativeFor);
+			List<TaskView> prerequisiteTasks, Map<ResourceView, Integer> requiredResources, TaskView alternativeFor);
 
 	public boolean setTaskFinished(ProjectView projectID, TaskView taskID,
 			LocalDateTime endTime);

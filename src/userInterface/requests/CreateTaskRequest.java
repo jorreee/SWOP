@@ -2,10 +2,12 @@ package userInterface.requests;
 
 import java.io.BufferedReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import taskMan.resource.Resource;
 import taskMan.view.ProjectView;
+import taskMan.view.ResourceView;
 import taskMan.view.TaskView;
 import userInterface.IFacade;
 
@@ -55,10 +57,10 @@ public class CreateTaskRequest extends Request {
 				}
 				
 				//TODO resources
-				ArrayList<Resource> reqRes = new ArrayList<Resource>();
+				HashMap<ResourceView, Integer> reqRes = new HashMap<>();
 				for(String preres : input[6].split(" ")) {
 					if((preres.equals(""))) {
-						reqRes.add(null);
+						reqRes.put(null, null);
 					}
 				}
 				

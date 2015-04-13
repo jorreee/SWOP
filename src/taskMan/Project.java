@@ -3,6 +3,7 @@ package taskMan;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import taskMan.resource.Resource;
 import taskMan.resource.ResourceManager;
@@ -11,6 +12,7 @@ import taskMan.state.ProjectStatus;
 import taskMan.util.Dependant;
 import taskMan.util.IntPair;
 import taskMan.util.TimeSpan;
+import taskMan.view.ResourceView;
 import taskMan.view.TaskView;
 
 import com.google.common.collect.ImmutableList;
@@ -143,7 +145,7 @@ public class Project implements Dependant {
 			int acceptableDeviation, 
 			ResourceManager resMan, 
 			List<Integer> prerequisiteTasks, 
-			List<Resource> requiredResources, 
+			Map<ResourceView, Integer> requiredResources, 
 			int alternativeFor, 
 			String taskStatus,
 			LocalDateTime startTime, 
@@ -211,7 +213,7 @@ public class Project implements Dependant {
 						int acceptableDeviation, 
 						ResourceManager resMan, 
 						List<TaskView> prerequisiteTasks, 
-						List<Resource> requiredResources, 
+						Map<ResourceView, Integer> requiredResources, 
 						TaskView alternativeFor, 
 						String taskStatus,
 						LocalDateTime startTime, 
@@ -296,7 +298,7 @@ public class Project implements Dependant {
 			int acceptableDeviation, 
 			ResourceManager resMan, 
 			List<TaskView> prerequisiteTasks, 
-			List<Resource> requiredResources, 
+			Map<ResourceView, Integer> requiredResources, 
 			TaskView alternativeFor) {
 		
 		return createTask(description, 
@@ -706,14 +708,29 @@ public class Project implements Dependant {
 	 * 			The planned developers of the Task.
 	 * @param 	plannedResources
 	 * 			The planned resources of the Task.
-	 * @return	True if and only if the creation of the Raw Planned Task was succesful.
+	 * @return	True if and only if the creation of the Raw Planned Task was successful.
 	 */
-	public boolean createRawPlannedTask(int project, String description,
+	public boolean createRawPlannedTask(String description,
 			int estimatedDuration, int acceptableDeviation,
-			List<Integer> prerequisiteTasks, int alternativeFor,
+			ResourceManager resMan,
+			List<Integer> prerequisiteTasks,
+			Map<ResourceView, Integer> requiredResources, int alternativeFor,
 			String statusString, LocalDateTime startTime,
 			LocalDateTime endTime, LocalDateTime planningDueTime,
 			List<Integer> plannedDevelopers, List<IntPair> plannedResources) {
+		// Create a raw task
+		boolean taskCreationSuccess = createRawTask(description, 
+				estimatedDuration, 
+				acceptableDeviation, 
+				resMan, 
+				prerequisiteTasks, 
+				requiredResources, 
+				alternativeFor, 
+				statusString,
+				startTime, 
+				endTime);
+		// Add the planning to the task
+		
 		return false; //TODO
 	}
 	

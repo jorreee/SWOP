@@ -3,11 +3,12 @@ package taskMan;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import taskMan.resource.AvailabilityPeriod;
-import taskMan.resource.Resource;
 import taskMan.resource.ResourceManager;
 import taskMan.resource.user.User;
 import taskMan.util.IntPair;
@@ -181,7 +182,7 @@ public class TaskMan {
 			int acceptableDeviation,
 			List<Integer> prerequisiteTasks, 
 			int alternativeFor, 
-			List<IntPair> requiredResources, 
+			List<IntPair> rawRequiredResources, 
 //			List<Resource> requiredResources, 
 			String taskStatus,
 			LocalDateTime startTime, 
@@ -193,7 +194,7 @@ public class TaskMan {
 					acceptableDeviation, 
 					resMan, 
 					prerequisiteTasks, 
-					new ArrayList<Resource>(),
+					new HashMap<ResourceView, Integer>(), // TODO feitelijke data gebruiken
 //					requiredResources, 
 					alternativeFor, 
 					taskStatus, 
@@ -226,7 +227,7 @@ public class TaskMan {
 			int estimatedDuration, 
 			int acceptableDeviation,
 			List<TaskView> prerequisiteTasks, 
-			List<Resource> requiredResources, 
+			Map<ResourceView, Integer> requiredResources, 
 			TaskView alternativeFor) {
 		
 		Project p = unwrapProjectView(project);
@@ -856,12 +857,16 @@ public class TaskMan {
 	 */
 	public boolean createRawPlannedTask(int project, String description,
 			int estimatedDuration, int acceptableDeviation,
-			List<Integer> prerequisiteTasks, int alternativeFor,
+			List<Integer> prerequisiteTasks,
+			List<IntPair> rawRequiredResources, // TODO Moet IntPair zijn (verantwoordelijkheid zoeken naar resources in TaskMan)
+			int alternativeFor,
 			String statusString, LocalDateTime startTime,
 			LocalDateTime endTime, LocalDateTime planningDueTime,
 			List<Integer> plannedDevelopers, List<IntPair> plannedResources) {
-		return projectList.get(project).createRawPlannedTask(project,description,estimatedDuration,
-				acceptableDeviation,prerequisiteTasks,alternativeFor,statusString,startTime,
+		Map<ResourceView, Integer> requiredResources = null; // TODO Moet HashMap worden (Verantwoordelijkheid zoeken naar resources in TaskMan)
+		return projectList.get(project).createRawPlannedTask(description,estimatedDuration,
+				acceptableDeviation,resMan,prerequisiteTasks,requiredResources, 
+				alternativeFor,statusString,startTime,
 				endTime,planningDueTime,plannedDevelopers, plannedResources);
 	}
 //	

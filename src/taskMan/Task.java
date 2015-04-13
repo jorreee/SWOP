@@ -4,8 +4,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import taskMan.resource.Resource;
 import taskMan.resource.ResourceManager;
 import taskMan.state.TaskStatus;
 import taskMan.state.UnavailableTask;
@@ -69,7 +69,7 @@ public class Task implements Dependant {
 			int acceptableDeviation, 
 			ResourceManager resMan, 
 			List<Task> prerequisiteTasks,
-			List<Resource> requiredResources, 
+			Map<ResourceView, Integer> requiredResources, 
 			Task alternativeFor) throws IllegalArgumentException {
 		
 		if(!isValidTaskID(taskID)) {
@@ -153,7 +153,7 @@ public class Task implements Dependant {
 			int acceptableDeviation, 
 			ResourceManager resMan, 
 			List<Task> prerequisiteTasks,
-			List<Resource> requiredResources, 
+			Map<ResourceView, Integer> requiredResources, 
 			Task alternativeFor,
 			String taskStatus,
 			LocalDateTime beginTime, 
