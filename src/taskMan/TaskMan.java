@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import taskMan.resource.AvailabilityPeriod;
 import taskMan.resource.Resource;
@@ -871,8 +872,8 @@ public class TaskMan {
 	public boolean createResourcePrototype(String name,
 			List<Integer> requirements, 
 			List<Integer> conflicts,
-			LocalTime availabilityStart,
-			LocalTime availabilityEnd) {
+			Optional<LocalTime> availabilityStart,
+			Optional<LocalTime> availabilityEnd) {
 		return resMan.createResourcePrototype(name,requirements,conflicts,availabilityStart,availabilityEnd);
 	}
 	

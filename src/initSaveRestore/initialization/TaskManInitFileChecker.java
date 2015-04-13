@@ -8,6 +8,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import taskMan.util.IntPair;
 
@@ -28,7 +29,7 @@ public class TaskManInitFileChecker extends StreamTokenizer {
 	  List<PlanningCreationData> planningDataList = new ArrayList<>();
 	  List<ReservationCreationData> reservationDataList = new ArrayList<>();
 	  
-	  LocalTime[] dailyAvailabilityTime = new LocalTime[2];
+	  List<LocalTime[]> dailyAvailabilityTime = new ArrayList<LocalTime[]>();
 
 	  public TaskManInitFileChecker(Reader r) {
 	    super(r);
@@ -147,8 +148,7 @@ public class TaskManInitFileChecker extends StreamTokenizer {
 	    expectLabel("dailyAvailability");
 	    while (ttype == '-') {
 	      expectChar('-');
-	      dailyAvailabilityTime[0] = expectTimeField("startTime");
-	      dailyAvailabilityTime[1] = expectTimeField("endTime");
+	      dailyAvailabilityTime.add(new LocalTime[]{expectTimeField("startTime"), expectTimeField("endTime")});
 	    }
 	    
 	    expectLabel("resourceTypes");
@@ -287,8 +287,14 @@ public class TaskManInitFileChecker extends StreamTokenizer {
 		return systemTime;
 	}
 	
-	public LocalTime[] getDailyAvailabilityTime() {
-		return dailyAvailabilityTime;
+	public Optional<LocalTime> getDailyAvailabilityStartByIndex(Integer index) {
+		if(index == null) return Optional.empty();
+		else return Optional.of(dailyAvailabilityTime.get(index)[0]);
+	}
+	
+	public Optional<LocalTime> getDailyAvailabilityEndByIndex(Integer index) {
+		if(index == null) return Optional.empty();
+		else return Optional.of(dailyAvailabilityTime.get(index)[1]);
 	}
 
 	public List<ResourcePrototypeCreationData> getResourcePrototypeDataList() {

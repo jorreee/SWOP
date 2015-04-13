@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 import taskMan.resource.AvailabilityPeriod;
 import taskMan.resource.Resource;
@@ -159,8 +160,8 @@ public class Facade implements IFacade {
 	public boolean createResourcePrototype(String name,
 			List<Integer> requirements, 
 			List<Integer> conflicts,
-			LocalTime availabilityStart,
-			LocalTime availabilityEnd) {
+			Optional<LocalTime> availabilityStart,
+			Optional<LocalTime> availabilityEnd) {
 		return taskMan.createResourcePrototype(name,requirements,conflicts,availabilityStart,availabilityEnd);
 	}
 

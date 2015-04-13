@@ -92,8 +92,8 @@ public class Main {
 					rprot.getName(), 
 					rprot.getConflicts(),
 					rprot.getRequirements(), 
-					fileChecker.getDailyAvailabilityTime()[0],
-					fileChecker.getDailyAvailabilityTime()[1]);
+					fileChecker.getDailyAvailabilityStartByIndex(rprot.getAvailabilityIndex()),
+					fileChecker.getDailyAvailabilityEndByIndex(rprot.getAvailabilityIndex()));
 			//, rprot.getRequirements(), rprot.getConflicts(), rprot.getAvailabilityIndex());
 		}
 			// Init concrete resources
@@ -133,7 +133,7 @@ public class Main {
 						statusString, 
 						tcd.getStartTime(), 
 						tcd.getEndTime(),
-						planning.getDueTime(), 		//TODO wtf is due time voor task ineens?
+						planning.getDueTime(), 		//TODO wtf is due time voor task ineens? -- Ik vermoed: de task is "due" om dan te starten
 						planning.getDevelopers(),
 						planning.getResources());
 			else

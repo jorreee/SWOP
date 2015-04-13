@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import taskMan.Task;
 import taskMan.resource.user.Developer;
@@ -39,7 +40,7 @@ public class ResourceManager {
 	//TODO kunnen ook lijsten van Strings zijn of zelfs lijsten van ResourceViews
 	public boolean createResourcePrototype(String resourceName,
 			List<Integer> requirements, List<Integer> conflicts,
-			LocalTime availabilityStart, LocalTime availabilityEnd) {
+			Optional<LocalTime> availabilityStart, Optional<LocalTime> availabilityEnd) {
 		
 		if(!isValidPeriod(availabilityStart, availabilityEnd)) {
 			return false;
@@ -63,11 +64,11 @@ public class ResourceManager {
 		// since a resource can conflict with itself
 		boolean success = false;
 		ResourcePrototype resprot = null;
-		if(availabilityStart == null && availabilityEnd == null) {
+		if(!availabilityStart.isPresent() && !availabilityEnd.isPresent()) {
 			resprot = new ResourcePrototype(resourceName, null, nextCreationIndex);
 //			resprot = new ResourcePrototype(resourceName, new ArrayList<ResourcePrototype>(), new ArrayList<ResourcePrototype>(), null);
 		} else {
-			resprot = new ResourcePrototype(resourceName, new AvailabilityPeriod(availabilityStart, availabilityEnd), nextCreationIndex);
+			resprot = new ResourcePrototype(resourceName, new AvailabilityPeriod(availabilityStart.get(), availabilityEnd.get()), nextCreationIndex);
 //			resprot = new ResourcePrototype(resourceName, new ArrayList<ResourcePrototype>(), new ArrayList<ResourcePrototype>(), availabilityPeriodList.get(availabilityIndex));
 		}
 		success = addResourceType(resprot);
@@ -104,17 +105,17 @@ public class ResourceManager {
 //		return availabilityPeriodList.add(new AvailabilityPeriod(startTime, endTime));
 //	}
 	
-	private boolean isValidPeriod(LocalTime start, LocalTime end) {
-		if(start == null && end != null) {
+	private boolean isValidPeriod(Optional<LocalTime> start, Optional<LocalTime> end) {
+		if(start.isPresent() && !end.isPresent()) {
 			return false;
 		}
-		if(start != null && end == null) {
+		if(!start.isPresent() && end.isPresent()) {
 			return false;
 		}
-		if(start == null && end == null) {
+		if(!start.isPresent() && !end.isPresent()) {
 			return true;
 		}
-		return !end.isBefore(start);
+		return !end.get().isBefore(start.get());
 	}
 	
 	private boolean addResourceType(ResourcePrototype resProt) {
