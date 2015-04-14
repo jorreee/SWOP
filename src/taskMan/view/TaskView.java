@@ -159,7 +159,7 @@ public class TaskView {
 	}
 	
 	public boolean hasAsTask(Task t) {
-		return task == t;
+		return task.equals(t);
 	}
 	
 	public HashMap<ResourceView,Integer> getRequiredResources(){
