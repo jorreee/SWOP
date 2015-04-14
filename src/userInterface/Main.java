@@ -146,20 +146,26 @@ public class Main {
 			
 			PlanningCreationData planning = tcd.getPlanningData();
 			if(planning != null) {
-				facade.createRawPlannedTask( // TODO no more raw
-						tcd.getProject(), 
+				
+				List<ResourceView> devs = facade.getDeveloperList();
+				List<ResourceView> plannedDevelopers = new ArrayList<>();
+				for(Integer integer : planning.getDevelopers()) {
+					plannedDevelopers.add(devs.get(integer));
+				}
+				
+				facade.createPlannedTask(
+						project, 
 						tcd.getDescription(),
 						tcd.getEstimatedDuration(),
 						tcd.getAcceptableDeviation(), 
-						tcd.getPrerequisiteTasks(),
-						tcd.getAlternativeFor(), 
-						tcd.getRequiredResources(),
+						prerequisiteTasks,
+						taskAlternative, 
+						requiredResources,
 						statusString, 
 						tcd.getStartTime(), 
 						tcd.getEndTime(),
-						planning.getDueTime(), 		//TODO wtf is due time voor task ineens? -- Ik vermoed: de task is "due" om dan te starten
-						planning.getDevelopers(),
-						planning.getResources());
+						planning.getPlannedStartTime(),
+						plannedDevelopers);
 			} else {
 				facade.createTask(
 						project, 

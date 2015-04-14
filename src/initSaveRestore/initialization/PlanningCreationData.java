@@ -5,26 +5,20 @@ import java.util.List;
 
 public class PlanningCreationData {
 	
-	private final List<IntPair> resources;
 	private final List<Integer> developers;
 	private final LocalDateTime dueTime;
 
 	public PlanningCreationData(LocalDateTime dueTime,
-			List<Integer> developers, List<IntPair> resources) {
+			List<Integer> developers) {
 		this.dueTime = dueTime;
 		this.developers = developers;
-		this.resources = resources;
-	}
-
-	public List<IntPair> getResources() {
-		return resources;
 	}
 
 	public List<Integer> getDevelopers() {
 		return developers;
 	}
 
-	public LocalDateTime getDueTime() {
+	public LocalDateTime getPlannedStartTime() {
 		return dueTime;
 	}
 

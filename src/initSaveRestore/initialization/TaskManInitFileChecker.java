@@ -205,9 +205,7 @@ public class TaskManInitFileChecker extends StreamTokenizer {
 	      LocalDateTime dueTime = expectDateField("plannedStartTime");
 	      expectLabel("developers");
 	      List<Integer> developers = expectIntList();
-	      expectLabel("resources");
-	      List<IntPair> resources = expectLabeledPairList("type", "quantity");
-	      planningDataList.add(new PlanningCreationData(dueTime, developers, resources));
+	      planningDataList.add(new PlanningCreationData(dueTime, developers));
 	    }
 
 	    expectLabel("tasks");

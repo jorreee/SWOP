@@ -1,7 +1,5 @@
 package userInterface;
 
-import initSaveRestore.initialization.IntPair;
-
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.HashMap;
@@ -44,12 +42,12 @@ public interface IFacade {
 //			LocalDateTime startTime, 
 //			LocalDateTime endTime);
 
-	public boolean createRawPlannedTask(int project, String description,
-			int estimatedDuration, int acceptableDeviation,
-			List<Integer> prerequisiteTasks, int alternativeFor,
-			List<IntPair> requiredResources, String statusString, LocalDateTime startTime,
-			LocalDateTime endTime, LocalDateTime planningDueTime,
-			List<Integer> plannedDevelopers, List<IntPair> plannedResources);
+//	public boolean createRawPlannedTask(int project, String description,
+//			int estimatedDuration, int acceptableDeviation,
+//			List<Integer> prerequisiteTasks, int alternativeFor,
+//			List<IntPair> requiredResources, String statusString, LocalDateTime startTime,
+//			LocalDateTime endTime, LocalDateTime planningDueTime,
+//			List<Integer> plannedDevelopers, List<IntPair> plannedResources);
 
 	public boolean createTask(ProjectView project, String description,
 			int estimatedDuration, int acceptableDeviation,
@@ -59,6 +57,13 @@ public interface IFacade {
 			int estimatedDuration, int acceptableDeviation,
 			List<TaskView> prerequisiteTasks, TaskView alternativeFor, Map<ResourceView, Integer> requiredResources, 
 			String taskStatus, LocalDateTime startTime, LocalDateTime endTime);
+	
+	public boolean createPlannedTask(ProjectView project, String description,
+			int estimatedDuration, int acceptableDeviation,
+			List<TaskView> prerequisiteTasks, TaskView alternativeFor, Map<ResourceView, Integer> requiredResources, 
+			String taskStatus, LocalDateTime startTime, LocalDateTime endTime,
+			LocalDateTime plannedStartTime, List<ResourceView> plannedDevelopers);
+
 	
 	public boolean setTaskFinished(ProjectView projectID, TaskView taskID,
 			LocalDateTime endTime);

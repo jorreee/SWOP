@@ -1,7 +1,6 @@
 package taskMan;
 
 import initSaveRestore.caretaker.TaskManCaretaker;
-import initSaveRestore.initialization.IntPair;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -78,6 +77,27 @@ public class Facade implements IFacade {
 				startTime,
 				endTime);
 	}
+	
+	@Override
+	public boolean createPlannedTask(ProjectView project, String description,
+			int estimatedDuration, int acceptableDeviation,
+			List<TaskView> prerequisiteTasks, TaskView alternativeFor,
+			Map<ResourceView, Integer> requiredResources, String taskStatus,
+			LocalDateTime startTime, LocalDateTime endTime,
+			LocalDateTime plannedStartTime, List<ResourceView> plannedDevelopers) {
+		return taskMan.createPlannedTask(project, 
+				description, 
+				estimatedDuration, 
+				acceptableDeviation, 
+				prerequisiteTasks, 
+				alternativeFor,
+				requiredResources,
+				taskStatus,
+				startTime,
+				endTime,
+				plannedStartTime,
+				plannedDevelopers);
+	}
 
 	@Override
 	public boolean advanceTimeTo(LocalDateTime time) {
@@ -132,17 +152,6 @@ public class Facade implements IFacade {
 		return taskMan.changeToUser(name);
 	}
 
-	@Override
-	public boolean createRawPlannedTask(int project, String description,
-			int estimatedDuration, int acceptableDeviation,
-			List<Integer> prerequisiteTasks, int alternativeFor,
-			List<IntPair> requiredResources,
-			String statusString, LocalDateTime startTime,
-			LocalDateTime endTime, LocalDateTime planningDueTime,
-			List<Integer> plannedDevelopers, List<IntPair> plannedResources) {
-		return taskMan.createRawPlannedTask(project, description, estimatedDuration, acceptableDeviation,
-				prerequisiteTasks, requiredResources, alternativeFor, statusString, startTime, endTime, planningDueTime, plannedDevelopers, plannedResources);
-	}
 //
 //	@Override
 //	public boolean declareAvailabilityPeriod(LocalTime startTime,LocalTime endTime) {

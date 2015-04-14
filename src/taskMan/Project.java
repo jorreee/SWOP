@@ -1,13 +1,10 @@
 package taskMan;
 
-import initSaveRestore.initialization.IntPair;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import taskMan.resource.Resource;
 import taskMan.resource.ResourceManager;
 import taskMan.state.OngoingProject;
 import taskMan.state.ProjectStatus;
@@ -278,41 +275,52 @@ public class Project implements Dependant {
 		} 
 		return success;
 	}
-
-	/**
-	 * Creates a new Task without a set status.
-	 * 
-	 * @param 	description
-	 * 			The description of the given Task.
-	 * @param 	estimatedDuration
-	 * 			The estimated duration of the Task.
-	 * @param 	acceptableDeviation
-	 * 			The acceptable deviation of the Task.
-	 * @param 	alternativeFor
-	 * 			The alternative Task.
-	 * @param 	prerequisiteTasks
-	 * 			The prerequisites Tasks for this Task.
-	 * @return	True if the creation of a new Task was successful.
-	 */
-	public boolean createTask(String description, 
-			int estimatedDuration, 
-			int acceptableDeviation, 
-			ResourceManager resMan, 
-			List<TaskView> prerequisiteTasks, 
-			Map<ResourceView, Integer> requiredResources, 
-			TaskView alternativeFor) {
-		
-		return createTask(description, 
-				estimatedDuration, 
-				acceptableDeviation, 
-				resMan, 
-				prerequisiteTasks,
-				requiredResources, 
-				alternativeFor, 
-				null,
-				null, 
-				null);
+	
+	public boolean createPlannedTask(String description2,
+			int estimatedDuration, int acceptableDeviation,
+			ResourceManager resMan, List<TaskView> prerequisiteTasks,
+			Map<ResourceView, Integer> requiredResources,
+			TaskView alternativeFor, String taskStatus,
+			LocalDateTime startTime, LocalDateTime endTime2,
+			LocalDateTime plannedStartTime, List<ResourceView> plannedDevelopers) {
+		// TODO Auto-generated method stub
+		return false;
 	}
+
+//	/**
+//	 * Creates a new Task without a set status.
+//	 * 
+//	 * @param 	description
+//	 * 			The description of the given Task.
+//	 * @param 	estimatedDuration
+//	 * 			The estimated duration of the Task.
+//	 * @param 	acceptableDeviation
+//	 * 			The acceptable deviation of the Task.
+//	 * @param 	alternativeFor
+//	 * 			The alternative Task.
+//	 * @param 	prerequisiteTasks
+//	 * 			The prerequisites Tasks for this Task.
+//	 * @return	True if the creation of a new Task was successful.
+//	 */
+//	public boolean createTask(String description, 
+//			int estimatedDuration, 
+//			int acceptableDeviation, 
+//			ResourceManager resMan, 
+//			List<TaskView> prerequisiteTasks, 
+//			Map<ResourceView, Integer> requiredResources, 
+//			TaskView alternativeFor) {
+//		
+//		return createTask(description, 
+//				estimatedDuration, 
+//				acceptableDeviation, 
+//				resMan, 
+//				prerequisiteTasks,
+//				requiredResources, 
+//				alternativeFor, 
+//				null,
+//				null, 
+//				null);
+//	}
 	
 	/**
 	 * Checks whether the given TaskView is a valid TaskView representing a valid Task.
@@ -683,57 +691,6 @@ public class Project implements Dependant {
 //		}
 //		return longest;
 //	}
-	
-	/**
-	 * Creates a Raw Planned Task as issued by the input file.
-	 * 
-	 * @param 	description
-	 * 			The description of the Task.
-	 * @param 	estimatedDuration
-	 * 			The estimated duration of the Task.
-	 * @param 	acceptableDeviation
-	 * 			The acceptable deviation of the Task.
-	 * @param 	prerequisiteTasks
-	 * 			The prerequisites of the Task.
-	 * @param 	alternativeFor
-	 * 			The alternative for the Task.
-	 * @param 	statusString
-	 * 			The status of the Task.
-	 * @param 	startTime
-	 * 			The startTime of the Task.
-	 * @param 	endTime
-	 * 			The endTime of the Task.
-	 * @param 	planningDueTime
-	 * 			The due time of the planning of the Task.
-	 * @param 	plannedDevelopers
-	 * 			The planned developers of the Task.
-	 * @param 	plannedResources
-	 * 			The planned resources of the Task.
-	 * @return	True if and only if the creation of the Raw Planned Task was successful.
-	 */
-	public boolean createRawPlannedTask(String description,
-			int estimatedDuration, int acceptableDeviation,
-			ResourceManager resMan,
-			List<Integer> prerequisiteTasks,
-			Map<ResourceView, Integer> requiredResources, int alternativeFor,
-			String statusString, LocalDateTime startTime,
-			LocalDateTime endTime, LocalDateTime planningDueTime,
-			List<Integer> plannedDevelopers, List<IntPair> plannedResources) {
-		// Create a raw task
-		boolean taskCreationSuccess = createRawTask(description, 
-				estimatedDuration, 
-				acceptableDeviation, 
-				resMan, 
-				prerequisiteTasks, 
-				requiredResources, 
-				alternativeFor, 
-				statusString,
-				startTime, 
-				endTime);
-		// Add the planning to the task
-		
-		return false; //TODO
-	}
 	
 	/**
 	 * Returns an amount of possible Task starting times for a given Task.
