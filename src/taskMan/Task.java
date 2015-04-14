@@ -169,11 +169,13 @@ public class Task implements Dependant {
 				alternativeFor);
 		
 		if(taskStatus.equalsIgnoreCase("failed")) {
+			plan(beginTime);
 			plan.setBeginTime(beginTime);
 			if(!state.fail(endTime)) {
 				throw new IllegalArgumentException("Very bad timeStamps");
 			}
 		} else if(taskStatus.equalsIgnoreCase("finished")) {
+			plan(beginTime);
 			plan.setBeginTime(beginTime);
 			if(!state.finish(endTime)) {
 				throw new IllegalArgumentException("Very bad timeStamps");
@@ -358,6 +360,14 @@ public class Task implements Dependant {
 //	public TimeSpan getTimeSpent() {
 //		return getTimeSpent(endTime);
 //	}
+	
+	public LocalDateTime getPlannedBeginTime() {
+		return plan.getPlannedBeginTime();
+	}
+	
+	public LocalDateTime getPlannedEndTime() {
+		return plan.getPlannedEndTime();
+	}
 
 	/**
 	 * Returns the start time of the Task.
@@ -367,18 +377,6 @@ public class Task implements Dependant {
 	public LocalDateTime getBeginTime() {
 		return plan.getBeginTime();
 	}
-
-//	/**
-//	 * Sets the start time of the Task.
-//	 * 
-//	 * @param 	beginTime
-//	 * 			The new start time for the Task.
-//	 * @throws	IllegalArgumentException
-//	 * 			If the new begin time is null or the old begin time is already set. 
-//	 */
-//	public void setBeginTime(LocalDateTime beginTime) throws IllegalArgumentException{
-//		plan.setBeginTime(beginTime);
-//	}
 
 	/**
 	 * Returns the end time of the Task.
@@ -390,6 +388,16 @@ public class Task implements Dependant {
 	}
 
 	/**
+	 * Sets the begin time of Task.
+	 * 
+	 * @param 	beginTime
+	 * 			The new begin time of the Task. 
+	 */
+	public boolean setBeginTime(LocalDateTime beginTime) {
+		return plan.setBeginTime(beginTime);
+	}
+
+	/**
 	 * Sets the end time of Task.
 	 * 
 	 * @param 	endTime
@@ -397,15 +405,8 @@ public class Task implements Dependant {
 	 * @throws	IllegalArgumentException
 	 * 			If the new end time is null or the old end time is already set. 
 	 */
-	public void setEndTime(LocalDateTime endTime) throws IllegalArgumentException {
-//		if(endTime==null) {
-//			throw new IllegalArgumentException("The new endTime is null");
-//		}
-//		if(getEndTime()!=null) {
-//			throw new IllegalArgumentException("The endtime is already set");
-//		}
-//		this.endTime = endTime;
-		plan.setEndTime(endTime);
+	public boolean setEndTime(LocalDateTime endTime) {
+		return plan.setEndTime(endTime);
 	}
 
 	/**
@@ -511,7 +512,6 @@ public class Task implements Dependant {
 	 * @return	True if and only if the updates succeeds.
 	 */
 	public boolean setFinished(LocalDateTime endTime) {
-		
 		return state.finish(endTime);
 	}
 
@@ -689,11 +689,11 @@ public class Task implements Dependant {
 //	}
 	
 	public boolean plan(LocalDateTime startTime) {
-//		if(getBeginTime() != null) {
-//			return false;
-//		}
-		plan.setBeginTime(startTime);
-		return true;
+		return plan.setPlannedBeginTime(startTime);
+	}
+	
+	public boolean execute(LocalDateTime startTime) {
+		return state.execute(startTime);
 	}
 	
 	/**

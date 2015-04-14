@@ -2,7 +2,6 @@ package taskMan.state;
 
 import java.time.LocalDateTime;
 
-import taskMan.Planning;
 import taskMan.Task;
 import taskMan.util.Dependant;
 
@@ -18,15 +17,18 @@ public class UnavailableTask implements TaskStatus {
 	public boolean makeAvailable() {
 		for(Task t : task.getPrerequisites()) {
 			if(!t.hasFinishedEndpoint()) {
-				return false;
+				return false; //unfulfilled prereqs
 			}
+		}
+		if(task.getPlannedBeginTime() == null) {
+			return false; //not planned
 		}
 		task.setTaskStatus(new AvailableTask(task));
 		return true;
 	}
 	
 	@Override
-	public boolean execute(Planning plan) {
+	public boolean execute(LocalDateTime beginTime) {
 		return false;
 	}
 

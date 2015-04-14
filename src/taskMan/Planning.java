@@ -6,6 +6,7 @@ import taskMan.util.TimeSpan;
 
 public class Planning {
 
+	private LocalDateTime plannedBeginTime;
 	private LocalDateTime beginTime;
 	private LocalDateTime endTime;
 	private final TimeSpan estimatedDuration;
@@ -21,31 +22,52 @@ public class Planning {
 		return beginTime;
 	}
 	
-	public void setBeginTime(LocalDateTime beginTime) throws IllegalArgumentException {
+	public LocalDateTime getPlannedBeginTime() {
+		return plannedBeginTime;
+	}
+	
+	public boolean setPlannedBeginTime(LocalDateTime beginTime) {
 		if(beginTime==null) {
-			throw new IllegalArgumentException("The new beginTime is null");
+			return false;
 		}
-		if(getBeginTime()!=null) {
-			throw new IllegalArgumentException("The beginTime is already set");
+		if(getPlannedBeginTime() != null) {
+			return false; //already set
+		}
+		this.plannedBeginTime = beginTime;
+		return true;
+	}
+	
+	public boolean setBeginTime(LocalDateTime beginTime) {
+		if(beginTime==null) {
+			return false;
+		}
+		if(getBeginTime() != null) {
+			return false; //already set
+		}
+		if(getPlannedBeginTime() == null) {
+			return false; //nog niet gepland
 		}
 		this.beginTime = beginTime;
+		return true;
 	}
 	
 	public LocalDateTime getEndTime() {
 		return endTime;
 	}
 	
-	public void setEndTime(LocalDateTime endTime) throws IllegalArgumentException {
+	public boolean setEndTime(LocalDateTime endTime) {
 		if(getBeginTime() == null) {
-			throw new IllegalArgumentException("The plan hasn't even started yet");
+			return false; //The plan hasn't even started yet
 		}
 		if(endTime == null) {
-			throw new IllegalArgumentException("The new endTime is null");
+			return false; 
 		}
 		if(getEndTime() != null) {
-			throw new IllegalArgumentException("The endTime is already set");
+			return false; //already set
 		}
 		this.endTime = endTime;
+		return true;
+		
 	}
 	
 	public TimeSpan getEstimatedDuration() {
@@ -79,8 +101,11 @@ public class Planning {
 	}
 	
 	public LocalDateTime getPlannedEndTime() {
-		if(getBeginTime() == null) {
+		if(plannedBeginTime == null) {
 			return null;
+		}
+		if(beginTime == null) {
+			return TimeSpan.addSpanToLDT(plannedBeginTime, estimatedDuration);
 		}
 		return TimeSpan.addSpanToLDT(beginTime, estimatedDuration);
 	}

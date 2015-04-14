@@ -2,7 +2,6 @@ package taskMan.state;
 
 import java.time.LocalDateTime;
 
-import taskMan.Planning;
 import taskMan.Task;
 import taskMan.util.Dependant;
 
@@ -20,7 +19,7 @@ public class ExecutingTask implements TaskStatus{
 	}
 	
 	@Override
-	public boolean execute(Planning plan) {
+	public boolean execute(LocalDateTime beginTime) {
 		return false;
 	}
 
@@ -36,6 +35,7 @@ public class ExecutingTask implements TaskStatus{
 			task.notifyDependants();
 			
 			return true;
+			
 		}
 		return false;
 	}

@@ -2,7 +2,6 @@ package taskMan.state;
 
 import java.time.LocalDateTime;
 
-import taskMan.Planning;
 import taskMan.Task;
 import taskMan.util.Dependant;
 
@@ -20,9 +19,17 @@ public class AvailableTask implements TaskStatus {
 	}
 	
 	@Override
-	public boolean execute(Planning plan) {
-		//TODO work out executing transition
-		return false;
+	public boolean execute(LocalDateTime beginTime) {
+		if(beginTime.isBefore(task.getPlannedBeginTime()) || beginTime.isAfter(task.getPlannedEndTime())) {
+			if(!task.refreshReservations(beginTime)) {
+				return false;
+			}
+			if(!task.setBeginTime(beginTime)) {
+				return false;
+			}
+			return true;
+		}
+		return task.setBeginTime(beginTime);
 	}
 
 	@Override
