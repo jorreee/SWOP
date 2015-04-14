@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -181,11 +182,27 @@ public class Main {
 			}
 		}
 			// Init reservations
+		
+		List<ResourceView> allConcreteResources = facade.getAllConcreteResources();
+		allConcreteResources.sort(new Comparator<ResourceView>() {
+			@Override
+			public int compare(ResourceView resource1, ResourceView resource2) {
+				if(resource1.getCreationIndex() < resource2.getCreationIndex())
+					return -1;
+				else if(resource1.getCreationIndex() > resource2.getCreationIndex())
+					return 1;
+				else return 0;
+			}
+		});
+		
 		for(ReservationCreationData rcd : reservations) {
-			facade.createRawReservation( // TODO no more raw
-					rcd.getResource(), 
-					taskData.get(rcd.getTask()).getProject(), 
-					rcd.getTask(), 
+			
+			ProjectView project = facade.getProjects().get(taskData.get(rcd.getTask()).getProject());
+			TaskView task = project.getTasks().get(rcd.getTask());
+			
+			facade.createReservation(
+					allConcreteResources.get(rcd.getResource()), 
+					task, 
 					rcd.getStartTime(), 
 					rcd.getEndTime());
 		}

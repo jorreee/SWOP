@@ -6,6 +6,7 @@ import java.util.List;
 public abstract class Resource {
 	
 	protected String resName;
+	protected final int creationIndex;
 	protected List<ResourcePrototype> reqResourcesList;
 	protected List<ResourcePrototype> conResourcesList;
 	
@@ -19,6 +20,7 @@ public abstract class Resource {
 	}
 	
 	public String getName() { return resName; }
+	public int getCreationIndex() { return creationIndex; }
 	public List<ResourcePrototype> getRequiredResources() { return reqResourcesList; }
 	public List<ResourcePrototype> getConflictingResources() { return conResourcesList; }
 	
@@ -72,4 +74,5 @@ public abstract class Resource {
 			return false;
 		return true;
 	}
+
 }

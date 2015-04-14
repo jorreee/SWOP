@@ -178,9 +178,9 @@ public class Facade implements IFacade {
 	}
 
 	@Override
-	public boolean createRawReservation(int resource, int project, int task,
+	public boolean createReservation(ResourceView resource, TaskView task,
 			LocalDateTime startTime, LocalDateTime endTime) {
-		return taskMan.createRawReservation(resource,project,task,startTime,endTime);
+		return taskMan.createReservation(resource,task,startTime,endTime);
 	}
 
 	@Override

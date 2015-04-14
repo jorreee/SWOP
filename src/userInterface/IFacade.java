@@ -92,7 +92,7 @@ public interface IFacade {
 
 	public boolean createDeveloper(String name);
 
-	public boolean createRawReservation(int resource, int project, int task,
+	public boolean createReservation(ResourceView resource, TaskView task,
 			LocalDateTime startTime, LocalDateTime endTime);
 
 	public ImmutableList<LocalDateTime> getPossibleTaskStartingTimes(ProjectView project, TaskView task, int amount);

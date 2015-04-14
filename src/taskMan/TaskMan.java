@@ -890,7 +890,7 @@ public class TaskMan {
 		return resMan.createDeveloper(name);
 	}
 	
-	public boolean createRawReservation(int resource, int project, int task,
+	public boolean createReservation(ResourceView resource, TaskView task,
 			LocalDateTime startTime, LocalDateTime endTime) {
 		return false;
 		//TODO dit kan via de rare "raw plan" data worden geinitialiseerd
