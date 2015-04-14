@@ -48,6 +48,14 @@ public class ResourceView {
 	}
 	
 	public boolean hasAsResource(Resource otherResource) {
-		return resource == otherResource;
+		return resource.equals(otherResource);
+	}
+
+	public boolean equals(ResourceView otherView) {
+		if (this == otherView)
+			return true;
+		if (otherView == null)
+			return false;
+		return otherView.hasAsResource(resource);
 	}
 }

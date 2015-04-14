@@ -170,24 +170,12 @@ public class TaskView {
 		return task.getPossibleResourceInstances(resourceType);
 	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((task == null) ? 0 : task.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
+	public boolean equals(TaskView otherView) {
+		if (this == otherView)
 			return true;
-		if (obj == null)
+		if (otherView == null)
 			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		TaskView other = (TaskView) obj;
-		return other.hasAsTask(task);
+		return otherView.hasAsTask(task);
 	}
 
 }

@@ -109,19 +109,15 @@ public class ProjectView {
 	}
 	
 	public boolean hasAsProject(Project p) {
-		return project == p;
+		return project.equals(p);
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
+	public boolean equals(ProjectView otherView) {
+		if (this == otherView)
 			return true;
-		if (obj == null)
+		if (otherView == null)
 			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		ProjectView other = (ProjectView) obj;
-		return other.hasAsProject(project);
+		return otherView.hasAsProject(project);
 	}
 
 	public List<TaskView> getUnplannedTasks() {

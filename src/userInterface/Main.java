@@ -90,8 +90,8 @@ public class Main {
 //			facade.createResourcePrototype(rprot.getName(), rprot.getRequirements(), rprot.getConflicts(), rprot.getAvailabilityIndex());
 			facade.createResourcePrototype(
 					rprot.getName(), 
+					rprot.getRequirements(),
 					rprot.getConflicts(),
-					rprot.getRequirements(), 
 					fileChecker.getDailyAvailabilityStartByIndex(rprot.getAvailabilityIndex()),
 					fileChecker.getDailyAvailabilityEndByIndex(rprot.getAvailabilityIndex()));
 			//, rprot.getRequirements(), rprot.getConflicts(), rprot.getAvailabilityIndex());
