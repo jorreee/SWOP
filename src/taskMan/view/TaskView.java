@@ -159,6 +159,9 @@ public class TaskView {
 	}
 	
 	public boolean hasAsTask(Task t) {
+		if(t == null || task == null) {
+			return false;
+		}
 		return task.equals(t);
 	}
 	

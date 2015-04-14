@@ -244,4 +244,11 @@ public class Facade implements IFacade {
 		return null;
 	}
 
+	@Override
+	public ImmutableList<ResourceView> getConcreteResourcesForPrototype(
+			ResourceView resourcePrototype) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

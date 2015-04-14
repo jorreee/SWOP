@@ -2,10 +2,11 @@ package userInterface.requests;
 
 import java.io.BufferedReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
-import taskMan.resource.Resource;
 import taskMan.view.ProjectView;
 import taskMan.view.ResourceView;
 import taskMan.view.TaskView;
@@ -21,7 +22,13 @@ public class CreateTaskRequest extends Request {
 	public String execute() {
 		List<ProjectView> projects = facade.getProjects();
 		for(ProjectView project : projects) {
-			System.out.println("(ID: " + project.getID() + "Project " + project.getName());
+			System.out.println(project.getID() + ": Project " + project.getName());
+		}
+		
+		List<ResourceView> resourceTypes = facade.getResourcePrototypes();
+		for(int i = 0 ; i < resourceTypes.size() ; i++) {
+			System.out.println(i + ": Resouce: " + resourceTypes.get(i).getName()
+					+ ", total quantity " + facade.getConcreteResourcesForPrototype(resourceTypes.get(i)).size());
 		}
 		
 		while(true) {
@@ -31,9 +38,9 @@ public class CreateTaskRequest extends Request {
 						"Acceptable Deviation (a precentage)",
 						"Alternative For (-1 for no alternative)",
 						"Prerequisite Tasks (Seperated by spaces, nothing for no prerequisites)",
-						"Desired resources (Separated by spaces, nothing for no resources)"};
-				String[] input = new String[6];
-				for(int i=0 ; i < 6 ; i++) {
+						"Desired resources (Resource type and quantity separated by spaces, nothing for no resources)"};
+				String[] input = new String[creationForm.length];
+				for(int i=0 ; i < creationForm.length ; i++) {
 					// Show task creation form
 					System.out.println(creationForm[i] + "? (type quit to exit)");
 
@@ -56,12 +63,12 @@ public class CreateTaskRequest extends Request {
 					}
 				}
 				
-				//TODO resources
 				HashMap<ResourceView, Integer> reqRes = new HashMap<>();
-				for(String preres : input[6].split(" ")) {
-					if((preres.equals(""))) {
-						reqRes.put(null, null);
-					}
+				Iterator<String> resourceInput = Arrays.asList(input[6].split(" ")).iterator();
+				while(resourceInput.hasNext()) {
+					Integer type = Integer.parseInt(resourceInput.next());
+					Integer quantity = Integer.parseInt(resourceInput.next());
+					reqRes.put(resourceTypes.get(type), quantity);
 				}
 				
 				//-1 mag geen error geven
@@ -74,6 +81,7 @@ public class CreateTaskRequest extends Request {
 				// createTask(ProjectView project, String description,
 				// int estimatedDuration, int acceptableDeviation,
 				// List<TaskView> prerequisiteTasks,
+				// Map<ResourceView, Integer> requiredResources
 				// TaskView alternativeFor);
 				boolean success = facade.createTask(
 						projects.get(Integer.parseInt(input[0])), input[1],

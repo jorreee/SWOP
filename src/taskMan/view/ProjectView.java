@@ -109,6 +109,9 @@ public class ProjectView {
 	}
 	
 	public boolean hasAsProject(Project p) {
+		if(p == null || project == null) {
+			return false;
+		}
 		return project.equals(p);
 	}
 
@@ -121,6 +124,11 @@ public class ProjectView {
 	}
 
 	public List<TaskView> getUnplannedTasks() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public LocalDateTime getEstimatedEndTime() {
 		// TODO Auto-generated method stub
 		return null;
 	}

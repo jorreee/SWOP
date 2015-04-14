@@ -96,6 +96,9 @@ public interface IFacade {
 	public ImmutableList<ResourceView> getAllConcreteResources();
 //	public ImmutableList<ResourceView> getResourceRequirements(ResourceView resource); TODO in ResourceView
 
+	public ImmutableList<ResourceView> getConcreteResourcesForPrototype(
+			ResourceView resourcePrototype);
+
 //	public ImmutableList<ResourceView> getResourceConflicts(ResourceView resource); TODO in ResourceView
 
 //	boolean isResourceDailyAvailable(ResourceView resprot); TODO in ResourceView

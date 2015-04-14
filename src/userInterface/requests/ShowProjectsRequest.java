@@ -56,11 +56,11 @@ public class ShowProjectsRequest extends Request {
 						+ project.getStatusAsString() + ", ");
 
 				int[] delay = null;
-				//				if(!project.isFinished()) {
+				//				if(!project.isFinished()) { 
 				if(project.isEstimatedOnTime(facade.getCurrentTime())) {
-					projectHeader.append("is estimated on time");
+					projectHeader.append("on time");
 				} else {
-					projectHeader.append("is estimated over time");
+					projectHeader.append("over time");
 				}
 				//				}
 				delay = project.getDelay(facade.getCurrentTime());
@@ -77,6 +77,12 @@ public class ShowProjectsRequest extends Request {
 					if(delay[4] != 0) projectHeader.append(delay[4] + " working minutes "); // minutes
 					projectHeader.append("short");
 				}
+				
+				if(!project.isFinished()) {
+					projectHeader.append(", estimated to end on "
+							+ project.getEstimatedEndTime().toString());
+				}
+				
 				projectHeader.append(")");
 
 				System.out.println(projectHeader.toString());
