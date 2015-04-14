@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import taskMan.view.ProjectView;
 import taskMan.view.ResourceView;
@@ -23,11 +24,11 @@ public class PlanTaskRequest extends Request {
 		// Show a list of projects and their unplanned tasks
 		List<ProjectView> projects = facade.getProjects();
 
-		for(ProjectView project : projects) {
-			System.out.println("- Project " + project.getID() + ":");
-			List<TaskView> availableTasks = project.getUnplannedTasks();
-			for(TaskView task : availableTasks) {
-				System.out.println("  * Task " + task.getID() + " is unplanned");
+		for(int i = 0 ; i < projects.size() ; i++) {
+			System.out.println("(" + i + ") Project " + projects.get(i).getID() + ":");
+			List<TaskView> unplannedTasks = projects.get(i).getUnplannedTasks();
+			for(int j = 0 ; j < unplannedTasks.size() ; j++) {
+				System.out.println("  {" + j + "} Task " + unplannedTasks.get(j).getID() + " is unplanned");
 			}
 		}
 
@@ -37,7 +38,7 @@ public class PlanTaskRequest extends Request {
 		while(true) {
 			try {
 				// Ask for user input
-				System.out.println("Select a project and the task you wish to plan (Format: ProjectID TaskID, type quit to exit)");
+				System.out.println("Select a project and the task you wish to plan (Format: (Project location in list) (Task location in list), type quit to exit)");
 				String input = inputReader.readLine();
 
 				// User quits
@@ -49,20 +50,22 @@ public class PlanTaskRequest extends Request {
 				taskID = Integer.parseInt(input.split(" ")[1]);
 
 				ProjectView project = projects.get(projectID);
-				TaskView task;
+				TaskView task = project.getUnplannedTasks().get(taskID);
 
-				if(isValidUnplannedTask(project, taskID)) {
-					task = project.getTasks().get(taskID);
-				} else {
-					throw new IllegalArgumentException();
-				}
-				
 				// PLAN TASK
 				PlanningScheme planning = planTask(project, task);
 				if(planning == null) { return quit(); }
-				
+
 				// Assign developers to task, assign planning to task, reserve selected resource(types)
-				
+				boolean success = facade.planTask(project, task, planning.getPlanningStartTime());
+
+				if(!success) { System.out.println("Failed to plan task, try again"); continue; }
+				else {
+					for(ResourceView resourceToReserve : planning.getResourcesToReserve()) {
+						facade.reserveResource(resourceToReserve, project, task);
+					}
+				}
+
 			} catch(Exception e) {
 				System.out.println("Invalid input");
 			}
@@ -73,20 +76,10 @@ public class PlanTaskRequest extends Request {
 		return "Tasks remain unplanned";
 	}
 
-	private boolean isValidUnplannedTask(ProjectView project, int taskID) {
-		List<TaskView> unplannedTasks = project.getUnplannedTasks();
-
-		for(int i = 0 ; i < unplannedTasks.size() ; i++) {
-			if(unplannedTasks.get(i).getID() == taskID)
-				return true;
-		}
-		return false;
-	}
-	
-	// TODO dit afwerken
-	// TODO Return type? Een soort planning container met voorstellen voor het plan en de reservaties?
 	public PlanningScheme planTask(ProjectView project, TaskView task) {
-		
+
+		PlanningScheme planning = null;
+
 		// Ask user for time slot
 		while(true) {
 			try {
@@ -96,64 +89,81 @@ public class PlanTaskRequest extends Request {
 				for(int i = 0 ; i < possibleStartingTimes.size() ; i++) {
 					System.out.println("(" + i + ") Possible task starting time: " + possibleStartingTimes.get(i).toString());
 				}
-				
+
 				System.out.println("Select a time slot (type quit to exit)");
 				String input = inputReader.readLine();		
-				
+
 				// User quits
 				if(input.toLowerCase().equals("quit"))	{ return null; }
-				
+
 				// Confirm time slot
 				LocalDateTime timeSlotStart = possibleStartingTimes.get(Integer.parseInt(input));
 				System.out.println("Time slot selected from " + timeSlotStart.toString() + " until " + timeSlotStart.plusMinutes(task.getEstimatedDuration()).toString());
-				// Show each required resource
-				
-				// Ask user fot input
-				input = inputReader.readLine();
-				
-				// User quits
-				if(input.toLowerCase().equals("quit")) { return null; }
-				
-					// User allows system to choose the resource (Abstraction)
-				
-					// User wants a specific resource
-						// Propose every concrete res from the abstract res type to reserve
-						
-						// User quits
-						if(input.toLowerCase().equals("quit")) { return null; }
-					// if resource is already reserved initiate resolve conflict request
-				
-					
-					
-					// Show list of developers
-					List<ResourceView> devs = facade.getDeveloperList();
-					System.out.println("Possible developers to assign:");
-					for(int i = 0; i < devs.size() ; i++) {
-						System.out.println("(" + i + ") " + devs.get(i));
-					}
-					System.out.println("Choose the developers you wish to assign (their numbers on one line, seperated by spaces) (type quit to exit)");
-					input = inputReader.readLine();
-					// User quits
-					if(input.toLowerCase().equals("quit")) { return null; }
-					// User selects developers
-					String[] devIDs = input.split(" ");
-					List<ResourceView> devNames = new ArrayList<>();
-					for(String devID : devIDs) {
-						devNames.add(devs.get(Integer.parseInt(devID)));
-					}
-					
-					// If selected dev conflicts with another task planning init resolve conflict request
-					HashMap<ProjectView, List<TaskView>> conflictingTasks = facade.findConflictingDeveloperPlannings(project, task, devNames, timeSlotStart);
+				planning = new PlanningScheme(timeSlotStart);
 
-					if(!conflictingTasks.isEmpty()) {
-						ResolvePlanningConflictRequest resolveConflictRequest = new ResolvePlanningConflictRequest(facade, inputReader, conflictingTasks);
-						System.out.println(resolveConflictRequest.execute());
-						// Conflict dictates that this planning should start over
-						if(resolveConflictRequest.shouldMovePlanningTask()) {
-							continue;
+				// Show each required resource
+				Map<ResourceView, Integer> requiredResources = task.getRequiredResources();
+				if(!requiredResources.isEmpty()) {
+					System.out.println("The following resources are required: ");
+					for(ResourceView requiredResource : requiredResources.keySet()) {
+						int amountLeft = requiredResources.get(requiredResource);
+						System.out.println(requiredResource.getName() + ", amount: " + amountLeft);
+						while(amountLeft > 0) {
+							System.out.println(amountLeft + " left to reserve, reserve specific resource or will any suffice? (type quit to exit)");
+							List<ResourceView> concreteResources = facade.getConcreteResourcesForPrototype(requiredResource);
+							for(int i = 0 ; i < concreteResources.size() ; i++) {
+								System.out.println("(" + i + ") " + concreteResources.get(i).getName());
+							}
+							System.out.println("(any)");
+
+							// Ask user for input
+							input = inputReader.readLine();
+
+							// User quits
+							if(input.toLowerCase().equals("quit")) { return null; }
+							if(input.toLowerCase().equals("any")) {
+								planning.addSeveralToReservationList(requiredResource, amountLeft);
+								break;
+							} else {
+								planning.addToReservationList(concreteResources.get(Integer.parseInt(input)));
+								amountLeft--;
+							}
+							
+							// if resource is already reserved initiate resolve conflict request
+							// TODO
 						}
 					}
-					return new PlanningScheme(timeSlotStart);
+				}
+
+				// Show list of developers
+				List<ResourceView> devs = facade.getDeveloperList();
+				System.out.println("Possible developers to assign:");
+				for(int i = 0; i < devs.size() ; i++) {
+					System.out.println("(" + i + ") " + devs.get(i));
+				}
+				System.out.println("Choose the developers you wish to assign (their numbers on one line, seperated by spaces) (type quit to exit)");
+				input = inputReader.readLine();
+				// User quits
+				if(input.toLowerCase().equals("quit")) { return null; }
+				// User selects developers
+				String[] devIDs = input.split(" ");
+				List<ResourceView> devNames = new ArrayList<>();
+				for(String devID : devIDs) {
+					devNames.add(devs.get(Integer.parseInt(devID)));
+				}
+
+				// If selected dev conflicts with another task planning init resolve conflict request
+				HashMap<ProjectView, List<TaskView>> conflictingTasks = facade.findConflictingDeveloperPlannings(project, task, devNames, timeSlotStart);
+
+				if(!conflictingTasks.isEmpty()) {
+					ResolvePlanningConflictRequest resolveConflictRequest = new ResolvePlanningConflictRequest(facade, inputReader, conflictingTasks);
+					System.out.println(resolveConflictRequest.execute());
+					// Conflict dictates that this planning should start over
+					if(resolveConflictRequest.shouldMovePlanningTask()) {
+						continue;
+					}
+				}
+				return planning;
 			} catch(Exception e) {
 				System.out.println("Invalid input");
 			}
@@ -163,15 +173,31 @@ public class PlanTaskRequest extends Request {
 }
 
 class PlanningScheme {
-	
+
 	private LocalDateTime timeSlotStartTime;
-	
+	private List<ResourceView> resourcesToReserve;
+
 	public PlanningScheme(LocalDateTime timeSlotStartTime) {
 		this.timeSlotStartTime = timeSlotStartTime;
 	}
-	
+
+
 	public LocalDateTime getPlanningStartTime() {
 		return timeSlotStartTime;
+	}
+
+	public boolean addToReservationList(ResourceView resource) {
+		return resourcesToReserve.add(resource);
+	}
+
+	public void addSeveralToReservationList(ResourceView requiredResource, int amount) {
+		for(int i = 0 ; i < amount ; i++) {
+			resourcesToReserve.add(requiredResource);
+		}
+	}
+
+	public List<ResourceView> getResourcesToReserve() {
+		return resourcesToReserve;
 	}
 }
 

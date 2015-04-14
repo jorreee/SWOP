@@ -200,11 +200,10 @@ public class Main {
 			ProjectView project = facade.getProjects().get(taskData.get(rcd.getTask()).getProject());
 			TaskView task = project.getTasks().get(rcd.getTask());
 			
-			facade.createReservation(
+			facade.reserveResource(
 					allConcreteResources.get(rcd.getResource()), 
-					task, 
-					rcd.getStartTime(), 
-					rcd.getEndTime());
+					project,
+					task);
 		}
 		// End initialization
 		

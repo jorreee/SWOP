@@ -178,9 +178,8 @@ public class Facade implements IFacade {
 	}
 
 	@Override
-	public boolean createReservation(ResourceView resource, TaskView task,
-			LocalDateTime startTime, LocalDateTime endTime) {
-		return taskMan.createReservation(resource,task,startTime,endTime);
+	public boolean reserveResource(ResourceView resource, ProjectView project, TaskView task) {
+		return taskMan.reserveResource(resource, project, task);
 	}
 
 	@Override
@@ -251,6 +250,13 @@ public class Facade implements IFacade {
 			ResourceView resourcePrototype) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public boolean planTask(ProjectView project, TaskView task,
+			LocalDateTime planningStartTime) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

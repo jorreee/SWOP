@@ -1,8 +1,8 @@
 package taskMan.view;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import taskMan.Task;
 import taskMan.util.TimeSpan;
@@ -165,7 +165,7 @@ public class TaskView {
 		return task.equals(t);
 	}
 	
-	public HashMap<ResourceView,Integer> getRequiredResources(){
+	public Map<ResourceView,Integer> getRequiredResources(){
 		return task.getRequiredResources();
 	}
 	

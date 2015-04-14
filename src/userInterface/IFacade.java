@@ -92,8 +92,7 @@ public interface IFacade {
 
 	public boolean createDeveloper(String name);
 
-	public boolean createReservation(ResourceView resource, TaskView task,
-			LocalDateTime startTime, LocalDateTime endTime);
+	public boolean reserveResource(ResourceView resource, ProjectView project, TaskView task);
 
 	public ImmutableList<LocalDateTime> getPossibleTaskStartingTimes(ProjectView project, TaskView task, int amount);
 
@@ -109,6 +108,9 @@ public interface IFacade {
 
 	public ImmutableList<ResourceView> getConcreteResourcesForPrototype(
 			ResourceView resourcePrototype);
+
+	public boolean planTask(ProjectView project, TaskView task,
+			LocalDateTime planningStartTime);
 
 //	public ImmutableList<ResourceView> getResourceConflicts(ResourceView resource); TODO in ResourceView
 
