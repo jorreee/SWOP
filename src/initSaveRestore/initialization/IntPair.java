@@ -1,4 +1,4 @@
-package taskMan.util;
+package initSaveRestore.initialization;
 
 public class IntPair {
 	public int first;

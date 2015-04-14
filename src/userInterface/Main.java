@@ -2,6 +2,7 @@ package userInterface;
 
 import initSaveRestore.initialization.ConcreteResourceCreationData;
 import initSaveRestore.initialization.DeveloperCreationData;
+import initSaveRestore.initialization.IntPair;
 import initSaveRestore.initialization.PlanningCreationData;
 import initSaveRestore.initialization.ProjectCreationData;
 import initSaveRestore.initialization.ReservationCreationData;
@@ -16,9 +17,15 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import taskMan.Facade;
+import taskMan.view.ProjectView;
+import taskMan.view.ResourceView;
+import taskMan.view.TaskView;
 import userInterface.requests.Request;
 /**
  * Main class of the User Interface of the project TaskMan.
@@ -88,7 +95,7 @@ public class Main {
 		
 		for(ResourcePrototypeCreationData rprot : resourcePrototypes) {
 //			facade.createResourcePrototype(rprot.getName(), rprot.getRequirements(), rprot.getConflicts(), rprot.getAvailabilityIndex());
-			facade.createResourcePrototype(
+			facade.createResourcePrototype( // TODO less raw maybe
 					rprot.getName(), 
 					rprot.getRequirements(),
 					rprot.getConflicts(),
@@ -120,9 +127,26 @@ public class Main {
 			String statusString = null;
 			if(status != null)
 				statusString = status.name();
+			
+			ProjectView project = facade.getProjects().get(tcd.getProject());
+			List<TaskView> tasks = project.getTasks();
+			List<TaskView> prerequisiteTasks = new ArrayList<>();
+			for(Integer i : tcd.getPrerequisiteTasks()) {
+				prerequisiteTasks.add(tasks.get(i));
+			}
+			TaskView taskAlternative = null;
+			if(tcd.getAlternativeFor() != -1) {
+				taskAlternative = tasks.get(tcd.getAlternativeFor());
+			}
+			Map<ResourceView, Integer> requiredResources = new HashMap<>();
+			List<ResourceView> resources = facade.getResourcePrototypes();
+			for(IntPair intPair : tcd.getRequiredResources()) {
+				requiredResources.put(resources.get(intPair.first), intPair.second);
+			}
+			
 			PlanningCreationData planning = tcd.getPlanningData();
-			if(planning != null)
-				facade.createRawPlannedTask(
+			if(planning != null) {
+				facade.createRawPlannedTask( // TODO no more raw
 						tcd.getProject(), 
 						tcd.getDescription(),
 						tcd.getEstimatedDuration(),
@@ -136,22 +160,23 @@ public class Main {
 						planning.getDueTime(), 		//TODO wtf is due time voor task ineens? -- Ik vermoed: de task is "due" om dan te starten
 						planning.getDevelopers(),
 						planning.getResources());
-			else
-				facade.createRawTask(
-						tcd.getProject(), 
+			} else {
+				facade.createTask(
+						project, 
 						tcd.getDescription(),
 						tcd.getEstimatedDuration(),
 						tcd.getAcceptableDeviation(), 
-						tcd.getPrerequisiteTasks(),
-						tcd.getAlternativeFor(), 
-						tcd.getRequiredResources(),
+						prerequisiteTasks,
+						taskAlternative, 
+						requiredResources,
 						statusString, 
 						tcd.getStartTime(), 
 						tcd.getEndTime());
+			}
 		}
 			// Init reservations
 		for(ReservationCreationData rcd : reservations) {
-			facade.createRawReservation(
+			facade.createRawReservation( // TODO no more raw
 					rcd.getResource(), 
 					taskData.get(rcd.getTask()).getProject(), 
 					rcd.getTask(), 

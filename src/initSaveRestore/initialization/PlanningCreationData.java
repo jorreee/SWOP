@@ -3,8 +3,6 @@ package initSaveRestore.initialization;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import taskMan.util.IntPair;
-
 public class PlanningCreationData {
 	
 	private final List<IntPair> resources;

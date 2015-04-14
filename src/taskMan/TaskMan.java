@@ -1,9 +1,10 @@
 package taskMan;
 
+import initSaveRestore.initialization.IntPair;
+
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -11,7 +12,6 @@ import java.util.Optional;
 import taskMan.resource.AvailabilityPeriod;
 import taskMan.resource.ResourceManager;
 import taskMan.resource.user.User;
-import taskMan.util.IntPair;
 import taskMan.view.ProjectView;
 import taskMan.view.ResourceView;
 import taskMan.view.TaskView;
@@ -176,33 +176,23 @@ public class TaskMan {
 	 * @return	True if and only the creation of a Task with a status
 	 * 			of failed or finished was successful.
 	 */
-	public boolean createRawTask(int project, 
-			String description, 
-			int estimatedDuration, 
-			int acceptableDeviation,
-			List<Integer> prerequisiteTasks, 
-			int alternativeFor, 
-			List<IntPair> rawRequiredResources, 
-//			List<Resource> requiredResources, 
-			String taskStatus,
-			LocalDateTime startTime, 
-			LocalDateTime endTime) {
-		if(isValidProjectID(project)) {
-			return projectList.get(project).createRawTask(
-					description, 
-					estimatedDuration, 
-					acceptableDeviation, 
-					resMan, 
-					prerequisiteTasks, 
-					new HashMap<ResourceView, Integer>(), // TODO feitelijke data gebruiken
-//					requiredResources, 
-					alternativeFor, 
-					taskStatus, 
-					startTime, 
-					endTime);
-		} else {
-			return false;
-		}
+	public boolean createTask(ProjectView projectView, String description,
+			int estimatedDuration, int acceptableDeviation,
+			List<TaskView> prerequisiteTasks, TaskView alternativeFor,
+			Map<ResourceView, Integer> requiredResources, String taskStatus,
+			LocalDateTime startTime, LocalDateTime endTime) {
+		Project project = unwrapProjectView(projectView);
+		return project.createTask(
+				description,
+				estimatedDuration,
+				acceptableDeviation,
+				resMan,
+				prerequisiteTasks,
+				requiredResources,
+				alternativeFor,
+				taskStatus,
+				startTime,
+				endTime);
 	}
 	
 	/**
@@ -780,20 +770,20 @@ public class TaskMan {
 //		return getProject(projectID).getEstimatedProjectDelay(currentTime);
 //	}
 //	
-	/**
-	 * Checks whether the given project ID is a valid one.
-	 * 
-	 * @param 	projectID
-	 * 			The ID to check.
-	 * @return	True if the ID is valid.
-	 * 			False otherwise.
-	 */
-	private boolean isValidProjectID(int projectID) {
-		if(projectID < 0 || projectID >= projectList.size()) {
-			return false;
-		}
-		return true;
-	}
+//	/**
+//	 * Checks whether the given project ID is a valid one.
+//	 * 
+//	 * @param 	projectID
+//	 * 			The ID to check.
+//	 * @return	True if the ID is valid.
+//	 * 			False otherwise.
+//	 */ // TODO onnodig?
+//	private boolean isValidProjectID(int projectID) {
+//		if(projectID < 0 || projectID >= projectList.size()) {
+//			return false;
+//		}
+//		return true;
+//	}
 
 	/**
 	 * Returns a list of ProjectView objects that each contain one of this taskman's projects

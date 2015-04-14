@@ -1,6 +1,7 @@
 package taskMan;
 
 import initSaveRestore.caretaker.TaskManCaretaker;
+import initSaveRestore.initialization.IntPair;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -10,7 +11,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import taskMan.resource.AvailabilityPeriod;
-import taskMan.util.IntPair;
 import taskMan.view.ProjectView;
 import taskMan.view.ResourceView;
 import taskMan.view.TaskView;
@@ -62,27 +62,20 @@ public class Facade implements IFacade {
 	}
 
 	@Override
-	public boolean createRawTask(int project, 
-			String description,
-			int estimatedDuration, 
-			int acceptableDeviation,
-			List<Integer> prerequisiteTasks, 
-			int alternativeFor,
-			List<IntPair> requiredResources, 
-//			List<Resource> requiredResources, 
-			String taskStatus, 
-			LocalDateTime startTime, 
-			LocalDateTime endTime) {
-		
-		return taskMan.createRawTask(project, 
+	public boolean createTask(ProjectView project, String description,
+			int estimatedDuration, int acceptableDeviation,
+			List<TaskView> prerequisiteTasks, TaskView alternativeFor,
+			Map<ResourceView, Integer> requiredResources, String taskStatus,
+			LocalDateTime startTime, LocalDateTime endTime) {
+		return taskMan.createTask(project, 
 				description, 
 				estimatedDuration, 
 				acceptableDeviation, 
-				prerequisiteTasks,  
-				alternativeFor, 
+				prerequisiteTasks, 
+				alternativeFor,
 				requiredResources,
-				taskStatus, 
-				startTime, 
+				taskStatus,
+				startTime,
 				endTime);
 	}
 

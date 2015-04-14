@@ -1,5 +1,7 @@
 package taskMan;
 
+import initSaveRestore.initialization.IntPair;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +12,6 @@ import taskMan.resource.ResourceManager;
 import taskMan.state.OngoingProject;
 import taskMan.state.ProjectStatus;
 import taskMan.util.Dependant;
-import taskMan.util.IntPair;
 import taskMan.util.TimeSpan;
 import taskMan.view.ResourceView;
 import taskMan.view.TaskView;

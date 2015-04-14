@@ -1,5 +1,7 @@
 package userInterface;
 
+import initSaveRestore.initialization.IntPair;
+
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.HashMap;
@@ -7,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import taskMan.util.IntPair;
 import taskMan.view.ProjectView;
 import taskMan.view.ResourceView;
 import taskMan.view.TaskView;
@@ -31,17 +32,17 @@ public interface IFacade {
 	public boolean createProject(String name, String description,
 			LocalDateTime dueTime);
 
-	public boolean createRawTask(int project, 
-			String description,
-			int estimatedDuration, 
-			int acceptableDeviation,
-			List<Integer> prerequisiteTasks, 
-			int alternativeFor, 
-			List<IntPair> requiredResources, //TODO
-//			List<Resource> requiredResources, 
-			String taskStatus, 
-			LocalDateTime startTime, 
-			LocalDateTime endTime);
+//	public boolean createRawTask(int project, 
+//			String description,
+//			int estimatedDuration, 
+//			int acceptableDeviation,
+//			List<Integer> prerequisiteTasks, 
+//			int alternativeFor, 
+//			List<IntPair> requiredResources, //TODO
+////			List<Resource> requiredResources, 
+//			String taskStatus, 
+//			LocalDateTime startTime, 
+//			LocalDateTime endTime);
 
 	public boolean createRawPlannedTask(int project, String description,
 			int estimatedDuration, int acceptableDeviation,
@@ -54,6 +55,11 @@ public interface IFacade {
 			int estimatedDuration, int acceptableDeviation,
 			List<TaskView> prerequisiteTasks, Map<ResourceView, Integer> requiredResources, TaskView alternativeFor);
 
+	public boolean createTask(ProjectView project, String description,
+			int estimatedDuration, int acceptableDeviation,
+			List<TaskView> prerequisiteTasks, TaskView alternativeFor, Map<ResourceView, Integer> requiredResources, 
+			String taskStatus, LocalDateTime startTime, LocalDateTime endTime);
+	
 	public boolean setTaskFinished(ProjectView projectID, TaskView taskID,
 			LocalDateTime endTime);
 
