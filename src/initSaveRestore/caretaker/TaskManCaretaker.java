@@ -194,7 +194,7 @@ public class TaskManCaretaker {
 						tcd.getAcceptableDeviation(), tcd.getPrerequisiteTasks(),
 						tcd.getAlternativeFor(), tcd.getRequiredResources(),
 						statusString, tcd.getStartTime(), tcd.getEndTime(),
-						planning.getDueTime(), planning.getDevelopers(),
+						planning.getPlannedStartTime(), planning.getDevelopers(),
 						planning.getResources());
 			else
 				facade.createRawTask(tcd.getProject(), tcd.getDescription(),

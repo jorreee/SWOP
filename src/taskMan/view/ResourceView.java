@@ -19,6 +19,10 @@ public class ResourceView {
 		return resource.getName();
 	}
 	
+	public int getCreationIndex() {
+		return resource.getCreationIndex();
+	}
+	
 	public List<ResourceView> getRequiredResources() {
 		ImmutableList.Builder<ResourceView> reqRes = ImmutableList.builder();
 		for(Resource res : resource.getRequiredResources()) {

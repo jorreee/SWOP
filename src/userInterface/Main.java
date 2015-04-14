@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -146,20 +147,26 @@ public class Main {
 			
 			PlanningCreationData planning = tcd.getPlanningData();
 			if(planning != null) {
-				facade.createRawPlannedTask( // TODO no more raw
-						tcd.getProject(), 
+				
+				List<ResourceView> devs = facade.getDeveloperList();
+				List<ResourceView> plannedDevelopers = new ArrayList<>();
+				for(Integer integer : planning.getDevelopers()) {
+					plannedDevelopers.add(devs.get(integer));
+				}
+				
+				facade.createPlannedTask(
+						project, 
 						tcd.getDescription(),
 						tcd.getEstimatedDuration(),
 						tcd.getAcceptableDeviation(), 
-						tcd.getPrerequisiteTasks(),
-						tcd.getAlternativeFor(), 
-						tcd.getRequiredResources(),
+						prerequisiteTasks,
+						taskAlternative, 
+						requiredResources,
 						statusString, 
 						tcd.getStartTime(), 
 						tcd.getEndTime(),
-						planning.getDueTime(), 		//TODO wtf is due time voor task ineens? -- Ik vermoed: de task is "due" om dan te starten
-						planning.getDevelopers(),
-						planning.getResources());
+						planning.getPlannedStartTime(),
+						plannedDevelopers);
 			} else {
 				facade.createTask(
 						project, 
@@ -175,11 +182,27 @@ public class Main {
 			}
 		}
 			// Init reservations
+		
+		List<ResourceView> allConcreteResources = facade.getAllConcreteResources();
+		allConcreteResources.sort(new Comparator<ResourceView>() {
+			@Override
+			public int compare(ResourceView resource1, ResourceView resource2) {
+				if(resource1.getCreationIndex() < resource2.getCreationIndex())
+					return -1;
+				else if(resource1.getCreationIndex() > resource2.getCreationIndex())
+					return 1;
+				else return 0;
+			}
+		});
+		
 		for(ReservationCreationData rcd : reservations) {
-			facade.createRawReservation( // TODO no more raw
-					rcd.getResource(), 
-					taskData.get(rcd.getTask()).getProject(), 
-					rcd.getTask(), 
+			
+			ProjectView project = facade.getProjects().get(taskData.get(rcd.getTask()).getProject());
+			TaskView task = project.getTasks().get(rcd.getTask());
+			
+			facade.createReservation(
+					allConcreteResources.get(rcd.getResource()), 
+					task, 
 					rcd.getStartTime(), 
 					rcd.getEndTime());
 		}
