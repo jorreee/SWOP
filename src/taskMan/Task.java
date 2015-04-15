@@ -2,12 +2,13 @@ package taskMan;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 import taskMan.resource.ResourceManager;
+import taskMan.resource.ResourcePrototype;
 import taskMan.state.TaskStatus;
-import taskMan.state.UnavailableTask;
 import taskMan.util.Dependant;
 import taskMan.util.TimeSpan;
 import taskMan.view.ResourceView;
@@ -25,20 +26,13 @@ public class Task implements Dependant {
 
 	private final int taskID;
 	private final String description;
-//	private final TimeSpan estimatedDuration;
-//	private final int acceptableDeviation;
-	
-//	private LocalDateTime beginTime;
+
 	private Planning plan;
-//	private LocalDateTime endTime;
 	
 	private final Task alternativeFor;
 	private Task replacement;
 	private ArrayList<Dependant> dependants;
 	private ArrayList<Task> prerequisites;
-//	private ArrayList<Task> unfinishedPrerequisites;
-
-	private Map<ResourceView,Integer> requiredResources;
 	
 	private TaskStatus state;
 	
@@ -100,6 +94,10 @@ public class Task implements Dependant {
 //		this.acceptableDeviation = acceptableDeviation;
 		this.resMan = resMan;
 		
+		if(!resMan.registerRequiredResources(requiredResources)) {
+			throw new IllegalArgumentException("Very bad resources");
+		}
+		
 		this.state = new UnavailableTask(this);
 
 		this.dependants = new ArrayList<Dependant>();
@@ -118,7 +116,6 @@ public class Task implements Dependant {
 //			this.unfinishedPrerequisites.add(t);
 		}
 		
-		this.requiredResources = requiredResources;
 		removeAlternativesDependencies();
 
 //		state.makeAvailable();

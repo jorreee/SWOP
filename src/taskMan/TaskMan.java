@@ -180,10 +180,12 @@ public class TaskMan {
 			List<TaskView> prerequisiteTasks, 
 			Map<ResourceView, Integer> requiredResources, 
 			TaskView alternativeFor) {
+		
 		if(!currentUser.hasAsCredential(UserCredential.PROJECTMANAGER)) {
 			return false;
-		} else {
-			return createTask(project,
+		}
+
+		return createTask(project,
 				description, 
 				estimatedDuration, 
 				acceptableDeviation,  
@@ -195,7 +197,7 @@ public class TaskMan {
 				null,
 				null,
 				null);
-		}
+
 	}
 	
 	/**
@@ -225,12 +227,18 @@ public class TaskMan {
 	 * 			The planned resources of the Task.
 	 * @return	True if and only if the creation of the Raw Planned Task was succesful.
 	 */
-	public boolean createTask(ProjectView projectView, String description,
-			int estimatedDuration, int acceptableDeviation,
-			List<TaskView> prerequisiteTasks, TaskView alternativeFor,
-			Map<ResourceView, Integer> requiredResources, String taskStatus,
-			LocalDateTime startTime, LocalDateTime endTime,
-			LocalDateTime plannedStartTime, List<ResourceView> plannedDevelopers) {
+	public boolean createTask(ProjectView projectView, 
+			String description,
+			int estimatedDuration, 
+			int acceptableDeviation,
+			List<TaskView> prerequisiteTasks, 
+			TaskView alternativeFor,
+			Map<ResourceView, Integer> requiredResources, 
+			String taskStatus,
+			LocalDateTime startTime, 
+			LocalDateTime endTime,
+			LocalDateTime plannedStartTime, 
+			List<ResourceView> plannedDevelopers) {
 		Project project = unwrapProjectView(projectView);
 		if(project == null) {
 			return false;
