@@ -122,7 +122,7 @@ public class ResourceManager {
 	}
 	
 	public boolean declareConcreteResource(String resName, ResourceView ptype) {
-		Resource prototype = unWrapResourcePrototypeView(ptype);
+		ResourcePrototype prototype = unWrapResourcePrototypeView(ptype);
 		ResourcePool resPool = null;
 		for(ResourcePool rp : resPools) {
 			if(rp.hasAsPrototype(prototype)) {
@@ -256,47 +256,48 @@ public class ResourceManager {
 	}
 	
 	public List<ResourceView> getConcreteResourcesForPrototype(ResourceView resourcePrototype) {
+		ResourcePrototype rprot = unWrapResourcePrototypeView(resourcePrototype);
 		for(ResourcePool pool : resPools) {
-			if (resourcePrototype.hasAsResource(pool.getPrototype())) {
+			if (pool.hasAsPrototype(rprot)) {
 				return pool.getConcreteResourceViewList();
 			}
 		}
 		return null;
 	}
 	
-	@Deprecated
-	private Resource unwrapResourceView(ResourceView view) {
-		if(view == null) {
-			return null;
-		}
-		for(ResourcePool pool : resPools) {
-			if (view.hasAsResource(pool.getPrototype())) {
-				return pool.getPrototype();
-			}
-			else {
-				for (Resource res : pool.getConcreteResourceList()){
-					if (view.hasAsResource(res)){
-						return res;
-					}
-				}
-			}
-		}
-		return null;
-	}
+//	@Deprecated
+//	private Resource unwrapResourceView(ResourceView view) {
+//		if(view == null) {
+//			return null;
+//		}
+//		for(ResourcePool pool : resPools) {
+//			if (pool.hasAsPrototype(view)) {
+//				return pool.getPrototype();
+//			}
+//			else {
+//				for (Resource res : pool.getConcreteResourceList()){
+//					if (view.hasAsResource(res)){
+//						return res;
+//					}
+//				}
+//			}
+//		}
+//		return null;
+//	}
 
-	private ConcreteResource unWrapConcreteResourceView(ResourceView view){
-		if(view == null) {
-			return null;
-		}
-		for(ResourcePool pool : resPools) {
-				for (ConcreteResource res : pool.getConcreteResourceList()){
-					if (view.hasAsResource(res)){
-						return res;
-					}
-				}
-		}
-		return null;
-	}
+//	private ConcreteResource unWrapConcreteResourceView(ResourceView view){
+//		if(view == null) {
+//			return null;
+//		}
+//		for(ResourcePool pool : resPools) {
+//				for (ConcreteResource res : pool.getConcreteResourceList()){
+//					if (view.hasAsResource(res)){
+//						return res;
+//					}
+//				}
+//		}
+//		return null;
+//	}
 	
 	private ResourcePrototype unWrapResourcePrototypeView(ResourceView view){
 		if(view == null) {
@@ -330,10 +331,26 @@ public class ResourceManager {
 		}
 		return true;
 	}
-	
-	public boolean hasReservations(Task reservedTask, Map<Resource,Integer> requiredResources){
-		// TODO nog te maken
-		return false;
+
+	public boolean hasActiveReservations(Task reservedTask, Map<ResourceView,Integer> requiredResources){
+		Map<ResourceView,Integer> checkList = requiredResources;
+		for (Reservation res: activeReservations){
+			if (res.getReservingTask().equals(reservedTask)){
+				for (ResourceView resource : checkList.keySet()){
+					if(resource.hasAsResource(res.getReservedResource().getPrototype())){
+						checkList.put(resource, checkList.get(resource) - 1);
+					}
+						
+				}
+			}
+		}
+		boolean largerZero = false;
+		for (ResourceView resource : checkList.keySet()){
+			if(checkList.get(resource) > 0){
+				largerZero = true;
+			}
+		}
+		return (!largerZero);
 	}
 	
 	public boolean addRequirementsToResource(List<ResourceView> reqToAdd, ResourceView prototype){

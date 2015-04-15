@@ -96,6 +96,10 @@ public class Task implements Dependant {
 //		this.estimatedDuration = new TimeSpan(estimatedDuration);
 //		this.acceptableDeviation = acceptableDeviation;
 		this.resMan = resMan;
+		this.requiredResources.putAll(requiredResources);
+//		for(ResourceView rv : requiredResources.keySet()) {
+//			this.requiredResources.put(rv, requiredResources.get(rv));
+//		}
 		
 		this.state = new UnavailableTask(this);
 

@@ -45,10 +45,13 @@ public class ResourcePool {
 		}
 		return list;
 	}
-
-	public boolean hasAsPrototype(Resource prototype) {
-		// TODO Auto-generated method stub
-		return false;
+	
+	public boolean hasAsPrototype(ResourcePrototype prototype) {
+		return resProt.equals(prototype);
+	}
+	
+	public int size(){
+		return concreteResList.size();
 	}
 
 }

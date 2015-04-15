@@ -14,7 +14,7 @@ public class ResourcePrototype extends Resource {
 	}
 	
 	public ConcreteResource instantiate(String instanceName) {
-		return new ConcreteResource(instanceName, reqResourcesList, conResourcesList, dailyAvailable);
+		return new ConcreteResource(instanceName, reqResourcesList, conResourcesList, dailyAvailable,this);
 	}
 	
 	public boolean addRequiredResource(ResourcePrototype requiredResources) {
