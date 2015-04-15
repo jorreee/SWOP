@@ -381,10 +381,6 @@ public class TaskMan {
 		return unwrapProjectView(project).getPossibleTaskStartingTimes(task,amount);
 	}
 
-//	public List<AvailabilityPeriod> getPossibleDailyAvailabilities() {
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
 
 	public List<ResourceView> getDeveloperList() {
 		return resMan.getDeveloperList();
