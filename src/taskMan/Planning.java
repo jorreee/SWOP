@@ -33,6 +33,9 @@ public class Planning {
 //		if(getPlannedBeginTime() != null) { // TODO this will happen when conflicts arise
 //			return false; //already set
 //		}
+		if(beginTime != null) {
+			return false; //already started working
+		}
 		this.plannedBeginTime = newPlannedBeginTime;
 		return true;
 	}

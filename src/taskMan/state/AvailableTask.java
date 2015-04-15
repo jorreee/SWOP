@@ -25,7 +25,7 @@ public class AvailableTask implements TaskStatus {
 //				return false;
 //			}
 //		}
-		
+//		
 //		return task.setBeginTime(beginTime);
 		
 		if(!task.setBeginTime(beginTime)) {
