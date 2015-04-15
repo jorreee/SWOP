@@ -75,6 +75,9 @@ public interface IFacade {
 
 	public List<ResourceView> getResourcePrototypes();
 	public List<ResourceView> getAllConcreteResources();
+	
+	public boolean addRequirementsToResource(List<ResourceView> resourcesToAdd, ResourceView prototype);
+	public boolean addConflictsToResource(List<ResourceView> resourcesToAdd, ResourceView prototype);
 
 	public List<ResourceView> getConcreteResourcesForPrototype(
 			ResourceView resourcePrototype);

@@ -218,4 +218,16 @@ public class Facade implements IFacade {
 		return taskMan.flushFutureReservations(project, task);
 	}
 
+	@Override
+	public boolean addRequirementsToResource(List<ResourceView> resourcesToAdd,
+			ResourceView prototype) {
+		return taskMan.addRequirementsToResource(resourcesToAdd, prototype);
+	}
+
+	@Override
+	public boolean addConflictsToResource(List<ResourceView> resourcesToAdd,
+			ResourceView prototype) {
+		return taskMan.addConflictsToResource(resourcesToAdd, prototype);
+	}
+
 }

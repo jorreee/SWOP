@@ -423,5 +423,15 @@ public class TaskMan {
 	public List<ResourceView> getResourcePrototypes() {
 		return resMan.getResourcePrototypes();
 	}
+
+	public boolean addRequirementsToResource(List<ResourceView> resourcesToAdd,
+			ResourceView prototype) {
+		return resMan.addRequirementsToResource(resourcesToAdd, prototype);
+	}
+
+	public boolean addConflictsToResource(List<ResourceView> resourcesToAdd,
+			ResourceView prototype) {
+		return resMan.addConflictsToResource(resourcesToAdd, prototype);
+	}
 	
 }
