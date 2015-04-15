@@ -12,10 +12,10 @@ import initSaveRestore.initialization.TaskManInitFileChecker;
 import initSaveRestore.initialization.TaskStatus;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,17 +32,19 @@ import userInterface.requests.Request;
  * @author Tim Van Den Broecke, Joran Van de Woestijne, Vincent Van Gestel and Eli Vangrieken
  */
 public class Main {
-		
+
+	private static boolean initSuccess = true;
+
 	public static void main(String[] args) throws IOException {
 		System.out.println("~~~~~~~~~~~~~~~ TASKMAN ~~~~~~~~~~~~~~~");		
-	
+
 		IFacade facade;
 		if(args.length < 1) {
 			facade = new Facade(LocalDateTime.now());
 		} else {
-			facade = initialize(args[0]);
+			facade = initializeFromStream(new FileReader(args[0]));
 		}
-		
+
 		// Start accepting user input
 		BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
 		InputParser inParser = new InputParser(facade, input);
@@ -54,44 +56,56 @@ public class Main {
 			System.out.println("TaskMan instruction? (h for help)");
 			// Parse user input
 			Request request = inParser.parse(input.readLine());
-			
+
 			// Execute request
 			String response = request.execute();
-			
+
 			// Display the response of the previous request
 			System.out.println(response);
 
 		} // Repeat
 	}
-	
-	private static IFacade initialize(String fileLocation) throws FileNotFoundException {
+
+	private static IFacade initializeFromStream(Reader fileReader) {
 
 		// Initialize variables from file
 		TaskManInitFileChecker fileChecker;
-		
-		fileChecker = new TaskManInitFileChecker(new FileReader(fileLocation));
+
+		fileChecker = new TaskManInitFileChecker(fileReader);
 		fileChecker.checkFile();
-		
+
 		LocalDateTime systemTime = fileChecker.getSystemTime();
-		List<ProjectCreationData> projectData = fileChecker.getProjectDataList();
-		List<TaskCreationData> taskData = fileChecker.getTaskDataList();
-		List<ResourcePrototypeCreationData> resourcePrototypes = fileChecker.getResourcePrototypeDataList();
-		List<ConcreteResourceCreationData> concreteResources = fileChecker.getConcreteResourceDataList();
-		List<DeveloperCreationData> developers = fileChecker.getDeveloperDataList();
-		List<ReservationCreationData> reservations = fileChecker.getReservationDataList();
-		
+
 		// Get facade
 		IFacade facade = new Facade(systemTime);
-		
-		// Initialize system through a facade
+		boolean success = initialize(facade, fileChecker);
+		if(success) {
+			return facade;
+		} else {
+			System.out.println("Initialization from tman failed, check your file!");
+			return new Facade(LocalDateTime.now());
+		}
+	}
+
+	public static boolean initialize(IFacade facade, TaskManInitFileChecker fileChecker) {
+		boolean success = false;
+		try {
+			List<ProjectCreationData> projectData = fileChecker.getProjectDataList();
+			List<TaskCreationData> taskData = fileChecker.getTaskDataList();
+			List<ResourcePrototypeCreationData> resourcePrototypes = fileChecker.getResourcePrototypeDataList();
+			List<ConcreteResourceCreationData> concreteResources = fileChecker.getConcreteResourceDataList();
+			List<DeveloperCreationData> developers = fileChecker.getDeveloperDataList();
+			List<ReservationCreationData> reservations = fileChecker.getReservationDataList();
+
+			// Initialize system through a facade
 			// Init resource prototypes
-		List<ResourceView> resourceProts = new ArrayList<>();
-		for(ResourcePrototypeCreationData rprot : resourcePrototypes) {
-			boolean success = facade.createResourcePrototype(
-					rprot.getName(),
-					fileChecker.getDailyAvailabilityStartByIndex(rprot.getAvailabilityIndex()),
-					fileChecker.getDailyAvailabilityEndByIndex(rprot.getAvailabilityIndex()));
-			if(success) {
+			List<ResourceView> resourceProts = new ArrayList<>();
+			for(ResourcePrototypeCreationData rprot : resourcePrototypes) {
+				success = facade.createResourcePrototype(
+						rprot.getName(),
+						fileChecker.getDailyAvailabilityStartByIndex(rprot.getAvailabilityIndex()),
+						fileChecker.getDailyAvailabilityEndByIndex(rprot.getAvailabilityIndex()));
+				if(!success) { failInit("creating a resource prototype!"); }
 				List<ResourceView> currentExistingProts = facade.getResourcePrototypes();
 				ResourceView currentProt = currentExistingProts.get(facade.getResourcePrototypes().size() -1); 
 				resourceProts.add(currentProt);
@@ -103,112 +117,127 @@ public class Main {
 				for(Integer index : rprot.getConflicts()) {
 					conflicts.add(currentExistingProts.get(index));
 				}
-				facade.addRequirementsToResource(requirements, currentProt);
-				facade.addConflictsToResource(conflicts, currentProt);
+				success = facade.addRequirementsToResource(requirements, currentProt);
+				if(!success) { failInit("adding requirements to a prototype!"); }
+				success = facade.addConflictsToResource(conflicts, currentProt);
+				if(!success) { failInit("adding conflicts to a prototype!"); }
 			}
-		}
 			// Init concrete resources
-		List<ResourceView> allConcreteResources = new ArrayList<>();
-		for(ConcreteResourceCreationData cres : concreteResources) {
-			boolean success = facade.declareConcreteResource(cres.getName(), resourceProts.get(cres.getTypeIndex()));
-			if(success) {
+			List<ResourceView> allConcreteResources = new ArrayList<>();
+			for(ConcreteResourceCreationData cres : concreteResources) {
+				success = facade.declareConcreteResource(cres.getName(), resourceProts.get(cres.getTypeIndex()));
+				if(!success) { failInit("creating a concrete resource!"); }
 				List<ResourceView> specificResources = facade.getConcreteResourcesForPrototype(resourceProts.get(cres.getTypeIndex()));
 				allConcreteResources.add(specificResources.get(specificResources.size() - 1));
 			}
-		}
-		// --------------------------------
+			// --------------------------------
 			// Init developers
-		for(DeveloperCreationData dev : developers) {
-			facade.createDeveloper(dev.getName());
-		}
-		
+			for(DeveloperCreationData dev : developers) {
+				success = facade.createDeveloper(dev.getName());
+				if(!success) { failInit("creating a developer!"); }
+			}
+
 			// Init current user
-		facade.changeToUser(fileChecker.getCurrentUser());
-		// --------------------------------
-		
+			success = facade.changeToUser(fileChecker.getCurrentUser());
+			if(!success) { failInit("changing the current user!"); }
+			// --------------------------------
+
 			// Init projects
-		for(ProjectCreationData pcd : projectData) {
-			facade.createProject(pcd.getName(), pcd.getDescription(), pcd.getCreationTime(), pcd.getDueTime());
-		}
+			for(ProjectCreationData pcd : projectData) {
+				success = facade.createProject(pcd.getName(), pcd.getDescription(), pcd.getCreationTime(), pcd.getDueTime());
+				if(!success) { failInit("creating a project!"); }
+			}
 			// Init tasks (planned and unplanned)
-		List<TaskView> creationList = new ArrayList<>();
-		for(TaskCreationData tcd : taskData) {
-			TaskStatus status = tcd.getStatus();
-			String statusString = null;
-			if(status != null)
-				statusString = status.name();
-			
-			ProjectView project = facade.getProjects().get(tcd.getProject());
-			List<TaskView> prerequisiteTasks = new ArrayList<>();
-			for(Integer i : tcd.getPrerequisiteTasks()) {
-				prerequisiteTasks.add(creationList.get(i));
-			}
-			TaskView taskAlternative = null;
-			if(tcd.getAlternativeFor() != -1) {
-				taskAlternative = creationList.get(tcd.getAlternativeFor());
-			}
-			Map<ResourceView, Integer> requiredResources = new HashMap<>();
-			List<ResourceView> resources = facade.getResourcePrototypes();
-			for(IntPair intPair : tcd.getRequiredResources()) {
-				requiredResources.put(resources.get(intPair.first), intPair.second);
-			}
-			
-			PlanningCreationData planning = tcd.getPlanningData();
-			if(planning != null) {
-				
-				List<ResourceView> devs = facade.getDeveloperList();
-				List<ResourceView> plannedDevelopers = new ArrayList<>();
-				for(Integer integer : planning.getDevelopers()) {
-					plannedDevelopers.add(devs.get(integer));
+			List<TaskView> creationList = new ArrayList<>();
+			for(TaskCreationData tcd : taskData) {
+				TaskStatus status = tcd.getStatus();
+				String statusString = null;
+				if(status != null)
+					statusString = status.name();
+
+				ProjectView project = facade.getProjects().get(tcd.getProject());
+				List<TaskView> prerequisiteTasks = new ArrayList<>();
+				for(Integer i : tcd.getPrerequisiteTasks()) {
+					prerequisiteTasks.add(creationList.get(i));
 				}
-				
-				facade.createTask(
-						project, 
-						tcd.getDescription(),
-						tcd.getEstimatedDuration(),
-						tcd.getAcceptableDeviation(), 
-						prerequisiteTasks,
-						taskAlternative, 
-						requiredResources,
-						statusString, 
-						tcd.getStartTime(), 
-						tcd.getEndTime(),
-						planning.getPlannedStartTime(),
-						plannedDevelopers);
-			} else {
-				facade.createTask(
-						project, 
-						tcd.getDescription(),
-						tcd.getEstimatedDuration(),
-						tcd.getAcceptableDeviation(), 
-						prerequisiteTasks,
-						taskAlternative, 
-						requiredResources,
-						statusString, 
-						tcd.getStartTime(), 
-						tcd.getEndTime(),
-						null,
-						null);
+				TaskView taskAlternative = null;
+				if(tcd.getAlternativeFor() != -1) {
+					taskAlternative = creationList.get(tcd.getAlternativeFor());
+				}
+				Map<ResourceView, Integer> requiredResources = new HashMap<>();
+				List<ResourceView> resources = facade.getResourcePrototypes();
+				for(IntPair intPair : tcd.getRequiredResources()) {
+					requiredResources.put(resources.get(intPair.first), intPair.second);
+				}
+
+				PlanningCreationData planning = tcd.getPlanningData();
+				if(planning != null) {
+
+					List<ResourceView> devs = facade.getDeveloperList();
+					List<ResourceView> plannedDevelopers = new ArrayList<>();
+					for(Integer integer : planning.getDevelopers()) {
+						plannedDevelopers.add(devs.get(integer));
+					}
+
+					success = facade.createTask(
+							project, 
+							tcd.getDescription(),
+							tcd.getEstimatedDuration(),
+							tcd.getAcceptableDeviation(), 
+							prerequisiteTasks,
+							taskAlternative, 
+							requiredResources,
+							statusString, 
+							tcd.getStartTime(), 
+							tcd.getEndTime(),
+							planning.getPlannedStartTime(),
+							plannedDevelopers);
+				} else {
+					success = facade.createTask(
+							project, 
+							tcd.getDescription(),
+							tcd.getEstimatedDuration(),
+							tcd.getAcceptableDeviation(), 
+							prerequisiteTasks,
+							taskAlternative, 
+							requiredResources,
+							statusString, 
+							tcd.getStartTime(), 
+							tcd.getEndTime(),
+							null,
+							null);
+
+				}
+				if(!success) { failInit("creating a task!"); }
+
+				List<TaskView> tasks = project.getTasks();
+				creationList.add(tasks.get(tasks.size() - 1));
 			}
-			List<TaskView> tasks = project.getTasks();
-			creationList.add(tasks.get(tasks.size() - 1));
-		}
 			// Init reservations
-		for(ReservationCreationData rcd : reservations) {
-			
-			ProjectView project = facade.getProjects().get(taskData.get(rcd.getTask()).getProject());
-			TaskView task = creationList.get(rcd.getTask());
-			
-			facade.reserveResource(
-					allConcreteResources.get(rcd.getResource()), 
-					project,
-					task,
-					rcd.getStartTime(),
-					rcd.getEndTime());
+			for(ReservationCreationData rcd : reservations) {
+
+				ProjectView project = facade.getProjects().get(taskData.get(rcd.getTask()).getProject());
+				TaskView task = creationList.get(rcd.getTask());
+
+				success = facade.reserveResource(
+						allConcreteResources.get(rcd.getResource()), 
+						project,
+						task,
+						rcd.getStartTime(),
+						rcd.getEndTime());
+				if(!success) { failInit("trying to reserve!"); }
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+			failInit("an exception was thrown!");
 		}
 		// End initialization
-		
-		return facade;
+		return initSuccess;
+	}
+
+	private static void failInit(String issue) {
+		System.out.println("Initialization failed when " + issue);
+		initSuccess = false;
 	}
 
 }
