@@ -190,18 +190,19 @@ public class ResourceManager {
 			ConcreteResource reservedResource, 
 			Task reservingTask, 
 			LocalDateTime startTime, 
-			LocalDateTime endTime, 
-			LocalDateTime currentTime) {
+			LocalDateTime endTime
+//			LocalDateTime currentTime
+			) {
 		
 		if(reservedResource == null || reservingTask == null ||
-				startTime == null || endTime == null || currentTime == null) {
+				startTime == null || endTime == null) { // || currentTime == null
 			return false;
 		}
 		if(endTime.isBefore(startTime)) {
 			return false;
 		}
 		// Reservation is no longer active
-		if(currentTime.isAfter(endTime) || reservingTask.hasEnded()) {
+		if(reservingTask.hasEnded()) { //currentTime.isAfter(endTime) || 
 			return allReservations.add(new Reservation(reservedResource, reservingTask, startTime, endTime));
 		}
 		// Active task

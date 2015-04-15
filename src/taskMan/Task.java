@@ -116,13 +116,9 @@ public class Task implements Dependant {
 		for(Task t : prerequisiteTasks) {
 			t.register(this);
 			this.prerequisites.add(t);
-//			this.unfinishedPrerequisites.add(t);
 		}
 		
 		removeAlternativesDependencies();
-
-//		state.makeAvailable();
-//		state.makeAvailable(unfinishedPrerequisites);
 		
 	}
 	
@@ -133,10 +129,13 @@ public class Task implements Dependant {
 			ResourceManager resMan, 
 			List<Task> prerequisiteTasks,
 			Map<ResourceView, Integer> requiredResources, 
-			Task alternativeFor, String taskStatus,
-			LocalDateTime startTime, LocalDateTime endTime,
+			Task alternativeFor, 
+			String taskStatus,
+			LocalDateTime startTime, 
+			LocalDateTime endTime,
 			LocalDateTime plannedStartTime,
 			List<ResourceView> plannedDevelopers) throws IllegalArgumentException {
+		
 		this(	taskID, 
 				taskDescription, 
 				estimatedDuration, 
@@ -145,25 +144,29 @@ public class Task implements Dependant {
 				prerequisiteTasks,
 				requiredResources, 
 				alternativeFor);
-		plan(plannedStartTime);
-		if(!planDevelopers(plannedDevelopers)) {
-			throw new IllegalArgumentException("Very bad developers, very bad!");
+		if(!isValidTaskStatus(taskStatus)) {
+			throw new IllegalArgumentException("Very bad taskStatus");
 		}
-		state.makeAvailable();
 		if(taskStatus != null) {
+			plan(plannedStartTime);
+			if(!planDevelopers(plannedDevelopers)) {
+				throw new IllegalArgumentException("Very bad developers, very bad! ## dit is een zéér gaye fout");
+			}
+			state.makeAvailable();
 			state.execute(startTime);
 			if(taskStatus.equalsIgnoreCase("failed")) {
 				if(!state.fail(endTime)) {
-					throw new IllegalArgumentException("Very bad timeStamps");
+					throw new IllegalArgumentException("Zéér gaye fout");
 				}
 			} else if(taskStatus.equalsIgnoreCase("finished")) {
 				if(!state.finish(endTime)) {
-					throw new IllegalArgumentException("Very bad timeStamps");
+					throw new IllegalArgumentException("Zéér gaye fout");
 				}
-			} else {
-				throw new IllegalArgumentException(
-						"Time stamps are only allowed if a task is finished or failed");
 			}
+//			else {
+//				throw new IllegalArgumentException(
+//						"Time stamps are only allowed if a task is finished or failed");
+//			}
 		}
 	}
 
@@ -579,6 +582,15 @@ public class Task implements Dependant {
 	 */
 	private boolean isValidDuration(int duration){
 		return duration > 0;
+	}
+	
+	private boolean isValidTaskStatus(String status) {
+		if(    !status.equalsIgnoreCase("finished")
+			|| !status.equalsIgnoreCase("failed")
+			|| !status.equalsIgnoreCase("executing")) {
+			return false;
+		}
+		return true;
 	}
 
 	/**
