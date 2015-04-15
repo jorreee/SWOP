@@ -197,7 +197,7 @@ public class Main {
 		for(ReservationCreationData rcd : reservations) {
 			
 			ProjectView project = facade.getProjects().get(taskData.get(rcd.getTask()).getProject());
-			TaskView task = project.getTasks().get(rcd.getTask());
+			TaskView task = creationList.get(rcd.getTask());
 			
 			facade.reserveResource(
 					allConcreteResources.get(rcd.getResource()), 
