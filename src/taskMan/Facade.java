@@ -146,11 +146,9 @@ public class Facade implements IFacade {
 
 	@Override
 	public boolean createResourcePrototype(String name,
-			List<Integer> requirements, 
-			List<Integer> conflicts,
 			Optional<LocalTime> availabilityStart,
 			Optional<LocalTime> availabilityEnd) {
-		return taskMan.createResourcePrototype(name,requirements,conflicts,availabilityStart,availabilityEnd);
+		return taskMan.createResourcePrototype(name,availabilityStart,availabilityEnd);
 	}
 
 	@Override
@@ -198,10 +196,6 @@ public class Facade implements IFacade {
 		return taskMan.getResourcePrototypes();
 	}
 
-	public List<ResourceView> getAllConcreteResources() {
-		return taskMan.getAllConcreteResources();
-	}
-
 	public ResourceView getPrototypeOf(ResourceView resource) {
 		return taskMan.getPrototypeOf(resource);
 	}
@@ -229,6 +223,18 @@ public class Facade implements IFacade {
 	public boolean flushFutureReservations(ProjectView project,
 			TaskView task) {
 		return taskMan.flushFutureReservations(project, task);
+	}
+
+	@Override
+	public boolean addRequirementsToResource(List<ResourceView> resourcesToAdd,
+			ResourceView prototype) {
+		return taskMan.addRequirementsToResource(resourcesToAdd, prototype);
+	}
+
+	@Override
+	public boolean addConflictsToResource(List<ResourceView> resourcesToAdd,
+			ResourceView prototype) {
+		return taskMan.addConflictsToResource(resourcesToAdd, prototype);
 	}
 
 }

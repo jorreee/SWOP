@@ -358,11 +358,9 @@ public class TaskMan {
 	}
 	
 	public boolean createResourcePrototype(String name,
-			List<Integer> requirements, 
-			List<Integer> conflicts,
 			Optional<LocalTime> availabilityStart,
 			Optional<LocalTime> availabilityEnd) {
-		return resMan.createResourcePrototype(name,requirements,conflicts,availabilityStart,availabilityEnd);
+		return resMan.createResourcePrototype(name,availabilityStart,availabilityEnd);
 	}
 	
 	public boolean declareConcreteResource(String name, ResourceView typeIndex) {
@@ -430,6 +428,16 @@ public class TaskMan {
 
 	public List<ResourceView> getResourcePrototypes() {
 		return resMan.getResourcePrototypes();
+	}
+
+	public boolean addRequirementsToResource(List<ResourceView> resourcesToAdd,
+			ResourceView prototype) {
+		return resMan.addRequirementsToResource(resourcesToAdd, prototype);
+	}
+
+	public boolean addConflictsToResource(List<ResourceView> resourcesToAdd,
+			ResourceView prototype) {
+		return resMan.addConflictsToResource(resourcesToAdd, prototype);
 	}
 	
 }
