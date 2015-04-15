@@ -2,7 +2,6 @@ package userInterface;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -27,25 +26,6 @@ public interface IFacade {
 
 	public boolean createProject(String name, String description,
 			LocalDateTime dueTime);
-
-//	public boolean createRawTask(int project, 
-//			String description,
-//			int estimatedDuration, 
-//			int acceptableDeviation,
-//			List<Integer> prerequisiteTasks, 
-//			int alternativeFor, 
-//			List<IntPair> requiredResources, //TODO
-////			List<Resource> requiredResources, 
-//			String taskStatus, 
-//			LocalDateTime startTime, 
-//			LocalDateTime endTime);
-
-//	public boolean createRawPlannedTask(int project, String description,
-//			int estimatedDuration, int acceptableDeviation,
-//			List<Integer> prerequisiteTasks, int alternativeFor,
-//			List<IntPair> requiredResources, String statusString, LocalDateTime startTime,
-//			LocalDateTime endTime, LocalDateTime planningDueTime,
-//			List<Integer> plannedDevelopers, List<IntPair> plannedResources);
 
 	public boolean createTask(ProjectView project, String description,
 			int estimatedDuration, int acceptableDeviation,
@@ -77,9 +57,6 @@ public interface IFacade {
 
 	public boolean discardMemento();
 
-	//TODO guys.
-//	public boolean declareAvailabilityPeriod(LocalTime startTime, LocalTime endTime);
-
 	public boolean createResourcePrototype(String name,
 			List<Integer> requirements, 
 			List<Integer> conflicts,
@@ -97,13 +74,12 @@ public interface IFacade {
 
 	public List<ResourceView> getDeveloperList();
 
-	public HashMap<ProjectView, List<TaskView>> findConflictingDeveloperPlannings(
+	public Map<ProjectView, List<TaskView>> findConflictingDeveloperPlannings(
 			ProjectView projectID, TaskView taskID, List<ResourceView> developerNames,
 			LocalDateTime planningStartTime);
 
 	public List<ResourceView> getResourcePrototypes();
 	public List<ResourceView> getAllConcreteResources();
-//	public List<ResourceView> getResourceRequirements(ResourceView resource); TODO in ResourceView
 
 	public List<ResourceView> getConcreteResourcesForPrototype(
 			ResourceView resourcePrototype);
@@ -111,62 +87,9 @@ public interface IFacade {
 	public boolean planTask(ProjectView project, TaskView task,
 			LocalDateTime planningStartTime);
 
-	public HashMap<ProjectView, List<TaskView>> reservationConflict(ResourceView requiredResource,
+	public Map<ProjectView, List<TaskView>> reservationConflict(ResourceView requiredResource,
 			ProjectView project, TaskView task, LocalDateTime planningStartTime);
 
 	public boolean flushFutureReservations(ProjectView project,
 			TaskView conflictingTask);
-
-//	public List<ResourceView> getResourceConflicts(ResourceView resource); TODO in ResourceView
-
-//	boolean isResourceDailyAvailable(ResourceView resprot); TODO in ResourceView
-//	public ResourceView getPrototypeOf(ResourceView resource); TODO in ResourceView
-	/*
-	public boolean createTask(int projectID, String description, int estimatedDuration, int acceptableDeviation, String taskStatus, Integer alternativeFor, List<Integer> prerequisiteTasks, LocalDateTime startTime, LocalDateTime endTime);
-	public boolean createTask(int projectID, String description, int estimatedDuration, int acceptableDeviation, Integer alternativeFor, List<Integer> prerequisiteTasks);
-	
-
-	public boolean setTaskFinished(int projectID, int taskID, LocalDateTime startTime, LocalDateTime endTime);
-	public boolean setTaskFailed(int projectID, int taskID, LocalDateTime startTime, LocalDateTime endTime);
-	
-	public int getProjectAmount();
-	public int getTaskAmount(int projectID);	
-	
-	public String getProjectName(int projectID);
-	
-	public boolean isProjectEstimatedOnTime(int projectID);
-	public boolean isTaskUnacceptableOverdue(int projectID, int taskID);
-	public boolean isTaskOnTime(int projectID, int taskID);
-	public int getTaskOverTimePercentage(int projectID, int TaskID);
-	
-	public int[] getProjectDelay(int projectID);
-	public boolean isProjectFinished(int projectID);
-	public int[] getEstimatedProjectDelay(int projectID);
-	
-	public String getProjectDescription(int projectID);
-	public String getTaskDescription(int projectID, int taskID);
-	
-	public LocalDateTime getProjectCreationTime(int projectID);
-	public LocalDateTime getTaskStartTime(int projectID, int taskID);
-	
-	public LocalDateTime getProjectDueTime(int projectID);
-	public int getEstimatedTaskDuration(int projectID, int taskID);	
-	public int getAcceptableTaskDeviation(int projectID, int taskID);
-	
-	public LocalDateTime getProjectEndTime(int projectID);
-	public boolean hasTaskEnded(int projectID, int taskID);
-	public LocalDateTime getTaskEndTime(int projectID, int taskID);
-	
-	public String getProjectStatus(int projectID);
-	public String getTaskStatus(int projectID, int taskID);
-
-	public HashMap<Integer,List<Integer>> getAvailableTasks();
-	public List<Integer> getAvailableTasks(int projectID);
-
-	public boolean hasTaskPrerequisites(int projectID, int taskID);
-	public List<Integer> getTaskPrerequisitesFor(int projectID, int taskID);
-
-	public boolean hasTaskAlternative(int projectID, int taskID);
-	public int getTaskAlternativeTo(int projectID, int taskID);
-	*/
 }

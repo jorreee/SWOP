@@ -224,7 +224,7 @@ public class Facade implements IFacade {
 	}
 
 	@Override
-	public HashMap<ProjectView, List<TaskView>> reservationConflict(
+	public Map<ProjectView, List<TaskView>> reservationConflict(
 			ResourceView requiredResource, ProjectView project, TaskView task,
 			LocalDateTime plannedStartTime) {
 		return taskMan.reservationConflict(requiredResource, project, task, plannedStartTime);

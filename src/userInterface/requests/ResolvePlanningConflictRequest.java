@@ -1,8 +1,8 @@
 package userInterface.requests;
 
 import java.io.BufferedReader;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import taskMan.view.ProjectView;
 import taskMan.view.ResourceView;
@@ -11,11 +11,11 @@ import userInterface.IFacade;
 
 public class ResolvePlanningConflictRequest extends Request {
 
-	private HashMap<ProjectView, List<TaskView>> conflictingTasks;
+	private Map<ProjectView, List<TaskView>> conflictingTasks;
 	private boolean movePlanningTask = false;
 
 	public ResolvePlanningConflictRequest(IFacade facade,
-			BufferedReader inputReader, HashMap<ProjectView, List<TaskView>> conflictingTasks) {
+			BufferedReader inputReader, Map<ProjectView, List<TaskView>> conflictingTasks) {
 		super(facade, inputReader);
 		this.conflictingTasks = conflictingTasks;
 	}

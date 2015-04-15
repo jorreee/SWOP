@@ -3,7 +3,6 @@ package userInterface.requests;
 import java.io.BufferedReader;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -126,7 +125,7 @@ public class PlanTaskRequest extends Request {
 								break;
 							} else {
 								// if resource is already reserved initiate resolve conflict request
-								HashMap<ProjectView, List<TaskView>> conflictingTasks = facade.reservationConflict(concreteResources.get(Integer.parseInt(input)), project, task, planning.getPlanningStartTime());
+								Map<ProjectView, List<TaskView>> conflictingTasks = facade.reservationConflict(concreteResources.get(Integer.parseInt(input)), project, task, planning.getPlanningStartTime());
 								if(!conflictingTasks.isEmpty()) {
 									ResolvePlanningConflictRequest resolveConflictRequest = new ResolvePlanningConflictRequest(facade, inputReader, conflictingTasks);
 									System.out.println(resolveConflictRequest.execute());
@@ -160,7 +159,7 @@ public class PlanTaskRequest extends Request {
 				}
 
 				// If selected dev conflicts with another task planning init resolve conflict request
-				HashMap<ProjectView, List<TaskView>> conflictingTasks = facade.findConflictingDeveloperPlannings(project, task, devNames, timeSlotStart);
+				Map<ProjectView, List<TaskView>> conflictingTasks = facade.findConflictingDeveloperPlannings(project, task, devNames, timeSlotStart);
 
 				if(!conflictingTasks.isEmpty()) {
 					ResolvePlanningConflictRequest resolveConflictRequest = new ResolvePlanningConflictRequest(facade, inputReader, conflictingTasks);

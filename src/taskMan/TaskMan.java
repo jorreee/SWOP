@@ -434,7 +434,7 @@ public class TaskMan {
 		return false;
 	}
 
-	public HashMap<ProjectView, List<TaskView>> reservationConflict(
+	public Map<ProjectView, List<TaskView>> reservationConflict(
 			ResourceView requiredResource, ProjectView project, TaskView task,
 			LocalDateTime plannedStartTime) {
 		// TODO Auto-generated method stub
