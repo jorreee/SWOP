@@ -467,8 +467,7 @@ public class TaskMan {
 	}
 
 	public List<ResourceView> getResourcePrototypes() {
-		// TODO Auto-generated method stub
-		return null;
+		return resMan.getResourcePrototypes();
 	}
 	
 }

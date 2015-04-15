@@ -165,16 +165,15 @@ public class Task implements Dependant {
 				prerequisiteTasks,
 				requiredResources, 
 				alternativeFor);
-		
+
+		plan(beginTime);
+		state.makeAvailable();
+		state.execute(beginTime);
 		if(taskStatus.equalsIgnoreCase("failed")) {
-			plan(beginTime);
-			plan.setBeginTime(beginTime);
 			if(!state.fail(endTime)) {
 				throw new IllegalArgumentException("Very bad timeStamps");
 			}
 		} else if(taskStatus.equalsIgnoreCase("finished")) {
-			plan(beginTime);
-			plan.setBeginTime(beginTime);
 			if(!state.finish(endTime)) {
 				throw new IllegalArgumentException("Very bad timeStamps");
 			}

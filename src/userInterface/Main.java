@@ -123,6 +123,7 @@ public class Main {
 			facade.createProject(pcd.getName(), pcd.getDescription(), pcd.getCreationTime(), pcd.getDueTime());
 		}
 			// Init tasks (planned and unplanned)
+		List<TaskView> creationList = new ArrayList<>();
 		for(TaskCreationData tcd : taskData) {
 			TaskStatus status = tcd.getStatus();
 			String statusString = null;
@@ -130,14 +131,13 @@ public class Main {
 				statusString = status.name();
 			
 			ProjectView project = facade.getProjects().get(tcd.getProject());
-			List<TaskView> tasks = project.getTasks();
 			List<TaskView> prerequisiteTasks = new ArrayList<>();
 			for(Integer i : tcd.getPrerequisiteTasks()) {
-				prerequisiteTasks.add(tasks.get(i));
+				prerequisiteTasks.add(creationList.get(i));
 			}
 			TaskView taskAlternative = null;
 			if(tcd.getAlternativeFor() != -1) {
-				taskAlternative = tasks.get(tcd.getAlternativeFor());
+				taskAlternative = creationList.get(tcd.getAlternativeFor());
 			}
 			Map<ResourceView, Integer> requiredResources = new HashMap<>();
 			List<ResourceView> resources = facade.getResourcePrototypes();
@@ -180,6 +180,8 @@ public class Main {
 						tcd.getStartTime(), 
 						tcd.getEndTime());
 			}
+			List<TaskView> tasks = project.getTasks();
+			creationList.add(tasks.get(tasks.size() - 1));
 		}
 			// Init reservations
 		

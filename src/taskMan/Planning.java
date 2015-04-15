@@ -26,14 +26,14 @@ public class Planning {
 		return plannedBeginTime;
 	}
 	
-	public boolean setPlannedBeginTime(LocalDateTime beginTime) {
-		if(beginTime==null) {
+	public boolean setPlannedBeginTime(LocalDateTime newPlannedBeginTime) {
+		if(newPlannedBeginTime==null) {
 			return false;
 		}
-		if(getPlannedBeginTime() != null) {
-			return false; //already set
-		}
-		this.plannedBeginTime = beginTime;
+//		if(getPlannedBeginTime() != null) { // TODO this will happen when conflicts arise
+//			return false; //already set
+//		}
+		this.plannedBeginTime = newPlannedBeginTime;
 		return true;
 	}
 	

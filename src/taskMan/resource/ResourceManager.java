@@ -10,6 +10,7 @@ import taskMan.Task;
 import taskMan.resource.user.Developer;
 import taskMan.resource.user.ProjectManager;
 import taskMan.resource.user.User;
+import taskMan.resource.user.UserCredential;
 import taskMan.view.ResourceView;
 
 import com.google.common.collect.ImmutableList;
@@ -230,6 +231,24 @@ public class ResourceManager {
 	
 	public ImmutableList<ResourceView> getPossibleResourceInstances(ResourceView resourceType){
 		return null; //TODO implement
+	}
+
+	public List<ResourceView> getResourcePrototypes() {
+		Builder<ResourceView> prototypes = ImmutableList.builder();
+		for(ResourcePool pool : resPools) {
+			prototypes.add(new ResourceView(pool.getPrototype()));
+		}
+		return prototypes.build();
+	}
+
+	public List<ResourceView> getDeveloperList() {
+		Builder<ResourceView> usernames = ImmutableList.builder();
+		for(User user : userList) {
+			if(user.hasAsCredential(UserCredential.DEVELOPER)) {
+				usernames.add(new ResourceView(user));
+			}
+		}
+		return usernames.build();
 	}
 
 }

@@ -216,7 +216,6 @@ public class Project implements Dependant {
 						LocalDateTime endTime) {
 
 		int newTaskID = nextTaskID;
-		nextTaskID++;
 		if(isFinished()) {
 			return false;
 		}
@@ -270,16 +269,17 @@ public class Project implements Dependant {
 		
 		if(success) {
 			newTask.register(this);
-		} 
+			nextTaskID++;
+		}
 		return success;
 	}
 	
-	public boolean createPlannedTask(String description2,
+	public boolean createPlannedTask(String description,
 			int estimatedDuration, int acceptableDeviation,
 			ResourceManager resMan, List<TaskView> prerequisiteTasks,
 			Map<ResourceView, Integer> requiredResources,
 			TaskView alternativeFor, String taskStatus,
-			LocalDateTime startTime, LocalDateTime endTime2,
+			LocalDateTime startTime, LocalDateTime endTime,
 			LocalDateTime plannedStartTime, List<ResourceView> plannedDevelopers) {
 		// TODO Auto-generated method stub
 		return false;
