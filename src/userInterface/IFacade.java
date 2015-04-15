@@ -11,8 +11,6 @@ import taskMan.view.ProjectView;
 import taskMan.view.ResourceView;
 import taskMan.view.TaskView;
 
-import com.google.common.collect.ImmutableList;
-
 public interface IFacade {
 
 	public boolean advanceTimeTo(LocalDateTime time);
@@ -20,7 +18,7 @@ public interface IFacade {
 	public LocalDateTime getCurrentTime();
 	
 	public String getCurrentUsername();
-	public ImmutableList<ResourceView> getPossibleUsernames();
+	public List<ResourceView> getPossibleUsernames();
 	public boolean changeToUser(String username);
 
 	
@@ -71,7 +69,7 @@ public interface IFacade {
 	public boolean setTaskFailed(ProjectView projectID, TaskView taskID,
 			 LocalDateTime endTime);
 
-	public ImmutableList<ProjectView> getProjects();
+	public List<ProjectView> getProjects();
 
 	public boolean storeInMemento();
 
@@ -95,19 +93,19 @@ public interface IFacade {
 	public boolean reserveResource(ResourceView resource, ProjectView project, TaskView task);
 	public boolean reserveResource(ResourceView resource, ProjectView project, TaskView task, LocalDateTime startTime, LocalDateTime endTime);
 
-	public ImmutableList<LocalDateTime> getPossibleTaskStartingTimes(ProjectView project, TaskView task, int amount);
+	public List<LocalDateTime> getPossibleTaskStartingTimes(ProjectView project, TaskView task, int amount);
 
-	public ImmutableList<ResourceView> getDeveloperList();
+	public List<ResourceView> getDeveloperList();
 
 	public HashMap<ProjectView, List<TaskView>> findConflictingDeveloperPlannings(
 			ProjectView projectID, TaskView taskID, List<ResourceView> developerNames,
 			LocalDateTime planningStartTime);
 
-	public ImmutableList<ResourceView> getResourcePrototypes();
-	public ImmutableList<ResourceView> getAllConcreteResources();
-//	public ImmutableList<ResourceView> getResourceRequirements(ResourceView resource); TODO in ResourceView
+	public List<ResourceView> getResourcePrototypes();
+	public List<ResourceView> getAllConcreteResources();
+//	public List<ResourceView> getResourceRequirements(ResourceView resource); TODO in ResourceView
 
-	public ImmutableList<ResourceView> getConcreteResourcesForPrototype(
+	public List<ResourceView> getConcreteResourcesForPrototype(
 			ResourceView resourcePrototype);
 
 	public boolean planTask(ProjectView project, TaskView task,
@@ -119,7 +117,7 @@ public interface IFacade {
 	public boolean flushFutureReservations(ProjectView project,
 			TaskView conflictingTask);
 
-//	public ImmutableList<ResourceView> getResourceConflicts(ResourceView resource); TODO in ResourceView
+//	public List<ResourceView> getResourceConflicts(ResourceView resource); TODO in ResourceView
 
 //	boolean isResourceDailyAvailable(ResourceView resprot); TODO in ResourceView
 //	public ResourceView getPrototypeOf(ResourceView resource); TODO in ResourceView

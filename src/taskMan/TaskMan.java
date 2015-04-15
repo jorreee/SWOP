@@ -367,7 +367,7 @@ public class TaskMan {
 	 * @return
 	 * 			| a list of ProjectViews
 	 */
-	public ImmutableList<ProjectView> getProjects() {
+	public List<ProjectView> getProjects() {
 		Builder<ProjectView> views = ImmutableList.builder();
 		for(Project project : projectList)
 			views.add(new ProjectView(project));
@@ -389,7 +389,7 @@ public class TaskMan {
 		}
 	}
 	
-	public ImmutableList<ResourceView> getPossibleUsernames(){
+	public List<ResourceView> getPossibleUsernames(){
 		return resMan.getPossibleUsernames();
 	}
 	
@@ -415,7 +415,7 @@ public class TaskMan {
 //		return resMan.createRawReservation(resource,project,task,startTime,endTime);
 	}
 	
-	public ImmutableList<LocalDateTime> getPossibleTaskStartingTimes(ProjectView project, TaskView task,
+	public List<LocalDateTime> getPossibleTaskStartingTimes(ProjectView project, TaskView task,
 			int amount) {
 		return unwrapProjectView(project).getPossibleTaskStartingTimes(task,amount);
 	}
@@ -425,7 +425,7 @@ public class TaskMan {
 //		return null;
 //	}
 
-	public ImmutableList<ResourceView> getDeveloperList() {
+	public List<ResourceView> getDeveloperList() {
 		return resMan.getDeveloperList();
 	}
 
@@ -450,7 +450,7 @@ public class TaskMan {
 		return false;
 	}
 
-	public ImmutableList<ResourceView> getConcreteResourcesForPrototype(
+	public List<ResourceView> getConcreteResourcesForPrototype(
 			ResourceView resourcePrototype) {
 		// TODO Auto-generated method stub
 		return null;
@@ -461,12 +461,12 @@ public class TaskMan {
 		return null;
 	}
 
-	public ImmutableList<ResourceView> getAllConcreteResources() {
+	public List<ResourceView> getAllConcreteResources() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public ImmutableList<ResourceView> getResourcePrototypes() {
+	public List<ResourceView> getResourcePrototypes() {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -13,8 +13,6 @@ import taskMan.util.TimeSpan;
 import taskMan.view.ResourceView;
 import taskMan.view.TaskView;
 
-import com.google.common.collect.ImmutableList;
-
 /**
  * The project class used by TaskMan. A project will always have a unique
  * identifier, a name, a description, a creation time, a due time, a status and
@@ -701,7 +699,7 @@ public class Project implements Dependant {
 	 * 			The amount of possible starting times wanted.
 	 * @return	The possible starting times of the Task
 	 */
-	public ImmutableList<LocalDateTime> getPossibleTaskStartingTimes(TaskView task, int amount){
+	public List<LocalDateTime> getPossibleTaskStartingTimes(TaskView task, int amount){
 		return unwrapTaskView(task).getPossibleTaskStartingTimes(amount);
 	}
 

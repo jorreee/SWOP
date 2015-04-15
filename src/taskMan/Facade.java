@@ -14,8 +14,6 @@ import taskMan.view.ResourceView;
 import taskMan.view.TaskView;
 import userInterface.IFacade;
 
-import com.google.common.collect.ImmutableList;
-
 public class Facade implements IFacade {
 	private TaskMan taskMan;
 	private final TaskManCaretaker caretaker;
@@ -117,7 +115,7 @@ public class Facade implements IFacade {
 	}
 
 	@Override
-	public ImmutableList<ProjectView> getProjects() {
+	public List<ProjectView> getProjects() {
 		return taskMan.getProjects();
 	}
 
@@ -142,7 +140,7 @@ public class Facade implements IFacade {
 	}
 
 	@Override
-	public ImmutableList<ResourceView> getPossibleUsernames() {
+	public List<ResourceView> getPossibleUsernames() {
 		return taskMan.getPossibleUsernames();
 	}
 
@@ -181,13 +179,13 @@ public class Facade implements IFacade {
 	}
 
 	@Override
-	public ImmutableList<LocalDateTime> getPossibleTaskStartingTimes(ProjectView project, TaskView task,
+	public List<LocalDateTime> getPossibleTaskStartingTimes(ProjectView project, TaskView task,
 			int amount) {
 		return taskMan.getPossibleTaskStartingTimes(project,task,amount);
 	}
 
 	@Override
-	public ImmutableList<ResourceView> getDeveloperList() {
+	public List<ResourceView> getDeveloperList() {
 		return taskMan.getDeveloperList();
 	}
 
@@ -201,11 +199,11 @@ public class Facade implements IFacade {
 	}
 
 	@Override
-	public ImmutableList<ResourceView> getResourcePrototypes() {
+	public List<ResourceView> getResourcePrototypes() {
 		return taskMan.getResourcePrototypes();
 	}
 
-	public ImmutableList<ResourceView> getAllConcreteResources() {
+	public List<ResourceView> getAllConcreteResources() {
 		return taskMan.getAllConcreteResources();
 	}
 
@@ -214,7 +212,7 @@ public class Facade implements IFacade {
 	}
 
 	@Override
-	public ImmutableList<ResourceView> getConcreteResourcesForPrototype(
+	public List<ResourceView> getConcreteResourcesForPrototype(
 			ResourceView resourcePrototype) {
 		return taskMan.getConcreteResourcesForPrototype(resourcePrototype);
 	}

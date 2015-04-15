@@ -13,8 +13,6 @@ import taskMan.util.Dependant;
 import taskMan.util.TimeSpan;
 import taskMan.view.ResourceView;
 
-import com.google.common.collect.ImmutableList;
-
 /**
  * The Task object. A task will have an ID, a description, an estimated duration, 
  * acceptable deviation and a status. Also it will be possible to set the begin and end time
@@ -703,7 +701,7 @@ public class Task implements Dependant {
 	 * 			The amount of possible starting times wanted.
 	 * @return	The possible starting times of the Task
 	 */
-	public ImmutableList<LocalDateTime> getPossibleTaskStartingTimes(int amount){
+	public List<LocalDateTime> getPossibleTaskStartingTimes(int amount){
 		return null; //TODO
 	}
 	
@@ -711,7 +709,7 @@ public class Task implements Dependant {
 		return requiredResources;
 	}
 	
-	public ImmutableList<ResourceView> getPossibleResourceInstances(ResourceView resourceType){
+	public List<ResourceView> getPossibleResourceInstances(ResourceView resourceType){
 		return resMan.getPossibleResourceInstances(resourceType);
 	}
 	
