@@ -731,5 +731,9 @@ public class Task implements Dependant {
 	public List<ResourceView> getPossibleResourceInstances(ResourceView resourceType){
 		return resMan.getPossibleResourceInstances(resourceType);
 	}
+
+	public boolean flushFutureReservations(LocalDateTime currentTime) {
+		return resMan.flushFutureReservations(this, currentTime);
+	}
 	
 }

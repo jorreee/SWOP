@@ -359,7 +359,11 @@ public class ResourceManager {
 			ResourcePrototype prot = pool.getPrototype();
 			if (prototype.hasAsResource(prot)) {
 				for (ResourceView req : reqToAdd ){
-					prot.addRequiredResource(unWrapResourcePrototypeView(req));
+					ResourcePrototype unwrapReq = unWrapResourcePrototypeView(req);
+					if (unwrapReq == null){
+						return false;
+					}
+					else prot.addRequiredResource(unwrapReq);
 				}
 				return true;
 			}
@@ -372,12 +376,38 @@ public class ResourceManager {
 			ResourcePrototype prot = pool.getPrototype();
 			if (prototype.hasAsResource(prot)) {
 				for (ResourceView conflict : conToAdd ){
-					prot.addConflictingResource(unWrapResourcePrototypeView(conflict));
+					ResourcePrototype unwrapCon = unWrapResourcePrototypeView(conflict);
+					if (unwrapCon == null){
+						return false;
+					}
+					prot.addConflictingResource(unwrapCon);
 				}
 				return true;
 			}
 		}
 		return false;
+	}
+
+	public boolean flushFutureReservations(Task task, LocalDateTime currentTime) {
+		boolean succesful = false;
+		for (Reservation res : activeReservations){
+			if (res.getReservingTask().equals(task)){
+				activeReservations.remove(res);
+				succesful = true;
+			}
+		}
+		for (Reservation res : allReservations){
+			if (res.getReservingTask().equals(task)){
+				if(res.getEndTime().isAfter(currentTime)){
+					ConcreteResource reserved = res.getReservedResource();
+					Task resTask = res.getReservingTask();
+					LocalDateTime start = res.getStartTime();
+					allReservations.remove(res);
+					allReservations.add(new Reservation(reserved,resTask,start,currentTime));
+				}
+			}
+		}
+		return succesful;
 	}
 
 }
