@@ -383,8 +383,11 @@ public class TaskMan {
 	}
 
 	public boolean flushFutureReservations(ProjectView project, TaskView task) {
-		// TODO Auto-generated method stub
-		return false;
+		Project p = unwrapProjectView(project);
+		if(p == null) {
+			return false;
+		}
+		return p.flushFutureReservations(task);
 	}
 
 	public Map<ProjectView, List<TaskView>> reservationConflict(

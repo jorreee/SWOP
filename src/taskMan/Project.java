@@ -643,4 +643,12 @@ public class Project implements Dependant {
 		return unwrapTaskView(task).getPossibleTaskStartingTimes(amount);
 	}
 
+	public boolean flushFutureReservations(TaskView task) {
+		Task t = unwrapTaskView(task);
+		if(t == null) {
+			return false;
+		}
+		return t.flushFutureReservations();
+	}
+
 }

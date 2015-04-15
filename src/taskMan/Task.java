@@ -715,5 +715,10 @@ public class Task implements Dependant {
 	public List<ResourceView> getPossibleResourceInstances(ResourceView resourceType){
 		return resMan.getPossibleResourceInstances(resourceType);
 	}
+
+	public boolean flushFutureReservations() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 	
 }

@@ -336,7 +336,11 @@ public class ResourceManager {
 			ResourcePrototype prot = pool.getPrototype();
 			if (prototype.hasAsResource(prot)) {
 				for (ResourceView req : reqToAdd ){
-					prot.addRequiredResource(unWrapResourcePrototypeView(req));
+					ResourcePrototype unwrapReq = unWrapResourcePrototypeView(req);
+					if (unwrapReq == null){
+						return false;
+					}
+					else prot.addRequiredResource(unwrapReq);
 				}
 				return true;
 			}
@@ -349,7 +353,11 @@ public class ResourceManager {
 			ResourcePrototype prot = pool.getPrototype();
 			if (prototype.hasAsResource(prot)) {
 				for (ResourceView conflict : conToAdd ){
-					prot.addConflictingResource(unWrapResourcePrototypeView(conflict));
+					ResourcePrototype unwrapCon = unWrapResourcePrototypeView(conflict);
+					if (unwrapCon == null){
+						return false;
+					}
+					prot.addConflictingResource(unwrapCon);
 				}
 				return true;
 			}
