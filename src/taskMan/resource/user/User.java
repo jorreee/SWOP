@@ -10,8 +10,8 @@ public abstract class User extends Resource {
 	
 	private List<UserCredential> userCredentials;
 	
-	public User(int creationIndex, String name){
-		super(creationIndex, name,new ArrayList<ResourcePrototype>(),new ArrayList<ResourcePrototype>(),null);
+	public User(String name){
+		super(name,new ArrayList<ResourcePrototype>(),new ArrayList<ResourcePrototype>(),null);
 		userCredentials = new ArrayList<>();
 	}
 	

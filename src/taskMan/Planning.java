@@ -1,8 +1,10 @@
 package taskMan;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import taskMan.util.TimeSpan;
+import taskMan.view.ResourceView;
 
 public class Planning {
 
@@ -11,6 +13,8 @@ public class Planning {
 	private LocalDateTime endTime;
 	private final TimeSpan estimatedDuration;
 	private final int acceptableDeviation;
+	
+	private List<ResourceView> plannedDevelopers;
 	
 	public Planning(int estimatedDuration, int acceptableDeviation) {
 		this.estimatedDuration = new TimeSpan(estimatedDuration);
@@ -118,6 +122,12 @@ public class Planning {
 			return null;
 		}
 		return TimeSpan.addSpanToLDT(beginTime, estimatedDuration.getAcceptableSpan(acceptableDeviation));
+	}
+
+	public boolean planDevelopers(List<ResourceView> plannedDevelopers) {
+		// TODO Actual developers?
+		this.plannedDevelopers = plannedDevelopers;
+		return true;              
 	}
 
 }

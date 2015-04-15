@@ -157,50 +157,6 @@ public class TaskMan {
 	}
 	
 	/**
-	 * Creates a new Task with a status of failed or finished.
-	 * 
-	 * @param 	description
-	 * 			The description of the given Task.
-	 * @param 	estimatedDuration
-	 * 			The estimated duration of the Task.
-	 * @param 	acceptableDeviation
-	 * 			The acceptable deviation of the Task.
-	 * @param 	taskStatus
-	 * 			The Status of the Task.
-	 * @param 	alternativeFor
-	 * 			The alternative Task.
-	 * @param 	prerequisiteTasks
-	 * 			The prerequisites Tasks for this Task.
-	 * @param 	startTime
-	 * 			The start time of the Task.
-	 * @param 	endTime
-	 * 			The end time of the Task.
-	 * @return	True if and only the creation of a Task with a status
-	 * 			of failed or finished was successful.
-	 */
-	public boolean createTask(ProjectView projectView, String description,
-			int estimatedDuration, int acceptableDeviation,
-			List<TaskView> prerequisiteTasks, TaskView alternativeFor,
-			Map<ResourceView, Integer> requiredResources, String taskStatus,
-			LocalDateTime startTime, LocalDateTime endTime) {
-		Project project = unwrapProjectView(projectView);
-		if(project == null) {
-			return false;
-		}
-		return project.createTask(
-				description,
-				estimatedDuration,
-				acceptableDeviation,
-				resMan,
-				prerequisiteTasks,
-				requiredResources,
-				alternativeFor,
-				taskStatus,
-				startTime,
-				endTime);
-	}
-	
-	/**
 	 * Creates a new Task without a set status.
 	 * 
 	 * @param 	description
@@ -236,6 +192,8 @@ public class TaskMan {
 				requiredResources,
 				null,
 				null,
+				null,
+				null,
 				null);
 		}
 	}
@@ -267,7 +225,7 @@ public class TaskMan {
 	 * 			The planned resources of the Task.
 	 * @return	True if and only if the creation of the Raw Planned Task was succesful.
 	 */
-	public boolean createPlannedTask(ProjectView projectView, String description,
+	public boolean createTask(ProjectView projectView, String description,
 			int estimatedDuration, int acceptableDeviation,
 			List<TaskView> prerequisiteTasks, TaskView alternativeFor,
 			Map<ResourceView, Integer> requiredResources, String taskStatus,
@@ -277,7 +235,7 @@ public class TaskMan {
 		if(project == null) {
 			return false;
 		}
-		return project.createPlannedTask(
+		return project.createTask(
 				description,
 				estimatedDuration,
 				acceptableDeviation,
@@ -399,7 +357,7 @@ public class TaskMan {
 		return resMan.createResourcePrototype(name,requirements,conflicts,availabilityStart,availabilityEnd);
 	}
 	
-	public boolean declareConcreteResource(String name, int typeIndex) {
+	public boolean declareConcreteResource(String name, ResourceView typeIndex) {
 		return resMan.declareConcreteResource(name,typeIndex);
 	}
 	
@@ -449,15 +407,14 @@ public class TaskMan {
 
 	public List<ResourceView> getConcreteResourcesForPrototype(
 			ResourceView resourcePrototype) {
-		// TODO Auto-generated method stub
-		return null;
+		return resMan.getConcreteResourcesForPrototype(resourcePrototype);
 	}
 
 	public ResourceView getPrototypeOf(ResourceView resource) {
-		// TODO Auto-generated method stub
-		return null;
+		return resMan.getPrototypeOf(resource);
 	}
 
+	@Deprecated
 	public List<ResourceView> getAllConcreteResources() {
 		// TODO Auto-generated method stub
 		return null;

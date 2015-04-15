@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import taskMan.Task;
@@ -29,17 +30,11 @@ public class ResourceManager {
 	private List<Reservation> activeReservations;
 	private List<Reservation> allReservations;
 	
-	// controls indices of resources, prototypes and developers in the system at init 
-	private int prototypeIndex, resourceIndex, developerIndex;
-	
 	public ResourceManager() {
 		this.resPools = new ArrayList<>();
 //		this.availabilityPeriodList = new ArrayList<>();
 		this.userList = new ArrayList<>();
 		userList.add(new ProjectManager("admin"));
-		prototypeIndex = 0;
-		resourceIndex = 0;
-		developerIndex = 0;
 	}
 	
 	//TODO kunnen ook lijsten van Strings zijn of zelfs lijsten van ResourceViews
@@ -70,10 +65,10 @@ public class ResourceManager {
 		boolean success = false;
 		ResourcePrototype resprot = null;
 		if(!availabilityStart.isPresent() && !availabilityEnd.isPresent()) {
-			resprot = new ResourcePrototype(prototypeIndex, resourceName, null);
+			resprot = new ResourcePrototype(resourceName, null);
 //			resprot = new ResourcePrototype(resourceName, new ArrayList<ResourcePrototype>(), new ArrayList<ResourcePrototype>(), null);
 		} else {
-			resprot = new ResourcePrototype(prototypeIndex, resourceName, new AvailabilityPeriod(availabilityStart.get(), availabilityEnd.get()));
+			resprot = new ResourcePrototype(resourceName, new AvailabilityPeriod(availabilityStart.get(), availabilityEnd.get()));
 //			resprot = new ResourcePrototype(resourceName, new ArrayList<ResourcePrototype>(), new ArrayList<ResourcePrototype>(), availabilityPeriodList.get(availabilityIndex));
 		}
 		success = addResourceType(resprot);
@@ -127,19 +122,18 @@ public class ResourceManager {
 		return resPools.add(new ResourcePool(resProt));
 	}
 	
-	public boolean declareConcreteResource(String resName, int typeIndex) {
+	public boolean declareConcreteResource(String resName, ResourceView prototype) {
 		ResourcePool resPool = null;
 		for(ResourcePool rp : resPools) {
-			if(rp.getPrototype().isCreationIndex(typeIndex)) {
+			if(rp.hasAsPrototype(prototype)) {
 				resPool = rp;
 			}
 		}
 		if(resPool == null) {
 			return false;
 		}
-		boolean success = resPool.createResourceInstance(resourceIndex, resName);
+		boolean success = resPool.createResourceInstance(resName);
 		if(success) {
-			resourceIndex++;
 			return true;
 		} else {
 			return false;
@@ -249,6 +243,50 @@ public class ResourceManager {
 			}
 		}
 		return usernames.build();
+	}
+	
+	public ResourceView getPrototypeOf(ResourceView view){
+		for(ResourcePool pool : resPools) {
+			for (Resource res : pool.getConcreteResourceList()){
+				if (view.hasAsResource(res)){
+					return new ResourceView(pool.getPrototype());
+				}
+			}
+		}
+		return null;
+	}
+	
+	public List<ResourceView> getConcreteResourcesForPrototype(ResourceView resourcePrototype) {
+		for(ResourcePool pool : resPools) {
+			if (resourcePrototype.hasAsResource(pool.getPrototype())) {
+				return pool.getConcreteResourceViewList();
+			}
+		}
+		return null;
+	}
+	
+	private Resource unwrapResourceView(ResourceView view) {
+		if(view == null) {
+			return null;
+		}
+		for(ResourcePool pool : resPools) {
+			if (view.hasAsResource(pool.getPrototype())) {
+				return pool.getPrototype();
+			}
+			else {
+				for (Resource res : pool.getConcreteResourceList()){
+					if (view.hasAsResource(res)){
+						return res;
+					}
+				}
+			}
+		}
+		return null;
+	}
+	
+	public boolean hasReservations(Task reservedTask, Map<Resource,Integer> requiredResources){
+		// TODO nog te maken
+		return false;
 	}
 
 }

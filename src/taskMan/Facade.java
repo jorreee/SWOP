@@ -62,27 +62,9 @@ public class Facade implements IFacade {
 			int estimatedDuration, int acceptableDeviation,
 			List<TaskView> prerequisiteTasks, TaskView alternativeFor,
 			Map<ResourceView, Integer> requiredResources, String taskStatus,
-			LocalDateTime startTime, LocalDateTime endTime) {
-		return taskMan.createTask(project, 
-				description, 
-				estimatedDuration, 
-				acceptableDeviation, 
-				prerequisiteTasks, 
-				alternativeFor,
-				requiredResources,
-				taskStatus,
-				startTime,
-				endTime);
-	}
-	
-	@Override
-	public boolean createPlannedTask(ProjectView project, String description,
-			int estimatedDuration, int acceptableDeviation,
-			List<TaskView> prerequisiteTasks, TaskView alternativeFor,
-			Map<ResourceView, Integer> requiredResources, String taskStatus,
 			LocalDateTime startTime, LocalDateTime endTime,
 			LocalDateTime plannedStartTime, List<ResourceView> plannedDevelopers) {
-		return taskMan.createPlannedTask(project, 
+		return taskMan.createTask(project, 
 				description, 
 				estimatedDuration, 
 				acceptableDeviation, 
@@ -159,7 +141,7 @@ public class Facade implements IFacade {
 	}
 
 	@Override
-	public boolean declareConcreteResource(String name, int typeIndex) {
+	public boolean declareConcreteResource(String name, ResourceView typeIndex) {
 		return taskMan.declareConcreteResource(name,typeIndex);
 	}
 

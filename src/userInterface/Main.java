@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -93,7 +92,7 @@ public class Main {
 //		facade.declareAvailabilityPeriod(fileChecker.getDailyAvailabilityTime()[0],
 //				fileChecker.getDailyAvailabilityTime()[1]);
 			// Init resource prototypes
-		
+		List<ResourceView> resourceProts = new ArrayList<>();
 		for(ResourcePrototypeCreationData rprot : resourcePrototypes) {
 //			facade.createResourcePrototype(rprot.getName(), rprot.getRequirements(), rprot.getConflicts(), rprot.getAvailabilityIndex());
 			facade.createResourcePrototype( // TODO less raw maybe
@@ -105,8 +104,13 @@ public class Main {
 			//, rprot.getRequirements(), rprot.getConflicts(), rprot.getAvailabilityIndex());
 		}
 			// Init concrete resources
+		List<ResourceView> allConcreteResources = new ArrayList<>();
 		for(ConcreteResourceCreationData cres : concreteResources) {
-			facade.declareConcreteResource(cres.getName(), cres.getTypeIndex());
+			boolean success = facade.declareConcreteResource(cres.getName(), resourceProts.get(cres.getTypeIndex()));
+			if(success) {
+				List<ResourceView> specificResources = facade.getConcreteResourcesForPrototype(resourceProts.get(cres.getTypeIndex()));
+				allConcreteResources.add(specificResources.get(specificResources.size() - 1));
+			}
 		}
 		// -------------------------- TODO
 			// Init developers
@@ -154,7 +158,7 @@ public class Main {
 					plannedDevelopers.add(devs.get(integer));
 				}
 				
-				facade.createPlannedTask(
+				facade.createTask(
 						project, 
 						tcd.getDescription(),
 						tcd.getEstimatedDuration(),
@@ -178,25 +182,14 @@ public class Main {
 						requiredResources,
 						statusString, 
 						tcd.getStartTime(), 
-						tcd.getEndTime());
+						tcd.getEndTime(),
+						null,
+						null);
 			}
 			List<TaskView> tasks = project.getTasks();
 			creationList.add(tasks.get(tasks.size() - 1));
 		}
 			// Init reservations
-		
-		List<ResourceView> allConcreteResources = facade.getAllConcreteResources();
-		allConcreteResources.sort(new Comparator<ResourceView>() {
-			@Override
-			public int compare(ResourceView resource1, ResourceView resource2) {
-				if(resource1.getCreationIndex() < resource2.getCreationIndex())
-					return -1;
-				else if(resource1.getCreationIndex() > resource2.getCreationIndex())
-					return 1;
-				else return 0;
-			}
-		});
-		
 		for(ReservationCreationData rcd : reservations) {
 			
 			ProjectView project = facade.getProjects().get(taskData.get(rcd.getTask()).getProject());

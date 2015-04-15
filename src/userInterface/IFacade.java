@@ -30,13 +30,8 @@ public interface IFacade {
 	public boolean createTask(ProjectView project, String description,
 			int estimatedDuration, int acceptableDeviation,
 			List<TaskView> prerequisiteTasks, Map<ResourceView, Integer> requiredResources, TaskView alternativeFor);
-
-	public boolean createTask(ProjectView project, String description,
-			int estimatedDuration, int acceptableDeviation,
-			List<TaskView> prerequisiteTasks, TaskView alternativeFor, Map<ResourceView, Integer> requiredResources, 
-			String taskStatus, LocalDateTime startTime, LocalDateTime endTime);
 	
-	public boolean createPlannedTask(ProjectView project, String description,
+	public boolean createTask(ProjectView project, String description,
 			int estimatedDuration, int acceptableDeviation,
 			List<TaskView> prerequisiteTasks, TaskView alternativeFor, Map<ResourceView, Integer> requiredResources, 
 			String taskStatus, LocalDateTime startTime, LocalDateTime endTime,
@@ -63,7 +58,7 @@ public interface IFacade {
 			Optional<LocalTime> availabilityStart,
 			Optional<LocalTime> availabilityEnd);
 
-	public boolean declareConcreteResource(String name, int typeIndex);
+	public boolean declareConcreteResource(String name, ResourceView resourceView);
 
 	public boolean createDeveloper(String name);
 
