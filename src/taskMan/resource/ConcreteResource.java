@@ -4,7 +4,7 @@ import java.util.List;
 
 public class ConcreteResource extends Resource {
 
-	public ConcreteResource(int creationIndex, String resourceName,
+	public ConcreteResource(String resourceName,
 			List<ResourcePrototype> requiredResourcesList,
 			List<ResourcePrototype> conflictingResourcesList,
 			AvailabilityPeriod dailyAvailble) {

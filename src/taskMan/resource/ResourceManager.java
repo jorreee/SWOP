@@ -39,7 +39,6 @@ public class ResourceManager {
 	
 	//TODO kunnen ook lijsten van Strings zijn of zelfs lijsten van ResourceViews
 	public boolean createResourcePrototype(String resourceName,
-			List<Integer> requirements, List<Integer> conflicts,
 			Optional<LocalTime> availabilityStart, Optional<LocalTime> availabilityEnd) {
 		
 		if(!isValidPeriod(availabilityStart, availabilityEnd)) {
@@ -50,11 +49,11 @@ public class ResourceManager {
 			return false;
 		}
 		// Requirement cannot be a conflict
-		for(Integer requirement : requirements) {
-			if(conflicts.contains(requirement)) {
-				return false;
-			}
-		}
+//		for(Integer requirement : requirements) {
+//			if(conflicts.contains(requirement)) {
+//				return false;
+//			}
+//		}
 		// If daily available, availabilityPeriod must exist
 //		if(availabilityIndex != null && (availabilityIndex < 0 || availabilityIndex > availabilityPeriodList.size())) {
 //			return false;
@@ -78,23 +77,23 @@ public class ResourceManager {
 		
 //		List<ResourcePrototype> reqList = new ArrayList<ResourcePrototype>();
 //		List<ResourcePrototype> conList = new ArrayList<ResourcePrototype>();
-		for(Integer requirement : requirements) {
-			for(ResourcePool resPool : resPools) {
-				if(resPool.getPrototype().isCreationIndex(requirement)) {
-					resprot.addRequiredResource(resPool.getPrototype());
-				}
-			}
-		}
-		for(Integer conflict : conflicts) {
-			for(ResourcePool resPool : resPools) {
-				if(resPool.getPrototype().isCreationIndex(conflict)) {
-					resprot.addConflictingResource(resPool.getPrototype());
-				}
-			}
-		}
+//		for(Integer requirement : requirements) {
+//			for(ResourcePool resPool : resPools) {
+//				if(resPool.getPrototype().isCreationIndex(requirement)) {
+//					resprot.addRequiredResource(resPool.getPrototype());
+//				}
+//			}
+//		}
+//		for(Integer conflict : conflicts) {
+//			for(ResourcePool resPool : resPools) {
+//				if(resPool.getPrototype().isCreationIndex(conflict)) {
+//					resprot.addConflictingResource(resPool.getPrototype());
+//				}
+//			}
+//		}
 //		resprot.putConflictingResources(conList);
 //		resprot.putRequiredResources(reqList);
-		prototypeIndex++;
+//		prototypeIndex++;
 		return true;
 	}
 //	
@@ -168,9 +167,8 @@ public class ResourceManager {
 		if(name == null) {
 			return false;
 		}
-		boolean success = userList.add(new Developer(developerIndex, name));
+		boolean success = userList.add(new Developer(name));
 		if(success) {
-			developerIndex++;
 			return true;
 		} else {
 			return false;
@@ -265,6 +263,7 @@ public class ResourceManager {
 		return null;
 	}
 	
+	@Deprecated
 	private Resource unwrapResourceView(ResourceView view) {
 		if(view == null) {
 			return null;
@@ -284,8 +283,60 @@ public class ResourceManager {
 		return null;
 	}
 	
+	private ConcreteResource unWrapConcreteResourceView(ResourceView view){
+		if(view == null) {
+			return null;
+		}
+		for(ResourcePool pool : resPools) {
+				for (ConcreteResource res : pool.getConcreteResourceList()){
+					if (view.hasAsResource(res)){
+						return res;
+					}
+				}
+		}
+		return null;
+	}
+	
+	private ResourcePrototype unWrapResourcePrototypeView(ResourceView view){
+		if(view == null) {
+			return null;
+		}
+		for(ResourcePool pool : resPools) {
+			if (view.hasAsResource(pool.getPrototype())) {
+				return pool.getPrototype();
+			}
+		}
+		return null;
+	}
+	
 	public boolean hasReservations(Task reservedTask, Map<Resource,Integer> requiredResources){
 		// TODO nog te maken
+		return false;
+	}
+	
+	public boolean addRequirementsToResource(List<ResourceView> reqToAdd, ResourceView prototype){
+		for(ResourcePool pool : resPools) {
+			ResourcePrototype prot = pool.getPrototype();
+			if (prototype.hasAsResource(prot)) {
+				for (ResourceView req : reqToAdd ){
+					prot.addRequiredResource(unWrapResourcePrototypeView(req));
+				}
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean addConflictsToResource(List<ResourceView> conToAdd, ResourceView prototype){
+		for(ResourcePool pool : resPools) {
+			ResourcePrototype prot = pool.getPrototype();
+			if (prototype.hasAsResource(prot)) {
+				for (ResourceView conflict : conToAdd ){
+					prot.addConflictingResource(unWrapResourcePrototypeView(conflict));
+				}
+				return true;
+			}
+		}
 		return false;
 	}
 

@@ -13,8 +13,8 @@ public class ResourcePrototype extends Resource {
 		super(name, requiredResources, conflictingResources, availability);
 	}
 	
-	public ConcreteResource instantiate(int creationIndex, String instanceName) {
-		return new ConcreteResource(creationIndex, instanceName, reqResourcesList, conResourcesList, dailyAvailable);
+	public ConcreteResource instantiate(String instanceName) {
+		return new ConcreteResource(instanceName, reqResourcesList, conResourcesList, dailyAvailable);
 	}
 	
 	public boolean addRequiredResource(ResourcePrototype requiredResources) {

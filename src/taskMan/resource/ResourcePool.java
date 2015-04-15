@@ -22,8 +22,8 @@ public class ResourcePool {
 		return resProt;
 	}
 
-	public boolean createResourceInstance(int creationIndex, String resName) {
-		ConcreteResource conRes = resProt.instantiate(creationIndex, resName);
+	public boolean createResourceInstance(String resName) {
+		ConcreteResource conRes = resProt.instantiate(resName);
 		return concreteResList.add(conRes);
 	}
 
@@ -34,7 +34,7 @@ public class ResourcePool {
 		return concreteResList.get(concreteResourceIndex);
 	}
 	
-	public List<? extends Resource> getConcreteResourceList(){
+	public List<ConcreteResource> getConcreteResourceList(){
 		return concreteResList;
 	}
 	
@@ -44,6 +44,11 @@ public class ResourcePool {
 			list.add(new ResourceView(res));
 		}
 		return list;
+	}
+
+	public boolean hasAsPrototype(ResourceView prototype) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }
