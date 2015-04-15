@@ -2,13 +2,12 @@ package taskMan;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 import taskMan.resource.ResourceManager;
-import taskMan.resource.ResourcePrototype;
 import taskMan.state.TaskStatus;
+import taskMan.state.UnavailableTask;
 import taskMan.util.Dependant;
 import taskMan.util.TimeSpan;
 import taskMan.view.ResourceView;
@@ -37,6 +36,7 @@ public class Task implements Dependant {
 	private TaskStatus state;
 	
 	private final ResourceManager resMan;
+	private Map<ResourceView,Integer> requiredResources;
 	
 	/**
 	 * Create a new Task.
@@ -87,16 +87,15 @@ public class Task implements Dependant {
 		if(!isValidResourceManager(resMan)) {
 			throw new IllegalArgumentException("Invalid resource manager");
 		}
+		if(!resMan.isValidRequiredResources(requiredResources)) {
+			throw new IllegalArgumentException("Very bad required resources");
+		}
 		this.taskID = taskID;
 		this.description = taskDescription;
 		this.plan = new Planning(estimatedDuration, acceptableDeviation);
 //		this.estimatedDuration = new TimeSpan(estimatedDuration);
 //		this.acceptableDeviation = acceptableDeviation;
 		this.resMan = resMan;
-		
-		if(!resMan.registerRequiredResources(requiredResources)) {
-			throw new IllegalArgumentException("Very bad resources");
-		}
 		
 		this.state = new UnavailableTask(this);
 
@@ -683,7 +682,7 @@ public class Task implements Dependant {
 //	}
 	
 	public boolean plan(LocalDateTime startTime) {
-		if(!resMan.hasReservations(this,requiredResources)) {
+		if(!resMan.hasActiveReservations(this,requiredResources)) {
 			return false;
 		}
 		plan.setPlannedBeginTime(startTime);

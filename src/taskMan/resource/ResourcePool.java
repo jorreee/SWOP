@@ -46,7 +46,7 @@ public class ResourcePool {
 		return list;
 	}
 
-	public boolean hasAsPrototype(ResourceView prototype) {
+	public boolean hasAsPrototype(Resource prototype) {
 		// TODO Auto-generated method stub
 		return false;
 	}

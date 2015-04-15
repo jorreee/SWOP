@@ -121,7 +121,8 @@ public class ResourceManager {
 		return resPools.add(new ResourcePool(resProt));
 	}
 	
-	public boolean declareConcreteResource(String resName, ResourceView prototype) {
+	public boolean declareConcreteResource(String resName, ResourceView ptype) {
+		Resource prototype = unWrapResourcePrototypeView(ptype);
 		ResourcePool resPool = null;
 		for(ResourcePool rp : resPools) {
 			if(rp.hasAsPrototype(prototype)) {
@@ -307,6 +308,27 @@ public class ResourceManager {
 			}
 		}
 		return null;
+	}
+	
+	public boolean isValidRequiredResources(Map<ResourceView,Integer> reqRes) {
+		for(ResourceView rv : reqRes.keySet()) {
+			ResourcePrototype rp = unWrapResourcePrototypeView(rv);
+			if(rp == null) {
+				return false;
+			}
+			int i = reqRes.get(rv);
+			if(i <= 0) {
+				return false;
+			}
+			for(ResourcePool pool : resPools) {
+				if(pool.hasAsPrototype(rp)) {
+					if(i > pool.size()) {
+						return false;
+					}
+				}
+			}
+		}
+		return true;
 	}
 	
 	public boolean hasReservations(Task reservedTask, Map<Resource,Integer> requiredResources){
