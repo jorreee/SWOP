@@ -407,15 +407,14 @@ public class TaskMan {
 
 	public List<ResourceView> getConcreteResourcesForPrototype(
 			ResourceView resourcePrototype) {
-		// TODO Auto-generated method stub
-		return null;
+		return resMan.getConcreteResourcesForPrototype(resourcePrototype);
 	}
 
 	public ResourceView getPrototypeOf(ResourceView resource) {
-		// TODO Auto-generated method stub
-		return null;
+		return resMan.getPrototypeOf(resource);
 	}
 
+	@Deprecated
 	public List<ResourceView> getAllConcreteResources() {
 		// TODO Auto-generated method stub
 		return null;

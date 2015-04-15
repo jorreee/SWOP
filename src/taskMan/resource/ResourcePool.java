@@ -3,6 +3,8 @@ package taskMan.resource;
 import java.util.ArrayList;
 import java.util.List;
 
+import taskMan.view.ResourceView;
+
 public class ResourcePool {
 	
 	// The prototype
@@ -30,6 +32,18 @@ public class ResourcePool {
 			return null;
 		}
 		return concreteResList.get(concreteResourceIndex);
+	}
+	
+	public List<? extends Resource> getConcreteResourceList(){
+		return concreteResList;
+	}
+	
+	public List<ResourceView> getConcreteResourceViewList(){
+		ArrayList<ResourceView> list = new ArrayList<ResourceView>();
+		for (Resource res : concreteResList){
+			list.add(new ResourceView(res));
+		}
+		return list;
 	}
 
 }
