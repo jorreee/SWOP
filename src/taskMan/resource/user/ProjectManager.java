@@ -4,5 +4,6 @@ public class ProjectManager extends User {
 
 	public ProjectManager(String username){
 		super(username);
+		addCredential(UserCredential.PROJECTMANAGER);
 	}
 }

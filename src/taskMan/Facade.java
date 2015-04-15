@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import taskMan.resource.AvailabilityPeriod;
 import taskMan.view.ProjectView;
 import taskMan.view.ResourceView;
 import taskMan.view.TaskView;
@@ -178,7 +177,7 @@ public class Facade implements IFacade {
 	
 	@Override
 	public boolean reserveResource(ResourceView resource, ProjectView project, TaskView task, LocalDateTime startTime, LocalDateTime endTime) {
-		return taskMan.reserveResource(resource, project, task); // TODO
+		return taskMan.reserveResource(resource, project, task);
 	}
 
 	@Override
@@ -189,70 +188,54 @@ public class Facade implements IFacade {
 
 	@Override
 	public ImmutableList<ResourceView> getDeveloperList() {
-		// TODO Auto-generated method stub
-		return null;
+		return taskMan.getDeveloperList();
 	}
 
 	@Override
 	public HashMap<ProjectView, List<TaskView>> findConflictingDeveloperPlannings(
-			ProjectView projectID, TaskView taskID,
-			List<ResourceView> developerNames, LocalDateTime planningStartTime) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public List<AvailabilityPeriod> getPossibleDailyAvailabilities() {
-		return taskMan.getPossibleDailyAvailabilities();		
+			ProjectView project, TaskView task,
+			List<ResourceView> developers, LocalDateTime plannedStartTime) {
+		return findConflictingDeveloperPlannings(
+				project, task,
+				developers, plannedStartTime);
 	}
 
 	@Override
 	public ImmutableList<ResourceView> getResourcePrototypes() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public AvailabilityPeriod getDailyAvailability(ResourceView resprot) {
-		// TODO Auto-generated method stub
-		return null;
+		return taskMan.getResourcePrototypes();
 	}
 
 	public ImmutableList<ResourceView> getAllConcreteResources() {
-		// TODO Auto-generated method stub
-		return null;
+		return taskMan.getAllConcreteResources();
 	}
 
-	public ResourceView getPrototypeOf(ResourceView conres) {
-		// TODO Auto-generated method stub
-		return null;
+	public ResourceView getPrototypeOf(ResourceView resource) {
+		return taskMan.getPrototypeOf(resource);
 	}
 
 	@Override
 	public ImmutableList<ResourceView> getConcreteResourcesForPrototype(
 			ResourceView resourcePrototype) {
-		// TODO Auto-generated method stub
-		return null;
+		return taskMan.getConcreteResourcesForPrototype(resourcePrototype);
 	}
 
 	@Override
 	public boolean planTask(ProjectView project, TaskView task,
-			LocalDateTime planningStartTime) {
-		// TODO Auto-generated method stub
-		return false;
+			LocalDateTime plannedStartTime) {
+		return taskMan.planTask(project, task, plannedStartTime);
 	}
 
 	@Override
 	public HashMap<ProjectView, List<TaskView>> reservationConflict(
 			ResourceView requiredResource, ProjectView project, TaskView task,
-			LocalDateTime planningStartTime) {
-		// TODO Auto-generated method stub
-		return null;
+			LocalDateTime plannedStartTime) {
+		return taskMan.reservationConflict(requiredResource, project, task, plannedStartTime);
 	}
 
 	@Override
 	public boolean flushFutureReservations(ProjectView project,
-			TaskView conflictingTask) {
-		// TODO Auto-generated method stub
-		return false;
+			TaskView task) {
+		return taskMan.flushFutureReservations(project, task);
 	}
 
 }

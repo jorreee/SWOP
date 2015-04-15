@@ -3,6 +3,7 @@ package taskMan;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -10,6 +11,7 @@ import java.util.Optional;
 import taskMan.resource.AvailabilityPeriod;
 import taskMan.resource.ResourceManager;
 import taskMan.resource.user.User;
+import taskMan.resource.user.UserCredential;
 import taskMan.view.ProjectView;
 import taskMan.view.ResourceView;
 import taskMan.view.TaskView;
@@ -149,7 +151,11 @@ public class TaskMan {
 	 * 			false if the creation was unsuccessful
 	 */
 	public boolean createProject(String name, String description, LocalDateTime dueTime) {
-		return createProject(name, description, getCurrentTime(), dueTime);
+		if(!currentUser.hasAsCredential(UserCredential.PROJECTMANAGER)) {
+			return false;
+		} else {
+			return createProject(name, description, getCurrentTime(), dueTime);
+		}
 	}
 	
 	/**
@@ -220,7 +226,10 @@ public class TaskMan {
 			List<TaskView> prerequisiteTasks, 
 			Map<ResourceView, Integer> requiredResources, 
 			TaskView alternativeFor) {
-		return createTask(project,
+		if(!currentUser.hasAsCredential(UserCredential.PROJECTMANAGER)) {
+			return false;
+		} else {
+			return createTask(project,
 				description, 
 				estimatedDuration, 
 				acceptableDeviation,  
@@ -230,6 +239,7 @@ public class TaskMan {
 				null,
 				null,
 				null);
+		}
 	}
 	
 	/**
@@ -284,380 +294,6 @@ public class TaskMan {
 				plannedDevelopers);
 	}
 	
-//	/** // TODO remove this
-//	 * Returns the name of the project with the given ID
-//	 * 
-//	 * @param 	projectID
-//	 * 			The id of the project
-//	 * @return	the name of the project
-//	 * 			null if the ID isn't a valid one
-//	 */
-//	public String getProjectName(int projectID) {
-//		if(!isValidProjectID(projectID)) {
-//			return null;
-//		}
-//		return getProject(projectID).getProjectName();
-//	}
-	
-//	/** // TODO remove this
-//	 * Returns the description of the project with the given ID
-//	 * 
-//	 * @param 	projectID
-//	 * 			The id of the project
-//	 * @return	the description of the project
-//	 * 			null if the ID isn't a valid one
-//	 */
-//	public String getProjectDescription(int projectID) {
-//		if(!isValidProjectID(projectID)) {
-//			return null;
-//		}
-//		return getProject(projectID).getProjectDescription();
-//	}
-	
-//	/** // TODO remove this
-//	 * Returns the creation time of the project with the given ID
-//	 * 
-//	 * @param 	projectID
-//	 * 			The id of the project
-//	 * @return	the creation time of the project
-//	 * 			null if the ID isn't a valid one
-//	 */
-//	public LocalDateTime getProjectCreationTime(int projectID) {
-//		if(!isValidProjectID(projectID)) {
-//			return null;
-//		}
-//		return getProject(projectID).getProjectCreationTime();
-//	}
-	
-//	/** // TODO remove this
-//	 * Returns the due time of the project with the given ID
-//	 * 
-//	 * @param 	projectID
-//	 * 			The id of the project
-//	 * @return	the due time of the project
-//	 * 			null if the ID isn't a valid one
-//	 */
-//	public LocalDateTime getProjectDueTime(int projectID) {
-//		if(!isValidProjectID(projectID)) {
-//			return null;
-//		}
-//		return getProject(projectID).getProjectDueTime();
-//	}
-	
-//	/** // TODO remove this
-//	 * Returns the end time of the project with the given ID
-//	 * 
-//	 * @param 	projectID
-//	 * 			The id of the project
-//	 * @return	the end time of the project
-//	 * 			null if the ID isn't a valid one
-//	 */
-//	public LocalDateTime getProjectEndTime(int projectID) {
-//		if(!isValidProjectID(projectID)) {
-//			return null;
-//		}
-//		return getProject(projectID).getProjectEndTime();
-//	}
-	
-//	/** // TODO remove this
-//	 * Returns the status of the project with the given ID
-//	 * 
-//	 * @param 	projectID
-//	 * 			the id of the project
-//	 * @return	the status of the project
-//	 * 			null if the ID isn't a valid one
-//	 */
-//	public String getProjectStatus(int projectID) {
-//		if(!isValidProjectID(projectID)) {
-//			return null;
-//		}
-//		return getProject(projectID).getProjectStatus();
-//	}
-	
-//	/** // TODO remove this
-//	 * Returns the delay of the project with the given ID
-//	 * 
-//	 * @param 	projectID
-//	 * 			the id of the project
-//	 * @return	the delay of the project
-//	 * 			null if the ID isn't a valid one
-//	 */
-//	public int[] getProjectDelay(int projectID){
-//		if(!isValidProjectID(projectID)) {
-//			return null;
-//		}
-//		return getProject(projectID).getDelay(currentTime);
-//
-//	}
-	
-//	/** // TODO remove this
-//	 * Returns all available tasks per project
-//	 * 
-//	 * @return	a mapping of a project id on a list of available task id's
-//	 */
-//	public HashMap<Integer, List<Integer>> getAvailableTasks() {
-//		HashMap<Integer, List<Integer>> hashMap = new HashMap<Integer, List<Integer>>();
-//		for (Project proj : projectList){
-//			hashMap.put(proj.getProjectID(), getAvailableTasks(proj.getProjectID()));
-//		}
-//		return hashMap;
-//	}
-	
-//	/** // TODO remove this
-//	 * Returns all available tasks for a given project
-//	 * 
-//	 * @param 	projectID
-//	 * 			The id of the project
-//	 * @return	The available task id's of the project
-//	 * 			null if the ID isn't a valid one
-//	 */
-//	public List<TaskView> getAvailableTasks(int projectID) {
-//		if(!isValidProjectID(projectID)) {
-//			return null;
-//		}
-//		return getProject(projectID).getAvailableTasks();
-//	}
-	
-//	/** // TODO remove this
-//	 * Returns the total amount of projects
-//	 * 
-//	 * @return	the amount of projects
-//	 */
-//	public int getProjectAmount() {
-//		return projectList.size();
-//	}
-
-//	/** // TODO remove this
-//	 * Returns whether the project with the given ID is on time or not
-//	 * 
-//	 * @param 	projectID
-//	 * 			the id of the project
-//	 * @return	True if the project is on time,
-//	 * 			false if the project is not on time
-//	 */
-//	public boolean isProjectOnTime(int projectID) {
-//		if(!isValidProjectID(projectID)) {
-//			return false;
-//		}
-//		return getProject(projectID).isOnTime(currentTime);
-//	}
-
-//	/** // TODO remove this
-//	 * Returns the amount of tasks of the project with the given ID
-//	 * 
-//	 * @param 	projectID
-//	 * 			the id of the project
-//	 * @return	the amount of tasks of the project
-//	 * 			-1 if the ID isn't a valid one
-//	 */
-//	public int getTaskAmount(int projectID) {
-//		if(!isValidProjectID(projectID)) {
-//			return -1;
-//		}
-//		return projectList.get(projectID).getTaskAmount();
-//	}
-
-//	/** // TODO remove this
-//	 * Returns the description of the task with the given task id belonging 
-//	 * to the project with the given project id
-//	 * 
-//	 * @param 	projectID
-//	 * 			the id of the given project
-//	 * @param 	taskID
-//	 * 			the id of the given task
-//	 * @return	the description of the task
-//	 * 			null if the ID isn't a valid one
-//	 */
-//	public String getTaskDescription(int projectID, int taskID) {
-//		if(!isValidProjectID(projectID)) {
-//			return null;
-//		}
-//		return projectList.get(projectID).getTaskDescription(taskID);
-//	}
-
-//	/** // TODO remove this
-//	 * Returns the start time of the task with the given task id 
-//	 * belonging to the project with the given project id
-//	 * 
-//	 * @param 	projectID
-//	 * 			the id of the given project
-//	 * @param 	taskID
-//	 * 			the id of the given task
-//	 * @return	the start time of the task
-//	 * 			null if the ID isn't a valid one 
-//	 */
-//	public LocalDateTime getTaskStartTime(int projectID, int taskID) {
-//		if(!isValidProjectID(projectID)) {
-//			return null;
-//		}
-//		return projectList.get(projectID).getTaskStartTime(taskID);
-//	}
-
-//	/** // TODO remove this
-//	 * Returns the estimated duration of the task with the given task id 
-//	 * belonging to the project with the given project id
-//	 * 
-//	 * @param 	projectID
-//	 * 			the id of the given project
-//	 * @param 	taskID
-//	 * 			the id of the given task
-//	 * @return	the estimated duration of the task 
-//	 * 			-1 if the project ID isn't a valid one
-//	 */
-//	public int getEstimatedTaskDuration(int projectID, int taskID) {
-//		if(!isValidProjectID(projectID)) {
-//			return -1;
-//		}
-//		return projectList.get(projectID).getEstimatedTaskDuration(taskID);
-//	}
-
-//	/** // TODO remove this
-//	 * Returns the acceptable deviation of the task with the given task id 
-//	 * belonging to the project with the given project id
-//	 * 
-//	 * @param 	projectID
-//	 * 			the id of the given project
-//	 * @param 	taskID
-//	 * 			the id of the given task
-//	 * @return	the acceptable deviation of the task 
-//	 * 			-1 if the project ID isn't a valid one
-//	 */
-//	public int getAcceptableTaskDeviation(int projectID, int taskID) {
-//		if(!isValidProjectID(projectID)) {
-//			return -1;
-//		}
-//		return projectList.get(projectID).getAcceptableTaskDeviation(taskID);
-//	}
-
-//	/** // TODO remove this
-//	 * Returns whether the task with the given task id belonging to the project 
-//	 * with the given project id has ended
-//	 * 
-//	 * @param 	projectID
-//	 * 			the id of the given project
-//	 * @param 	taskID
-//	 * 			the id of the given task
-//	 * @return	True if the task has ended,
-//	 * 			false if the task hasn't ended
-//	 * 			false if the project ID isn't a valid one
-//	 */
-//	public boolean hasTaskEnded(int projectID, int taskID) {
-//		if(!isValidProjectID(projectID)) {
-//			return false;
-//		}
-//		return projectList.get(projectID).hasTaskEnded(taskID);
-//	}
-
-//	/** // TODO remove this
-//	 * Returns the end time of the task with the given task id belonging 
-//	 * to the project with the given project id
-//	 * 
-//	 * @param 	projectID
-//	 * 			the id of the given project
-//	 * @param 	taskID
-//	 * 			the id of the given task
-//	 * @return	the end time of the task 
-//	 * 			null if the project ID isn't a valid one
-//	 */
-//	public LocalDateTime getTaskEndTime(int projectID, int taskID) {
-//		if(!isValidProjectID(projectID)) {
-//			return null;
-//		}
-//		return projectList.get(projectID).getTaskEndTime(taskID);
-//	}
-
-//	/** // TODO remove this
-//	 * Returns the status of the task with the given task id belonging 
-//	 * to the project with the given project id
-//	 * 
-//	 * @param 	projectID
-//	 * 			the id of the given project
-//	 * @param 	taskID
-//	 * 			the id of the given task
-//	 * @return	the status of the task 
-//	 * 			null if the project ID isn't a valid one
-//	 */
-//	public String getTaskStatus(int projectID, int taskID) {
-//		if(!isValidProjectID(projectID)) {
-//			return null;
-//		}
-//		return projectList.get(projectID).getTaskStatus(taskID);
-//	}
-
-//	/** // TODO remove this
-//	 * Returns whether the task with the given task id belonging to the project 
-//	 * with the given project id has prerequisites
-//	 * 
-//	 * @param 	projectID
-//	 * 			the id of the given project
-//	 * @param 	taskID
-//	 * 			the id of the given task
-//	 * @return	True if the task has prerequisites,
-//	 * 			false if the task doesn't have prerequisites
-//	 * 			false if the project ID isn't a valid one
-//	 */
-//	public boolean hasTaskPrerequisites(int projectID, int taskID) {
-//		if(!isValidProjectID(projectID)) {
-//			return false;
-//		}
-//		return projectList.get(projectID).hasPrerequisites(taskID);
-//	}
-
-//	/** // TODO remove this
-//	 * Returns the prerequisites for the task with the given task id belonging 
-//	 * to the project with the given project id
-//	 * 
-//	 * @param 	projectID
-//	 * 			the id of the given project
-//	 * @param 	taskID
-//	 * 			the id of the given task
-//	 * @return	the prerequisites for the task 
-//	 * 			null if the project ID isn't a valid one
-//	 */
-//	public List<Integer> getTaskPrerequisitesFor(int projectID, int taskID) {
-//		if(!isValidProjectID(projectID)) {
-//			return null;
-//		}
-//		return projectList.get(projectID).getPrerequisites(taskID);
-//	}
-
-//	/** // TODO remove this
-//	 * Returns whether the task with the given task id belonging 
-//	 * to the project with the given project id has alternatives
-//	 * 
-//	 * @param 	projectID
-//	 * 			the id of the given project
-//	 * @param 	taskID
-//	 * 			the id of the given task
-//	 * @return	True if the task has alternatives,
-//	 * 			false if the task doesn't have alternatives
-//	 * 			false if the project ID isn't a valid one
-//	 */
-//	public boolean hasTaskAlternative(int projectID, int taskID) {
-//		if(!isValidProjectID(projectID)) {
-//			return false;
-//		}
-//		return projectList.get(projectID).hasAlternative(taskID);
-//	}
-
-//	/** // TODO remove this
-//	 * Returns the alternative for the task with the given task id belonging 
-//	 * to the project with the given project id
-//	 * 
-//	 * @param 	projectID
-//	 * 			the id of the given project
-//	 * @param 	taskID
-//	 * 			the id of the given task
-//	 * @return	the alternatives for the task 
-//	 * 			-1 if the project ID isn't a valid one
-//	 */
-//	public int getTaskAlternativeTo(int projectID, int taskID) {
-//		if(!isValidProjectID(projectID)) {
-//			return -1;
-//		}
-//		return projectList.get(projectID).getAlternative(taskID);
-//	}
-	
 	/**
 	 * Sets the task with the given task id belonging to the project 
 	 * with the given project id to finished
@@ -675,6 +311,9 @@ public class TaskMan {
 	 * 			false if the project ID isn't a valid one
 	 */
 	public boolean setTaskFinished(ProjectView project, TaskView taskID, LocalDateTime endTime) {
+		if(!currentUser.hasAsCredential(UserCredential.DEVELOPER)) {
+			return false;
+		}
 		if(endTime == null) { // || startTime == null) {
 			return false;
 		}
@@ -706,6 +345,9 @@ public class TaskMan {
 	 * 			False if the end time is null or the end time comes after the current time.
 	 */
 	public boolean setTaskFailed(ProjectView project, TaskView taskID, LocalDateTime endTime) {
+		if(!currentUser.hasAsCredential(UserCredential.DEVELOPER)) {
+			return false;
+		}
 		if(endTime == null) { // || startTime == null) {
 			return false;
 		}
@@ -718,123 +360,6 @@ public class TaskMan {
 		}
 		return p.setTaskFailed(taskID, endTime);
 	}
-
-//	/** // TODO remove this
-//	 * Returns whether the Task is unacceptable overdue.
-//	 * 
-//	 * @param 	projectID
-//	 * 			The ID of the project
-//	 * @param 	taskID
-//	 * 			The ID of the Task
-//	 * @return	True if the Task is unacceptable overdue.
-//	 * 			False otherwise or the task has not ended or failed.
-//	 * 			False if the project ID isn't a valid one
-//	 */
-//	public boolean isTaskUnacceptableOverdue(int projectID, int taskID) {
-//		if(!isValidProjectID(projectID)) {
-//			return false;
-//		}
-//		return getProject(projectID).isTaskUnacceptableOverdue(taskID);
-//	}
-
-//	/** // TODO remove this
-//	 * Checks whether the Task in on time.
-//	 * 
-//	 * @param 	projectID
-//	 * 			The ID of the project
-//	 * @param 	taskID
-//	 * 			The ID of the task.
-//	 * @return	True if the Task is on time or has not yet finished or failed.
-//	 * 			False otherwise.
-//	 * 			False if the project ID isn't a valid one
-//	 */
-//	public boolean isTaskOnTime(int projectID, int taskID) {
-//		if(!isValidProjectID(projectID)) {
-//			return false;
-//		}
-//		return getProject(projectID).isTaskOnTime(taskID);
-//	}
-
-//	/** // TODO remove this
-//	 * Returns the percentage of overdue of the task if any.
-//	 * 
-//	 * @param 	projectID
-//	 * 			The ID of the project
-//	 * @param 	taskID
-//	 * 			The ID of the task
-//	 * @return	The percentage of overdue.
-//	 * 			0 if the task is on time.
-//	 * 			-1 if the project ID or tak ID isn't a valid one.
-//	 */
-//	public int getTaskOverTimePercentage(int projectID, int taskID) {
-//		if(!isValidProjectID(projectID)) {
-//			return -1;
-//		}
-//		return getProject(projectID).getTaskOverTimePercentage(taskID);
-//	}
-
-//	/** // TODO remove this
-//	 * Returns whether a certain project has finished
-//	 * 
-//	 * @param	projectID
-//	 * 			the id of the given project
-//	 * @return	True if the project has finished
-//	 * 			false if the project ID isn't a valid one
-//	 */
-//	public boolean isProjectFinished(int projectID) {
-//		if(!isValidProjectID(projectID)) {
-//			return false;
-//		}
-//		return getProject(projectID).isFinished();
-//	}
-	
-//	/** // TODO remove this
-//	 * Returns whether the unfinished project is estimated to end on time
-//	 * 
-//	 * @param	projectID
-//	 * 			The id of the given project
-//	 * @return	True if the project is estimated to end on time
-//	 * 			If the project has already finished,
-//	 * 				it will return whether or not it had accumulated a delay
-//	 * 			False if the project ID isn't a valid one
-//	 */
-//	public boolean isProjectEstimatedOnTime(int projectID) {
-//		if(!isValidProjectID(projectID)) {
-//			return false;
-//		}
-//		return getProject(projectID).isEstimatedOnTime(currentTime);
-//	}
-	
-//	/** // TODO remove this
-//	 * Returns the estimated time until the project should end
-//	 * 
-//	 * @param	projectID
-//	 * 			the id of the given project
-//	 * @return	The amount of years, months, days, hours and minutes
-//	 * 				that are estimated to be required to finish the project
-//	 * 			null if the project ID isn't a valid one
-//	 */
-//	public int[] getEstimatedProjectDelay(int projectID) {
-//		if(!isValidProjectID(projectID)) {
-//			return null;
-//		}
-//		return getProject(projectID).getEstimatedProjectDelay(currentTime);
-//	}
-//	
-//	/**
-//	 * Checks whether the given project ID is a valid one.
-//	 * 
-//	 * @param 	projectID
-//	 * 			The ID to check.
-//	 * @return	True if the ID is valid.
-//	 * 			False otherwise.
-//	 */ // TODO onnodig?
-//	private boolean isValidProjectID(int projectID) {
-//		if(projectID < 0 || projectID >= projectList.size()) {
-//			return false;
-//		}
-//		return true;
-//	}
 
 	/**
 	 * Returns a list of ProjectView objects that each contain one of this taskman's projects
@@ -868,12 +393,6 @@ public class TaskMan {
 		return resMan.getPossibleUsernames();
 	}
 	
-	
-//	
-//	public boolean declareAvailabilityPeriod(LocalTime startTime,LocalTime endTime) {
-//		return resMan.declareAvailabilityPeriod(startTime,endTime);
-//	}
-	
 	public boolean createResourcePrototype(String name,
 			List<Integer> requirements, 
 			List<Integer> conflicts,
@@ -901,7 +420,53 @@ public class TaskMan {
 		return unwrapProjectView(project).getPossibleTaskStartingTimes(task,amount);
 	}
 
-	public List<AvailabilityPeriod> getPossibleDailyAvailabilities() {
+//	public List<AvailabilityPeriod> getPossibleDailyAvailabilities() {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
+
+	public ImmutableList<ResourceView> getDeveloperList() {
+		return resMan.getDeveloperList();
+	}
+
+	public boolean flushFutureReservations(ProjectView project, TaskView task) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public HashMap<ProjectView, List<TaskView>> reservationConflict(
+			ResourceView requiredResource, ProjectView project, TaskView task,
+			LocalDateTime plannedStartTime) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public boolean planTask(ProjectView project, TaskView task,
+			LocalDateTime plannedStartTime) {
+		if(!currentUser.hasAsCredential(UserCredential.PROJECTMANAGER)) {
+			return false;
+		}
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public ImmutableList<ResourceView> getConcreteResourcesForPrototype(
+			ResourceView resourcePrototype) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ResourceView getPrototypeOf(ResourceView resource) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ImmutableList<ResourceView> getAllConcreteResources() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ImmutableList<ResourceView> getResourcePrototypes() {
 		// TODO Auto-generated method stub
 		return null;
 	}
