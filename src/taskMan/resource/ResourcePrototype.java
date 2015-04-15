@@ -5,22 +5,16 @@ import java.util.List;
 
 public class ResourcePrototype extends Resource {
 	
-	private int creationIndex;
-	public boolean isCreationIndex(int i) {
-		return i == creationIndex;
+	public ResourcePrototype(int creationIndex, String name, AvailabilityPeriod availability) {
+		super(creationIndex, name, new ArrayList<ResourcePrototype>(), new ArrayList<ResourcePrototype>(), availability);
 	}
 	
-	public ResourcePrototype(String name, AvailabilityPeriod availability, int creationIndex) {
-		super(name, new ArrayList<ResourcePrototype>(), new ArrayList<ResourcePrototype>(), availability);
-		this.creationIndex = creationIndex;
+	public ResourcePrototype(int creationIndex, String name, List<ResourcePrototype> requiredResources, List<ResourcePrototype> conflictingResources, AvailabilityPeriod availability) {
+		super(creationIndex, name, requiredResources, conflictingResources, availability);
 	}
 	
-	public ResourcePrototype(String name, List<ResourcePrototype> requiredResources, List<ResourcePrototype> conflictingResources, AvailabilityPeriod availability) {
-		super(name, requiredResources, conflictingResources, availability);
-	}
-	
-	public ConcreteResource instantiate(String instanceName) {
-		return new ConcreteResource(instanceName, reqResourcesList, conResourcesList, dailyAvailable);
+	public ConcreteResource instantiate(int creationIndex, String instanceName) {
+		return new ConcreteResource(creationIndex, instanceName, reqResourcesList, conResourcesList, dailyAvailable);
 	}
 	
 	public boolean addRequiredResource(ResourcePrototype requiredResources) {

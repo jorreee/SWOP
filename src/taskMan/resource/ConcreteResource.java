@@ -4,11 +4,11 @@ import java.util.List;
 
 public class ConcreteResource extends Resource {
 
-	public ConcreteResource(String resourceName,
+	public ConcreteResource(int creationIndex, String resourceName,
 			List<ResourcePrototype> requiredResourcesList,
 			List<ResourcePrototype> conflictingResourcesList,
 			AvailabilityPeriod dailyAvailble) {
-		super(resourceName, requiredResourcesList, conflictingResourcesList,
+		super(creationIndex, resourceName, requiredResourcesList, conflictingResourcesList,
 				dailyAvailble);
 	}
 

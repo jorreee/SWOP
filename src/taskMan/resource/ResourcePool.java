@@ -20,8 +20,8 @@ public class ResourcePool {
 		return resProt;
 	}
 
-	public boolean createResourceInstance(String resName) {
-		ConcreteResource conRes = resProt.instantiate(resName);
+	public boolean createResourceInstance(int creationIndex, String resName) {
+		ConcreteResource conRes = resProt.instantiate(creationIndex, resName);
 		return concreteResList.add(conRes);
 	}
 

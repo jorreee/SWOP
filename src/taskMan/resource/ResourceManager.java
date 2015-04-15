@@ -20,7 +20,6 @@ public class ResourceManager {
 	// The resource manager has a list of resource pools (and users)
 	private List<ResourcePool> resPools;
 	private List<User> userList;
-	private int nextCreationIndex;
 	
 //	// A list of availabilities
 //	private List<AvailabilityPeriod> availabilityPeriodList;
@@ -29,12 +28,17 @@ public class ResourceManager {
 	private List<Reservation> activeReservations;
 	private List<Reservation> allReservations;
 	
+	// controls indices of resources, prototypes and developers in the system at init 
+	private int prototypeIndex, resourceIndex, developerIndex;
+	
 	public ResourceManager() {
 		this.resPools = new ArrayList<>();
 //		this.availabilityPeriodList = new ArrayList<>();
 		this.userList = new ArrayList<>();
 		userList.add(new ProjectManager("admin"));
-		nextCreationIndex = 0;
+		prototypeIndex = 0;
+		resourceIndex = 0;
+		developerIndex = 0;
 	}
 	
 	//TODO kunnen ook lijsten van Strings zijn of zelfs lijsten van ResourceViews
@@ -65,10 +69,10 @@ public class ResourceManager {
 		boolean success = false;
 		ResourcePrototype resprot = null;
 		if(!availabilityStart.isPresent() && !availabilityEnd.isPresent()) {
-			resprot = new ResourcePrototype(resourceName, null, nextCreationIndex);
+			resprot = new ResourcePrototype(prototypeIndex, resourceName, null);
 //			resprot = new ResourcePrototype(resourceName, new ArrayList<ResourcePrototype>(), new ArrayList<ResourcePrototype>(), null);
 		} else {
-			resprot = new ResourcePrototype(resourceName, new AvailabilityPeriod(availabilityStart.get(), availabilityEnd.get()), nextCreationIndex);
+			resprot = new ResourcePrototype(prototypeIndex, resourceName, new AvailabilityPeriod(availabilityStart.get(), availabilityEnd.get()));
 //			resprot = new ResourcePrototype(resourceName, new ArrayList<ResourcePrototype>(), new ArrayList<ResourcePrototype>(), availabilityPeriodList.get(availabilityIndex));
 		}
 		success = addResourceType(resprot);
@@ -94,7 +98,7 @@ public class ResourceManager {
 		}
 //		resprot.putConflictingResources(conList);
 //		resprot.putRequiredResources(reqList);
-		nextCreationIndex++;
+		prototypeIndex++;
 		return true;
 	}
 //	
@@ -132,7 +136,13 @@ public class ResourceManager {
 		if(resPool == null) {
 			return false;
 		}
-		return resPool.createResourceInstance(resName);
+		boolean success = resPool.createResourceInstance(resourceIndex, resName);
+		if(success) {
+			resourceIndex++;
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 	public User getUser(String username) {
@@ -163,7 +173,13 @@ public class ResourceManager {
 		if(name == null) {
 			return false;
 		}
-		return userList.add(new Developer(name));
+		boolean success = userList.add(new Developer(developerIndex, name));
+		if(success) {
+			developerIndex++;
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 //	private boolean createRawReservation(
