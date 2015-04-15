@@ -284,7 +284,7 @@ public class ResourceManager {
 		return null;
 	}
 	
-	public boolean hasReservations(Task reservedTask, Map<Resource,Integer> requiredResources){
+	public boolean hasReservations(Task reservedTask, Map<ResourcePrototype,Integer> requiredResources){
 		// TODO nog te maken
 		return false;
 	}
