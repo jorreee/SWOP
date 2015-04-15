@@ -81,7 +81,7 @@ public class PlanTaskRequest extends Request {
 		PlanningScheme planning = null;
 
 		// Ask user for time slot
-		planning : while(true) {
+		while(true) {
 			try {
 				// show list of possible starting times
 				List<LocalDateTime> possibleStartingTimes = facade.getPossibleTaskStartingTimes(project, task, 3);
@@ -132,7 +132,7 @@ public class PlanTaskRequest extends Request {
 									System.out.println(resolveConflictRequest.execute());
 									// Conflict dictates that this planning should start over
 									if(resolveConflictRequest.shouldMovePlanningTask()) {
-										continue planning;
+										return planTask(project, task);
 									}
 								}
 								planning.addToReservationList(concreteResources.get(Integer.parseInt(input)));
@@ -167,7 +167,7 @@ public class PlanTaskRequest extends Request {
 					System.out.println(resolveConflictRequest.execute());
 					// Conflict dictates that this planning should start over
 					if(resolveConflictRequest.shouldMovePlanningTask()) {
-						continue planning;
+						return planTask(project, task);
 					}
 				}
 				return planning;
