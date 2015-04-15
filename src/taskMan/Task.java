@@ -2,7 +2,6 @@ package taskMan;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -39,7 +38,7 @@ public class Task implements Dependant {
 	private ArrayList<Task> prerequisites;
 //	private ArrayList<Task> unfinishedPrerequisites;
 
-	private HashMap<ResourceView,Integer> requiredResources;
+	private Map<ResourceView,Integer> requiredResources;
 	
 	private TaskStatus state;
 	
@@ -118,33 +117,15 @@ public class Task implements Dependant {
 			this.prerequisites.add(t);
 //			this.unfinishedPrerequisites.add(t);
 		}
+		
+		this.requiredResources = requiredResources;
 		removeAlternativesDependencies();
 
 //		state.makeAvailable();
 //		state.makeAvailable(unfinishedPrerequisites);
 		
 	}
-
-	/**
-	 * Create a new Task with start and end time given (only with finished or failed tasks).
-	 * 
-	 * @param 	taskID
-	 * 			The ID of the new Task.
-	 * @param 	taskDescription
-	 * 			The description of the new Task.
-	 * @param 	estimatedDuration
-	 * 			The estimated duration of the new Task.
-	 * @param 	acceptableDeviation
-	 * 			The acceptable deviation of the new Task.
-	 * @param 	taskStatus
-	 * 			The status of the new Task.
-	 * @param 	beginTime
-	 * 			The begin time of the new Task.
-	 * @param 	endTime
-	 * 			The end time of the new Task.
-	 * @throws	IllegalArgumentException
-	 * 			if any of the parameters are invalid ( < 0 or null)
-	 */
+	
 	public Task(int taskID, 
 			String taskDescription, 
 			int estimatedDuration,
@@ -152,11 +133,10 @@ public class Task implements Dependant {
 			ResourceManager resMan, 
 			List<Task> prerequisiteTasks,
 			Map<ResourceView, Integer> requiredResources, 
-			Task alternativeFor,
-			String taskStatus,
-			LocalDateTime beginTime, 
-			LocalDateTime endTime) throws IllegalArgumentException {
-		
+			Task alternativeFor, String taskStatus,
+			LocalDateTime startTime, LocalDateTime endTime,
+			LocalDateTime plannedStartTime,
+			List<ResourceView> plannedDevelopers) throws IllegalArgumentException {
 		this(	taskID, 
 				taskDescription, 
 				estimatedDuration, 
@@ -165,23 +145,26 @@ public class Task implements Dependant {
 				prerequisiteTasks,
 				requiredResources, 
 				alternativeFor);
-
-		plan(beginTime);
-		state.makeAvailable();
-		state.execute(beginTime);
-		if(taskStatus.equalsIgnoreCase("failed")) {
-			if(!state.fail(endTime)) {
-				throw new IllegalArgumentException("Very bad timeStamps");
-			}
-		} else if(taskStatus.equalsIgnoreCase("finished")) {
-			if(!state.finish(endTime)) {
-				throw new IllegalArgumentException("Very bad timeStamps");
-			}
-		} else {
-			throw new IllegalArgumentException(
-					"Time stamps are only allowed if a task is finished or failed");
+		plan(plannedStartTime);
+		if(!planDevelopers(plannedDevelopers)) {
+			throw new IllegalArgumentException("Very bad developers, very bad!");
 		}
-		
+		state.makeAvailable();
+		if(taskStatus != null) {
+			state.execute(startTime);
+			if(taskStatus.equalsIgnoreCase("failed")) {
+				if(!state.fail(endTime)) {
+					throw new IllegalArgumentException("Very bad timeStamps");
+				}
+			} else if(taskStatus.equalsIgnoreCase("finished")) {
+				if(!state.finish(endTime)) {
+					throw new IllegalArgumentException("Very bad timeStamps");
+				}
+			} else {
+				throw new IllegalArgumentException(
+						"Time stamps are only allowed if a task is finished or failed");
+			}
+		}
 	}
 
 	public boolean register(Dependant t) {
@@ -706,6 +689,10 @@ public class Task implements Dependant {
 		return plan.setPlannedBeginTime(startTime);
 	}
 	
+	public boolean planDevelopers(List<ResourceView> plannedDevelopers) {
+		return plan.planDevelopers(plannedDevelopers);
+	}
+	
 	public boolean execute(LocalDateTime startTime) {
 		return state.execute(startTime);
 	}
@@ -721,7 +708,7 @@ public class Task implements Dependant {
 		return null; //TODO
 	}
 	
-	public HashMap<ResourceView,Integer> getRequiredResources(){
+	public Map<ResourceView,Integer> getRequiredResources(){
 		return requiredResources;
 	}
 	

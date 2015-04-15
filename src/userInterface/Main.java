@@ -154,7 +154,7 @@ public class Main {
 					plannedDevelopers.add(devs.get(integer));
 				}
 				
-				facade.createPlannedTask(
+				facade.createTask(
 						project, 
 						tcd.getDescription(),
 						tcd.getEstimatedDuration(),
@@ -178,7 +178,9 @@ public class Main {
 						requiredResources,
 						statusString, 
 						tcd.getStartTime(), 
-						tcd.getEndTime());
+						tcd.getEndTime(),
+						null,
+						null);
 			}
 			List<TaskView> tasks = project.getTasks();
 			creationList.add(tasks.get(tasks.size() - 1));
