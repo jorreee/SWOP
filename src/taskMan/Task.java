@@ -703,7 +703,11 @@ public class Task implements Dependant {
 //	}
 	
 	public boolean plan(LocalDateTime startTime) {
-		return plan.setPlannedBeginTime(startTime);
+		if(!resMan.hasReservations(this,requiredResources)) {
+			return false;
+		}
+		plan.setPlannedBeginTime(startTime);
+		return state.makeAvailable();
 	}
 	
 	public boolean execute(LocalDateTime startTime) {

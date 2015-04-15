@@ -24,14 +24,16 @@ public class AvailableTask implements TaskStatus {
 //			if(!task.refreshReservations(beginTime)) { // TODO kijk hier nog eens naar wanneer we meer van de reservations hebben gedaan
 //				return false;
 //			}
-			if(!task.setBeginTime(beginTime)) {
-				return false;
-			}
-			task.setTaskStatus(new ExecutingTask(task));
-			return true;
 //		}
 		
 //		return task.setBeginTime(beginTime);
+		
+		if(!task.setBeginTime(beginTime)) {
+			return false;
+		}
+		task.setTaskStatus(new ExecutingTask(task));
+		return true;
+		
 	}
 
 	@Override
