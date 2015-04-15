@@ -560,7 +560,7 @@ public class Project implements Dependant {
 //		if(startTime.isBefore(creationTime)) {
 //			return false;
 //		}
-		return unwrapTaskView(t).setFinished(endTime);
+		return unwrapTaskView(t).finish(endTime);
 	}
 	
 //	private boolean markTaskFinished(Task task) {
@@ -599,7 +599,7 @@ public class Project implements Dependant {
 //		if(startTime.isBefore(creationTime)) {
 //			return false;
 //		}
-		return unwrapTaskView(t).setFailed(endTime);
+		return unwrapTaskView(t).fail(endTime);
 	}
 
 	/**

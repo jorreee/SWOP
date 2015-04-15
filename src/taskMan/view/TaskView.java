@@ -85,6 +85,10 @@ public class TaskView {
 		return task.isAvailable();
 	}
 	
+	public boolean isUnavailable() {
+		return task.isUnavailable();
+	}
+	
 	public boolean hasEnded() {
 		return task.hasEnded();
 	}

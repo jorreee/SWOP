@@ -120,7 +120,7 @@ public class Task implements Dependant {
 		}
 		removeAlternativesDependencies();
 
-		state.makeAvailable();
+//		state.makeAvailable();
 //		state.makeAvailable(unfinishedPrerequisites);
 		
 	}
@@ -309,7 +309,7 @@ public class Task implements Dependant {
 	 * Checks whether the Task is unavailable.
 	 * 
 	 * @return	True if and only the Task is unavailable.
-	 */ //TODO moet dit bestaan?
+	 */
 	public boolean isUnavailable(){
 		return state.isUnavailable();
 	}
@@ -525,7 +525,7 @@ public class Task implements Dependant {
 	 * 			The new end time of the Task.
 	 * @return	True if and only if the updates succeeds.
 	 */
-	public boolean setFinished(LocalDateTime endTime) {
+	public boolean finish(LocalDateTime endTime) {
 		return state.finish(endTime);
 	}
 
@@ -538,7 +538,7 @@ public class Task implements Dependant {
 	 * 			The new end time of the Task.
 	 * @return	True if and only if the updates succeeds.
 	 */
-	public boolean setFailed(LocalDateTime endTime) {
+	public boolean fail(LocalDateTime endTime) {
 		return state.fail(endTime);
 	}
 	

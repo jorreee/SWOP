@@ -3,12 +3,10 @@ package taskMan;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import taskMan.resource.AvailabilityPeriod;
 import taskMan.resource.ResourceManager;
 import taskMan.resource.user.User;
 import taskMan.resource.user.UserCredential;
@@ -412,7 +410,6 @@ public class TaskMan {
 	public boolean reserveResource(ResourceView resource, ProjectView project, TaskView task) {
 		return false;
 		//TODO dit kan via de rare "raw plan" data worden geinitialiseerd
-//		return resMan.createRawReservation(resource,project,task,startTime,endTime);
 	}
 	
 	public List<LocalDateTime> getPossibleTaskStartingTimes(ProjectView project, TaskView task,

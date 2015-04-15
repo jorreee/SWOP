@@ -124,8 +124,13 @@ public class ProjectView {
 	}
 
 	public List<TaskView> getUnplannedTasks() {
-		// TODO Auto-generated method stub
-		return null;
+		ImmutableList.Builder<TaskView> unavailableTasks = ImmutableList.builder();
+		for(TaskView task : project.getTaskViews()) {
+			if(task.isUnavailable()) {
+				unavailableTasks.add(task);
+			}
+		}
+		return unavailableTasks.build();
 	}
 
 	public LocalDateTime getEstimatedEndTime() {
