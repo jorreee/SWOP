@@ -3,6 +3,7 @@ package taskMan.resource;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -256,7 +257,7 @@ public class ResourceManager {
 	
 	public List<ResourceView> getConcreteResourcesForPrototype(ResourceView resourcePrototype) {
 		for(ResourcePool pool : resPools) {
-			if (resourcePrototype.hasAsResource(pool.getPrototype())) {
+			if (pool.hasAsPrototype(resourcePrototype)) {
 				return pool.getConcreteResourceViewList();
 			}
 		}
@@ -269,7 +270,7 @@ public class ResourceManager {
 			return null;
 		}
 		for(ResourcePool pool : resPools) {
-			if (view.hasAsResource(pool.getPrototype())) {
+			if (pool.hasAsPrototype(view)) {
 				return pool.getPrototype();
 			}
 			else {
@@ -309,9 +310,25 @@ public class ResourceManager {
 		return null;
 	}
 	
-	public boolean hasReservations(Task reservedTask, Map<Resource,Integer> requiredResources){
-		// TODO nog te maken
-		return false;
+	public boolean hasActiveReservations(Task reservedTask, Map<ResourceView,Integer> requiredResources){
+		Map<ResourceView,Integer> checkList = requiredResources;
+		for (Reservation res: activeReservations){
+			if (res.getReservingTask().equals(reservedTask)){
+				for (ResourceView resource : checkList.keySet()){
+					if(resource.hasAsResource(res.getReservedResource().getPrototype())){
+						checkList.put(resource, checkList.get(resource) - 1);
+					}
+						
+				}
+			}
+		}
+		boolean largerZero = false;
+		for (ResourceView resource : checkList.keySet()){
+			if(checkList.get(resource) > 0){
+				largerZero = true;
+			}
+		}
+		return (!largerZero);
 	}
 	
 	public boolean addRequirementsToResource(List<ResourceView> reqToAdd, ResourceView prototype){
