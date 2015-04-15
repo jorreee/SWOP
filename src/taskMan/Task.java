@@ -342,7 +342,24 @@ public class Task implements Dependant {
 		if(alternativeFor == null) {
 			return taskTimeSpent;
 		}
-		return taskTimeSpent.add(alternativeFor.getTimeSpent(currentTime));
+		if(hasEnded()) {
+			int timeSpent = TimeSpan.getDifferenceWorkingMinutes(getBeginTime(), getEndTime());
+			if(alternativeFor != null) {
+				timeSpent += alternativeFor.getTimeSpent(currentTime).getSpanMinutes();
+			}
+			return new TimeSpan(timeSpent);
+		}
+		
+		int currentTimeSpent = TimeSpan.getDifferenceWorkingMinutes(
+				getBeginTime(), 
+				currentTime);
+		
+		if(alternativeFor != null) {
+			currentTimeSpent = currentTimeSpent
+							 + alternativeFor.getTimeSpent(currentTime).getSpanMinutes();
+		}
+		
+		return new TimeSpan(currentTimeSpent);
 	}
 
 //	/**
