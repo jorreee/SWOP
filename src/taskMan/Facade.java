@@ -152,12 +152,6 @@ public class Facade implements IFacade {
 		return taskMan.changeToUser(name);
 	}
 
-//
-//	@Override
-//	public boolean declareAvailabilityPeriod(LocalTime startTime,LocalTime endTime) {
-//		return taskMan.declareAvailabilityPeriod(startTime,endTime);
-//	}
-
 	@Override
 	public boolean createResourcePrototype(String name,
 			List<Integer> requirements, 
@@ -180,6 +174,11 @@ public class Facade implements IFacade {
 	@Override
 	public boolean reserveResource(ResourceView resource, ProjectView project, TaskView task) {
 		return taskMan.reserveResource(resource, project, task);
+	}
+	
+	@Override
+	public boolean reserveResource(ResourceView resource, ProjectView project, TaskView task, LocalDateTime startTime, LocalDateTime endTime) {
+		return taskMan.reserveResource(resource, project, task); // TODO
 	}
 
 	@Override
@@ -211,24 +210,6 @@ public class Facade implements IFacade {
 		// TODO Auto-generated method stub
 		return null;
 	}
-//
-//	@Override
-//	public ImmutableList<ResourceView> getResourceRequirements(
-//			ResourceView resource) {
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
-//	
-//
-//	@Override
-//	public ImmutableList<ResourceView> getResourceConflicts(ResourceView resprot) {
-//		return null;
-//	}
-//
-//	@Override
-//	public boolean isResourceDailyAvailable(ResourceView resprot) {
-//		return false;
-//	}
 
 	public AvailabilityPeriod getDailyAvailability(ResourceView resprot) {
 		// TODO Auto-generated method stub
@@ -255,6 +236,21 @@ public class Facade implements IFacade {
 	@Override
 	public boolean planTask(ProjectView project, TaskView task,
 			LocalDateTime planningStartTime) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public HashMap<ProjectView, List<TaskView>> reservationConflict(
+			ResourceView requiredResource, ProjectView project, TaskView task,
+			LocalDateTime planningStartTime) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean flushFutureReservations(ProjectView project,
+			TaskView conflictingTask) {
 		// TODO Auto-generated method stub
 		return false;
 	}

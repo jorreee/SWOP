@@ -81,7 +81,7 @@ public class PlanTaskRequest extends Request {
 		PlanningScheme planning = null;
 
 		// Ask user for time slot
-		while(true) {
+		planning : while(true) {
 			try {
 				// show list of possible starting times
 				List<LocalDateTime> possibleStartingTimes = facade.getPossibleTaskStartingTimes(project, task, 3);
@@ -125,12 +125,19 @@ public class PlanTaskRequest extends Request {
 								planning.addSeveralToReservationList(requiredResource, amountLeft);
 								break;
 							} else {
+								// if resource is already reserved initiate resolve conflict request
+								HashMap<ProjectView, List<TaskView>> conflictingTasks = facade.reservationConflict(concreteResources.get(Integer.parseInt(input)), project, task, planning.getPlanningStartTime());
+								if(!conflictingTasks.isEmpty()) {
+									ResolvePlanningConflictRequest resolveConflictRequest = new ResolvePlanningConflictRequest(facade, inputReader, conflictingTasks);
+									System.out.println(resolveConflictRequest.execute());
+									// Conflict dictates that this planning should start over
+									if(resolveConflictRequest.shouldMovePlanningTask()) {
+										continue planning;
+									}
+								}
 								planning.addToReservationList(concreteResources.get(Integer.parseInt(input)));
 								amountLeft--;
 							}
-							
-							// if resource is already reserved initiate resolve conflict request
-							// TODO
 						}
 					}
 				}
@@ -160,7 +167,7 @@ public class PlanTaskRequest extends Request {
 					System.out.println(resolveConflictRequest.execute());
 					// Conflict dictates that this planning should start over
 					if(resolveConflictRequest.shouldMovePlanningTask()) {
-						continue;
+						continue planning;
 					}
 				}
 				return planning;

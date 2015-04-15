@@ -203,7 +203,9 @@ public class Main {
 			facade.reserveResource(
 					allConcreteResources.get(rcd.getResource()), 
 					project,
-					task);
+					task,
+					rcd.getStartTime(),
+					rcd.getEndTime());
 		}
 		// End initialization
 		

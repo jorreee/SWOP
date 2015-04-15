@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import taskMan.view.ProjectView;
+import taskMan.view.ResourceView;
 import taskMan.view.TaskView;
 import userInterface.IFacade;
 
@@ -21,6 +22,7 @@ public class ResolvePlanningConflictRequest extends Request {
 
 	@Override
 	public String execute() {
+		System.out.println("A conflict with other tasks has been detected!");
 
 		// Show conflicting tasks
 		for(ProjectView project : conflictingTasks.keySet()) {
@@ -57,8 +59,17 @@ public class ResolvePlanningConflictRequest extends Request {
 				// Plan specific conflicting task
 				PlanningScheme newPlanning = planTaskRequest.planTask(project, conflictingTask);
 				// Remove planned reservations for conflicting task
+				facade.flushFutureReservations(project, conflictingTask);
 				
 				// Register newly planned reservations and assign newly planned planning to the conflicting task
+				boolean success = facade.planTask(project, conflictingTask, newPlanning.getPlanningStartTime());
+
+				if(!success) { System.out.println("Failed to plan task, try again"); continue; }
+				else {
+					for(ResourceView resourceToReserve : newPlanning.getResourcesToReserve()) {
+						facade.reserveResource(resourceToReserve, project, conflictingTask);
+					}
+				}
 			}
 		}
 		return "Conflict resolved";
