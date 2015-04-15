@@ -30,17 +30,11 @@ public class ResourceManager {
 	private List<Reservation> activeReservations;
 	private List<Reservation> allReservations;
 	
-	// controls indices of resources, prototypes and developers in the system at init 
-	private int prototypeIndex, resourceIndex, developerIndex;
-	
 	public ResourceManager() {
 		this.resPools = new ArrayList<>();
 //		this.availabilityPeriodList = new ArrayList<>();
 		this.userList = new ArrayList<>();
 		userList.add(new ProjectManager("admin"));
-		prototypeIndex = 0;
-		resourceIndex = 0;
-		developerIndex = 0;
 	}
 	
 	//TODO kunnen ook lijsten van Strings zijn of zelfs lijsten van ResourceViews
@@ -71,10 +65,10 @@ public class ResourceManager {
 		boolean success = false;
 		ResourcePrototype resprot = null;
 		if(!availabilityStart.isPresent() && !availabilityEnd.isPresent()) {
-			resprot = new ResourcePrototype(prototypeIndex, resourceName, null);
+			resprot = new ResourcePrototype(resourceName, null);
 //			resprot = new ResourcePrototype(resourceName, new ArrayList<ResourcePrototype>(), new ArrayList<ResourcePrototype>(), null);
 		} else {
-			resprot = new ResourcePrototype(prototypeIndex, resourceName, new AvailabilityPeriod(availabilityStart.get(), availabilityEnd.get()));
+			resprot = new ResourcePrototype(resourceName, new AvailabilityPeriod(availabilityStart.get(), availabilityEnd.get()));
 //			resprot = new ResourcePrototype(resourceName, new ArrayList<ResourcePrototype>(), new ArrayList<ResourcePrototype>(), availabilityPeriodList.get(availabilityIndex));
 		}
 		success = addResourceType(resprot);
@@ -128,10 +122,10 @@ public class ResourceManager {
 		return resPools.add(new ResourcePool(resProt));
 	}
 	
-	public boolean declareConcreteResource(String resName, int typeIndex) {
+	public boolean declareConcreteResource(String resName, ResourceView prototype) {
 		ResourcePool resPool = null;
 		for(ResourcePool rp : resPools) {
-			if(rp.getPrototype().isCreationIndex(typeIndex)) {
+			if(rp.hasAsPrototype(prototype)) {
 				resPool = rp;
 			}
 		}

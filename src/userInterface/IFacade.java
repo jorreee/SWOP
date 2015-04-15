@@ -58,7 +58,7 @@ public interface IFacade {
 			Optional<LocalTime> availabilityStart,
 			Optional<LocalTime> availabilityEnd);
 
-	public boolean declareConcreteResource(String name, int typeIndex);
+	public boolean declareConcreteResource(String name, ResourceView resourceView);
 
 	public boolean createDeveloper(String name);
 

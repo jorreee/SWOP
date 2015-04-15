@@ -6,14 +6,12 @@ import java.util.List;
 public abstract class Resource {
 	
 	protected String resName;
-	protected final int creationIndex;
 	protected List<ResourcePrototype> reqResourcesList;
 	protected List<ResourcePrototype> conResourcesList;
 	
 	protected AvailabilityPeriod dailyAvailable;
 	
-	public Resource(int creationIndex, String resourceName, List<ResourcePrototype> requiredResourcesList, List<ResourcePrototype> conflictingResourcesList, AvailabilityPeriod dailyAvailability) {
-		this.creationIndex = creationIndex;
+	public Resource(String resourceName, List<ResourcePrototype> requiredResourcesList, List<ResourcePrototype> conflictingResourcesList, AvailabilityPeriod dailyAvailability) {
 		this.resName = resourceName;
 		this.reqResourcesList = requiredResourcesList;
 		this.conResourcesList = conflictingResourcesList;
@@ -21,9 +19,6 @@ public abstract class Resource {
 	}
 	
 	public String getName() { return resName; }
-	
-	public int getCreationIndex() { return creationIndex; }
-	public boolean isCreationIndex(int i) {	return i == creationIndex; }
 	
 	public List<ResourcePrototype> getRequiredResources() { return reqResourcesList; }
 	public List<ResourcePrototype> getConflictingResources() { return conResourcesList; }

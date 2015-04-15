@@ -141,7 +141,7 @@ public class Facade implements IFacade {
 	}
 
 	@Override
-	public boolean declareConcreteResource(String name, int typeIndex) {
+	public boolean declareConcreteResource(String name, ResourceView typeIndex) {
 		return taskMan.declareConcreteResource(name,typeIndex);
 	}
 

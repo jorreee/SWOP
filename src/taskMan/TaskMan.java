@@ -357,7 +357,7 @@ public class TaskMan {
 		return resMan.createResourcePrototype(name,requirements,conflicts,availabilityStart,availabilityEnd);
 	}
 	
-	public boolean declareConcreteResource(String name, int typeIndex) {
+	public boolean declareConcreteResource(String name, ResourceView typeIndex) {
 		return resMan.declareConcreteResource(name,typeIndex);
 	}
 	

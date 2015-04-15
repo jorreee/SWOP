@@ -8,7 +8,7 @@ public class ConcreteResource extends Resource {
 			List<ResourcePrototype> requiredResourcesList,
 			List<ResourcePrototype> conflictingResourcesList,
 			AvailabilityPeriod dailyAvailble) {
-		super(creationIndex, resourceName, requiredResourcesList, conflictingResourcesList,
+		super(resourceName, requiredResourcesList, conflictingResourcesList,
 				dailyAvailble);
 	}
 
