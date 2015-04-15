@@ -35,11 +35,7 @@ public class Main {
 		
 	public static void main(String[] args) throws IOException {
 		System.out.println("~~~~~~~~~~~~~~~ TASKMAN ~~~~~~~~~~~~~~~");		
-//		if (args.length < 1) {
-//			System.err.println("Error: First command line argument must be filename.");
-//			return;
-//		}
-		
+	
 		IFacade facade;
 		if(args.length < 1) {
 			facade = new Facade(LocalDateTime.now());
@@ -88,20 +84,28 @@ public class Main {
 		IFacade facade = new Facade(systemTime);
 		
 		// Initialize system through a facade
-			// Init daily availability
-//		facade.declareAvailabilityPeriod(fileChecker.getDailyAvailabilityTime()[0],
-//				fileChecker.getDailyAvailabilityTime()[1]);
 			// Init resource prototypes
 		List<ResourceView> resourceProts = new ArrayList<>();
 		for(ResourcePrototypeCreationData rprot : resourcePrototypes) {
-//			facade.createResourcePrototype(rprot.getName(), rprot.getRequirements(), rprot.getConflicts(), rprot.getAvailabilityIndex());
-			facade.createResourcePrototype( // TODO less raw maybe
-					rprot.getName(), 
-					rprot.getRequirements(),
-					rprot.getConflicts(),
+			boolean success = facade.createResourcePrototype(
+					rprot.getName(),
 					fileChecker.getDailyAvailabilityStartByIndex(rprot.getAvailabilityIndex()),
 					fileChecker.getDailyAvailabilityEndByIndex(rprot.getAvailabilityIndex()));
-			//, rprot.getRequirements(), rprot.getConflicts(), rprot.getAvailabilityIndex());
+			if(success) {
+				List<ResourceView> currentExistingProts = facade.getResourcePrototypes();
+				ResourceView currentProt = currentExistingProts.get(facade.getResourcePrototypes().size() -1); 
+				resourceProts.add(currentProt);
+				List<ResourceView> requirements = new ArrayList<>();
+				for(Integer index : rprot.getRequirements()) {
+					requirements.add(currentExistingProts.get(index));
+				}
+				List<ResourceView> conflicts = new ArrayList<>();
+				for(Integer index : rprot.getConflicts()) {
+					conflicts.add(currentExistingProts.get(index));
+				}
+				facade.addRequirementsToResource(requirements, currentProt);
+				facade.addConflictsToResource(conflicts, currentProt);
+			}
 		}
 			// Init concrete resources
 		List<ResourceView> allConcreteResources = new ArrayList<>();
@@ -112,7 +116,7 @@ public class Main {
 				allConcreteResources.add(specificResources.get(specificResources.size() - 1));
 			}
 		}
-		// -------------------------- TODO
+		// --------------------------------
 			// Init developers
 		for(DeveloperCreationData dev : developers) {
 			facade.createDeveloper(dev.getName());

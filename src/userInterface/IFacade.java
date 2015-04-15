@@ -53,8 +53,6 @@ public interface IFacade {
 	public boolean discardMemento();
 
 	public boolean createResourcePrototype(String name,
-			List<Integer> requirements, 
-			List<Integer> conflicts,
 			Optional<LocalTime> availabilityStart,
 			Optional<LocalTime> availabilityEnd);
 
@@ -74,7 +72,6 @@ public interface IFacade {
 			LocalDateTime planningStartTime);
 
 	public List<ResourceView> getResourcePrototypes();
-	public List<ResourceView> getAllConcreteResources();
 	
 	public boolean addRequirementsToResource(List<ResourceView> resourcesToAdd, ResourceView prototype);
 	public boolean addConflictsToResource(List<ResourceView> resourcesToAdd, ResourceView prototype);

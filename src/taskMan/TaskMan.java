@@ -350,11 +350,9 @@ public class TaskMan {
 	}
 	
 	public boolean createResourcePrototype(String name,
-			List<Integer> requirements, 
-			List<Integer> conflicts,
 			Optional<LocalTime> availabilityStart,
 			Optional<LocalTime> availabilityEnd) {
-		return resMan.createResourcePrototype(name,requirements,conflicts,availabilityStart,availabilityEnd);
+		return resMan.createResourcePrototype(name,availabilityStart,availabilityEnd);
 	}
 	
 	public boolean declareConcreteResource(String name, ResourceView typeIndex) {
