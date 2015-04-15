@@ -132,9 +132,8 @@ public class ResourceManager {
 		if(resPool == null) {
 			return false;
 		}
-		boolean success = resPool.createResourceInstance(resourceIndex, resName);
+		boolean success = resPool.createResourceInstance(resName);
 		if(success) {
-			resourceIndex++;
 			return true;
 		} else {
 			return false;
