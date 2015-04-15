@@ -395,7 +395,7 @@ public class TaskMan {
 		if(p == null) {
 			return false;
 		}
-		return p.flushFutureReservations(task);
+		return p.flushFutureReservations(task, currentTime);
 	}
 
 	public Map<ProjectView, List<TaskView>> reservationConflict(

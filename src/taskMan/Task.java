@@ -720,9 +720,8 @@ public class Task implements Dependant {
 		return resMan.getPossibleResourceInstances(resourceType);
 	}
 
-	public boolean flushFutureReservations() {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean flushFutureReservations(LocalDateTime currentTime) {
+		return resMan.flushFutureReservations(this, currentTime);
 	}
 	
 }

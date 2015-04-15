@@ -387,4 +387,26 @@ public class ResourceManager {
 		return false;
 	}
 
+	public boolean flushFutureReservations(Task task, LocalDateTime currentTime) {
+		boolean succesful = false;
+		for (Reservation res : activeReservations){
+			if (res.getReservingTask().equals(task)){
+				activeReservations.remove(res);
+				succesful = true;
+			}
+		}
+		for (Reservation res : allReservations){
+			if (res.getReservingTask().equals(task)){
+				if(res.getEndTime().isAfter(currentTime)){
+					ConcreteResource reserved = res.getReservedResource();
+					Task resTask = res.getReservingTask();
+					LocalDateTime start = res.getStartTime();
+					allReservations.remove(res);
+					allReservations.add(new Reservation(reserved,resTask,start,currentTime));
+				}
+			}
+		}
+		return succesful;
+	}
+
 }
