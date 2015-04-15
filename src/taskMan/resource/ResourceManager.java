@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import taskMan.Task;
@@ -249,6 +250,50 @@ public class ResourceManager {
 			}
 		}
 		return usernames.build();
+	}
+	
+	public ResourceView getPrototypeOf(ResourceView view){
+		for(ResourcePool pool : resPools) {
+			for (Resource res : pool.getConcreteResourceList()){
+				if (view.hasAsResource(res)){
+					return new ResourceView(pool.getPrototype());
+				}
+			}
+		}
+		return null;
+	}
+	
+	public List<ResourceView> getConcreteResourcesForPrototype(ResourceView resourcePrototype) {
+		for(ResourcePool pool : resPools) {
+			if (resourcePrototype.hasAsResource(pool.getPrototype())) {
+				return pool.getConcreteResourceViewList();
+			}
+		}
+		return null;
+	}
+	
+	private Resource unwrapResourceView(ResourceView view) {
+		if(view == null) {
+			return null;
+		}
+		for(ResourcePool pool : resPools) {
+			if (view.hasAsResource(pool.getPrototype())) {
+				return pool.getPrototype();
+			}
+			else {
+				for (Resource res : pool.getConcreteResourceList()){
+					if (view.hasAsResource(res)){
+						return res;
+					}
+				}
+			}
+		}
+		return null;
+	}
+	
+	public boolean hasReservations(Task reservedTask, Map<Resource,Integer> requiredResources){
+		// TODO nog te maken
+		return false;
 	}
 
 }
