@@ -53,5 +53,9 @@ public class ResourcePool {
 			return false;
 		}
 	}
+	
+	public int size(){
+		return concreteResList.size();
+	}
 
 }
