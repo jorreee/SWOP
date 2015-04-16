@@ -41,7 +41,7 @@ public class ExecutingTask implements TaskStatus{
 
 	@Override
 	public boolean fail(LocalDateTime endTime) {
-		if(isValidTimeStamps(task.getBeginTime(), endTime)) {
+		if(!isValidTimeStamps(task.getBeginTime(), endTime)) {
 			return false;
 		}
 		if(!task.setEndTime(endTime)) {

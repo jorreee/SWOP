@@ -134,7 +134,7 @@ public class Main {
 			// Init developers
 			for(DeveloperCreationData dev : developers) {
 				success = facade.createDeveloper(dev.getName());
-				if(!success) { failInit("creating a developer!"); }
+				if(!success) { failInit("creating developer" + dev.getName() + "!"); }
 			}
 
 			// Init current user
@@ -145,7 +145,7 @@ public class Main {
 			// Init projects
 			for(ProjectCreationData pcd : projectData) {
 				success = facade.createProject(pcd.getName(), pcd.getDescription(), pcd.getCreationTime(), pcd.getDueTime());
-				if(!success) { failInit("creating a project!"); }
+				if(!success) { failInit("creating project" + pcd.getName() + "!"); }
 			}
 			// Init tasks (planned and unplanned)
 			List<TaskView> creationList = new ArrayList<>();
@@ -208,7 +208,7 @@ public class Main {
 							null);
 
 				}
-				if(!success) { failInit("creating a task!"); }
+				if(!success) { failInit("creating task: " + tcd.getDescription() + ", in project " + tcd.getProject() + "!"); }
 
 				List<TaskView> tasks = project.getTasks();
 				creationList.add(tasks.get(tasks.size() - 1));
@@ -225,7 +225,7 @@ public class Main {
 						task,
 						rcd.getStartTime(),
 						rcd.getEndTime());
-				if(!success) { failInit("trying to reserve!"); }
+				if(!success) { failInit("trying to reserve resource " + rcd.getResource() + " for task " + rcd.getTask() + "!"); }
 			}
 		} catch(Exception e) {
 			e.printStackTrace();
