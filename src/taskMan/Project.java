@@ -451,6 +451,8 @@ public class Project implements Dependant {
 		}
 		return availableTasks;
 	}
+	
+	
 
 //	/**
 //	 * Returns whether the project is on time;
@@ -658,6 +660,16 @@ public class Project implements Dependant {
 			return false;
 		}
 		return t.reserve(resource, startTime, endTime);
+	}
+	
+	public List<Task> getUpdatableTasksForUser(ResourceView user){
+		List<Task> list = new ArrayList<Task>();
+		for (Task task : taskList){
+			if (task.hasDeveloper(user) && (task.isExecuting() || task.isAvailable()) ){
+				list.add(task);
+			}
+		}
+		return list;
 	}
 
 }
