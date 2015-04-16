@@ -35,6 +35,9 @@ public class ResourceManager {
 //		this.availabilityPeriodList = new ArrayList<>();
 		this.userList = new ArrayList<>();
 		userList.add(new ProjectManager("admin"));
+		
+		activeReservations = new ArrayList<>();
+		allReservations = new ArrayList<>();
 	}
 	
 	//TODO kunnen ook lijsten van Strings zijn of zelfs lijsten van ResourceViews
@@ -327,6 +330,7 @@ public class ResourceManager {
 					if(i > pool.size()) {
 						return false;
 					}
+					break;
 				}
 			}
 		}

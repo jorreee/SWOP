@@ -96,10 +96,7 @@ public class Task implements Dependant {
 //		this.estimatedDuration = new TimeSpan(estimatedDuration);
 //		this.acceptableDeviation = acceptableDeviation;
 		this.resMan = resMan;
-		this.requiredResources.putAll(requiredResources);
-//		for(ResourceView rv : requiredResources.keySet()) {
-//			this.requiredResources.put(rv, requiredResources.get(rv));
-//		}
+		this.requiredResources = requiredResources; // Cannot be putAll, this.requiredResources == null
 		
 		this.state = new UnavailableTask(this);
 
@@ -586,8 +583,8 @@ public class Task implements Dependant {
 	
 	private boolean isValidTaskStatus(String status) {
 		if(    !status.equalsIgnoreCase("finished")
-			|| !status.equalsIgnoreCase("failed")
-			|| !status.equalsIgnoreCase("executing")) {
+			&& !status.equalsIgnoreCase("failed")
+			&& !status.equalsIgnoreCase("executing")) {
 			return false;
 		}
 		return true;
@@ -698,9 +695,6 @@ public class Task implements Dependant {
 //	}
 	
 	public boolean plan(LocalDateTime startTime) {
-		if(!resMan.hasActiveReservations(this,requiredResources)) {
-			return false;
-		}
 		plan.setPlannedBeginTime(startTime);
 		return state.makeAvailable();
 	}
