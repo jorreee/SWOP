@@ -169,7 +169,7 @@ public class Facade implements IFacade {
 	
 	@Override
 	public boolean reserveResource(ResourceView resource, ProjectView project, TaskView task, LocalDateTime startTime, LocalDateTime endTime) {
-		return taskMan.reserveResource(resource, project, task); // TODO
+		return taskMan.reserveResource(resource, project, task, startTime, endTime);
 	}
 
 	@Override

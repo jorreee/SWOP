@@ -65,6 +65,7 @@ developers:
   - name : "Tom Hawk"
   - name : "Bob Grylls"
 
+### TMAN UPDATE ###
 # A system will have a user logged in at init
 currentUser:
   - name : "admin"
@@ -88,9 +89,15 @@ projects:
 plannings:
   - plannedStartTime : "2014-01-01 09:00"
     developers       : [0, 1]
+    ### TMAN UPDATE ###
+    # Plannings needn't know about required resources, tasks do
   - plannedStartTime : "2014-01-02 17:00"
     developers       : [1]
   - plannedStartTime : "2014-03-01 09:00"
+    developers       : [2]
+    ### TMAN UPDATE ###
+    # Added a new planning for convenience
+  - plannedStartTime : "2014-01-01 10:00"
     developers       : [2]
 
 tasks:
@@ -101,6 +108,7 @@ tasks:
     acceptableDeviation: 50
     alternativeFor     :
     prerequisiteTasks  :
+    ### TMAN UPDATE ###
     # during task creation, required resources and their quantity should be specified
     requiredResources  : [{type: 0,  quantity: 2}, {type: 2,  quantity: 1}]
     planning           : 0
@@ -118,7 +126,9 @@ tasks:
     prerequisiteTasks  :
     requiredResources  :
     planning           :
-    status             :
+    ### TMAN UPDATE ###
+    # Original status was available, but no executing in system yet, so for completion
+    status             : executing
 
   - project            : 1
     description        : "yet another task description"
@@ -131,42 +141,50 @@ tasks:
     status             :
 
   - project            : 1
-    description        : "description"
+    description        : "task 3's description"
     estimatedDuration  : 5000
     acceptableDeviation: 0
     alternativeFor     :
     prerequisiteTasks  : [ 1, 2 ]
     requiredResources  :
     planning           : 1
-    status             : failed
-    startTime          : "2014-01-02 09:00"
-    endTime            : "2014-03-25 18:00"
+    ### TMAN UPDATE ###
+    # original status was failed, impossible to fail unavailable tasks
+    status             :
 
   - project            : 1
-    description        : "description"
+    description        : "task 4's description"
     estimatedDuration  : 50000
     acceptableDeviation: 0
-    alternativeFor     : 3
+    ### TMAN UPDATE ###
+    # Task 3 is no longer failed, so 3 as alternative is impossible
+    alternativeFor     :
     prerequisiteTasks  : [ 1, 2 ]
     requiredResources  : [{type: 5,  quantity: 1}]
     planning           : 2
-    status             : executing
+    ### TMAN UPDATE ###
+    # Original status was executing, yet an unavailable task can execute
+    status             :
 
   - project            : 2
-    description        : "description"
+    description        : "task 5's description"
     estimatedDuration  : 500
     acceptableDeviation: 50
     alternativeFor     :
     prerequisiteTasks  :
     requiredResources  :
-    planning           :
-    status             :
+    planning           : 3
+    ### TMAN UPDATE ###
+    # this task is now failed for completion's sake
+    status             : failed
+    startTime          : "2014-01-01 10:00"
+    endTime            : "2014-01-02 17:00"
 
   - project            : 2
-    description        : "description"
+    description        : "task 6's description"
     estimatedDuration  : 500
     acceptableDeviation: 50
-    alternativeFor     :
+    alternativeFor     : 5
     prerequisiteTasks  :
     requiredResources  :
     planning           :

@@ -190,27 +190,30 @@ public class ResourceManager {
 //	}
 	
 	public boolean reserve(
-			ConcreteResource reservedResource, 
+			ResourceView resource, 
 			Task reservingTask, 
 			LocalDateTime startTime, 
 			LocalDateTime endTime
-//			LocalDateTime currentTime
 			) {
 		
-		if(reservedResource == null || reservingTask == null ||
+		if(resource == null || reservingTask == null ||
 				startTime == null || endTime == null) { // || currentTime == null
 			return false;
 		}
 		if(endTime.isBefore(startTime)) {
 			return false;
 		}
+		ConcreteResource cr = unwrapConcreteResource(resource);
+		if(cr == null) {
+			return false;
+		}
 		// Reservation is no longer active
 		if(reservingTask.hasEnded()) { //currentTime.isAfter(endTime) || 
-			return allReservations.add(new Reservation(reservedResource, reservingTask, startTime, endTime));
+			return allReservations.add(new Reservation(cr, reservingTask, startTime, endTime));
 		}
 		// Active task
 		else {
-			Reservation newReservation = new Reservation(reservedResource, reservingTask, startTime, endTime);
+			Reservation newReservation = new Reservation(cr, reservingTask, startTime, endTime);
 			boolean firstAddSuccess = activeReservations.add(newReservation);
 			if(!firstAddSuccess) { return false; }
 			boolean secondAddSuccess = allReservations.add(newReservation);
