@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.ImmutableList;
+
 import taskMan.resource.ResourceManager;
 import taskMan.state.OngoingProject;
 import taskMan.state.ProjectStatus;
@@ -12,6 +14,9 @@ import taskMan.util.Dependant;
 import taskMan.util.TimeSpan;
 import taskMan.view.ResourceView;
 import taskMan.view.TaskView;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableList.Builder;
 
 /**
  * The project class used by TaskMan. A project will always have a unique
@@ -670,13 +675,13 @@ public class Project implements Dependant {
 	}
 	
 	public List<TaskView> getUpdatableTasksForUser(ResourceView user){
-		List<TaskView> list = new ArrayList<TaskView>();
+		Builder<TaskView> list = ImmutableList.builder();
 		for (Task task : taskList){
 			if (task.hasDeveloper(user) && (task.isExecuting() || task.isAvailable()) ){
 				list.add(new TaskView(task));
 			}
 		}
-		return list;
+		return list.build();
 	}
 
 }

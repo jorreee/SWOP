@@ -424,7 +424,9 @@ public class ResourceManager {
 	}
 
 	public List<Reservation> getAllReservations() {
-		return allReservations;
+		Builder<Reservation> reservations = ImmutableList.builder();
+		reservations.addAll(allReservations);
+		return reservations.build();
 	}
 
 }
