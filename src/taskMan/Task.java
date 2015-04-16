@@ -751,4 +751,5 @@ public class Task implements Dependant {
 	public List<ResourceView> getPlannedDevelopers(){
 		return plan.getPlannedDevelopers();
 	}
+	
 }

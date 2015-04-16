@@ -193,4 +193,7 @@ public class TaskView {
 		return task.getPlannedBeginTime();
 	}
 
+	public boolean isPlanned(){
+		return (task.getPlannedBeginTime() != null);
+	}
 }
