@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import taskMan.resource.user.UserCredential;
 import taskMan.view.ProjectView;
 import taskMan.view.ResourceView;
 import taskMan.view.TaskView;
@@ -235,6 +236,11 @@ public class Facade implements IFacade {
 	public boolean addConflictsToResource(List<ResourceView> resourcesToAdd,
 			ResourceView prototype) {
 		return taskMan.addConflictsToResource(resourcesToAdd, prototype);
+	}
+
+	@Override
+	public boolean currentUserHasCredential(UserCredential credential) {
+		return taskMan.currentUserHasCredential(credential);
 	}
 
 }

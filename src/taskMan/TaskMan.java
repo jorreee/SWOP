@@ -149,11 +149,7 @@ public class TaskMan {
 	 * 			false if the creation was unsuccessful
 	 */
 	public boolean createProject(String name, String description, LocalDateTime dueTime) {
-		if(!currentUser.hasAsCredential(UserCredential.PROJECTMANAGER)) {
-			return false;
-		} else {
-			return createProject(name, description, getCurrentTime(), dueTime);
-		}
+		return createProject(name, description, getCurrentTime(), dueTime);
 	}
 	
 	/**
@@ -181,10 +177,6 @@ public class TaskMan {
 			Map<ResourceView, Integer> requiredResources, 
 			TaskView alternativeFor) {
 		
-		if(!currentUser.hasAsCredential(UserCredential.PROJECTMANAGER)) {
-			return false;
-		}
-
 		return createTask(project,
 				description, 
 				estimatedDuration, 
@@ -275,9 +267,6 @@ public class TaskMan {
 	 * 			false if the project ID isn't a valid one
 	 */
 	public boolean setTaskFinished(ProjectView project, TaskView taskID, LocalDateTime endTime) {
-		if(!currentUser.hasAsCredential(UserCredential.DEVELOPER)) {
-			return false;
-		}
 		if(endTime == null) { // || startTime == null) {
 			return false;
 		}
@@ -309,9 +298,6 @@ public class TaskMan {
 	 * 			False if the end time is null or the end time comes after the current time.
 	 */
 	public boolean setTaskFailed(ProjectView project, TaskView taskID, LocalDateTime endTime) {
-		if(!currentUser.hasAsCredential(UserCredential.DEVELOPER)) {
-			return false;
-		}
 		if(endTime == null) { // || startTime == null) {
 			return false;
 		}
@@ -403,9 +389,6 @@ public class TaskMan {
 
 	public boolean planTask(ProjectView project, TaskView task,
 			LocalDateTime plannedStartTime) {
-		if(!currentUser.hasAsCredential(UserCredential.PROJECTMANAGER)) {
-			return false;
-		}
 		// TODO Auto-generated method stub
 		return false;
 	}
@@ -437,6 +420,10 @@ public class TaskMan {
 	public boolean addConflictsToResource(List<ResourceView> resourcesToAdd,
 			ResourceView prototype) {
 		return resMan.addConflictsToResource(resourcesToAdd, prototype);
+	}
+
+	public boolean currentUserHasCredential(UserCredential credential) {
+		return currentUser.hasAsCredential(credential);
 	}
 	
 }

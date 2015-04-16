@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import taskMan.resource.user.UserCredential;
 import taskMan.view.ProjectView;
 import taskMan.view.ResourceView;
 import taskMan.view.TaskView;
@@ -87,4 +88,6 @@ public interface IFacade {
 
 	public boolean flushFutureReservations(ProjectView project,
 			TaskView conflictingTask);
+
+	public boolean currentUserHasCredential(UserCredential credential);
 }
