@@ -1,6 +1,7 @@
 package taskMan;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import taskMan.util.TimeSpan;
@@ -14,7 +15,7 @@ public class Planning {
 	private final TimeSpan estimatedDuration;
 	private final int acceptableDeviation;
 	
-	private List<ResourceView> plannedDevelopers;
+	private List<ResourceView> plannedDevelopers = new ArrayList<ResourceView>();
 	
 	public Planning(int estimatedDuration, int acceptableDeviation) {
 		this.estimatedDuration = new TimeSpan(estimatedDuration);

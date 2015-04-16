@@ -23,7 +23,7 @@ public class UpdateTaskStatusRequest extends Request {
 			System.out.println("- Project " + project.getID() + ":");
 			List<TaskView> availableTasks = facade.getUpdatableTasksForUser(project);
 			for(TaskView task : availableTasks) {
-				System.out.println("  * Task " + task.getID() + " is available");
+				System.out.println("  * Task " + task.getID() + " is " + task.getStatusAsString().toLowerCase());
 			}
 		}
 
@@ -47,7 +47,7 @@ public class UpdateTaskStatusRequest extends Request {
 				ProjectView project = projects.get(projectID);
 				TaskView task;
 
-				if(isValidAvailableTask(project, taskID)) {
+				if(isValidAvailableOrExecutingTask(project, taskID)) {
 					task = project.getTasks().get(taskID);
 				} else {
 					throw new IllegalArgumentException();
@@ -125,8 +125,8 @@ public class UpdateTaskStatusRequest extends Request {
 		return "Tasks remain unaltered";
 	}
 
-	private boolean isValidAvailableTask(ProjectView project, int taskID) {
-		List<TaskView> availableTasks = project.getAvailableTasks();
+	private boolean isValidAvailableOrExecutingTask(ProjectView project, int taskID) {
+		List<TaskView> availableTasks = facade.getUpdatableTasksForUser(project);
 
 		for(int i = 0 ; i < availableTasks.size() ; i++) {
 			if(availableTasks.get(i).getID() == taskID)

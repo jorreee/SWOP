@@ -99,7 +99,7 @@ public class ExecutingTask implements TaskStatus{
 	
 	@Override
 	public String toString() {
-		return "Available";
+		return "Executing";
 	}
 
 	//TODO needs to be specified
