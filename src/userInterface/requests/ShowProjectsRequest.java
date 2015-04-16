@@ -66,7 +66,7 @@ public class ShowProjectsRequest extends Request {
 				delay = project.getDelay(facade.getCurrentTime());
 
 				projectHeader.append(" (Due "
-						+ project.getDueTime().toLocalDate().toString());
+						+ project.getDueTime().toLocalDate().format(dateFormatter));
 
 				if(!Arrays.equals(delay, new int[]{ 0,0,0,0,0 })) {
 					projectHeader.append(", ");
@@ -80,7 +80,7 @@ public class ShowProjectsRequest extends Request {
 				
 				if(!project.isFinished()) {
 					projectHeader.append(", estimated to end on "
-							+ project.getEstimatedEndTime().toString());
+							+ project.getEstimatedEndTime(facade.getCurrentTime()).format(dateTimeFormatter));
 				}
 				
 				projectHeader.append(")");
@@ -159,7 +159,7 @@ public class ShowProjectsRequest extends Request {
 						taskHeader.append(", alternative to task " + task.getAlternativeTo().getID());
 					}
 					if(task.hasEnded()){
-						taskHeader.append(", started " + task.getStartTime().toString() + " , finished " + task.getEndTime().toString());
+						taskHeader.append(", started " + task.getStartTime().toString() + " , finished " + task.getEndTime().format(dateTimeFormatter));
 					}
 					System.out.println(taskHeader.toString()); // PRINT SELECTED TASK HEADER
 

@@ -5,6 +5,9 @@ import java.util.List;
 
 import taskMan.view.ResourceView;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableList.Builder;
+
 public class ResourcePool {
 	
 	// The prototype
@@ -40,11 +43,11 @@ public class ResourcePool {
 	}
 	
 	public List<ResourceView> getConcreteResourceViewList(){
-		ArrayList<ResourceView> list = new ArrayList<ResourceView>();
+		Builder<ResourceView> list = ImmutableList.builder();
 		for (Resource res : concreteResList){
 			list.add(new ResourceView(res));
 		}
-		return list;
+		return list.build();
 	}
 
 	

@@ -26,11 +26,11 @@ public class SimulationRequest extends Request {
 		while(true) {
 			try {
 				System.out.println("~~~ TASKMAN SIMULATION ~~~");
-				System.out.println("Simulation started at: " + simulationStart.toString());
+				System.out.println("Simulation started at: " + simulationStart.format(dateTimeFormatter));
 				// Display possible requests
 				System.out.println(new HelpRequest(facade, inputReader).execute());
-				System.out.println("commit			to commit changes made in the simulation");
-				System.out.println("revert			to revert changes made in the simulation");
+				System.out.println("commit				to commit changes made in the simulation");
+				System.out.println("revert				to revert changes made in the simulation");
 				
 				// Parse user input for escape commands
 				String input = inputReader.readLine();

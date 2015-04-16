@@ -135,9 +135,8 @@ public class ProjectView {
 		return unavailableTasks.build();
 	}
 
-	public LocalDateTime getEstimatedEndTime() {
-		// TODO Auto-generated method stub
-		return null;
+	public LocalDateTime getEstimatedEndTime(LocalDateTime currentTime) {
+		return project.getEstimatedEndTime(currentTime);
 	}
 	
 

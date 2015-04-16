@@ -531,6 +531,11 @@ public class Task implements Dependant {
 		return state.fail(endTime);
 	}
 	
+	
+	public boolean execute(LocalDateTime startTime) {
+		return state.execute(startTime);
+	}
+	
 	public boolean replaceWith(Task t) {
 		if(!canBeReplaced()) {
 			return false;
@@ -701,9 +706,9 @@ public class Task implements Dependant {
 //	}
 	
 	public boolean plan(LocalDateTime startTime) {
-		if(!resMan.hasActiveReservations(this, requiredResources)) {
-			return false;
-		}
+//		if(!resMan.hasActiveReservations(this, requiredResources)) { // TODO bij init bestaan de reservaties nog niet (task moet bestaan voor reservatie kan bestaan)
+//			return false;
+//		}
 		plan.setPlannedBeginTime(startTime);
 		return state.makeAvailable();
 	}
@@ -711,10 +716,7 @@ public class Task implements Dependant {
 	public boolean planDevelopers(List<ResourceView> plannedDevelopers) {
 		return plan.planDevelopers(plannedDevelopers);
 	}
-	
-	public boolean execute(LocalDateTime startTime) {
-		return state.execute(startTime);
-	}
+
 	
 	/**
 	 * Returns an amount of possible Task starting times.
