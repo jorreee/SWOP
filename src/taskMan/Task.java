@@ -147,7 +147,8 @@ public class Task implements Dependant {
 			throw new IllegalArgumentException("Very bad taskStatus");
 		}
 		if(taskStatus != null) {
-			plan(plannedStartTime);
+//			plan(plannedStartTime);
+			plan.setPlannedBeginTime(plannedStartTime);
 			if(!planDevelopers(plannedDevelopers)) {
 				throw new IllegalArgumentException("Very bad developers, very bad! ## dit is een zéér gaye fout");
 			}
@@ -705,11 +706,17 @@ public class Task implements Dependant {
 //		return ( overdue / estimatedDuration.getSpanMinutes() ) * 100;
 //	}
 	
-	public boolean plan(LocalDateTime startTime) {
-//		if(!resMan.hasActiveReservations(this, requiredResources)) { // TODO bij init bestaan de reservaties nog niet (task moet bestaan voor reservatie kan bestaan)
+	public boolean plan(LocalDateTime startTime, List<ResourceView> concRes) {
+//		if(!resMan.hasActiveReservations(this, requiredResources)) { 
+		// TODO bij init bestaan de reservaties nog niet (task moet bestaan voor reservatie kan bestaan)
 //			return false;
 //		}
-		plan.setPlannedBeginTime(startTime);
+		if(!plan.setPlannedBeginTime(startTime)) {
+			return false;
+		}
+		if(!resMan.reserve(concRes, this, startTime, plan.getPlannedEndTime())) {
+			return false;
+		}
 		return state.makeAvailable();
 	}
 	
@@ -743,10 +750,10 @@ public class Task implements Dependant {
 		return resMan.flushFutureReservations(this, currentTime);
 	}
 
-	public boolean reserve(ResourceView resource, LocalDateTime startTime,
-			LocalDateTime endTime) {
-		return resMan.reserve(resource, this, startTime, endTime);
-	}
+//	public boolean reserve(ResourceView resource, LocalDateTime startTime,
+//			LocalDateTime endTime) {
+//		return resMan.reserve(resource, this, startTime, endTime);
+//	}
 	
 	public boolean hasDeveloper(ResourceView user){
 		for(ResourceView dev : plan.getPlannedDevelopers()){
