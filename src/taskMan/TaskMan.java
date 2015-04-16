@@ -435,7 +435,7 @@ public class TaskMan {
 		return currentUser.hasAsCredential(credential);
 	}
 	
-	public List<Task> getUpdatableTasksForUser(ProjectView project){
+	public List<TaskView> getUpdatableTasksForUser(ProjectView project){
 		return unwrapProjectView(project).getUpdatableTasksForUser(new ResourceView(currentUser));
 	}
 	

@@ -662,11 +662,11 @@ public class Project implements Dependant {
 		return t.reserve(resource, startTime, endTime);
 	}
 	
-	public List<Task> getUpdatableTasksForUser(ResourceView user){
-		List<Task> list = new ArrayList<Task>();
+	public List<TaskView> getUpdatableTasksForUser(ResourceView user){
+		List<TaskView> list = new ArrayList<TaskView>();
 		for (Task task : taskList){
 			if (task.hasDeveloper(user) && (task.isExecuting() || task.isAvailable()) ){
-				list.add(task);
+				list.add(new TaskView(task));
 			}
 		}
 		return list;
