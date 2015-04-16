@@ -30,22 +30,18 @@ public class ResourceManager {
 	private List<Reservation> activeReservations;
 	private List<Reservation> allReservations;
 	
-	// controls indices of resources, prototypes and developers in the system at init 
-	private int prototypeIndex, resourceIndex, developerIndex;
-	
 	public ResourceManager() {
 		this.resPools = new ArrayList<>();
 //		this.availabilityPeriodList = new ArrayList<>();
 		this.userList = new ArrayList<>();
 		userList.add(new ProjectManager("admin"));
-		prototypeIndex = 0;
-		resourceIndex = 0;
-		developerIndex = 0;
+		
+		activeReservations = new ArrayList<>();
+		allReservations = new ArrayList<>();
 	}
 	
 	//TODO kunnen ook lijsten van Strings zijn of zelfs lijsten van ResourceViews
 	public boolean createResourcePrototype(String resourceName,
-			List<Integer> requirements, List<Integer> conflicts,
 			Optional<LocalTime> availabilityStart, Optional<LocalTime> availabilityEnd) {
 		
 		if(!isValidPeriod(availabilityStart, availabilityEnd)) {
@@ -56,11 +52,11 @@ public class ResourceManager {
 			return false;
 		}
 		// Requirement cannot be a conflict
-		for(Integer requirement : requirements) {
-			if(conflicts.contains(requirement)) {
-				return false;
-			}
-		}
+//		for(Integer requirement : requirements) {
+//			if(conflicts.contains(requirement)) {
+//				return false;
+//			}
+//		}
 		// If daily available, availabilityPeriod must exist
 //		if(availabilityIndex != null && (availabilityIndex < 0 || availabilityIndex > availabilityPeriodList.size())) {
 //			return false;
@@ -71,10 +67,10 @@ public class ResourceManager {
 		boolean success = false;
 		ResourcePrototype resprot = null;
 		if(!availabilityStart.isPresent() && !availabilityEnd.isPresent()) {
-			resprot = new ResourcePrototype(prototypeIndex, resourceName, null);
+			resprot = new ResourcePrototype(resourceName, null);
 //			resprot = new ResourcePrototype(resourceName, new ArrayList<ResourcePrototype>(), new ArrayList<ResourcePrototype>(), null);
 		} else {
-			resprot = new ResourcePrototype(prototypeIndex, resourceName, new AvailabilityPeriod(availabilityStart.get(), availabilityEnd.get()));
+			resprot = new ResourcePrototype(resourceName, new AvailabilityPeriod(availabilityStart.get(), availabilityEnd.get()));
 //			resprot = new ResourcePrototype(resourceName, new ArrayList<ResourcePrototype>(), new ArrayList<ResourcePrototype>(), availabilityPeriodList.get(availabilityIndex));
 		}
 		success = addResourceType(resprot);
@@ -84,23 +80,23 @@ public class ResourceManager {
 		
 //		List<ResourcePrototype> reqList = new ArrayList<ResourcePrototype>();
 //		List<ResourcePrototype> conList = new ArrayList<ResourcePrototype>();
-		for(Integer requirement : requirements) {
-			for(ResourcePool resPool : resPools) {
-				if(resPool.getPrototype().isCreationIndex(requirement)) {
-					resprot.addRequiredResource(resPool.getPrototype());
-				}
-			}
-		}
-		for(Integer conflict : conflicts) {
-			for(ResourcePool resPool : resPools) {
-				if(resPool.getPrototype().isCreationIndex(conflict)) {
-					resprot.addConflictingResource(resPool.getPrototype());
-				}
-			}
-		}
+//		for(Integer requirement : requirements) {
+//			for(ResourcePool resPool : resPools) {
+//				if(resPool.getPrototype().isCreationIndex(requirement)) {
+//					resprot.addRequiredResource(resPool.getPrototype());
+//				}
+//			}
+//		}
+//		for(Integer conflict : conflicts) {
+//			for(ResourcePool resPool : resPools) {
+//				if(resPool.getPrototype().isCreationIndex(conflict)) {
+//					resprot.addConflictingResource(resPool.getPrototype());
+//				}
+//			}
+//		}
 //		resprot.putConflictingResources(conList);
 //		resprot.putRequiredResources(reqList);
-		prototypeIndex++;
+//		prototypeIndex++;
 		return true;
 	}
 //	
@@ -128,19 +124,19 @@ public class ResourceManager {
 		return resPools.add(new ResourcePool(resProt));
 	}
 	
-	public boolean declareConcreteResource(String resName, int typeIndex) {
+	public boolean declareConcreteResource(String resName, ResourceView ptype) {
+		ResourcePrototype prototype = unWrapResourcePrototypeView(ptype);
 		ResourcePool resPool = null;
 		for(ResourcePool rp : resPools) {
-			if(rp.getPrototype().isCreationIndex(typeIndex)) {
+			if(rp.hasAsPrototype(prototype)) {
 				resPool = rp;
 			}
 		}
 		if(resPool == null) {
 			return false;
 		}
-		boolean success = resPool.createResourceInstance(resourceIndex, resName);
+		boolean success = resPool.createResourceInstance(resName);
 		if(success) {
-			resourceIndex++;
 			return true;
 		} else {
 			return false;
@@ -175,9 +171,8 @@ public class ResourceManager {
 		if(name == null) {
 			return false;
 		}
-		boolean success = userList.add(new Developer(developerIndex, name));
+		boolean success = userList.add(new Developer(name));
 		if(success) {
-			developerIndex++;
 			return true;
 		} else {
 			return false;
@@ -198,18 +193,19 @@ public class ResourceManager {
 			ConcreteResource reservedResource, 
 			Task reservingTask, 
 			LocalDateTime startTime, 
-			LocalDateTime endTime, 
-			LocalDateTime currentTime) {
+			LocalDateTime endTime
+//			LocalDateTime currentTime
+			) {
 		
 		if(reservedResource == null || reservingTask == null ||
-				startTime == null || endTime == null || currentTime == null) {
+				startTime == null || endTime == null) { // || currentTime == null
 			return false;
 		}
 		if(endTime.isBefore(startTime)) {
 			return false;
 		}
 		// Reservation is no longer active
-		if(currentTime.isAfter(endTime) || reservingTask.hasEnded()) {
+		if(reservingTask.hasEnded()) { //currentTime.isAfter(endTime) || 
 			return allReservations.add(new Reservation(reservedResource, reservingTask, startTime, endTime));
 		}
 		// Active task
@@ -264,15 +260,50 @@ public class ResourceManager {
 	}
 	
 	public List<ResourceView> getConcreteResourcesForPrototype(ResourceView resourcePrototype) {
+		ResourcePrototype rprot = unWrapResourcePrototypeView(resourcePrototype);
 		for(ResourcePool pool : resPools) {
-			if (resourcePrototype.hasAsResource(pool.getPrototype())) {
+			if (pool.hasAsPrototype(rprot)) {
 				return pool.getConcreteResourceViewList();
 			}
 		}
 		return null;
 	}
 	
-	private Resource unwrapResourceView(ResourceView view) {
+//	@Deprecated
+//	private Resource unwrapResourceView(ResourceView view) {
+//		if(view == null) {
+//			return null;
+//		}
+//		for(ResourcePool pool : resPools) {
+//			if (pool.hasAsPrototype(view)) {
+//				return pool.getPrototype();
+//			}
+//			else {
+//				for (Resource res : pool.getConcreteResourceList()){
+//					if (view.hasAsResource(res)){
+//						return res;
+//					}
+//				}
+//			}
+//		}
+//		return null;
+//	}
+
+//	private ConcreteResource unWrapConcreteResourceView(ResourceView view){
+//		if(view == null) {
+//			return null;
+//		}
+//		for(ResourcePool pool : resPools) {
+//				for (ConcreteResource res : pool.getConcreteResourceList()){
+//					if (view.hasAsResource(res)){
+//						return res;
+//					}
+//				}
+//		}
+//		return null;
+//	}
+	
+	private ResourcePrototype unWrapResourcePrototypeView(ResourceView view){
 		if(view == null) {
 			return null;
 		}
@@ -280,20 +311,108 @@ public class ResourceManager {
 			if (view.hasAsResource(pool.getPrototype())) {
 				return pool.getPrototype();
 			}
-			else {
-				for (Resource res : pool.getConcreteResourceList()){
-					if (view.hasAsResource(res)){
-						return res;
-					}
-				}
-			}
 		}
 		return null;
 	}
 	
-	public boolean hasReservations(Task reservedTask, Map<Resource,Integer> requiredResources){
-		// TODO nog te maken
+	public boolean isValidRequiredResources(Map<ResourceView,Integer> reqRes) {
+		for(ResourceView rv : reqRes.keySet()) {
+			ResourcePrototype rp = unWrapResourcePrototypeView(rv);
+			if(rp == null) {
+				return false;
+			}
+			int i = reqRes.get(rv);
+			if(i <= 0) {
+				return false;
+			}
+			for(ResourcePool pool : resPools) {
+				if(pool.hasAsPrototype(rp)) {
+					if(i > pool.size()) {
+						return false;
+					}
+					break;
+				}
+			}
+		}
+		return true;
+	}
+
+	public boolean hasActiveReservations(Task reservedTask, Map<ResourceView,Integer> requiredResources){
+		Map<ResourceView,Integer> checkList = requiredResources;
+		for (Reservation res: activeReservations){
+			if (res.getReservingTask().equals(reservedTask)){
+				for (ResourceView resource : checkList.keySet()){
+					if(resource.hasAsResource(res.getReservedResource().getPrototype())){
+						checkList.put(resource, checkList.get(resource) - 1);
+					}
+						
+				}
+			}
+		}
+		boolean largerZero = false;
+		for (ResourceView resource : checkList.keySet()){
+			if(checkList.get(resource) > 0){
+				largerZero = true;
+			}
+		}
+		return (!largerZero);
+	}
+	
+	public boolean addRequirementsToResource(List<ResourceView> reqToAdd, ResourceView prototype){
+		for(ResourcePool pool : resPools) {
+			ResourcePrototype prot = pool.getPrototype();
+			if (prototype.hasAsResource(prot)) {
+				for (ResourceView req : reqToAdd ){
+					ResourcePrototype unwrapReq = unWrapResourcePrototypeView(req);
+					if (unwrapReq == null){
+						return false;
+					}
+					else prot.addRequiredResource(unwrapReq);
+				}
+				return true;
+			}
+		}
 		return false;
 	}
+	
+	public boolean addConflictsToResource(List<ResourceView> conToAdd, ResourceView prototype){
+		for(ResourcePool pool : resPools) {
+			ResourcePrototype prot = pool.getPrototype();
+			if (prototype.hasAsResource(prot)) {
+				for (ResourceView conflict : conToAdd ){
+					ResourcePrototype unwrapCon = unWrapResourcePrototypeView(conflict);
+					if (unwrapCon == null){
+						return false;
+					}
+					prot.addConflictingResource(unwrapCon);
+				}
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean flushFutureReservations(Task task, LocalDateTime currentTime) {
+		boolean succesful = false;
+		for (Reservation res : activeReservations){
+			if (res.getReservingTask().equals(task)){
+				activeReservations.remove(res);
+				succesful = true;
+			}
+		}
+		for (Reservation res : allReservations){
+			if (res.getReservingTask().equals(task)){
+				if(res.getEndTime().isAfter(currentTime)){
+					ConcreteResource reserved = res.getReservedResource();
+					Task resTask = res.getReservingTask();
+					LocalDateTime start = res.getStartTime();
+					allReservations.remove(res);
+					allReservations.add(new Reservation(reserved,resTask,start,currentTime));
+				}
+			}
+		}
+		return succesful;
+	}
+
 
 }

@@ -16,7 +16,6 @@ public class Reservation {
 	
 	public Reservation(ConcreteResource reservedResource, Task reservingTask,
 			LocalDateTime startTime, LocalDateTime endTime) {
-		super();
 		this.reservedResource = reservedResource;
 		this.reservingTask = reservingTask;
 		this.startTime = startTime;
@@ -38,5 +37,6 @@ public class Reservation {
 	public LocalDateTime getEndTime() {
 		return endTime;
 	}
+	
 	
 }

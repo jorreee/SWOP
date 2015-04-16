@@ -24,6 +24,7 @@ import taskMan.resource.AvailabilityPeriod;
 import taskMan.view.ProjectView;
 import taskMan.view.ResourceView;
 import taskMan.view.TaskView;
+import userInterface.Main;
 
 import com.google.common.collect.ImmutableList;
 
@@ -148,67 +149,14 @@ public class TaskManCaretaker {
 		fileChecker.checkFile();
 
 		LocalDateTime systemTime = fileChecker.getSystemTime();
-		List<ProjectCreationData> projectData = fileChecker.getProjectDataList();
-		List<TaskCreationData> taskData = fileChecker.getTaskDataList();
-		List<ResourcePrototypeCreationData> resourcePrototypes = fileChecker.getResourcePrototypeDataList();
-		List<ConcreteResourceCreationData> concreteResources = fileChecker.getConcreteResourceDataList();
-		List<DeveloperCreationData> developers = fileChecker.getDeveloperDataList();
-		List<ReservationCreationData> reservations = fileChecker.getReservationDataList();
-
+		
 		// Initialize system through a facade
 		// Set system time
 		facade.initializeFromMemento(systemTime);
-		// Init daily availability
-		facade.declareAvailabilityPeriod(fileChecker.getDailyAvailabilityTime()[0],
-				fileChecker.getDailyAvailabilityTime()[1]);
-		// Init resource prototypes
-		for(ResourcePrototypeCreationData rprot : resourcePrototypes) {
-			facade.createResourcePrototype(rprot.getName(), rprot.getRequirements(), rprot.getConflicts(), rprot.getAvailabilityIndex());
-		}
-		// Init concrete resources
-		for(ConcreteResourceCreationData cres : concreteResources) {
-			facade.declareConcreteResource(cres.getName(), cres.getTypeIndex());
-		}
-		// Init developers
-		for(DeveloperCreationData dev : developers) {
-			facade.createDeveloper(dev.getName());
-		}
 		
-		// Init current user
-		facade.changeToUser(fileChecker.getCurrentUser());
-		
-		// Init projects
-		for(ProjectCreationData pcd : projectData) {
-			facade.createProject(pcd.getName(), pcd.getDescription(), pcd.getCreationTime(), pcd.getDueTime());
-		}
-		// Init tasks (planned and unplanned)
-		for(TaskCreationData tcd : taskData) {
-			TaskStatus status = tcd.getStatus();
-			String statusString = null;
-			if(status != null)
-				statusString = status.name();
-			PlanningCreationData planning = tcd.getPlanningData();
-			if(planning != null)
-				facade.createRawPlannedTask(tcd.getProject(), tcd.getDescription(),
-						tcd.getEstimatedDuration(),
-						tcd.getAcceptableDeviation(), tcd.getPrerequisiteTasks(),
-						tcd.getAlternativeFor(), tcd.getRequiredResources(),
-						statusString, tcd.getStartTime(), tcd.getEndTime(),
-						planning.getPlannedStartTime(), planning.getDevelopers(),
-						planning.getResources());
-			else
-				facade.createRawTask(tcd.getProject(), tcd.getDescription(),
-						tcd.getEstimatedDuration(),
-						tcd.getAcceptableDeviation(), tcd.getPrerequisiteTasks(),
-						tcd.getAlternativeFor(), tcd.getRequiredResources(),
-						statusString, tcd.getStartTime(), tcd.getEndTime());
-		}
-		// Init reservations
-		for(ReservationCreationData rcd : reservations) {
-			facade.createRawReservation(rcd.getResource(), taskData.get(rcd.getTask()).getProject(), rcd.getTask(), rcd.getStartTime(), rcd.getEndTime());
-		}
+		boolean success = Main.initialize(facade, fileChecker);
 		// End initialization
-		return true;		
+		return success;		
 	}
 
 	public boolean discardMemento() {

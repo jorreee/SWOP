@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import taskMan.resource.user.UserCredential;
 import taskMan.view.ProjectView;
 import taskMan.view.ResourceView;
 import taskMan.view.TaskView;
@@ -44,10 +45,15 @@ public class Facade implements IFacade {
 	}
 
 	@Override
-	public boolean createTask(ProjectView project, String description,
-			int estimatedDuration, int acceptableDeviation,
-			List<TaskView> prerequisiteTasks, Map<ResourceView, Integer> requiredResources,
+	public boolean createTask(
+			ProjectView project, 
+			String description,
+			int estimatedDuration, 
+			int acceptableDeviation,
+			List<TaskView> prerequisiteTasks, 
+			Map<ResourceView, Integer> requiredResources,
 			TaskView alternativeFor) {
+		
 		return taskMan.createTask(project, 
 				description, 
 				estimatedDuration, 
@@ -58,31 +64,21 @@ public class Facade implements IFacade {
 	}
 
 	@Override
-	public boolean createTask(ProjectView project, String description,
-			int estimatedDuration, int acceptableDeviation,
-			List<TaskView> prerequisiteTasks, TaskView alternativeFor,
-			Map<ResourceView, Integer> requiredResources, String taskStatus,
-			LocalDateTime startTime, LocalDateTime endTime) {
+	public boolean createTask(
+			ProjectView project,
+			String description,
+			int estimatedDuration, 
+			int acceptableDeviation,
+			List<TaskView> prerequisiteTasks, 
+			TaskView alternativeFor,
+			Map<ResourceView, Integer> requiredResources, 
+			String taskStatus,
+			LocalDateTime startTime, 
+			LocalDateTime endTime,
+			LocalDateTime plannedStartTime, 
+			List<ResourceView> plannedDevelopers) {
+		
 		return taskMan.createTask(project, 
-				description, 
-				estimatedDuration, 
-				acceptableDeviation, 
-				prerequisiteTasks, 
-				alternativeFor,
-				requiredResources,
-				taskStatus,
-				startTime,
-				endTime);
-	}
-	
-	@Override
-	public boolean createPlannedTask(ProjectView project, String description,
-			int estimatedDuration, int acceptableDeviation,
-			List<TaskView> prerequisiteTasks, TaskView alternativeFor,
-			Map<ResourceView, Integer> requiredResources, String taskStatus,
-			LocalDateTime startTime, LocalDateTime endTime,
-			LocalDateTime plannedStartTime, List<ResourceView> plannedDevelopers) {
-		return taskMan.createPlannedTask(project, 
 				description, 
 				estimatedDuration, 
 				acceptableDeviation, 
@@ -151,16 +147,14 @@ public class Facade implements IFacade {
 
 	@Override
 	public boolean createResourcePrototype(String name,
-			List<Integer> requirements, 
-			List<Integer> conflicts,
 			Optional<LocalTime> availabilityStart,
 			Optional<LocalTime> availabilityEnd) {
-		return taskMan.createResourcePrototype(name,requirements,conflicts,availabilityStart,availabilityEnd);
+		return taskMan.createResourcePrototype(name,availabilityStart,availabilityEnd);
 	}
 
 	@Override
-	public boolean declareConcreteResource(String name, int typeIndex) {
-		return taskMan.declareConcreteResource(name,typeIndex);
+	public boolean declareConcreteResource(String name, ResourceView fromPrototype) {
+		return taskMan.declareConcreteResource(name,fromPrototype);
 	}
 
 	@Override
@@ -175,7 +169,7 @@ public class Facade implements IFacade {
 	
 	@Override
 	public boolean reserveResource(ResourceView resource, ProjectView project, TaskView task, LocalDateTime startTime, LocalDateTime endTime) {
-		return taskMan.reserveResource(resource, project, task);
+		return taskMan.reserveResource(resource, project, task); // TODO
 	}
 
 	@Override
@@ -201,10 +195,6 @@ public class Facade implements IFacade {
 	@Override
 	public List<ResourceView> getResourcePrototypes() {
 		return taskMan.getResourcePrototypes();
-	}
-
-	public List<ResourceView> getAllConcreteResources() {
-		return taskMan.getAllConcreteResources();
 	}
 
 	public ResourceView getPrototypeOf(ResourceView resource) {
@@ -234,6 +224,23 @@ public class Facade implements IFacade {
 	public boolean flushFutureReservations(ProjectView project,
 			TaskView task) {
 		return taskMan.flushFutureReservations(project, task);
+	}
+
+	@Override
+	public boolean addRequirementsToResource(List<ResourceView> resourcesToAdd,
+			ResourceView prototype) {
+		return taskMan.addRequirementsToResource(resourcesToAdd, prototype);
+	}
+
+	@Override
+	public boolean addConflictsToResource(List<ResourceView> resourcesToAdd,
+			ResourceView prototype) {
+		return taskMan.addConflictsToResource(resourcesToAdd, prototype);
+	}
+
+	@Override
+	public boolean currentUserHasCredential(UserCredential credential) {
+		return taskMan.currentUserHasCredential(credential);
 	}
 
 }

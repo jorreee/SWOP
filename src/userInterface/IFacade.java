@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import taskMan.resource.user.UserCredential;
 import taskMan.view.ProjectView;
 import taskMan.view.ResourceView;
 import taskMan.view.TaskView;
@@ -30,13 +31,8 @@ public interface IFacade {
 	public boolean createTask(ProjectView project, String description,
 			int estimatedDuration, int acceptableDeviation,
 			List<TaskView> prerequisiteTasks, Map<ResourceView, Integer> requiredResources, TaskView alternativeFor);
-
-	public boolean createTask(ProjectView project, String description,
-			int estimatedDuration, int acceptableDeviation,
-			List<TaskView> prerequisiteTasks, TaskView alternativeFor, Map<ResourceView, Integer> requiredResources, 
-			String taskStatus, LocalDateTime startTime, LocalDateTime endTime);
 	
-	public boolean createPlannedTask(ProjectView project, String description,
+	public boolean createTask(ProjectView project, String description,
 			int estimatedDuration, int acceptableDeviation,
 			List<TaskView> prerequisiteTasks, TaskView alternativeFor, Map<ResourceView, Integer> requiredResources, 
 			String taskStatus, LocalDateTime startTime, LocalDateTime endTime,
@@ -58,12 +54,10 @@ public interface IFacade {
 	public boolean discardMemento();
 
 	public boolean createResourcePrototype(String name,
-			List<Integer> requirements, 
-			List<Integer> conflicts,
 			Optional<LocalTime> availabilityStart,
 			Optional<LocalTime> availabilityEnd);
 
-	public boolean declareConcreteResource(String name, int typeIndex);
+	public boolean declareConcreteResource(String name, ResourceView resourceView);
 
 	public boolean createDeveloper(String name);
 
@@ -79,7 +73,9 @@ public interface IFacade {
 			LocalDateTime planningStartTime);
 
 	public List<ResourceView> getResourcePrototypes();
-	public List<ResourceView> getAllConcreteResources();
+	
+	public boolean addRequirementsToResource(List<ResourceView> resourcesToAdd, ResourceView prototype);
+	public boolean addConflictsToResource(List<ResourceView> resourcesToAdd, ResourceView prototype);
 
 	public List<ResourceView> getConcreteResourcesForPrototype(
 			ResourceView resourcePrototype);
@@ -92,4 +88,6 @@ public interface IFacade {
 
 	public boolean flushFutureReservations(ProjectView project,
 			TaskView conflictingTask);
+
+	public boolean currentUserHasCredential(UserCredential credential);
 }

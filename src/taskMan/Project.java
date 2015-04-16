@@ -114,73 +114,20 @@ public class Project implements Dependant {
 		return true;
 	}
 	
-	/**
-	 * Creates a Raw Task: A Task as issued by the input file.
-	 * 
-	 * @param 	description
-	 * 			The description of the Task.
-	 * @param 	estimatedDuration
-	 * 			The estimated duration of the Task.
-	 * @param	 acceptableDeviation
-	 * 			The acceptable deviation of the Task.
-	 * @param	prerequisiteTasks
-	 * 			The list of prerequisites of the Task.
-	 * @param 	alternativeFor
-	 * 			The alternative for the Task.
-	 * @param 	taskStatus
-	 * 			The status of the Task.
-	 * @param 	startTime
-	 * 			The start time of the Task.
-	 * @param 	endTime
-	 * 			The end time of the Task.
-	 * @return	True if and only if the creation of the Raw Task
-	 * 			was successful.
-	 */
-	public boolean createRawTask(String description, 
-			int estimatedDuration, 
-			int acceptableDeviation, 
-			ResourceManager resMan, 
-			List<Integer> prerequisiteTasks, 
-			Map<ResourceView, Integer> requiredResources, 
-			int alternativeFor, 
-			String taskStatus,
-			LocalDateTime startTime, 
-			LocalDateTime endTime) {
-		
-		List<TaskView> prereqTaskViews = new ArrayList<TaskView>();
-		TaskView altTaskView = null;
-		
-		// FIND prereqs
-		for(Integer prereqID : prerequisiteTasks) {
-			Task t = findTask(prereqID);
-			if(t != null) {
-				prereqTaskViews.add(new TaskView(t));
-			}
-			
-		}
-		// FIND alt
-		if(alternativeFor != -1) {
-			altTaskView = new TaskView(findTask(alternativeFor));
-		}
-		
-		return createTask(description, estimatedDuration, acceptableDeviation, resMan, 
-				prereqTaskViews, requiredResources, altTaskView, taskStatus, startTime, endTime);
-	}
-	
-	/**
-	 * Find a specific task in this project by id
-	 * 
-	 * @param taskID
-	 *            the ID of the task to look for
-	 * @return The task with the specified ID or null when no task is found
-	 */
-	private Task findTask(int taskID) {
-		for(Task t : taskList) {
-			if(t.getID() == taskID)
-				return t;
-		}
-		return null;
-	}
+//	/**
+//	 * Find a specific task in this project by id
+//	 * 
+//	 * @param taskID
+//	 *            the ID of the task to look for
+//	 * @return The task with the specified ID or null when no task is found
+//	 */
+//	private Task findTask(int taskID) {
+//		for(Task t : taskList) {
+//			if(t.getID() == taskID)
+//				return t;
+//		}
+//		return null;
+//	}
 
 	/**
 	 * Creates a new Task with a status of failed or finished.
@@ -213,7 +160,9 @@ public class Project implements Dependant {
 						TaskView alternativeFor, 
 						String taskStatus,
 						LocalDateTime startTime, 
-						LocalDateTime endTime) {
+						LocalDateTime endTime,
+						LocalDateTime plannedStartTime,
+						List<ResourceView> plannedDevelopers) {
 
 		int newTaskID = nextTaskID;
 		if(isFinished()) {
@@ -248,7 +197,9 @@ public class Project implements Dependant {
 						altFor,
 						taskStatus, 
 						startTime, 
-						endTime);
+						endTime,
+						plannedStartTime,
+						plannedDevelopers);
 			}
 			else {
 				newTask = new Task(
@@ -274,17 +225,6 @@ public class Project implements Dependant {
 		return success;
 	}
 	
-	public boolean createPlannedTask(String description,
-			int estimatedDuration, int acceptableDeviation,
-			ResourceManager resMan, List<TaskView> prerequisiteTasks,
-			Map<ResourceView, Integer> requiredResources,
-			TaskView alternativeFor, String taskStatus,
-			LocalDateTime startTime, LocalDateTime endTime,
-			LocalDateTime plannedStartTime, List<ResourceView> plannedDevelopers) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
 //	/**
 //	 * Creates a new Task without a set status.
 //	 * 
@@ -701,6 +641,14 @@ public class Project implements Dependant {
 	 */
 	public List<LocalDateTime> getPossibleTaskStartingTimes(TaskView task, int amount){
 		return unwrapTaskView(task).getPossibleTaskStartingTimes(amount);
+	}
+
+	public boolean flushFutureReservations(TaskView task, LocalDateTime currentTime) {
+		Task t = unwrapTaskView(task);
+		if(t == null) {
+			return false;
+		}
+		return t.flushFutureReservations(currentTime);
 	}
 
 }

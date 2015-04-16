@@ -25,33 +25,32 @@ public class ExecutingTask implements TaskStatus{
 
 	@Override
 	public boolean finish(LocalDateTime endTime) {
-		if(isValidTimeStamps(task.getBeginTime(), endTime)) {
-
-//			task.setBeginTime(beginTime);
-			task.setEndTime(endTime);
-			
-			task.setTaskStatus(new FinishedTask(task));
-			
-			task.notifyDependants();
-			
-			return true;
-			
+		if(!isValidTimeStamps(task.getBeginTime(), endTime)) {
+			return false;
 		}
-		return false;
+		if(!task.setEndTime(endTime)) {
+			return false;
+		}
+
+		task.setTaskStatus(new FinishedTask(task));
+
+		task.notifyDependants();
+
+		return true;
 	}
 
 	@Override
 	public boolean fail(LocalDateTime endTime) {
 		if(isValidTimeStamps(task.getBeginTime(), endTime)) {
-
-//			task.setBeginTime(beginTime);
-			task.setEndTime(endTime);
-			
-			task.setTaskStatus(new FailedTask(task));
-			
-			return true;
+			return false;
 		}
-		return false;
+		if(!task.setEndTime(endTime)) {
+			return false;
+		}
+
+		task.setTaskStatus(new FailedTask(task));
+
+		return true;
 	}
 	
 	/**

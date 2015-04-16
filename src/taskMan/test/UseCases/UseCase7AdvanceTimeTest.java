@@ -54,7 +54,7 @@ public class UseCase7AdvanceTimeTest {
 
 		assertTrue(taskManager.createTask(project0, "Design system", task00EstDur, task00Dev, task00Dependencies, null));		// TASK 1
 		task01Dependencies.add(project0.getTasks().get(0));
-		assertTrue(taskManager.createTask(project0, "Implement Native", task01EstDur, task01Dev, task01Dependencies, null));		// TASK 2
+		assertTrue(taskManager.createTask(project0, "Implement Native", task01EstDur, task01Dev, task01Dependencies, null));	// TASK 2
 		task02Dependencies.add(project0.getTasks().get(1));
 		assertTrue(taskManager.createTask(project0, "Test code", task02EstDur, task02Dev, task02Dependencies, null));			// TASK 3
 		task03Dependencies.add(project0.getTasks().get(1));

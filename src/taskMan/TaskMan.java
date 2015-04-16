@@ -149,55 +149,7 @@ public class TaskMan {
 	 * 			false if the creation was unsuccessful
 	 */
 	public boolean createProject(String name, String description, LocalDateTime dueTime) {
-		if(!currentUser.hasAsCredential(UserCredential.PROJECTMANAGER)) {
-			return false;
-		} else {
-			return createProject(name, description, getCurrentTime(), dueTime);
-		}
-	}
-	
-	/**
-	 * Creates a new Task with a status of failed or finished.
-	 * 
-	 * @param 	description
-	 * 			The description of the given Task.
-	 * @param 	estimatedDuration
-	 * 			The estimated duration of the Task.
-	 * @param 	acceptableDeviation
-	 * 			The acceptable deviation of the Task.
-	 * @param 	taskStatus
-	 * 			The Status of the Task.
-	 * @param 	alternativeFor
-	 * 			The alternative Task.
-	 * @param 	prerequisiteTasks
-	 * 			The prerequisites Tasks for this Task.
-	 * @param 	startTime
-	 * 			The start time of the Task.
-	 * @param 	endTime
-	 * 			The end time of the Task.
-	 * @return	True if and only the creation of a Task with a status
-	 * 			of failed or finished was successful.
-	 */
-	public boolean createTask(ProjectView projectView, String description,
-			int estimatedDuration, int acceptableDeviation,
-			List<TaskView> prerequisiteTasks, TaskView alternativeFor,
-			Map<ResourceView, Integer> requiredResources, String taskStatus,
-			LocalDateTime startTime, LocalDateTime endTime) {
-		Project project = unwrapProjectView(projectView);
-		if(project == null) {
-			return false;
-		}
-		return project.createTask(
-				description,
-				estimatedDuration,
-				acceptableDeviation,
-				resMan,
-				prerequisiteTasks,
-				requiredResources,
-				alternativeFor,
-				taskStatus,
-				startTime,
-				endTime);
+		return createProject(name, description, getCurrentTime(), dueTime);
 	}
 	
 	/**
@@ -224,10 +176,8 @@ public class TaskMan {
 			List<TaskView> prerequisiteTasks, 
 			Map<ResourceView, Integer> requiredResources, 
 			TaskView alternativeFor) {
-		if(!currentUser.hasAsCredential(UserCredential.PROJECTMANAGER)) {
-			return false;
-		} else {
-			return createTask(project,
+		
+		return createTask(project,
 				description, 
 				estimatedDuration, 
 				acceptableDeviation,  
@@ -236,8 +186,10 @@ public class TaskMan {
 				requiredResources,
 				null,
 				null,
+				null,
+				null,
 				null);
-		}
+
 	}
 	
 	/**
@@ -267,17 +219,23 @@ public class TaskMan {
 	 * 			The planned resources of the Task.
 	 * @return	True if and only if the creation of the Raw Planned Task was succesful.
 	 */
-	public boolean createPlannedTask(ProjectView projectView, String description,
-			int estimatedDuration, int acceptableDeviation,
-			List<TaskView> prerequisiteTasks, TaskView alternativeFor,
-			Map<ResourceView, Integer> requiredResources, String taskStatus,
-			LocalDateTime startTime, LocalDateTime endTime,
-			LocalDateTime plannedStartTime, List<ResourceView> plannedDevelopers) {
+	public boolean createTask(ProjectView projectView, 
+			String description,
+			int estimatedDuration, 
+			int acceptableDeviation,
+			List<TaskView> prerequisiteTasks, 
+			TaskView alternativeFor,
+			Map<ResourceView, Integer> requiredResources, 
+			String taskStatus,
+			LocalDateTime startTime, 
+			LocalDateTime endTime,
+			LocalDateTime plannedStartTime, 
+			List<ResourceView> plannedDevelopers) {
 		Project project = unwrapProjectView(projectView);
 		if(project == null) {
 			return false;
 		}
-		return project.createPlannedTask(
+		return project.createTask(
 				description,
 				estimatedDuration,
 				acceptableDeviation,
@@ -309,9 +267,6 @@ public class TaskMan {
 	 * 			false if the project ID isn't a valid one
 	 */
 	public boolean setTaskFinished(ProjectView project, TaskView taskID, LocalDateTime endTime) {
-		if(!currentUser.hasAsCredential(UserCredential.DEVELOPER)) {
-			return false;
-		}
 		if(endTime == null) { // || startTime == null) {
 			return false;
 		}
@@ -343,9 +298,6 @@ public class TaskMan {
 	 * 			False if the end time is null or the end time comes after the current time.
 	 */
 	public boolean setTaskFailed(ProjectView project, TaskView taskID, LocalDateTime endTime) {
-		if(!currentUser.hasAsCredential(UserCredential.DEVELOPER)) {
-			return false;
-		}
 		if(endTime == null) { // || startTime == null) {
 			return false;
 		}
@@ -392,15 +344,13 @@ public class TaskMan {
 	}
 	
 	public boolean createResourcePrototype(String name,
-			List<Integer> requirements, 
-			List<Integer> conflicts,
 			Optional<LocalTime> availabilityStart,
 			Optional<LocalTime> availabilityEnd) {
-		return resMan.createResourcePrototype(name,requirements,conflicts,availabilityStart,availabilityEnd);
+		return resMan.createResourcePrototype(name,availabilityStart,availabilityEnd);
 	}
 	
-	public boolean declareConcreteResource(String name, int typeIndex) {
-		return resMan.declareConcreteResource(name,typeIndex);
+	public boolean declareConcreteResource(String name, ResourceView fromPrototype) {
+		return resMan.declareConcreteResource(name,fromPrototype);
 	}
 	
 	public boolean createDeveloper(String name) {
@@ -417,18 +367,17 @@ public class TaskMan {
 		return unwrapProjectView(project).getPossibleTaskStartingTimes(task,amount);
 	}
 
-//	public List<AvailabilityPeriod> getPossibleDailyAvailabilities() {
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
 
 	public List<ResourceView> getDeveloperList() {
 		return resMan.getDeveloperList();
 	}
 
 	public boolean flushFutureReservations(ProjectView project, TaskView task) {
-		// TODO Auto-generated method stub
-		return false;
+		Project p = unwrapProjectView(project);
+		if(p == null) {
+			return false;
+		}
+		return p.flushFutureReservations(task, currentTime);
 	}
 
 	public Map<ProjectView, List<TaskView>> reservationConflict(
@@ -440,9 +389,6 @@ public class TaskMan {
 
 	public boolean planTask(ProjectView project, TaskView task,
 			LocalDateTime plannedStartTime) {
-		if(!currentUser.hasAsCredential(UserCredential.PROJECTMANAGER)) {
-			return false;
-		}
 		// TODO Auto-generated method stub
 		return false;
 	}
@@ -464,6 +410,20 @@ public class TaskMan {
 
 	public List<ResourceView> getResourcePrototypes() {
 		return resMan.getResourcePrototypes();
+	}
+
+	public boolean addRequirementsToResource(List<ResourceView> resourcesToAdd,
+			ResourceView prototype) {
+		return resMan.addRequirementsToResource(resourcesToAdd, prototype);
+	}
+
+	public boolean addConflictsToResource(List<ResourceView> resourcesToAdd,
+			ResourceView prototype) {
+		return resMan.addConflictsToResource(resourcesToAdd, prototype);
+	}
+
+	public boolean currentUserHasCredential(UserCredential credential) {
+		return currentUser.hasAsCredential(credential);
 	}
 	
 }
