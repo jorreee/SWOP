@@ -291,21 +291,6 @@ public class TaskTest {
 	}
 	
 	@Test
-	public void removeAlternativesDepTest(){
-		TaskAsPrerequisite.plan(LocalDateTime.of(2015, 2, 11, 16, 0));
-		TaskAsPrerequisite.execute(LocalDateTime.of(2015, 2, 11, 16, 0));
-		TaskAsPrerequisite.fail(LocalDateTime.of(2015, 2, 12, 16, 0));
-		Task temp = new Task(4, "temp", 50, 3, resMan,TaskAsPrerequisite.getPrerequisites(), 
-				new HashMap<ResourceView,Integer>(),TaskAsPrerequisite);
-		assertEquals(temp,TaskAsPrerequisite.getReplacement());
-		assertTrue(temp.getDependants().isEmpty());
-		temp.addDependant(TaskDep1);
-		assertEquals(1,temp.getDependants().size());
-		temp.removeAlternativesDependencies();
-		assertTrue(temp.getDependants().isEmpty());
-	}
-	
-	@Test
 	public void getTimeSpentTestTaskNotStarted(){
 		LocalDateTime currentTime = LocalDateTime.of(2015, 2, 11, 16, 0);
 		assertEquals(new TimeSpan(0),defaultTest.getTimeSpent(currentTime));
@@ -391,7 +376,7 @@ public class TaskTest {
 	@Test
 	public void possibleStartTimesTest(){
 		//TODO
-		defaultTest.getPossibleTaskStartingTimes(3);
+		defaultTest.getPossibleTaskStartingTimes(null,3);
 	}
 	
 	@Test
