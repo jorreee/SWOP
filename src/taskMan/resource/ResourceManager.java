@@ -394,6 +394,12 @@ public class ResourceManager {
 		}
 		return false;
 	}
+	
+	public List<LocalDateTime> getPossibleStartingTimes(Task task, List<ResourceView> concRes, int amount) {
+		List<LocalDateTime> posTimes = new ArrayList<LocalDateTime>();
+		//TODO het zware werk
+		return posTimes;
+	}
 
 	public boolean flushFutureReservations(Task task, LocalDateTime currentTime) {
 		boolean succesful = false;

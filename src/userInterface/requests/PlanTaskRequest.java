@@ -129,10 +129,11 @@ public class PlanTaskRequest extends Request {
 				}
 
 				// show list of possible starting times
-				List<LocalDateTime> possibleStartingTimes = facade.getPossibleTaskStartingTimes(project, task, 3);
+				List<LocalDateTime> possibleStartingTimes = task.getPossibleStartingTimes(planning.getResourcesToReserve(),3);
+				//TODO wat als er GEEN zijn? NOOIT.
 				// (3 first possible (enough res and devs available))
 				for(int i = 0 ; i < possibleStartingTimes.size() ; i++) {
-					System.out.println("(" + i + ") Possible task starting time: " + possibleStartingTimes.get(i).toString());
+					System.out.println("Possible task starting time " + i + ": " + possibleStartingTimes.get(i).toString());
 				}
 
 				System.out.println("Select a time slot (type quit to exit)");

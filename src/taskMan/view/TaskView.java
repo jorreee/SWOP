@@ -176,6 +176,10 @@ public class TaskView {
 	public List<ResourceView> getPossibleResourceInstances(ResourceView resourceType){
 		return task.getPossibleResourceInstances(resourceType);
 	}
+	
+	public List<LocalDateTime> getPossibleStartingTimes(List<ResourceView> concRes, int amount) {
+		return task.getPossibleTaskStartingTimes(concRes, amount);
+	}
 
 	public boolean equals(TaskView otherView) {
 		if (this == otherView)
