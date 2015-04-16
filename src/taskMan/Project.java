@@ -651,4 +651,13 @@ public class Project implements Dependant {
 		return t.flushFutureReservations(currentTime);
 	}
 
+	public boolean reserve(ResourceView resource, TaskView task,
+			LocalDateTime startTime, LocalDateTime endTime) {
+		Task t = unwrapTaskView(task);
+		if(t == null) {
+			return false;
+		}
+		return t.reserve(resource, startTime, endTime);
+	}
+
 }

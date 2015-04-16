@@ -729,5 +729,10 @@ public class Task implements Dependant {
 	public boolean flushFutureReservations(LocalDateTime currentTime) {
 		return resMan.flushFutureReservations(this, currentTime);
 	}
+
+	public boolean reserve(ResourceView resource, LocalDateTime startTime,
+			LocalDateTime endTime) {
+		return resMan.reserve(resource, this, startTime, endTime);
+	}
 	
 }
