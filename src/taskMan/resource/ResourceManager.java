@@ -395,7 +395,7 @@ public class ResourceManager {
 		return false;
 	}
 	
-	public List<LocalDateTime> getPossibleStartingTimes(Task task, List<ResourceView> concRes, int amount) {
+	public List<LocalDateTime> getPossibleStartingTimes(Task task, List<ResourceView> allResources, int amount) {
 		List<LocalDateTime> posTimes = new ArrayList<LocalDateTime>();
 		//TODO het zware werk
 		return posTimes;
@@ -421,6 +421,10 @@ public class ResourceManager {
 			}
 		}
 		return succesful;
+	}
+
+	public List<Reservation> getAllReservations() {
+		return allReservations;
 	}
 
 }

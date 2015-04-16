@@ -250,8 +250,7 @@ public class Facade implements IFacade {
 	}
 
 	public List<Reservation> getAllReservations() {
-		// TODO Auto-generated method stub
-		return null;
+		return taskMan.getAllReservations();
 	}
 
 }

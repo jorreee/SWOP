@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import taskMan.resource.Reservation;
 import taskMan.resource.ResourceManager;
 import taskMan.resource.user.User;
 import taskMan.resource.user.UserCredential;
@@ -437,6 +438,10 @@ public class TaskMan {
 	
 	public List<TaskView> getUpdatableTasksForUser(ProjectView project){
 		return unwrapProjectView(project).getUpdatableTasksForUser(new ResourceView(currentUser));
+	}
+
+	public List<Reservation> getAllReservations() {
+		return resMan.getAllReservations();
 	}
 	
 }
