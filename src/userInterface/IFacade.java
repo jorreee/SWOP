@@ -63,10 +63,10 @@ public interface IFacade {
 
 	public boolean createDeveloper(String name);
 
-	public boolean reserveResource(ResourceView resource, ProjectView project, TaskView task);
-	public boolean reserveResource(ResourceView resource, ProjectView project, TaskView task, LocalDateTime startTime, LocalDateTime endTime);
+//	public boolean reserveResource(ResourceView resource, ProjectView project, TaskView task);
+//	public boolean reserveResource(ResourceView resource, ProjectView project, TaskView task, LocalDateTime startTime, LocalDateTime endTime);
 
-	public List<LocalDateTime> getPossibleTaskStartingTimes(ProjectView project, TaskView task, int amount);
+//	public List<LocalDateTime> getPossibleTaskStartingTimes(ProjectView project, TaskView task, int amount);
 
 	public List<ResourceView> getDeveloperList();
 
@@ -83,7 +83,7 @@ public interface IFacade {
 			ResourceView resourcePrototype);
 
 	public boolean planTask(ProjectView project, TaskView task,
-			LocalDateTime planningStartTime);
+			LocalDateTime planningStartTime, List<ResourceView> concRes);
 
 	public Map<ProjectView, List<TaskView>> reservationConflict(ResourceView requiredResource,
 			ProjectView project, TaskView task, LocalDateTime planningStartTime);

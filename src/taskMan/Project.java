@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.collect.ImmutableList;
-
 import taskMan.resource.ResourceManager;
 import taskMan.state.OngoingProject;
 import taskMan.state.ProjectStatus;
@@ -555,6 +553,15 @@ public class Project implements Dependant {
 		}return unwrapTaskView(task).execute(startTime);
 		
 	}
+	
+	public boolean planTask(TaskView task, LocalDateTime plannedStartTime,
+			List<ResourceView> concRes) {
+		Task t = unwrapTaskView(task);
+		if(t == null) {
+			return false;
+		}
+		return t.plan(plannedStartTime, concRes);
+	}
 
 	/**
 	 * A method to check whether this project is finished
@@ -643,19 +650,19 @@ public class Project implements Dependant {
 //		}
 //		return longest;
 //	}
-	
-	/**
-	 * Returns an amount of possible Task starting times for a given Task.
-	 * 
-	 * @param 	task
-	 * 			The Task to get the starting times from.
-	 * @param 	amount
-	 * 			The amount of possible starting times wanted.
-	 * @return	The possible starting times of the Task
-	 */
-	public List<LocalDateTime> getPossibleTaskStartingTimes(TaskView task, int amount){
-		return unwrapTaskView(task).getPossibleTaskStartingTimes(amount);
-	}
+//	
+//	/**
+//	 * Returns an amount of possible Task starting times for a given Task.
+//	 * 
+//	 * @param 	task
+//	 * 			The Task to get the starting times from.
+//	 * @param 	amount
+//	 * 			The amount of possible starting times wanted.
+//	 * @return	The possible starting times of the Task
+//	 */
+//	public List<LocalDateTime> getPossibleTaskStartingTimes(TaskView task, int amount){
+//		return unwrapTaskView(task).getPossibleTaskStartingTimes(amount);
+//	}
 
 	public boolean flushFutureReservations(TaskView task, LocalDateTime currentTime) {
 		Task t = unwrapTaskView(task);
@@ -665,14 +672,14 @@ public class Project implements Dependant {
 		return t.flushFutureReservations(currentTime);
 	}
 
-	public boolean reserve(ResourceView resource, TaskView task,
-			LocalDateTime startTime, LocalDateTime endTime) {
-		Task t = unwrapTaskView(task);
-		if(t == null) {
-			return false;
-		}
-		return t.reserve(resource, startTime, endTime);
-	}
+//	public boolean reserve(ResourceView resource, TaskView task,
+//			LocalDateTime startTime, LocalDateTime endTime) {
+//		Task t = unwrapTaskView(task);
+//		if(t == null) {
+//			return false;
+//		}
+//		return t.reserve(resource, startTime, endTime);
+//	}
 	
 	public List<TaskView> getUpdatableTasksForUser(ResourceView user){
 		Builder<TaskView> list = ImmutableList.builder();

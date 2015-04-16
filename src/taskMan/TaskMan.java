@@ -377,19 +377,19 @@ public class TaskMan {
 		//TODO dit kan via de rare "raw plan" data worden geinitialiseerd
 	}
 	
-	public boolean reserveResource(ResourceView resource, ProjectView project, TaskView task,
-			LocalDateTime startTime, LocalDateTime endTime) {
-		Project p = unwrapProjectView(project);
-		if(p == null) {
-			return false;
-		}
-		return p.reserve(resource, task, startTime, endTime);
-	}
+//	public boolean reserveResource(ResourceView resource, ProjectView project, TaskView task,
+//			LocalDateTime startTime, LocalDateTime endTime) {
+//		Project p = unwrapProjectView(project);
+//		if(p == null) {
+//			return false;
+//		}
+//		return p.reserve(resource, task, startTime, endTime);
+//	}
 	
-	public List<LocalDateTime> getPossibleTaskStartingTimes(ProjectView project, TaskView task,
-			int amount) {
-		return unwrapProjectView(project).getPossibleTaskStartingTimes(task,amount);
-	}
+//	public List<LocalDateTime> getPossibleTaskStartingTimes(ProjectView project, TaskView task,
+//			int amount) {
+//		return unwrapProjectView(project).getPossibleTaskStartingTimes(task,amount);
+//	}
 
 
 	public List<ResourceView> getDeveloperList() {
@@ -412,9 +412,12 @@ public class TaskMan {
 	}
 
 	public boolean planTask(ProjectView project, TaskView task,
-			LocalDateTime plannedStartTime) {
-		// TODO Auto-generated method stub
-		return false;
+			LocalDateTime plannedStartTime, List<ResourceView> concRes) {
+		Project p = unwrapProjectView(project);
+		if(p == null) {
+			return false;
+		}
+		return p.planTask(task, plannedStartTime, concRes);
 	}
 
 	public List<ResourceView> getConcreteResourcesForPrototype(
