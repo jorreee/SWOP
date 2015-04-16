@@ -242,5 +242,10 @@ public class Facade implements IFacade {
 	public boolean currentUserHasCredential(UserCredential credential) {
 		return taskMan.currentUserHasCredential(credential);
 	}
+	
+	@Override
+	public List<TaskView> getUpdatableTasksForUser(ProjectView project){
+		return taskMan.getUpdatableTasksForUser(project);
+	}
 
 }

@@ -90,4 +90,6 @@ public interface IFacade {
 			TaskView conflictingTask);
 
 	public boolean currentUserHasCredential(UserCredential credential);
+	
+	public List<TaskView> getUpdatableTasksForUser(ProjectView project);
 }
