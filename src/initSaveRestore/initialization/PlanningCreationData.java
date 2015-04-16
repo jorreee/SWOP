@@ -22,4 +22,36 @@ public class PlanningCreationData {
 		return dueTime;
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((developers == null) ? 0 : developers.hashCode());
+		result = prime * result + ((dueTime == null) ? 0 : dueTime.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		PlanningCreationData other = (PlanningCreationData) obj;
+		if (developers == null) {
+			if (other.developers != null)
+				return false;
+		} else if (!developers.equals(other.developers))
+			return false;
+		if (dueTime == null) {
+			if (other.dueTime != null)
+				return false;
+		} else if (!dueTime.equals(other.dueTime))
+			return false;
+		return true;
+	}
+
 }
