@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -44,13 +45,15 @@ public class Main {
 		} else {
 			facade = initializeFromStream(new FileReader(args[0]));
 		}
+		
+		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
 		// Start accepting user input
 		BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
 		InputParser inParser = new InputParser(facade, input);
 		while(true) {
 			// Display System status
-			System.out.println("Current System time: " + facade.getCurrentTime().toString() +
+			System.out.println("Current System time: " + facade.getCurrentTime().format(dateTimeFormatter) +
 					", logged in as: " + facade.getCurrentUsername());
 			// Ask user for input
 			System.out.println("TaskMan instruction? (h for help)");

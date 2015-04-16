@@ -701,9 +701,9 @@ public class Task implements Dependant {
 //	}
 	
 	public boolean plan(LocalDateTime startTime) {
-		if(!resMan.hasActiveReservations(this, requiredResources)) {
-			return false;
-		}
+//		if(!resMan.hasActiveReservations(this, requiredResources)) { // TODO bij init bestaan de reservaties nog niet (task moet bestaan voor reservatie kan bestaan)
+//			return false;
+//		}
 		plan.setPlannedBeginTime(startTime);
 		return state.makeAvailable();
 	}
