@@ -245,8 +245,10 @@ public class TaskManInitFileChecker extends StreamTokenizer {
 	      }
 	      LocalDateTime startTime = null;
 	      LocalDateTime endTime = null;
-	      if (status != null && status != TaskStatus.EXECUTING) {
+	      if (status != null) {
 	        startTime = expectDateField("startTime");
+	      }
+	      if (status != null && status != TaskStatus.EXECUTING) {
 	        endTime = expectDateField("endTime");
 	      }
 	      

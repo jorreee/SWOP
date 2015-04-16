@@ -2,6 +2,7 @@ package taskMan;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -96,7 +97,8 @@ public class Task implements Dependant {
 //		this.estimatedDuration = new TimeSpan(estimatedDuration);
 //		this.acceptableDeviation = acceptableDeviation;
 		this.resMan = resMan;
-		this.requiredResources = requiredResources; // Cannot be putAll, this.requiredResources == null
+		this.requiredResources = new HashMap<ResourceView, Integer>();
+		this.requiredResources.putAll(requiredResources);
 		
 		this.state = new UnavailableTask(this);
 
@@ -216,18 +218,18 @@ public class Task implements Dependant {
 	@Override
 	public boolean updateDependency(Task preTask) {
 		int preIndex = prerequisites.indexOf(preTask);
-//		int preIndex = unfinishedPrerequisites.indexOf(preTask);
+
 		if(preIndex < 0) {
 			return false;
 		}
 		prerequisites.remove(preIndex);
-//		unfinishedPrerequisites.remove(preIndex);
+
 		state.makeAvailable();
-//		state.makeAvailable(unfinishedPrerequisites);
+		
 		return true;
 	}
 	
-	public void removeAlternativesDependencies() {
+	private void removeAlternativesDependencies() {
 		if(alternativeFor != null) {
 			int depIndex;
 			for(Dependant d : alternativeFor.getDependants()) {
@@ -286,6 +288,10 @@ public class Task implements Dependant {
 	 */
 	public boolean isAvailable(){
 		return state.isAvailable();
+	}
+	
+	public boolean isExecuting(){
+		return state.isExecuting();
 	}
 
 	/**
@@ -695,6 +701,9 @@ public class Task implements Dependant {
 //	}
 	
 	public boolean plan(LocalDateTime startTime) {
+		if(!resMan.hasActiveReservations(this, requiredResources)) {
+			return false;
+		}
 		plan.setPlannedBeginTime(startTime);
 		return state.makeAvailable();
 	}
@@ -714,12 +723,14 @@ public class Task implements Dependant {
 	 * 			The amount of possible starting times wanted.
 	 * @return	The possible starting times of the Task
 	 */
-	public List<LocalDateTime> getPossibleTaskStartingTimes(int amount){
-		return null; //TODO
+	public List<LocalDateTime> getPossibleTaskStartingTimes(List<ResourceView> concRes, int amount) {
+		return resMan.getPossibleStartingTimes(this,concRes,amount);
 	}
 	
 	public Map<ResourceView,Integer> getRequiredResources(){
-		return requiredResources;
+		Map<ResourceView,Integer> reqRes = new HashMap<ResourceView,Integer>();
+		reqRes.putAll(requiredResources);
+		return reqRes;
 	}
 	
 	public List<ResourceView> getPossibleResourceInstances(ResourceView resourceType){
@@ -733,6 +744,19 @@ public class Task implements Dependant {
 	public boolean reserve(ResourceView resource, LocalDateTime startTime,
 			LocalDateTime endTime) {
 		return resMan.reserve(resource, this, startTime, endTime);
+	}
+	
+	public boolean hasDeveloper(ResourceView user){
+		for(ResourceView dev : plan.getPlannedDevelopers()){
+			if (dev.equals(user)){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public List<ResourceView> getPlannedDevelopers(){
+		return plan.getPlannedDevelopers();
 	}
 	
 }

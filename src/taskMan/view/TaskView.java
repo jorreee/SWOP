@@ -176,6 +176,10 @@ public class TaskView {
 	public List<ResourceView> getPossibleResourceInstances(ResourceView resourceType){
 		return task.getPossibleResourceInstances(resourceType);
 	}
+	
+	public List<LocalDateTime> getPossibleStartingTimes(List<ResourceView> concRes, int amount) {
+		return task.getPossibleTaskStartingTimes(concRes, amount);
+	}
 
 	public boolean equals(TaskView otherView) {
 		if (this == otherView)
@@ -184,5 +188,16 @@ public class TaskView {
 			return false;
 		return otherView.hasAsTask(task);
 	}
+	
+	public List<ResourceView> getPlannedDevelopers(){
+		return task.getPlannedDevelopers();
+	}
+	
+	public LocalDateTime getPlannedBeginTime() {
+		return task.getPlannedBeginTime();
+	}
 
+	public boolean isPlanned(){
+		return (task.getPlannedBeginTime() != null);
+	}
 }

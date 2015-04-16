@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import taskMan.resource.Reservation;
 import taskMan.resource.user.UserCredential;
 import taskMan.view.ProjectView;
 import taskMan.view.ResourceView;
@@ -241,6 +242,16 @@ public class Facade implements IFacade {
 	@Override
 	public boolean currentUserHasCredential(UserCredential credential) {
 		return taskMan.currentUserHasCredential(credential);
+	}
+	
+	@Override
+	public List<TaskView> getUpdatableTasksForUser(ProjectView project){
+		return taskMan.getUpdatableTasksForUser(project);
+	}
+
+	public List<Reservation> getAllReservations() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

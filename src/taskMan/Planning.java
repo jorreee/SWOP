@@ -129,5 +129,9 @@ public class Planning {
 		this.plannedDevelopers = plannedDevelopers;
 		return true;              
 	}
+	
+	public List<ResourceView> getPlannedDevelopers(){
+		return plannedDevelopers;
+	}
 
 }
