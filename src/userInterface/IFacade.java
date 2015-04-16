@@ -91,4 +91,6 @@ public interface IFacade {
 
 	public boolean currentUserHasCredential(UserCredential credential);
 	
+	public List<TaskView> getUpdatableTasksForUser(ProjectView project);
+	
 }

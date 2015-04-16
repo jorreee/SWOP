@@ -188,5 +188,16 @@ public class TaskView {
 			return false;
 		return otherView.hasAsTask(task);
 	}
+	
+	public List<ResourceView> getPlannedDevelopers(){
+		return task.getPlannedDevelopers();
+	}
+	
+	public LocalDateTime getPlannedBeginTime() {
+		return task.getPlannedBeginTime();
+	}
 
+	public boolean isPlanned(){
+		return (task.getPlannedBeginTime() != null);
+	}
 }

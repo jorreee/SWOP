@@ -125,10 +125,12 @@ tasks:
     alternativeFor     :
     prerequisiteTasks  :
     requiredResources  :
-    planning           :
+    planning           : 1
     ### TMAN UPDATE ###
     # Original status was available, but no executing in system yet, so for completion
     status             : executing
+    # An executing task requires an actual start time
+    startTime          : "2014-01-02 17:00"
 
   - project            : 1
     description        : "yet another task description"
@@ -147,7 +149,7 @@ tasks:
     alternativeFor     :
     prerequisiteTasks  : [ 1, 2 ]
     requiredResources  :
-    planning           : 1
+    planning           :
     ### TMAN UPDATE ###
     # original status was failed, impossible to fail unavailable tasks
     status             :

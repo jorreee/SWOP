@@ -289,6 +289,10 @@ public class Task implements Dependant {
 	public boolean isAvailable(){
 		return state.isAvailable();
 	}
+	
+	public boolean isExecuting(){
+		return state.isExecuting();
+	}
 
 	/**
 	 * Checks whether the Task is unavailable.
@@ -740,6 +744,19 @@ public class Task implements Dependant {
 	public boolean reserve(ResourceView resource, LocalDateTime startTime,
 			LocalDateTime endTime) {
 		return resMan.reserve(resource, this, startTime, endTime);
+	}
+	
+	public boolean hasDeveloper(ResourceView user){
+		for(ResourceView dev : plan.getPlannedDevelopers()){
+			if (dev.equals(user)){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public List<ResourceView> getPlannedDevelopers(){
+		return plan.getPlannedDevelopers();
 	}
 	
 }

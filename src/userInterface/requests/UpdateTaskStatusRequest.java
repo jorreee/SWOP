@@ -21,7 +21,7 @@ public class UpdateTaskStatusRequest extends Request {
 
 		for(ProjectView project : projects) {
 			System.out.println("- Project " + project.getID() + ":");
-			List<TaskView> availableTasks = project.getAvailableTasks();
+			List<TaskView> availableTasks = facade.getUpdatableTasksForUser(project);
 			for(TaskView task : availableTasks) {
 				System.out.println("  * Task " + task.getID() + " is available");
 			}
