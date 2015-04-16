@@ -1,5 +1,6 @@
 package initSaveRestore.caretaker;
 
+import initSaveRestore.initialization.PlanningCreationData;
 import initSaveRestore.initialization.TaskManInitFileChecker;
 
 import java.io.StringReader;
@@ -47,10 +48,23 @@ public class TaskManCaretaker {
 		List<ProjectView> existingProjects = facade.getProjects();
 		List<ResourceView> existingPrototypes = facade.getResourcePrototypes();
 		List<ResourceView> existingDevelopers = facade.getDeveloperList();
+		
 		List<TaskView> existingTasks = new ArrayList<>();
 		for(ProjectView project : existingProjects) {
 			existingTasks.addAll(project.getTasks());
 		}
+		
+		List<PlanningCreationData> existingPlannings = new ArrayList<>();
+		for(TaskView task : existingTasks) {
+			if(task.isPlanned()) {
+				List<Integer> plannedDevelopers = new ArrayList<>();
+				for(ResourceView dev : task.getPlannedDevelopers()) {
+					plannedDevelopers.add(existingDevelopers.indexOf(dev));
+				}
+				existingPlannings.add(new PlanningCreationData(task.getPlannedBeginTime(), plannedDevelopers));
+			}
+		}
+		
 		List<Reservation> existingReservations = facade.getAllReservations();
 		
 		// SystemTime
@@ -138,10 +152,19 @@ public class TaskManCaretaker {
 		
 		// plannings
 		tman.append("\nplannings:");
-		// TODO
+		for(PlanningCreationData pcd : existingPlannings) {
+			String plannedDevelopers = new String();
+			Iterator<Integer> devs = pcd.getDevelopers().iterator();
+			while(devs.hasNext()) {
+				plannedDevelopers += devs.next();
+				if(devs.hasNext()) { plannedDevelopers += ","; };
+			}
+			tman.append("\n  - plannedStartTime : " + pcd.getPlannedStartTime() // Planning start time
+					+ "\n    developers       : [" + plannedDevelopers + "]"); // Planned developers
+		}
 		
 		// tasks
-		tman.append("\ntasksk:");
+		tman.append("\ntasks:");
 		for(ProjectView project : existingProjects) {
 			List<TaskView> tasks = project.getTasks();
 			for(TaskView task : tasks) {
@@ -163,11 +186,39 @@ public class TaskManCaretaker {
 					if(prereqs.hasNext()) { prereqsIndices += ","; };
 				}
 				tman.append("\n    prerequisiteTasks  : " + prereqsIndices + "]"); // prerequisiteTasks
-				// requiredResources // TODO
-				// planning
-				// status
-				// startTime
-				// endTime
+				Map<ResourceView, Integer> requiredResources = task.getRequiredResources();
+				StringBuilder requiredResourcesAsStringBuilder = new StringBuilder();
+				Iterator<ResourceView> requiredResourcesIterator = requiredResources.keySet().iterator();
+				while(requiredResourcesIterator.hasNext()) {
+					ResourceView requiredResource = requiredResourcesIterator.next();
+					requiredResourcesAsStringBuilder.append("{type: " + existingPrototypes.indexOf(requiredResource)
+							+ ",  quantity: " + requiredResources.get(requiredResource) + "}");
+					if(requiredResourcesIterator.hasNext())	{
+						requiredResourcesAsStringBuilder.append(", ");
+					}
+				}
+				String requiredResourcesAsString = requiredResourcesAsStringBuilder.toString();
+				tman.append("\n    requiredResources  : [" + requiredResourcesAsString + "]"); // requiredResources
+				String planningIndex = new String();
+				if(task.isPlanned()) {
+					List<Integer> plannedDevelopers = new ArrayList<>();
+					for(ResourceView dev : task.getPlannedDevelopers()) {
+						plannedDevelopers.add(existingDevelopers.indexOf(dev));
+					}
+					planningIndex = String.valueOf(existingPlannings.indexOf(new PlanningCreationData(task.getPlannedBeginTime(), plannedDevelopers)));
+				}
+				tman.append("\n    planning           : " + planningIndex); // planning
+				String taskStatus = task.getStatusAsString().toLowerCase();
+				if(taskStatus.equalsIgnoreCase("unavailable") || taskStatus.equalsIgnoreCase("available")) {
+					taskStatus = new String();
+				}
+				tman.append("\n    status             : " + taskStatus); // status
+				if(!taskStatus.isEmpty()) {
+					tman.append("\n    startTime          : \"" + task.getStartTime().format(dateTimeFormatter) + "\""); // startTime
+				}
+				if(!taskStatus.isEmpty() || !taskStatus.equalsIgnoreCase("executing")) {
+					tman.append("\n    endTime            : \"" + task.getEndTime().format(dateTimeFormatter) + "\""); // endTime
+				}
 			}
 		}
 		
