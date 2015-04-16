@@ -203,7 +203,7 @@ public class ResourceManager {
 		if(endTime.isBefore(startTime)) {
 			return false;
 		}
-		ConcreteResource cr = unwrapConcreteResource(resource);
+		ConcreteResource cr = unWrapConcreteResourceView(resource);
 		if(cr == null) {
 			return false;
 		}
@@ -292,19 +292,19 @@ public class ResourceManager {
 //		return null;
 //	}
 
-//	private ConcreteResource unWrapConcreteResourceView(ResourceView view){
-//		if(view == null) {
-//			return null;
-//		}
-//		for(ResourcePool pool : resPools) {
-//				for (ConcreteResource res : pool.getConcreteResourceList()){
-//					if (view.hasAsResource(res)){
-//						return res;
-//					}
-//				}
-//		}
-//		return null;
-//	}
+	private ConcreteResource unWrapConcreteResourceView(ResourceView view){
+		if(view == null) {
+			return null;
+		}
+		for(ResourcePool pool : resPools) {
+				for (ConcreteResource res : pool.getConcreteResourceList()){
+					if (view.hasAsResource(res)){
+						return res;
+					}
+				}
+		}
+		return null;
+	}
 	
 	private ResourcePrototype unWrapResourcePrototypeView(ResourceView view){
 		if(view == null) {
