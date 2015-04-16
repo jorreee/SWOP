@@ -2,6 +2,13 @@ package initSaveRestore.initialization;
 
 import java.time.LocalDateTime;
 
+/**
+ * Instances of this class can be used to supply the data needed for the system
+ * to initialize a reservation
+ * 
+ * @author Tim Van Den Broecke, Joran Van de Woestijne, Vincent Van Gestel and
+ *         Eli Vangrieken
+ */
 public class ReservationCreationData {
 
 	private final int resource;

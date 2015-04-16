@@ -64,7 +64,7 @@ public class TaskManCaretaker {
 	 * considered snapshots of a system and are also used for initialization at
 	 * startup.
 	 * 
-	 * @return | The TMAN string based upon the current state of the system
+	 * @return The TMAN string based upon the current state of the system
 	 */
 	private String buildMemento() {
 		StringBuilder tman = new StringBuilder();
@@ -266,7 +266,7 @@ public class TaskManCaretaker {
 	 * of the stack. In the case of a simulation, the last simulation started
 	 * will be reverted first.
 	 * 
-	 * @return | True if the system was initialized without errors, false
+	 * @return True if the system was initialized without errors, false
 	 *         otherwise
 	 */
 	public boolean revertFromMemento() {
@@ -288,7 +288,7 @@ public class TaskManCaretaker {
 	/**
 	 * The top memento of the memento stack will be removed
 	 * 
-	 * @return | True if the memento was removed without a problem, false
+	 * @return True if the memento was removed without a problem, false
 	 *         otherwise
 	 */
 	public boolean discardMemento() {

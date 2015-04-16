@@ -3,6 +3,13 @@ package initSaveRestore.initialization;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * Instances of this class can be used to supply the data needed for the system
+ * to initialize a planning
+ * 
+ * @author Tim Van Den Broecke, Joran Van de Woestijne, Vincent Van Gestel and
+ *         Eli Vangrieken
+ */
 public class PlanningCreationData {
 	
 	private final List<Integer> developers;
