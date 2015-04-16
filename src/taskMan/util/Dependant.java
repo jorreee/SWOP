@@ -3,13 +3,23 @@ package taskMan.util;
 import taskMan.Task;
 
 /**
- * OBSERVER
+ * This interface determines all methods required in an observer pattern for the
+ * OBSERVER part. Both projects and tasks implement this interface. Tasks can be
+ * dependant of other tasks (prerequisite tasks), projects are dependant of
+ * tasks (a project can only be finished when it has at least one task and all
+ * tasks are finished or have a finished alternative).
  * 
- * @author 
- *
+ * @author Tim Van Den Broecke, Joran Van de Woestijne, Vincent Van Gestel and
+ *         Eli Vangrieken
  */
 public interface Dependant {
 	
+	/**
+	 * A prerequisite has changed, the state of the dependant might change.
+	 * 
+	 * @param preTask
+	 *            | The prerequisite that has changed
+	 */
 	public boolean updateDependency(Task preTask);
 
 }

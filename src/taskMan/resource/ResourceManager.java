@@ -17,96 +17,90 @@ import taskMan.view.ResourceView;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 
+/**
+ * The resource manager is the part in the system that will keep the data about
+ * resources, users and reservations. The resource manager is capable of
+ * unwrapping resourceViews and linking them with specific resource prototypes
+ * or concrete resources. The resource manager will make the reservations and
+ * keep them for bookkeeping purposes. The resource manager is also responsible
+ * for determining when a task is capable of reserving its resources during
+ * planning.
+ * 
+ * @author Tim Van Den Broecke, Joran Van de Woestijne, Vincent Van Gestel and
+ *         Eli Vangrieken
+ */
 public class ResourceManager {
 	
 	// The resource manager has a list of resource pools (and users)
 	private List<ResourcePool> resPools;
 	private List<User> userList;
 	
-//	// A list of availabilities
-//	private List<AvailabilityPeriod> availabilityPeriodList;
-	
 	// A list of (active) reservations
 	private List<Reservation> activeReservations;
 	private List<Reservation> allReservations;
 	
+	/**
+	 * Instantiate a new ResourceManager. This manager will have no resources
+	 * nor reservations. One user will be present in the system, the project
+	 * manager (admin).
+	 */
 	public ResourceManager() {
 		this.resPools = new ArrayList<>();
-//		this.availabilityPeriodList = new ArrayList<>();
 		this.userList = new ArrayList<>();
 		userList.add(new ProjectManager("admin"));
 		
 		activeReservations = new ArrayList<>();
 		allReservations = new ArrayList<>();
 	}
-	
-	//TODO kunnen ook lijsten van Strings zijn of zelfs lijsten van ResourceViews
+
+	/**
+	 * Define a new resource type. This will create a new (empty) resource pool
+	 * based on the new resource type.
+	 * 
+	 * @param resourceName
+	 *            | the name of the new abstract resource
+	 * @param availabilityStart
+	 *            | the optional start time of the availability period
+	 * @param availabilityEnd
+	 *            | the optional end time of the availability period
+	 * @return True when the prototype has been successfully initiated, false
+	 *         otherwise
+	 */
 	public boolean createResourcePrototype(String resourceName,
 			Optional<LocalTime> availabilityStart, Optional<LocalTime> availabilityEnd) {
 		
 		if(!isValidPeriod(availabilityStart, availabilityEnd)) {
 			return false;
 		}
-		// No nulls
 		if(resourceName == null) {
 			return false;
 		}
-		// Requirement cannot be a conflict
-//		for(Integer requirement : requirements) {
-//			if(conflicts.contains(requirement)) {
-//				return false;
-//			}
-//		}
-		// If daily available, availabilityPeriod must exist
-//		if(availabilityIndex != null && (availabilityIndex < 0 || availabilityIndex > availabilityPeriodList.size())) {
-//			return false;
-//		}
 		
-		// Create resprot (should happen before applying conflicting resources,
-		// since a resource can conflict with itself
+		// Create resourcePrototype (should happen before applying conflicting resources,
+		// since a resource can conflict with itself)
 		boolean success = false;
 		ResourcePrototype resprot = null;
 		if(!availabilityStart.isPresent() && !availabilityEnd.isPresent()) {
 			resprot = new ResourcePrototype(resourceName, null);
-//			resprot = new ResourcePrototype(resourceName, new ArrayList<ResourcePrototype>(), new ArrayList<ResourcePrototype>(), null);
 		} else {
 			resprot = new ResourcePrototype(resourceName, new AvailabilityPeriod(availabilityStart.get(), availabilityEnd.get()));
-//			resprot = new ResourcePrototype(resourceName, new ArrayList<ResourcePrototype>(), new ArrayList<ResourcePrototype>(), availabilityPeriodList.get(availabilityIndex));
 		}
 		success = addResourceType(resprot);
 		if(!success) {
 			return false;
 		}
-		
-//		List<ResourcePrototype> reqList = new ArrayList<ResourcePrototype>();
-//		List<ResourcePrototype> conList = new ArrayList<ResourcePrototype>();
-//		for(Integer requirement : requirements) {
-//			for(ResourcePool resPool : resPools) {
-//				if(resPool.getPrototype().isCreationIndex(requirement)) {
-//					resprot.addRequiredResource(resPool.getPrototype());
-//				}
-//			}
-//		}
-//		for(Integer conflict : conflicts) {
-//			for(ResourcePool resPool : resPools) {
-//				if(resPool.getPrototype().isCreationIndex(conflict)) {
-//					resprot.addConflictingResource(resPool.getPrototype());
-//				}
-//			}
-//		}
-//		resprot.putConflictingResources(conList);
-//		resprot.putRequiredResources(reqList);
-//		prototypeIndex++;
 		return true;
 	}
-//	
-//	public boolean declareAvailabilityPeriod(LocalTime startTime, LocalTime endTime) {
-//		if(!isValidPeriod(startTime,endTime)) {
-//			return false;
-//		}
-//		return availabilityPeriodList.add(new AvailabilityPeriod(startTime, endTime));
-//	}
 	
+	/**
+	 * Check whether the given availability period start and end times are valid
+	 * 
+	 * @param start
+	 *            | the optional startTime that should be valid
+	 * @param end
+	 *            | the optional endTime that should be valid
+	 * @return True if the given timestamps define a valid availability period
+	 */
 	private boolean isValidPeriod(Optional<LocalTime> start, Optional<LocalTime> end) {
 		if(start.isPresent() && !end.isPresent()) {
 			return false;
@@ -120,10 +114,29 @@ public class ResourceManager {
 		return !end.get().isBefore(start.get());
 	}
 	
+	/**
+	 * Create a new resourcePool based on a resource prototype
+	 * 
+	 * @param resProt
+	 *            | The resource prototype for which a resource pool should be
+	 *            defined
+	 * @return true if the new resource pool was successfully added to the
+	 *         system
+	 */
 	private boolean addResourceType(ResourcePrototype resProt) {
 		return resPools.add(new ResourcePool(resProt));
 	}
 	
+	/**
+	 * Construct a new concrete resource based on a resource prototype
+	 * 
+	 * @param resName
+	 *            | The name for the new concrete resource
+	 * @param ptype
+	 *            | The prototype for which a new resource should be made
+	 * @return True if and only if the new concrete resource was made and added
+	 *         to its correct pool
+	 */
 	public boolean declareConcreteResource(String resName, ResourceView ptype) {
 		ResourcePrototype prototype = unWrapResourcePrototypeView(ptype);
 		ResourcePool resPool = null;
@@ -143,6 +156,13 @@ public class ResourceManager {
 		}
 	}
 	
+	/**
+	 * Get the first user found with a given name
+	 * 
+	 * @param username
+	 *            | The name of the user
+	 * @return The first user in the user list that has the given name
+	 */ // TODO wat als er meerdere users zijn met dezelfde naam?
 	public User getUser(String username) {
 		if(username == null) {
 			return null;
@@ -155,10 +175,21 @@ public class ResourceManager {
 		return null;
 	}
 	
+	/**
+	 * Find the project manager (the user with admin as a username)
+	 * 
+	 * @return the project manager (default user)
+	 */ // TODO deze methode is verre van veilig (wat als er meerdere admins zijn, wat als een developer de naam admin heeft?)
 	public User getDefaultUser() {
 		return getUser("admin");
 	}
 	
+	/**
+	 * Retrieve all possible users. This will be a list of every user in the
+	 * system.
+	 * 
+	 * @return an immutable list containing every user in the system
+	 */
 	public ImmutableList<ResourceView> getPossibleUsernames() {
 		Builder<ResourceView> usernames = ImmutableList.builder();
 		for(User user : userList) {
@@ -167,6 +198,13 @@ public class ResourceManager {
 		return usernames.build();
 	}
 	
+	/**
+	 * Define a new developer with a given name in the system.
+	 * 
+	 * @param name
+	 *            | The name of the new developer
+	 * @return true if the new developer was added to the system
+	 */
 	public boolean createDeveloper(String name) {
 		if(name == null) {
 			return false;
@@ -179,16 +217,20 @@ public class ResourceManager {
 		}
 	}
 	
-//	private boolean createRawReservation(
-//			int resourceTypeIndex, 
-//			int concreteResourceIndex, 
-//			Task reservingTask,
-//			LocalDateTime startTime, 
-//			LocalDateTime endTime, 
-//			LocalDateTime currentTime) {
-//		return reserve(resPools.get(resourceTypeIndex).getConcreteResourceByIndex(concreteResourceIndex), reservingTask, startTime, endTime, currentTime);
-//	}
-	
+	/**
+	 * Reserve a resource from a specific start to a specific end time. A
+	 * reservation will always be made by a task.
+	 * 
+	 * @param resource
+	 *            | The resource to reserver
+	 * @param reservingTask
+	 *            | The task making the reservation
+	 * @param startTime
+	 *            | The start time of the reservation
+	 * @param endTime
+	 *            | The end time of the reservation
+	 * @return True if the new reservation was made and added to the system
+	 */
 	public boolean reserve(
 			ResourceView resource, 
 			Task reservingTask, 
@@ -221,18 +263,19 @@ public class ResourceManager {
 			else return true;
 		}
 	}
-
-//	public boolean createRawReservation(int resource, int project, int task,
-//			LocalDateTime startTime, LocalDateTime endTime) {
-//		// TODO Auto-generated method stub
-//		return false;
+	
+//	public ImmutableList<ResourceView> getPossibleResourceInstances(ResourceView resourceType){
+//		return null; //TODO implement (is het wel nodig?)
 //	}
 	
-	
-	public ImmutableList<ResourceView> getPossibleResourceInstances(ResourceView resourceType){
-		return null; //TODO implement
-	}
-
+	/**
+	 * This method will return a list of all prototypes present in the resource
+	 * pools in this resource manager.
+	 * 
+	 * @return an immutable list of resource prototypes. For every resource pool
+	 *         present in the system, one resource prototype will be added to
+	 *         this list
+	 */
 	public List<ResourceView> getResourcePrototypes() {
 		Builder<ResourceView> prototypes = ImmutableList.builder();
 		for(ResourcePool pool : resPools) {
@@ -240,7 +283,13 @@ public class ResourceManager {
 		}
 		return prototypes.build();
 	}
-
+	
+	/**
+	 * This method will return an immutable list of every user managed by the
+	 * resource manager that has the DEVELOPER credential
+	 * 
+	 * @return a list of the developers in the system
+	 */
 	public List<ResourceView> getDeveloperList() {
 		Builder<ResourceView> usernames = ImmutableList.builder();
 		for(User user : userList) {
@@ -251,6 +300,17 @@ public class ResourceManager {
 		return usernames.build();
 	}
 	
+	/**
+	 * This method will find the prototype corresponding to the given
+	 * resourceView and return a resourceView of that prototype. If there is no
+	 * prototype associated with the given resource, this method will return
+	 * null.
+	 * 
+	 * @param view
+	 *            | The resource to find the prototype of
+	 * @return a resourceView of the prototype associated with the given
+	 *         resource or null if no corresponding prototype was found
+	 */
 	public ResourceView getPrototypeOf(ResourceView view){
 		for(ResourcePool pool : resPools) {
 			for (Resource res : pool.getConcreteResourceList()){
@@ -262,6 +322,17 @@ public class ResourceManager {
 		return null;
 	}
 	
+	/**
+	 * This method will locate the resource pool responsible for the given
+	 * prototype and return an immutable list of all its concrete resource
+	 * instances (wrapped in a resourceView object)
+	 * 
+	 * @param resourcePrototype
+	 *            | The prototype for which the concrete resources are wanted
+	 * @return an immutable list of resourceView linked with the concrete
+	 *         resources based on the given resource prototype, null if the
+	 *         prototype is not associated with any pool
+	 */
 	public List<ResourceView> getConcreteResourcesForPrototype(ResourceView resourcePrototype) {
 		ResourcePrototype rprot = unWrapResourcePrototypeView(resourcePrototype);
 		for(ResourcePool pool : resPools) {
@@ -272,26 +343,15 @@ public class ResourceManager {
 		return null;
 	}
 	
-//	@Deprecated
-//	private Resource unwrapResourceView(ResourceView view) {
-//		if(view == null) {
-//			return null;
-//		}
-//		for(ResourcePool pool : resPools) {
-//			if (pool.hasAsPrototype(view)) {
-//				return pool.getPrototype();
-//			}
-//			else {
-//				for (Resource res : pool.getConcreteResourceList()){
-//					if (view.hasAsResource(res)){
-//						return res;
-//					}
-//				}
-//			}
-//		}
-//		return null;
-//	}
-
+	/**
+	 * Unwrap a resourceView to its concrete resource contents. This method will
+	 * return null if the resource cannot be found
+	 * 
+	 * @param view
+	 *            | The given concrete resource
+	 * @return the concrete resource found in the resourceView, null if it
+	 *         cannot be found in the resource manager's resource pools
+	 */
 	private ConcreteResource unWrapConcreteResourceView(ResourceView view){
 		if(view == null) {
 			return null;
@@ -306,6 +366,15 @@ public class ResourceManager {
 		return null;
 	}
 	
+	/**
+	 * Unwrap a resourceView to its resource prototype contents. This method
+	 * will return null if the resource cannot be found
+	 * 
+	 * @param view
+	 *            | The given resource prototype
+	 * @return the resource prototype found in the resourceView, null if it
+	 *         cannot be found in the resource manager's resource pools
+	 */
 	private ResourcePrototype unWrapResourcePrototypeView(ResourceView view){
 		if(view == null) {
 			return null;
@@ -317,7 +386,15 @@ public class ResourceManager {
 		}
 		return null;
 	}
-	
+
+	/**
+	 * Check whether or not the given resources and their supplied amount exist
+	 * in the resource manager's resource pools
+	 * 
+	 * @param reqRes
+	 *            | A map linking resourcePrototypes with a specified amount
+	 * @return True if enough resources exist, false otherwise
+	 */
 	public boolean isValidRequiredResources(Map<ResourceView,Integer> reqRes) {
 		for(ResourceView rv : reqRes.keySet()) {
 			ResourcePrototype rp = unWrapResourcePrototypeView(rv);
@@ -340,6 +417,17 @@ public class ResourceManager {
 		return true;
 	}
 
+	/**
+	 * Check whether a task has active reservations for all of its required
+	 * resources
+	 * 
+	 * @param reservedTask
+	 *            | The task for which the reservations should be checked
+	 * @param requiredResources
+	 *            | The resources and their amounts that should all have enough
+	 *            reservations
+	 * @return true if every required resource has enough active reservations
+	 */
 	public boolean hasActiveReservations(Task reservedTask, Map<ResourceView,Integer> requiredResources){
 		Map<ResourceView,Integer> checkList = requiredResources;
 		for (Reservation res: activeReservations){
@@ -361,16 +449,29 @@ public class ResourceManager {
 		return (!largerZero);
 	}
 	
-	public boolean addRequirementsToResource(List<ResourceView> reqToAdd, ResourceView prototype){
-		for(ResourcePool pool : resPools) {
+	/**
+	 * Add resource requirements to a prototype
+	 * 
+	 * @param reqToAdd
+	 *            | The new requirements to add
+	 * @param prototype
+	 *            | The prototype that the new requirements should be added to
+	 * @return True if the new requirements were successfully added to the
+	 *         prototype
+	 */
+	// TODO deze nieuwe reqs zouden ook aan alle concrete resources van het
+	// prototype moeten toegevoegd worden
+	public boolean addRequirementsToResource(List<ResourceView> reqToAdd,
+			ResourceView prototype) {
+		for (ResourcePool pool : resPools) {
 			ResourcePrototype prot = pool.getPrototype();
 			if (prototype.hasAsResource(prot)) {
-				for (ResourceView req : reqToAdd ){
+				for (ResourceView req : reqToAdd) {
 					ResourcePrototype unwrapReq = unWrapResourcePrototypeView(req);
-					if (unwrapReq == null){
+					if (unwrapReq == null) {
 						return false;
-					}
-					else prot.addRequiredResource(unwrapReq);
+					} else
+						prot.addRequiredResource(unwrapReq);
 				}
 				return true;
 			}
@@ -378,13 +479,26 @@ public class ResourceManager {
 		return false;
 	}
 	
-	public boolean addConflictsToResource(List<ResourceView> conToAdd, ResourceView prototype){
-		for(ResourcePool pool : resPools) {
+	/**
+	 * Add resource conflicts to a prototype
+	 * 
+	 * @param conToAdd
+	 *            | The new conflicts to add
+	 * @param prototype
+	 *            | The prototype that the new conflicts should be added to
+	 * @return True if the new conflicts were successfully added to the
+	 *         prototype
+	 */
+	// TODO deze nieuwe cons zouden ook aan alle concrete resources van het
+	// prototype moeten toegevoegd worden
+	public boolean addConflictsToResource(List<ResourceView> conToAdd,
+			ResourceView prototype) {
+		for (ResourcePool pool : resPools) {
 			ResourcePrototype prot = pool.getPrototype();
 			if (prototype.hasAsResource(prot)) {
-				for (ResourceView conflict : conToAdd ){
+				for (ResourceView conflict : conToAdd) {
 					ResourcePrototype unwrapCon = unWrapResourcePrototypeView(conflict);
-					if (unwrapCon == null){
+					if (unwrapCon == null) {
 						return false;
 					}
 					prot.addConflictingResource(unwrapCon);
@@ -395,12 +509,39 @@ public class ResourceManager {
 		return false;
 	}
 	
+	/**
+	 * Return a specific amount of possible starting times for a task. A task
+	 * can be planned to start when enough resources are available for the
+	 * entire estimated duration of the task.
+	 * 
+	 * @param task
+	 *            | The task wants to be planned
+	 * @param allResources
+	 *            | The resources that should be available
+	 * @param amount
+	 *            | The amount of suggestions that should be calculated
+	 * @return a list of timestamps when a planning could be made without
+	 *         conflicts
+	 */
 	public List<LocalDateTime> getPossibleStartingTimes(Task task, List<ResourceView> allResources, int amount) {
 		List<LocalDateTime> posTimes = new ArrayList<LocalDateTime>();
 		//TODO het zware werk
 		return posTimes;
 	}
-
+	
+	/**
+	 * This method will remove all future reservations for a given
+	 * (finished/failed) task. If there are any active reservations that have
+	 * already started, but not yet finished, a reservation until this point
+	 * will be maintained, but the resources will be made available again (i.e.
+	 * the reservation will end now).
+	 * 
+	 * @param task
+	 *            | The finished or failed task
+	 * @param currentTime
+	 *            | The current time in the system
+	 * @return true if all required changes were successfully made
+	 */
 	public boolean flushFutureReservations(Task task, LocalDateTime currentTime) {
 		boolean succesful = false;
 		for (Reservation res : activeReservations){
@@ -423,6 +564,12 @@ public class ResourceManager {
 		return succesful;
 	}
 
+	/**
+	 * Return an immutable list of all the reservations present in the resource
+	 * manager
+	 * 
+	 * @return all reservations
+	 */
 	public List<Reservation> getAllReservations() {
 		Builder<Reservation> reservations = ImmutableList.builder();
 		reservations.addAll(allReservations);

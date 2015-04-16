@@ -5,10 +5,22 @@ import java.time.LocalDateTime;
 import taskMan.Task;
 import taskMan.util.Dependant;
 
+/**
+ * This class represents the finished state of a task
+ * 
+ * @author Tim Van Den Broecke, Joran Van de Woestijne, Vincent Van Gestel and
+ *         Eli Vangrieken
+ */
 public class FinishedTask implements TaskStatus {
 
 	private Task task;
 
+	/**
+	 * Construct a new finished status
+	 * 
+	 * @param t
+	 *            | The task that this status belongs to
+	 */
 	public FinishedTask(Task t) {
 		task = t;
 	}
