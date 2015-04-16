@@ -24,22 +24,48 @@ import taskMan.view.ResourceView;
 import taskMan.view.TaskView;
 import userInterface.Main;
 
+/**
+ * This class represents the system caretaker. It is responsible for creating
+ * system snapshots in order to save and restore a system image.
+ * 
+ * @author Tim Van Den Broecke, Joran Van de Woestijne, Vincent Van Gestel and
+ *         Eli Vangrieken
+ */
 public class TaskManCaretaker {
 
 	private final Stack<TaskManMemento> mementos;
 	private final Facade facade;
 
+	/**
+	 * Constructs a caretaker linked to a specific facade
+	 * 
+	 * @param facade
+	 *            | the facade with which the caretaker will talk (its taskman
+	 *            can be saved and restored)
+	 */
 	public TaskManCaretaker(Facade facade) {
 		this.mementos = new Stack<>();
 		this.facade = facade;
 	}
 
-	public boolean storeInMemento() {
+	/**
+	 * Store in memento will push a memento of the current system on a stack for
+	 * safekeeping. Every system state should be storeable.
+	 */
+	public void storeInMemento() {
 		String taskman = buildMemento();
 		mementos.push(new TaskManMemento(taskman));
-		return true;
 	}
-
+	
+	/**
+	 * The Build Memento method will ask the system for specific details about
+	 * its current state. This happens through the facade. The method will
+	 * return a string in the format of a TMAN file. These TMAN files can be
+	 * considered snapshots of a system and are also used for initialization at
+	 * startup.
+	 * 
+	 * @return | The TMAN string based upon the current state of the system
+	 */
 	private String buildMemento() {
 		StringBuilder tman = new StringBuilder();
 		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
@@ -234,6 +260,15 @@ public class TaskManCaretaker {
 		return tman.toString();
 	}
 
+	/**
+	 * This method will ask the facade to recreate its current TaskMan. This
+	 * TaskMan will be initialized with values stored in the memento on the top
+	 * of the stack. In the case of a simulation, the last simulation started
+	 * will be reverted first.
+	 * 
+	 * @return | True if the system was initialized without errors, false
+	 *         otherwise
+	 */
 	public boolean revertFromMemento() {
 		TaskManInitFileChecker fileChecker = new TaskManInitFileChecker(
 				new StringReader(mementos.pop().getMementoAsString()));
@@ -250,6 +285,12 @@ public class TaskManCaretaker {
 		return success;		
 	}
 
+	/**
+	 * The top memento of the memento stack will be removed
+	 * 
+	 * @return | True if the memento was removed without a problem, false
+	 *         otherwise
+	 */
 	public boolean discardMemento() {
 		try {
 			mementos.pop();
