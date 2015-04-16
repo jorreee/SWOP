@@ -327,28 +327,28 @@ public class Task implements Dependant {
 	 * 			When the start time of the task is after the time given.
 	 */ //TODO geeft TimeSpan object terug, ça marche?
 	public TimeSpan getTimeSpent(LocalDateTime currentTime) {
-		TimeSpan taskTimeSpent = plan.getTimeSpent(currentTime);
-		if(alternativeFor == null) {
-			return taskTimeSpent;
+		if(!hasEnded() && !isExecuting()){
+			return new TimeSpan(0);
 		}
-		if(hasEnded()) {
+		else if (hasEnded()) {
 			int timeSpent = TimeSpan.getDifferenceWorkingMinutes(getBeginTime(), getEndTime());
 			if(alternativeFor != null) {
 				timeSpent += alternativeFor.getTimeSpent(currentTime).getSpanMinutes();
 			}
 			return new TimeSpan(timeSpent);
 		}
-		
-		int currentTimeSpent = TimeSpan.getDifferenceWorkingMinutes(
-				getBeginTime(), 
-				currentTime);
-		
-		if(alternativeFor != null) {
-			currentTimeSpent = currentTimeSpent
-							 + alternativeFor.getTimeSpent(currentTime).getSpanMinutes();
+		else {
+			int currentTimeSpent = TimeSpan.getDifferenceWorkingMinutes(
+					getBeginTime(), 
+					currentTime);
+			
+			if(alternativeFor != null) {
+				currentTimeSpent = currentTimeSpent
+								 + alternativeFor.getTimeSpent(currentTime).getSpanMinutes();
 		}
-		
-		return new TimeSpan(currentTimeSpent);
+			return new TimeSpan(currentTimeSpent);
+		}
+
 	}
 
 //	/**
