@@ -311,6 +311,20 @@ public class TaskMan {
 		}
 		return p.setTaskFailed(taskID, endTime);
 	}
+	
+	public boolean setTaskExecuting(ProjectView project, TaskView task, LocalDateTime startTime){
+		if(startTime == null) {
+			return false;
+		}
+		if(startTime.isAfter(currentTime)) {
+			return false;
+		}
+		Project p = unwrapProjectView(project);
+		if(p == null) {
+			return false;
+		}
+		return p.setTaskExecuting(task, startTime);
+	}
 
 	/**
 	 * Returns a list of ProjectView objects that each contain one of this taskman's projects

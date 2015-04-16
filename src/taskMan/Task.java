@@ -531,6 +531,11 @@ public class Task implements Dependant {
 		return state.fail(endTime);
 	}
 	
+	
+	public boolean execute(LocalDateTime startTime) {
+		return state.execute(startTime);
+	}
+	
 	public boolean replaceWith(Task t) {
 		if(!canBeReplaced()) {
 			return false;
@@ -711,10 +716,7 @@ public class Task implements Dependant {
 	public boolean planDevelopers(List<ResourceView> plannedDevelopers) {
 		return plan.planDevelopers(plannedDevelopers);
 	}
-	
-	public boolean execute(LocalDateTime startTime) {
-		return state.execute(startTime);
-	}
+
 	
 	/**
 	 * Returns an amount of possible Task starting times.

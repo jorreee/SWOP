@@ -39,11 +39,13 @@ public interface IFacade {
 			LocalDateTime plannedStartTime, List<ResourceView> plannedDevelopers);
 
 	
-	public boolean setTaskFinished(ProjectView projectID, TaskView taskID,
+	public boolean setTaskFinished(ProjectView project, TaskView task,
 			LocalDateTime endTime);
 
-	public boolean setTaskFailed(ProjectView projectID, TaskView taskID,
+	public boolean setTaskFailed(ProjectView project, TaskView task,
 			 LocalDateTime endTime);
+	
+	public boolean setTaskExecuting(ProjectView project, TaskView task, LocalDateTime startTime);
 
 	public List<ProjectView> getProjects();
 

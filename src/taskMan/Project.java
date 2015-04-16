@@ -543,6 +543,13 @@ public class Project implements Dependant {
 //		}
 		return unwrapTaskView(t).fail(endTime);
 	}
+	
+	public boolean setTaskExecuting(TaskView task, LocalDateTime startTime){
+		if(!isValidTaskView(task)) {
+			return false;
+		}return unwrapTaskView(task).execute(startTime);
+		
+	}
 
 	/**
 	 * A method to check whether this project is finished

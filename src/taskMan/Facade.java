@@ -100,15 +100,20 @@ public class Facade implements IFacade {
 	}
 
 	@Override
-	public boolean setTaskFinished(ProjectView projectID, TaskView taskID,
+	public boolean setTaskFinished(ProjectView project, TaskView task,
 			LocalDateTime endTime) {
-		return taskMan.setTaskFinished(projectID, taskID, endTime);
+		return taskMan.setTaskFinished(project, task, endTime);
 	}
 
 	@Override
-	public boolean setTaskFailed(ProjectView projectID, TaskView taskID,
+	public boolean setTaskFailed(ProjectView project, TaskView task,
 			LocalDateTime endTime) {
-		return taskMan.setTaskFailed(projectID, taskID, endTime);
+		return taskMan.setTaskFailed(project, task, endTime);
+	}
+	
+	@Override
+	public boolean setTaskExecuting(ProjectView project, TaskView task, LocalDateTime startTime){
+		return taskMan.setTaskExecuting(project,task,startTime);
 	}
 
 	@Override
