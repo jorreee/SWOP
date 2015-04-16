@@ -319,6 +319,8 @@ public class ResourceManager {
 	}
 	
 	public boolean isValidRequiredResources(Map<ResourceView,Integer> reqRes) {
+		if(reqRes == null)
+			return false;
 		for(ResourceView rv : reqRes.keySet()) {
 			ResourcePrototype rp = unWrapResourcePrototypeView(rv);
 			if(rp == null) {
