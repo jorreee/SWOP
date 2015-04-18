@@ -15,55 +15,44 @@ public class ProjectTest {
 	
 	@Before
 	public void initialize(){
-		defaultProject = new Project(1,"defaultProject","default",
+		defaultProject = new Project("defaultProject","default",
 				LocalDateTime.of(2015, 2, 11, 16, 0),LocalDateTime.of(2015, 2, 17, 16, 0));
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
-	public void ConstrFailID(){
-		new Project(-1,"fail","fail",LocalDateTime.of(2015, 2, 11, 16, 0),
-				LocalDateTime.of(2015, 2, 12, 16, 0));
-	}
-	
-	@Test(expected = IllegalArgumentException.class)
 	public void ConstrFailName(){
-		new Project(1,null,"fail",LocalDateTime.of(2015, 2, 11, 16, 0),
+		new Project(null,"fail",LocalDateTime.of(2015, 2, 11, 16, 0),
 				LocalDateTime.of(2015, 2, 12, 16, 0));
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void ConstrFailDescription(){
-		new Project(1,"fail",null,LocalDateTime.of(2015, 2, 11, 16, 0),
+		new Project("fail",null,LocalDateTime.of(2015, 2, 11, 16, 0),
 				LocalDateTime.of(2015, 2, 12, 16, 0));
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void ConstrFailCreationTimeNull(){
-		new Project(1,"fail","fail",null,
+		new Project("fail","fail",null,
 				LocalDateTime.of(2015, 2, 12, 16, 0));
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void ConstrFailDueTimeNull(){
-		new Project(1,"fail","fail",LocalDateTime.of(2015, 2, 11, 16, 0),
+		new Project("fail","fail",LocalDateTime.of(2015, 2, 11, 16, 0),
 				null);
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void ConstrFailDueBeforeCreation(){
-		new Project(1,"fail","fail",LocalDateTime.of(2015, 2, 12, 16, 0),
+		new Project("fail","fail",LocalDateTime.of(2015, 2, 12, 16, 0),
 				LocalDateTime.of(2015, 2, 11, 16, 0));
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void ConstrFailDueEqualsCreation(){
-		new Project(1,"fail","fail",LocalDateTime.of(2015, 2, 12, 16, 0),
+		new Project("fail","fail",LocalDateTime.of(2015, 2, 12, 16, 0),
 				LocalDateTime.of(2015, 2, 12, 16, 0));
-	}
-	
-	@Test
-	public void getIDTest(){
-		assertEquals(1, defaultProject.getID());
 	}
 	
 	@Test
