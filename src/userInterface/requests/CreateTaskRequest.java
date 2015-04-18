@@ -21,8 +21,10 @@ public class CreateTaskRequest extends Request {
 	@Override
 	public String execute() {
 		List<ProjectView> projects = facade.getProjects();
+		int pi = 0;
 		for(ProjectView project : projects) {
-			System.out.println(project.getID() + ": Project " + project.getName());
+			System.out.println("[" + pi + "] Project " + project.getName());
+			pi++;
 		}
 		
 		List<ResourceView> resourceTypes = facade.getResourcePrototypes();
