@@ -165,7 +165,7 @@ public class TaskManCaretaker {
 		
 		// currentUser
 		tman.append("\ncurrentUser:");
-		tman.append("\n  - name: \"" + facade.getCurrentUsername() + "\""); // Current logged in person (admin or dev)
+		tman.append("\n  - name: \"" + facade.getCurrentUser() + "\""); // Current logged in person (admin or dev)
 		
 		// projects
 		tman.append("\nprojects:");

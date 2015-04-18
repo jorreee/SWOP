@@ -14,17 +14,20 @@ import taskMan.util.TimeSpan;
 import taskMan.view.ResourceView;
 
 /**
- * The Task object. A task will have an ID, a description, an estimated duration, 
- * acceptable deviation and a status. Also it will be possible to set the begin and end time
- * once the project is finished or failed. There is also the extra time that is determined by
- * the alternative.
+ * The Task object. A task always has a description, a state, a link to the
+ * resource manager, an estimated duration, an acceptable deviation to this
+ * duration and a map of required resources mapping abstract resource types to
+ * their required quantity. A task can replace a failed task. Tasks can also
+ * serve as prerequisites to other tasks. Before a task can start, it should be
+ * planned first. Information related to the planning (such a time related task
+ * details) is kept in a Planning object.
  * 
- * @author	Tim Van den Broecke, Joran Van de Woestijne, Vincent Van Gestel, Eli Vangrieken
- *
+ * @author Tim Van den Broecke, Joran Van de Woestijne, Vincent Van Gestel, Eli
+ *         Vangrieken
+ * 
  */
 public class Task implements Dependant {
 
-	private final int taskID;
 	private final String description;
 
 	private Planning plan;
@@ -38,25 +41,29 @@ public class Task implements Dependant {
 	
 	private final ResourceManager resMan;
 	private Map<ResourceView,Integer> requiredResources;
-	
+
 	/**
 	 * Create a new Task.
 	 * 
-	 * @param 	taskID
-	 * 			The ID of the new Task.
-	 * @param 	taskDescription
-	 * 			The description of the new Task.
-	 * @param 	estimatedDuration
-	 * 			The estimated duration of the new Task.
-	 * @param 	acceptableDeviation
-	 * 			The acceptable deviation of the new Task.
-	 * @param	extraTime
-	 * 			The extra time offset to add to the elapsed time
-	 * @throws	IllegalArgumentException
-	 * 			if any of the parameters are invalid ( < 0 or null)
+	 * @param taskDescription
+	 *            The description of the new Task.
+	 * @param estimatedDuration
+	 *            The estimated duration of the new Task.
+	 * @param acceptableDeviation
+	 *            The acceptable deviation of the new Task.
+	 * @param resMan
+	 *            | The link to the resource manager
+	 * @param prerequisiteTasks
+	 *            | The tasks this task depends on
+	 * @param requiredResources
+	 *            | The required resource types for this task and their required
+	 *            quantity
+	 * @param alternativeFor
+	 *            | The task this task will replace
+	 * @throws IllegalArgumentException
+	 *             if any of the parameters are invalid ( < 0 or null)
 	 */
-	public Task(int taskID, 
-			String taskDescription, 
+	public Task(String taskDescription, 
 			int estimatedDuration,
 			int acceptableDeviation, 
 			ResourceManager resMan, 
@@ -64,9 +71,6 @@ public class Task implements Dependant {
 			Map<ResourceView, Integer> requiredResources, 
 			Task alternativeFor) throws IllegalArgumentException {
 		
-		if(!isValidTaskID(taskID)) {
-			throw new IllegalArgumentException("Invalid task ID");
-		}
 		if(!isValidDescription(taskDescription)) {
 			throw new IllegalArgumentException("Invalid description");
 		}
@@ -91,11 +95,8 @@ public class Task implements Dependant {
 		if(!resMan.isValidRequiredResources(requiredResources)) {
 			throw new IllegalArgumentException("Very bad required resources");
 		}
-		this.taskID = taskID;
 		this.description = taskDescription;
 		this.plan = new Planning(estimatedDuration, acceptableDeviation);
-//		this.estimatedDuration = new TimeSpan(estimatedDuration);
-//		this.acceptableDeviation = acceptableDeviation;
 		this.resMan = resMan;
 		this.requiredResources = new HashMap<ResourceView, Integer>();
 		this.requiredResources.putAll(requiredResources);
@@ -104,7 +105,6 @@ public class Task implements Dependant {
 
 		this.dependants = new ArrayList<Dependant>();
 		this.prerequisites = new ArrayList<Task>();
-//		this.unfinishedPrerequisites = new ArrayList<Task>();
 		
 		this.alternativeFor = alternativeFor;
 		if(alternativeFor != null) {
@@ -118,11 +118,41 @@ public class Task implements Dependant {
 		}
 		
 		removeAlternativesDependencies();
-		
 	}
 	
-	public Task(int taskID, 
-			String taskDescription, 
+	/**
+	 * Create a new Task
+	 * 
+	 * @param taskDescription
+	 *            The description of the new Task.
+	 * @param estimatedDuration
+	 *            The estimated duration of the new Task.
+	 * @param acceptableDeviation
+	 *            The acceptable deviation of the new Task.
+	 * @param resMan
+	 *            | The link to the resource manager
+	 * @param prerequisiteTasks
+	 *            | The tasks this task depends on
+	 * @param requiredResources
+	 *            | The required resource types for this task and their required
+	 *            quantity
+	 * @param alternativeFor
+	 *            | The task this task will replace
+	 * @param taskStatus
+	 *            | The new status of the task or null if the system should
+	 *            determine the status (unavailable/available)
+	 * @param startTime
+	 *            | The actual start time of the task
+	 * @param endTime
+	 *            | The actual end time of the task
+	 * @param plannedStartTime
+	 *            | The planned start time
+	 * @param plannedDevelopers
+	 *            | The assigned developers
+	 * @throws IllegalArgumentException
+	 *             | When invalid data was supplied
+	 */
+	public Task(String taskDescription, 
 			int estimatedDuration,
 			int acceptableDeviation, 
 			ResourceManager resMan, 
@@ -135,8 +165,7 @@ public class Task implements Dependant {
 			LocalDateTime plannedStartTime,
 			List<ResourceView> plannedDevelopers) throws IllegalArgumentException {
 		
-		this(	taskID, 
-				taskDescription, 
+		this(	taskDescription, 
 				estimatedDuration, 
 				acceptableDeviation, 
 				resMan, 
@@ -147,7 +176,8 @@ public class Task implements Dependant {
 			throw new IllegalArgumentException("Very bad taskStatus");
 		}
 		if(taskStatus != null) {
-			plan(plannedStartTime);
+//			plan(plannedStartTime);
+			plan.setPlannedBeginTime(plannedStartTime);
 			if(!planDevelopers(plannedDevelopers)) {
 				throw new IllegalArgumentException("Very bad developers, very bad! ## dit is een zéér gaye fout");
 			}
@@ -169,6 +199,14 @@ public class Task implements Dependant {
 		}
 	}
 
+	/**
+	 * Register a new dependant to the current task through the state of the
+	 * task
+	 * 
+	 * @param t
+	 *            | The new dependant
+	 * @return true if the dependant was added
+	 */
 	public boolean register(Dependant t) {
 		if(!isValidDependant(t)) {
 			return false;
@@ -176,6 +214,12 @@ public class Task implements Dependant {
 		return state.register(t);
 	}
 	
+	/**
+	 * Add a dependant to the current task
+	 * 
+	 * @param d
+	 *            | The new dependant
+	 */
 	public void addDependant(Dependant d) {
 		dependants.add(d);
 	}
@@ -195,6 +239,13 @@ public class Task implements Dependant {
 //		return true;
 //	}
 	
+	/**
+	 * Check whether the dependant is valid
+	 * 
+	 * @param t
+	 *            | The dependant to check
+	 * @return True when it is valid, false otherwise
+	 */
 	private boolean isValidDependant(Dependant t) {
 		if(t == this) {
 			return false;
@@ -205,6 +256,13 @@ public class Task implements Dependant {
 		return true;
 	}
 
+	/**
+	 * Notify the dependants of this task that this task has changed. If this
+	 * task is an alternative for another task then this will let the
+	 * alternative know to do the same
+	 * 
+	 * @return
+	 */
 	public boolean notifyDependants() {
 		for(Dependant t : dependants) {
 			t.updateDependency(this);
@@ -250,6 +308,15 @@ public class Task implements Dependant {
 		return state.isFinished();
 	}
 	
+	/**
+	 * Check if this task has a finished endpoint (this task has finished or if
+	 * it has failed, a replacement has finished). This check will happen
+	 * recursively over the possible alternatives until a finished alternative
+	 * is found (or no finished alternative exists)
+	 * 
+	 * @return True if the chain of alternatives starting from this task has
+	 *         finished
+	 */
 	public boolean hasFinishedEndpoint() {
 		if(isFinished()) {
 			return true;
@@ -271,6 +338,11 @@ public class Task implements Dependant {
 		return state.isFailed();
 	}
 	
+	/**
+	 * Check whether or not this task is eligible to be replaced by another
+	 * 
+	 * @return True when this task can be replaced by another
+	 */
 	private boolean canBeReplaced() {
 		if(!isFailed()) {
 			return false;
@@ -325,7 +397,7 @@ public class Task implements Dependant {
 	 * @return	time spent on this task in working time
 	 * @throws 	IllegalArgumentException 
 	 * 			When the start time of the task is after the time given.
-	 */ //TODO geeft TimeSpan object terug, ça marche?
+	 */
 	public TimeSpan getTimeSpent(LocalDateTime currentTime) {
 		if(!hasEnded() && !isExecuting()){
 			return new TimeSpan(0);
@@ -351,23 +423,20 @@ public class Task implements Dependant {
 
 	}
 
-//	/**
-//	 * Assumes the task is concluded (hasEnded() == true) and returns the time
-//	 * in working minutes that was spent on this task.
-//	 * 
-//	 * @return 	time elapsed between the start time and end time of the task.
-//	 * 			
-//	 * @throws 	IllegalStateException 
-//	 * 			whenever the end time is not yet determined
-//	 */ //TODO moet eigenlijk niet bestaan
-//	public TimeSpan getTimeSpent() {
-//		return getTimeSpent(endTime);
-//	}
-	
+	/**
+	 * Returns the planned start time of the Task.
+	 * 
+	 * @return	The planned start time of the Task.
+	 */
 	public LocalDateTime getPlannedBeginTime() {
 		return plan.getPlannedBeginTime();
 	}
 	
+	/**
+	 * Returns the planned end time of the Task.
+	 * 
+	 * @return	The planned end time of the Task.
+	 */
 	public LocalDateTime getPlannedEndTime() {
 		return plan.getPlannedEndTime();
 	}
@@ -439,14 +508,30 @@ public class Task implements Dependant {
 		return plan.getAcceptableDeviation();
 	}
 	
+	/**
+	 * Return the alternative this task replaces
+	 * @return the task this task is an alternative for
+	 */
 	public Task getAlternativeFor() {
 		return alternativeFor;
 	}
 	
+	/**
+	 * Return the task which replaces this one
+	 * 
+	 * @return the alternative for this task
+	 */
 	public Task getReplacement() {
 		return replacement;
 	}
 
+	/**
+	 * Get the longest possible duration that a series of tasks (this one and
+	 * its dependants) could require to finish (estimated)
+	 * 
+	 * @return the longest possible duration as a TimeSpan for this task and its
+	 *         dependants to finish (estimated)
+	 */
 	public TimeSpan getMaxDelayChain() {
 		TimeSpan longest = getEstimatedDuration();
 		TimeSpan candidate;
@@ -470,18 +555,14 @@ public class Task implements Dependant {
 	}
 	
 	public List<Task> getPrerequisites() {
-//		ArrayList<Task> allPrerequisites = new ArrayList<Task>();
-//		for(Task t : prerequisites) {
-//			allPrerequisites.add(t);
-//			allPrerequisites.addAll(t.getTaskPrerequisites());
-//		}
-//		if(alternativeFor != null) {
-//			allPrerequisites.add(alternativeFor);
-//		}
-//		return allPrerequisites
 		return prerequisites;
 	}
 	
+	/**
+	 * Return a list of all the dependants of this task
+	 * 
+	 * @return a list of all the dependants of this task
+	 */
 	public List<Dependant> getDependants() {
 		return dependants;
 	}
@@ -497,19 +578,8 @@ public class Task implements Dependant {
 	}
 
 	/**
-	 * Returns the TaskID of the this Task.
-	 * 
-	 * @return	The ID of this Task.
-	 */
-	public int getID() { 
-		return taskID; 
-	}
-
-	/**
 	 * End the task in a Finished state
 	 * 
-	 * @param 	beginTime
-	 * 			The new begin time of the Task.
 	 * @param 	endTime
 	 * 			The new end time of the Task.
 	 * @return	True if and only if the updates succeeds.
@@ -521,8 +591,6 @@ public class Task implements Dependant {
 	/**
 	 * End the task in a Failed state
 	 * 
-	 * @param 	beginTime
-	 * 			The new begin time of the Task.
 	 * @param 	endTime
 	 * 			The new end time of the Task.
 	 * @return	True if and only if the updates succeeds.
@@ -531,11 +599,24 @@ public class Task implements Dependant {
 		return state.fail(endTime);
 	}
 	
-	
+	/**
+	 * Ask the state to put this task in an executing state
+	 * 
+	 * @param startTime
+	 *            | The actual start time of the task
+	 * @return True if this task is now executing
+	 */
 	public boolean execute(LocalDateTime startTime) {
 		return state.execute(startTime);
 	}
 	
+	/**
+	 * Replace this task with another one
+	 * 
+	 * @param t
+	 *            | The alternative for this task
+	 * @return True if the replacement is set
+	 */
 	public boolean replaceWith(Task t) {
 		if(!canBeReplaced()) {
 			return false;
@@ -544,6 +625,12 @@ public class Task implements Dependant {
 		return true;
 	}
 
+	/**
+	 * Set the state of this task
+	 * 
+	 * @param newStatus
+	 *            | the new state
+	 */
 	public void setTaskStatus(TaskStatus newStatus) {
 		this.state = newStatus;
 	}
@@ -557,17 +644,6 @@ public class Task implements Dependant {
 	 */
 	private boolean isValidDeviation(int deviation) {
 		return deviation >= 0;
-	}
-	
-	/**
-	 * Checks whether the taskID is a valid one.
-	 * 
-	 * @param 	taskID
-	 * 			The taskID to check.
-	 * @return	True if taskID >= 0
-	 */
-	private boolean isValidTaskID(int taskID){
-		return taskID >= 0;
 	}
 	
 	/**
@@ -591,7 +667,14 @@ public class Task implements Dependant {
 	private boolean isValidDuration(int duration){
 		return duration > 0;
 	}
-	
+
+	/**
+	 * Check whether the status is a valid one
+	 * 
+	 * @param status
+	 *            | The status to check
+	 * @return True when the status is recognized
+	 */
 	private boolean isValidTaskStatus(String status) {
 		if(    !status.equalsIgnoreCase("finished")
 			&& !status.equalsIgnoreCase("failed")
@@ -604,8 +687,6 @@ public class Task implements Dependant {
 	/**
 	 * Checks whether the given prerequisites are valid for the given Task.
 	 * 
-	 * @param 	task
-	 * 			The given Task.
 	 * @param 	prerequisites
 	 * 			The prerequisites to check.
 	 * @return	True if and only the prerequisites are a valid.
@@ -625,7 +706,14 @@ public class Task implements Dependant {
 		}
 		return true;
 	}
-	
+
+	/**
+	 * Checks whether the given alternative is valid for the given Task.
+	 * 
+	 * @param altTask
+	 *            The alternative to check.
+	 * @return True if and only the alternative are a valid.
+	 */
 	private boolean isValidAlternative(Task altTask) {
 		if(altTask == null) {
 			return true;
@@ -642,6 +730,13 @@ public class Task implements Dependant {
 		return true;
 	}
 	
+	/**
+	 * Checks whether the given resource manager is valid for the given Task.
+	 * 
+	 * @param resMan
+	 *            | The resource manager to check
+	 * @return True when the resource manager is valid
+	 */
 	private boolean isValidResourceManager(ResourceManager resMan) {
 		if(resMan == null) {
 			return false;
@@ -649,70 +744,27 @@ public class Task implements Dependant {
 		return true;
 	}
 	
-//	/**
-//	 * Returns whether the current Task is on time, depending on the estimated duration
-//	 * 
-//	 * @return	True if the Task is on time.
-//	 * 			False if the current date false after beginTime + EstimatedDur (in working minutes)
-//	 */
-//	public boolean isOnTime(LocalDateTime currentTime){
-//		if(beginTime == null) {
+	public boolean plan(LocalDateTime startTime, List<ResourceView> concRes) {
+//		if(!resMan.hasActiveReservations(this, requiredResources)) { 
+	// TODO bij init bestaan de reservaties nog niet (task moet bestaan voor reservatie kan bestaan)
 //			return false;
 //		}
-//		TimeSpan acceptableSpan = getEstimatedDuration();
-//		LocalDateTime acceptableEndDate = TimeSpan.addSpanToLDT(beginTime, acceptableSpan);
-//		
-//		if(hasEnded()) {
-//			return !endTime.isAfter(acceptableEndDate);
-//		}
-//		
-//		return !currentTime.isAfter(acceptableEndDate);
-//	}
-//
-//	/**
-//	 * Returns whether the current is unacceptably overdue, depending on the estimated
-//	 * duration and acceptable deviation of the task.
-//	 * 
-//	 * @return	True if the project is overtime beyond the deviation.
-//	 * 			False otherwise.
-//	 */
-//	public boolean isUnacceptableOverdue(LocalDateTime currentTime) {
-//		if(beginTime == null) {
-//			return true;
-//		}
-//		TimeSpan acceptableSpan = estimatedDuration.getAcceptableSpan(getAcceptableDeviation());
-//		LocalDateTime acceptableEndDate = TimeSpan.addSpanToLDT(beginTime, acceptableSpan);
-//		
-//		if(hasEnded()) {
-//			return endTime.isAfter(acceptableEndDate);
-//		}
-//		
-//		return currentTime.isAfter(acceptableEndDate);
-//	}
-//
-//	/**
-//	 * Returns the percentage of overdueness of the task, depending on the 
-//	 * estimated duration of the task. Returns 0 if the task
-//	 * is well on time.
-//	 * 
-//	 * @return	The percentage of overdue.
-//	 */
-//	public int getOverTimePercentage(LocalDateTime currentTime) {
-//		if(isOnTime(currentTime)) {
-//			return 0;
-//		}
-//		int overdue = getTimeSpent(currentTime).getDifferenceMinute(estimatedDuration);
-//		return ( overdue / estimatedDuration.getSpanMinutes() ) * 100;
-//	}
-	
-	public boolean plan(LocalDateTime startTime) {
-//		if(!resMan.hasActiveReservations(this, requiredResources)) { // TODO bij init bestaan de reservaties nog niet (task moet bestaan voor reservatie kan bestaan)
-//			return false;
-//		}
-		plan.setPlannedBeginTime(startTime);
+		if(!plan.setPlannedBeginTime(startTime)) {
+			return false;
+		}
+		if(!resMan.reserve(concRes, this, startTime, plan.getPlannedEndTime())) {
+			return false;
+		}
 		return state.makeAvailable();
 	}
 	
+	/**
+	 * Assign a list of developers to this task
+	 * 
+	 * @param plannedDevelopers
+	 *            | The developers to add
+	 * @return True when the developers were successfully added
+	 */
 	public boolean planDevelopers(List<ResourceView> plannedDevelopers) {
 		return plan.planDevelopers(plannedDevelopers);
 	}
@@ -729,25 +781,45 @@ public class Task implements Dependant {
 		return resMan.getPossibleStartingTimes(this,concRes,amount);
 	}
 	
+	/**
+	 * Retrieve a map of the task's required resources. This map will map an
+	 * abstract resource type on the quantity required of that resource.
+	 * 
+	 * @return a map containing the required resources and their respective
+	 *         required quantities
+	 */
 	public Map<ResourceView,Integer> getRequiredResources(){
 		Map<ResourceView,Integer> reqRes = new HashMap<ResourceView,Integer>();
 		reqRes.putAll(requiredResources);
 		return reqRes;
 	}
 	
-//	public List<ResourceView> getPossibleResourceInstances(ResourceView resourceType){
-//		return resMan.getPossibleResourceInstances(resourceType);
-//	}
-
+	/**
+	 * Remove all reservations of this task that are still
+	 * scheduled to happen. This method will also free up reserved resources by
+	 * said task if the reservation is still ongoing.
+	 * 
+	 * @param currentTime
+	 *            | The current time
+	 * @return True if the operation was successful, false otherwise
+	 */
 	public boolean flushFutureReservations(LocalDateTime currentTime) {
 		return resMan.flushFutureReservations(this, currentTime);
 	}
 
-	public boolean reserve(ResourceView resource, LocalDateTime startTime,
-			LocalDateTime endTime) {
-		return resMan.reserve(resource, this, startTime, endTime);
-	}
+//	public boolean reserve(ResourceView resource, LocalDateTime startTime,
+//			LocalDateTime endTime) {
+//		return resMan.reserve(resource, this, startTime, endTime);
+//	}
 	
+	/**
+	 * Check whether or not this task has a specific developer assigned to this
+	 * task
+	 * 
+	 * @param user
+	 *            | The developer to check
+	 * @return True if the given developer is assigned to this task
+	 */
 	public boolean hasDeveloper(ResourceView user){
 		for(ResourceView dev : plan.getPlannedDevelopers()){
 			if (dev.equals(user)){
@@ -757,6 +829,12 @@ public class Task implements Dependant {
 		return false;
 	}
 	
+	/**
+	 * Return a list of the developers planned to work on this task
+	 * 
+	 * @return an immutable list of developers (wrapped in views) planned to
+	 *         work on this task
+	 */
 	public List<ResourceView> getPlannedDevelopers(){
 		return plan.getPlannedDevelopers();
 	}

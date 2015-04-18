@@ -157,18 +157,18 @@ public class ResourceManager {
 	}
 	
 	/**
-	 * Get the first user found with a given name
+	 * Get the user who corresponds to the given user
 	 * 
-	 * @param username
-	 *            | The name of the user
-	 * @return The first user in the user list that has the given name
-	 */ // TODO wat als er meerdere users zijn met dezelfde naam?
-	public User getUser(String username) {
-		if(username == null) {
+	 * @param newUser
+	 *            | The user
+	 * @return the user who corresponds to the given user
+	 */
+	public User getUser(ResourceView newUser) {
+		if(newUser == null) {
 			return null;
 		}
 		for(User user : userList) {
-			if(user.getName().equalsIgnoreCase(username)) {
+			if(newUser.hasAsResource(user)) {
 				return user;
 			}
 		}
@@ -176,12 +176,17 @@ public class ResourceManager {
 	}
 	
 	/**
-	 * Find the project manager (the user with admin as a username)
+	 * Find the project manager
 	 * 
 	 * @return the project manager (default user)
-	 */ // TODO deze methode is verre van veilig (wat als er meerdere admins zijn, wat als een developer de naam admin heeft?)
+	 */
 	public User getDefaultUser() {
-		return getUser("admin");
+		for(User user : userList) {
+			if(user.hasAsCredential(UserCredential.PROJECTMANAGER)) {
+				return user;
+			}
+		}
+		return null;
 	}
 	
 	/**
@@ -232,36 +237,83 @@ public class ResourceManager {
 	 * @return True if the new reservation was made and added to the system
 	 */
 	public boolean reserve(
-			ResourceView resource, 
+			List<ResourceView> resources, 
 			Task reservingTask, 
 			LocalDateTime startTime, 
 			LocalDateTime endTime
 			) {
 		
-		if(resource == null || reservingTask == null ||
+		if(resources == null || reservingTask == null ||
 				startTime == null || endTime == null) { // || currentTime == null
 			return false;
 		}
 		if(endTime.isBefore(startTime)) {
 			return false;
 		}
-		ConcreteResource cr = unWrapConcreteResourceView(resource);
-		if(cr == null) {
+		
+		//TODO check of task juiste hoeveelheid van juiste dingen reserveert
+		
+		List<Reservation> newReservations = new ArrayList<Reservation>();
+		
+		boolean error = false;
+		for(ResourceView resource : resources) {
+			ConcreteResource toReserve = null;
+			ResourcePrototype r = unWrapResourcePrototypeView(resource);
+			if(r != null) {
+				toReserve = pickUnreservedResource(r, startTime, endTime);
+			} else {
+				ConcreteResource cr = unWrapConcreteResourceView(resource);
+				if(cr != null) {
+					toReserve = cr;
+				}
+			}
+			if(toReserve == null || canReserve(toReserve,startTime,endTime)) {
+				error = true;
+				break;
+			} else {
+				newReservations.add(new Reservation(toReserve, reservingTask, startTime, endTime));
+			}
+		}
+		if(error) {
 			return false;
 		}
-		// Reservation is no longer active
-		if(reservingTask.hasEnded()) { //currentTime.isAfter(endTime) || 
-			return allReservations.add(new Reservation(cr, reservingTask, startTime, endTime));
+		
+		if(!reservingTask.hasEnded()) {
+			activeReservations.addAll(newReservations);
 		}
-		// Active task
-		else {
-			Reservation newReservation = new Reservation(cr, reservingTask, startTime, endTime);
-			boolean firstAddSuccess = activeReservations.add(newReservation);
-			if(!firstAddSuccess) { return false; }
-			boolean secondAddSuccess = allReservations.add(newReservation);
-			if(!secondAddSuccess) { activeReservations.remove(newReservation); return false; }
-			else return true;
+		allReservations.addAll(newReservations);
+		
+		return true;
+	}
+	
+	private boolean canReserve(ConcreteResource resource, LocalDateTime start, LocalDateTime end) {
+		for(Reservation reservation : activeReservations) {
+			if(reservation.getReservedResource().equals(resource)) {
+				if(reservation.overlaps(start,end)) {
+					return false;
+				}
+			}
 		}
+		return true;
+	}
+	
+	private ConcreteResource pickUnreservedResource(ResourcePrototype rp, LocalDateTime start, LocalDateTime end) {
+		List<ConcreteResource> options = getPoolOf(rp).getConcreteResourceList();
+		for(ConcreteResource cr : options) {
+			if(canReserve(cr, start, end)) {
+				return cr;
+			}
+		}
+		return null;
+	}
+	
+	private ResourcePool getPoolOf(ResourcePrototype rp) {
+		for(ResourcePool pool : resPools) {
+			if(pool.hasAsPrototype(rp)) {
+				return pool;
+			}
+		}
+		return null;
 	}
 	
 //	public ImmutableList<ResourceView> getPossibleResourceInstances(ResourceView resourceType){
@@ -335,11 +387,7 @@ public class ResourceManager {
 	 */
 	public List<ResourceView> getConcreteResourcesForPrototype(ResourceView resourcePrototype) {
 		ResourcePrototype rprot = unWrapResourcePrototypeView(resourcePrototype);
-		for(ResourcePool pool : resPools) {
-			if (pool.hasAsPrototype(rprot)) {
-				return pool.getConcreteResourceViewList();
-			}
-		}
+		getPoolOf(rprot).getConcreteResourceViewList();
 		return null;
 	}
 	
@@ -407,14 +455,14 @@ public class ResourceManager {
 			if(i <= 0) {
 				return false;
 			}
-			for(ResourcePool pool : resPools) {
-				if(pool.hasAsPrototype(rp)) {
-					if(i > pool.size()) {
+//			for(ResourcePool pool : resPools) {
+//				if(pool.hasAsPrototype(rp)) {
+					if(i > getPoolOf(rp).size()) {
 						return false;
 					}
-					break;
-				}
-			}
+//					break;
+//				}
+//			}
 		}
 		return true;
 	}
@@ -463,21 +511,26 @@ public class ResourceManager {
 	 */
 	// TODO deze nieuwe reqs zouden ook aan alle concrete resources van het
 	// prototype moeten toegevoegd worden
-	public boolean addRequirementsToResource(List<ResourceView> reqToAdd,
-			ResourceView prototype) {
-		for (ResourcePool pool : resPools) {
-			ResourcePrototype prot = pool.getPrototype();
-			if (prototype.hasAsResource(prot)) {
-				for (ResourceView req : reqToAdd) {
-					ResourcePrototype unwrapReq = unWrapResourcePrototypeView(req);
-					if (unwrapReq == null) {
-						return false;
-					} else
-						prot.addRequiredResource(unwrapReq);
-				}
-				return true;
+//TODO verwijder activeResources wanneer de task end
+	public boolean addRequirementsToResource(List<ResourceView> reqToAdd, ResourceView prototype){
+		ResourcePrototype rprot = unWrapResourcePrototypeView(prototype);
+		if(rprot == null) {
+			return false;
+		}
+//		for(ResourcePool pool : resPools) {
+//			ResourcePrototype prot = pool.getPrototype();
+//			if (prototype.hasAsResource(prot)) {
+		for (ResourceView req : reqToAdd ){
+			ResourcePrototype unwrapReq = unWrapResourcePrototypeView(req);
+			if (unwrapReq == null){
+				return false;
+			} else { 
+				rprot.addRequiredResource(unwrapReq);
 			}
 		}
+//				return true;
+//			}
+//		}
 		return false;
 	}
 	
@@ -493,21 +546,25 @@ public class ResourceManager {
 	 */
 	// TODO deze nieuwe cons zouden ook aan alle concrete resources van het
 	// prototype moeten toegevoegd worden
-	public boolean addConflictsToResource(List<ResourceView> conToAdd,
-			ResourceView prototype) {
-		for (ResourcePool pool : resPools) {
-			ResourcePrototype prot = pool.getPrototype();
-			if (prototype.hasAsResource(prot)) {
-				for (ResourceView conflict : conToAdd) {
-					ResourcePrototype unwrapCon = unWrapResourcePrototypeView(conflict);
-					if (unwrapCon == null) {
-						return false;
-					}
-					prot.addConflictingResource(unwrapCon);
-				}
-				return true;
+	public boolean addConflictsToResource(List<ResourceView> conToAdd, ResourceView prototype){
+		ResourcePrototype rprot = unWrapResourcePrototypeView(prototype);
+		if(rprot == null) {
+			return false;
+		}
+//		for(ResourcePool pool : resPools) {
+//			ResourcePrototype prot = pool.getPrototype();
+//			if (prototype.hasAsResource(prot)) {
+		for (ResourceView req : conToAdd ){
+			ResourcePrototype unwrapReq = unWrapResourcePrototypeView(req);
+			if (unwrapReq == null){
+				return false;
+			} else { 
+				rprot.addConflictingResource(unwrapReq);
 			}
 		}
+//				return true;
+//			}
+//		}
 		return false;
 	}
 	

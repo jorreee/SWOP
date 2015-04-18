@@ -137,18 +137,18 @@ public class Facade implements IFacade {
 	}
 
 	@Override
-	public String getCurrentUsername() {
+	public ResourceView getCurrentUser() {
 		return taskMan.getCurrentUserName();
 	}
 
 	@Override
-	public List<ResourceView> getPossibleUsernames() {
+	public List<ResourceView> getPossibleUsers() {
 		return taskMan.getPossibleUsernames();
 	}
 
 	@Override
-	public boolean changeToUser(String name) {
-		return taskMan.changeToUser(name);
+	public boolean changeToUser(ResourceView user) {
+		return taskMan.changeToUser(user);
 	}
 
 	@Override
@@ -168,21 +168,21 @@ public class Facade implements IFacade {
 		return taskMan.createDeveloper(name);
 	}
 
-	@Override
-	public boolean reserveResource(ResourceView resource, ProjectView project, TaskView task) {
-		return taskMan.reserveResource(resource, project, task);
-	}
+//	@Override
+//	public boolean reserveResource(ResourceView resource, ProjectView project, TaskView task) {
+//		return taskMan.reserveResource(resource, project, task);
+//	}
 	
-	@Override
-	public boolean reserveResource(ResourceView resource, ProjectView project, TaskView task, LocalDateTime startTime, LocalDateTime endTime) {
-		return taskMan.reserveResource(resource, project, task, startTime, endTime);
-	}
+//	@Override
+//	public boolean reserveResource(ResourceView resource, ProjectView project, TaskView task, LocalDateTime startTime, LocalDateTime endTime) {
+//		return taskMan.reserveResource(resource, project, task, startTime, endTime);
+//	}
 
-	@Override
-	public List<LocalDateTime> getPossibleTaskStartingTimes(ProjectView project, TaskView task,
-			int amount) {
-		return taskMan.getPossibleTaskStartingTimes(project,task,amount);
-	}
+//	@Override
+//	public List<LocalDateTime> getPossibleTaskStartingTimes(ProjectView project, TaskView task,
+//			int amount) {
+//		return taskMan.getPossibleTaskStartingTimes(project,task,amount);
+//	}
 
 	@Override
 	public List<ResourceView> getDeveloperList() {
@@ -215,8 +215,8 @@ public class Facade implements IFacade {
 
 	@Override
 	public boolean planTask(ProjectView project, TaskView task,
-			LocalDateTime plannedStartTime) {
-		return taskMan.planTask(project, task, plannedStartTime);
+			LocalDateTime plannedStartTime, List<ResourceView> concRes) {
+		return taskMan.planTask(project, task, plannedStartTime, concRes);
 	}
 
 	@Override

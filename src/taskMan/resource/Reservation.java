@@ -82,5 +82,18 @@ public class Reservation {
 		return endTime;
 	}
 	
+	public boolean overlaps(LocalDateTime start, LocalDateTime end) {
+		//             ###############
+		//     nnnnnnn
+		if(!end.isAfter(startTime)) {
+			return false;
+		}
+		// ##########
+		//			  nnnnnnnnnn
+		if(!start.isBefore(endTime)) {
+			return false;
+		}
+		return true;		
+	}
 	
 }
