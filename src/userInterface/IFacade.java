@@ -49,7 +49,7 @@ public interface IFacade {
 
 	public List<ProjectView> getProjects();
 
-	public boolean storeInMemento();
+	public void storeInMemento();
 
 	public boolean revertFromMemento();
 

@@ -10,7 +10,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-
+/**
+ * A TaskManInitFileChecker will read data from an input stream. The incoming
+ * data should be formatted as a TMAN file. The file checker will then
+ * instantiate several lists containing the parsed data required to initiate the
+ * system.
+ * 
+ * @author Tim Van Den Broecke, Joran Van de Woestijne, Vincent Van Gestel and
+ *         Eli Vangrieken
+ */
 public class TaskManInitFileChecker extends StreamTokenizer {
 	
 	  DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");

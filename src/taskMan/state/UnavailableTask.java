@@ -5,10 +5,22 @@ import java.time.LocalDateTime;
 import taskMan.Task;
 import taskMan.util.Dependant;
 
+/**
+ * This class represents the unavailable state of a task
+ * 
+ * @author Tim Van Den Broecke, Joran Van de Woestijne, Vincent Van Gestel and
+ *         Eli Vangrieken
+ */
 public class UnavailableTask implements TaskStatus {
 
 	private Task task;
 
+	/**
+	 * Construct a new unavailable status
+	 * 
+	 * @param t
+	 *            | The task that this status belongs to
+	 */
 	public UnavailableTask(Task t) {
 		task = t;
 	}

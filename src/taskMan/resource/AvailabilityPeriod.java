@@ -2,51 +2,74 @@ package taskMan.resource;
 
 import java.time.LocalTime;
 
+/**
+ * The AvailabilityPeriod of a resource indicates when that resource is available during the day.
+ *  
+ * @author Tim Van Den Broecke, Joran Van de Woestijne, Vincent Van Gestel and
+ *         Eli Vangrieken
+ */
 public class AvailabilityPeriod {
 	private LocalTime startTime;
 	private LocalTime endTime;
-
+	
+	/**
+	 * Construct a new Availability Period that begins with the start time and
+	 * ends with the end time.
+	 * 
+	 * @param startTime
+	 *            | The earliest moment in the day that the resource should be
+	 *            available
+	 * @param endTime
+	 *            | The moment of the day when the resource ceases to be
+	 *            available
+	 */
 	public AvailabilityPeriod(LocalTime startTime, LocalTime endTime) {
 		this.startTime = startTime;
 		this.endTime = endTime;
 	}
-
+	
+	/**
+	 * Return the time of day when the resource should be available
+	 * 
+	 * @return the time of day when the resource should be available
+	 */
 	public LocalTime getStartTime() { 
 		return startTime;
 	}
 
+	/**
+	 * Return the time of day when the resource should cease to be available
+	 * 
+	 * @return the time of day when the resource cease to be available
+	 */
 	public LocalTime getEndTime() { 
 		return endTime;
 	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((endTime == null) ? 0 : endTime.hashCode());
-		result = prime * result
-				+ ((startTime == null) ? 0 : startTime.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
+	
+	/**
+	 * Check whether or not this availability period is the same as another
+	 * 
+	 * @param otherPeriod
+	 *            | The other period to compare with
+	 * @return True is the other period has the same start and end timestamps,
+	 *         false otherwise
+	 */
+	public boolean equals(AvailabilityPeriod otherPeriod) {
+		if (this == otherPeriod)
 			return true;
-		if (obj == null)
+		if (otherPeriod == null)
 			return false;
-		if (getClass() != obj.getClass())
+		if (getClass() != otherPeriod.getClass())
 			return false;
-		AvailabilityPeriod other = (AvailabilityPeriod) obj;
 		if (endTime == null) {
-			if (other.endTime != null)
+			if (otherPeriod.endTime != null)
 				return false;
-		} else if (!endTime.equals(other.endTime))
+		} else if (!endTime.equals(otherPeriod.endTime))
 			return false;
 		if (startTime == null) {
-			if (other.startTime != null)
+			if (otherPeriod.startTime != null)
 				return false;
-		} else if (!startTime.equals(other.startTime))
+		} else if (!startTime.equals(otherPeriod.startTime))
 			return false;
 		return true;
 	}

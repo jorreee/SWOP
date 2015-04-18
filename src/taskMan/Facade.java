@@ -122,8 +122,8 @@ public class Facade implements IFacade {
 	}
 
 	@Override
-	public boolean storeInMemento() {
-		return caretaker.storeInMemento();
+	public void storeInMemento() {
+		caretaker.storeInMemento();
 	}
 
 	@Override
