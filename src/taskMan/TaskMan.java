@@ -312,14 +312,23 @@ public class TaskMan {
 		return views.build();
 	}
 
-	// TODO omzetten naar resourceView
-	public String getCurrentUserName() {
-		return currentUser.getName();
+	/**
+	 * Return a view on the current user in the system
+	 * @return
+	 */
+	public ResourceView getCurrentUserName() {
+		return new ResourceView(currentUser);
 	}
 
-	// TODO omzetten naar resourceView
-	public boolean changeToUser(String name) {
-		User user = resMan.getUser(name);
+	/**
+	 * Change the current logged in user to another one
+	 * 
+	 * @param newUser
+	 *            | The new user to log in
+	 * @return True if the new user was successfully logged in
+	 */
+	public boolean changeToUser(ResourceView newUser) {
+		User user = resMan.getUser(newUser);
 		if (user == null) {
 			return false;
 		} else {

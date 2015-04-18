@@ -17,12 +17,15 @@ public class ChangeUserRequest extends Request{
 	public String execute() {
 		while(true) {
 			// Display current user
-			System.out.println("Currently logged in as " + facade.getCurrentUsername());
+			System.out.println("Currently logged in as " + facade.getCurrentUser().getName());
 			// Display different options
-			List<ResourceView> possibleUsers = facade.getPossibleUsernames();
+			List<ResourceView> possibleUsers = facade.getPossibleUsers();
 
-			for(ResourceView user : possibleUsers)
-				System.out.println("Possible user: " + user.getName());
+			int i = 0;
+			for(ResourceView user : possibleUsers) {
+				System.out.println("(" + i + ") Possible user: " + user.getName());
+				i++;
+			}
 			
 			// Ask user for username to log in as
 			System.out.println("Select a user (type quit to exit)");
@@ -33,11 +36,11 @@ public class ChangeUserRequest extends Request{
 				if(userInput.equalsIgnoreCase("quit"))
 					return quit();
 				
-				if(facade.changeToUser(userInput)) // Valid User
-					return "Now logged in as " + facade.getCurrentUsername();
+				if(facade.changeToUser(possibleUsers.get(Integer.valueOf(userInput)))) // Valid User
+					return "Now logged in as " + facade.getCurrentUser().getName();
 				else // Invalid User
 					System.out.println("Invalid username, try again");
-			} catch(IOException e) {
+			} catch(Exception e) {
 				System.out.println("Invalid username, try again");
 			}
 		}

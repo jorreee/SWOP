@@ -54,7 +54,7 @@ public class Main {
 		while(true) {
 			// Display System status
 			System.out.println("Current System time: " + facade.getCurrentTime().format(dateTimeFormatter) +
-					", logged in as: " + facade.getCurrentUsername());
+					", logged in as: " + facade.getCurrentUser().getName());
 			// Ask user for input
 			System.out.println("TaskMan instruction? (h for help)");
 			// Parse user input
@@ -141,7 +141,15 @@ public class Main {
 			}
 
 			// Init current user
-			success = facade.changeToUser(fileChecker.getCurrentUser());
+			String username = fileChecker.getCurrentUser();
+			ResourceView currentUser = null;
+			for(ResourceView user : facade.getPossibleUsers()) {
+				if(user.getName().equalsIgnoreCase(username)) {
+					currentUser = user;
+					break;
+				}
+			}
+			success = facade.changeToUser(currentUser);
 			if(!success) { failInit("changing the current user!"); }
 			// --------------------------------
 

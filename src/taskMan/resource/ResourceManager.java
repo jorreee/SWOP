@@ -157,18 +157,18 @@ public class ResourceManager {
 	}
 	
 	/**
-	 * Get the first user found with a given name
+	 * Get the user who corresponds to the given user
 	 * 
-	 * @param username
-	 *            | The name of the user
-	 * @return The first user in the user list that has the given name
-	 */ // TODO wat als er meerdere users zijn met dezelfde naam?
-	public User getUser(String username) {
-		if(username == null) {
+	 * @param newUser
+	 *            | The user
+	 * @return the user who corresponds to the given user
+	 */
+	public User getUser(ResourceView newUser) {
+		if(newUser == null) {
 			return null;
 		}
 		for(User user : userList) {
-			if(user.getName().equalsIgnoreCase(username)) {
+			if(newUser.hasAsResource(user)) {
 				return user;
 			}
 		}
@@ -176,12 +176,17 @@ public class ResourceManager {
 	}
 	
 	/**
-	 * Find the project manager (the user with admin as a username)
+	 * Find the project manager
 	 * 
 	 * @return the project manager (default user)
-	 */ // TODO deze methode is verre van veilig (wat als er meerdere admins zijn, wat als een developer de naam admin heeft?)
+	 */
 	public User getDefaultUser() {
-		return getUser("admin");
+		for(User user : userList) {
+			if(user.hasAsCredential(UserCredential.PROJECTMANAGER)) {
+				return user;
+			}
+		}
+		return null;
 	}
 	
 	/**

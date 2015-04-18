@@ -17,9 +17,9 @@ public interface IFacade {
 
 	public LocalDateTime getCurrentTime();
 	
-	public String getCurrentUsername();
-	public List<ResourceView> getPossibleUsernames();
-	public boolean changeToUser(String username);
+	public ResourceView getCurrentUser();
+	public List<ResourceView> getPossibleUsers();
+	public boolean changeToUser(ResourceView user);
 
 	
 	public boolean createProject(String name, String description,
