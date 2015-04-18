@@ -59,15 +59,6 @@ public class ResourcePool {
 	}
 
 
-	public Resource getConcreteResourceByIndex(int concreteResourceIndex) {
-		if(concreteResourceIndex < 0 || concreteResourceIndex > concreteResList.size()) {
-			return null;
-		}
-		return concreteResList.get(concreteResourceIndex);
-	}
-	
-
-
 	/**
 	 * Return a list of concrete resources in the pool
 	 * 

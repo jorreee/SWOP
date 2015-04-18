@@ -385,10 +385,6 @@ public class TaskTest {
 		defaultTest.getRequiredResources();
 	}
 	
-	@Test
-	public void getResourceInstancesTest(){
-		//TODO
-		defaultTest.getPossibleResourceInstances(null);
-	}
+	
 	
 }
