@@ -32,14 +32,6 @@ public class TaskView {
 		this.task = t;
 	}
 
-	@Deprecated
-	/**
-	 *	Use getDescription instead
-	 */
-	public int getID() {
-		return task.getID();
-	}
-
 	/**
 	 * Retrieve the description of the task
 	 * 
@@ -103,6 +95,12 @@ public class TaskView {
 		return !getPrerequisites().isEmpty();
 	}
 
+	/**
+	 * A method to retrieve all prerequisite tasks (wrapped in views) for this
+	 * task
+	 * 
+	 * @return an immutable list of the task prerequisites of this task
+	 */
 	public List<TaskView> getPrerequisites() {
 		ImmutableList.Builder<TaskView> taskPrereqs = ImmutableList.builder();
 		for (Task t : task.getPrerequisites()) {
@@ -110,11 +108,21 @@ public class TaskView {
 		}
 		return taskPrereqs.build();
 	}
-
+	
+	/**
+	 * Check whether or not this (failed) task is replaced by another
+	 * 
+	 * @return True when this task has a replacement, false when it has not
+	 */
 	public boolean hasReplacement() {
 		return getReplacement() != null;
 	}
 
+	/**
+	 * A method to retrieve the replacement of this (failed) task
+	 * 
+	 * @return the replacement of this task
+	 */
 	public TaskView getReplacement() {
 		Task rep = task.getReplacement();
 		if (rep == null) {
@@ -123,10 +131,20 @@ public class TaskView {
 		return new TaskView(rep);
 	}
 
+	/**
+	 * Check whether or not this task replaces another (failed) task
+	 * 
+	 * @return True when this task has an alternative, false when it hasn't
+	 */
 	public boolean isAlternative() {
 		return getAlternativeTo() != null;
 	}
 
+	/**
+	 * A method to get the (failed) task this task replaces
+	 * 
+	 * @return the task this task is an alternative to
+	 */
 	public TaskView getAlternativeTo() {
 		Task alt = task.getAlternativeFor();
 		if (alt == null) {
@@ -135,14 +153,29 @@ public class TaskView {
 		return new TaskView(alt);
 	}
 
+	/**
+	 * A method to check whether or not this task is in an available status
+	 * 
+	 * @return True if this task is available
+	 */
 	public boolean isAvailable() {
 		return task.isAvailable();
 	}
 
+	/**
+	 * A method to check whether or not this task is in an unavailable status
+	 * 
+	 * @return True if this task is unavailable
+	 */
 	public boolean isUnavailable() {
 		return task.isUnavailable();
 	}
-
+	
+	/**
+	 * A method to check whether or not this task has ended (finished or failed)
+	 * 
+	 * @return True if this task has ended
+	 */
 	public boolean hasEnded() {
 		return task.hasEnded();
 	}
@@ -223,6 +256,13 @@ public class TaskView {
 		return (overdue / task.getEstimatedDuration().getSpanMinutes()) * 100;
 	}
 
+	/**
+	 * Check whether or not this view contains a specific task
+	 * 
+	 * @param t
+	 *            | The task to check with
+	 * @return True if this view contains the given task, false otherwise
+	 */
 	public boolean hasAsTask(Task t) {
 		if (t == null || task == null) {
 			return false;
@@ -230,6 +270,13 @@ public class TaskView {
 		return task.equals(t);
 	}
 
+	/**
+	 * Retrieve a map of the task's required resources. This map will map an
+	 * abstract resource type on the quantity required of that resource.
+	 * 
+	 * @return a map containing the required resources and their respective
+	 *         required quantities
+	 */
 	public Map<ResourceView, Integer> getRequiredResources() {
 		return task.getRequiredResources();
 	}
@@ -239,11 +286,34 @@ public class TaskView {
 	// return task.getPossibleResourceInstances(resourceType);
 	// }
 
+	/**
+	 * A method to retrieve a given amount of possible starting times. A task is
+	 * possible to start when enough resources are available for the estimated
+	 * duration of the task (taking into account developer pauses and
+	 * availability periods of resources). These suggested starting times can be
+	 * used by a project manager to plan the task in a specific slot.
+	 * 
+	 * @param concRes
+	 *            | A list of all the resources (possible abstract resource
+	 *            types or concrete resources) that all should be available for
+	 *            the estimated duration of the task
+	 * @param amount
+	 *            | The amount of suggestions that should be returned
+	 * @return a given amount of suggested starting times for the task to be
+	 *         planned at
+	 */
 	public List<LocalDateTime> getPossibleStartingTimes(
 			List<ResourceView> concRes, int amount) {
 		return task.getPossibleTaskStartingTimes(concRes, amount);
 	}
 
+	/**
+	 * Check whether two views are equal to each other
+	 * 
+	 * @param otherView
+	 *            | The other view to compare with
+	 * @return True if the views are identical or share the same task
+	 */
 	public boolean equals(TaskView otherView) {
 		if (this == otherView)
 			return true;
@@ -252,14 +322,32 @@ public class TaskView {
 		return otherView.hasAsTask(task);
 	}
 
+	/**
+	 * Return a list of the developers planned to work on this task
+	 * 
+	 * @return an immutable list of developers (wrapped in views) planned to
+	 *         work on this task
+	 */
 	public List<ResourceView> getPlannedDevelopers() {
 		return task.getPlannedDevelopers();
 	}
 
+	/**
+	 * A method to retrieve the planned starting time of this task
+	 * 
+	 * @return the planned starting time of this task
+	 */
 	public LocalDateTime getPlannedBeginTime() {
 		return task.getPlannedBeginTime();
 	}
 
+	/**
+	 * A method to check whether or not this task has already been planned by
+	 * the project manager
+	 * 
+	 * @return True if the task has been planned in the system, false if it
+	 *         hasn't
+	 */
 	public boolean isPlanned() {
 		return (task.getPlannedBeginTime() != null);
 	}

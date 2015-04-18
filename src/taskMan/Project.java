@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.collect.ImmutableList;
-
 import taskMan.resource.ResourceManager;
 import taskMan.state.OngoingProject;
 import taskMan.state.ProjectStatus;
@@ -19,19 +17,19 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 
 /**
- * The project class used by TaskMan. A project will always have a unique
- * identifier, a name, a description, a creation time, a due time, a status and
- * a list containing all tasks assigned to this project. A project will also
- * know if a task is another one's alternative or if a task depends on a series
- * of other tasks.
- * A project can be either ongoing or finished.
+ * The project class used by TaskMan. A project will always have a name, a
+ * description, a creation time, a due time, a status and a list containing all
+ * tasks assigned to this project. A project has the responsibility to unwrap
+ * taskViews in order for the tasks to communicate with the system. A project
+ * will finish when all its tasks are finished or have a finished alternative
+ * (in order to finish, a project must have at least one task). A project can be
+ * either ongoing or finished.
  * 
  * @author Tim Van Den Broecke, Joran Van de Woestijne, Vincent Van Gestel and
  *         Eli Vangrieken
  */
 public class Project implements Dependant {
 
-	private final int projectID;
 	private final String projectName;
 	private final String description;
 	private final LocalDateTime creationTime;
@@ -41,13 +39,10 @@ public class Project implements Dependant {
 	private ProjectStatus state;
 
 	private ArrayList<Task> taskList;
-	private int nextTaskID;
 
 	/**
 	 * Creates a new Project.
 	 * 
-	 * @param 	projectID
-	 * 			The ID of the new Project.
 	 * @param 	projectName
 	 * 			The name of the new Project.
 	 * @param 	description
@@ -59,12 +54,9 @@ public class Project implements Dependant {
 	 * @throws	IllegalArgumentException
 	 * 			Throws exception when the dueTime comes before the creationTime.
 	 */
-	public Project(int projectID, String projectName, String description,
+	public Project(String projectName, String description,
 			LocalDateTime creationTime, LocalDateTime dueTime) throws IllegalArgumentException {
 
-		if(!isValidProjectID(projectID)) {
-			throw new IllegalArgumentException("Invalid project ID");
-		}
 		if(!isValidName(projectName)) {
 			throw new IllegalArgumentException("Invalid project name");
 		}
@@ -79,36 +71,50 @@ public class Project implements Dependant {
 		this.description = description;
 		this.creationTime = creationTime;
 		this.dueTime = dueTime;
-		this.projectID = projectID;
 		
 		this.taskList = new ArrayList<Task>();
-		nextTaskID = 0;
 		
 		this.state = new OngoingProject(this);
 
 	}
-	
-	private boolean isValidProjectID(int pID) {
-		if(pID < 0) {
-			return false;
-		}
-		return true;
-	}
-	
+
+	/**
+	 * Check whether or not the given name is valid
+	 * 
+	 * @param name
+	 *            | The name to check
+	 * @return True if it is valid, false otherwise
+	 */
 	private boolean isValidName(String name) {
-		if(name  == null) {
+		if (name == null) {
 			return false;
 		}
 		return true;
 	}
-	
+
+	/**
+	 * Check whether or not the given description is valid
+	 * 
+	 * @param description
+	 *            | The description to check
+	 * @return True if it is valid, false otherwise
+	 */
 	private boolean isValidDescription(String description) {
-		if(description  == null) {
+		if (description == null) {
 			return false;
 		}
 		return true;
 	}
 	
+	/**
+	 * Check whether or not the given timestamps are valid
+	 * 
+	 * @param creationTime
+	 *            | The first timestamp
+	 * @param dueTime
+	 *            | The second timestamp
+	 * @return True if they are valid, false otherwise
+	 */
 	private boolean isValidCreationAndDueTimes(LocalDateTime creationTime, LocalDateTime dueTime) {
 		if(creationTime == null || dueTime == null) {
 			return false;
@@ -137,24 +143,32 @@ public class Project implements Dependant {
 	/**
 	 * Creates a new Task with a status of failed or finished.
 	 * 
-	 * @param 	description
-	 * 			The description of the given Task.
-	 * @param 	estimatedDuration
-	 * 			The estimated duration of the Task.
-	 * @param 	acceptableDeviation
-	 * 			The acceptable deviation of the Task.
-	 * @param 	taskStatus
-	 * 			The Status of the Task.
-	 * @param 	alternativeFor
-	 * 			The Task this new task will replace.
-	 * @param 	prerequisiteTasks
-	 * 			The prerequisites Tasks for this Task.
-	 * @param 	startTime
-	 * 			The start time of the Task.
-	 * @param 	endTime
-	 * 			The end time of the Task.
-	 * @return	True if and only the creation of a Task with a status
-	 * 			of failed or finished was successful.
+	 * @param description
+	 *            The description of the given Task.
+	 * @param estimatedDuration
+	 *            The estimated duration of the Task.
+	 * @param acceptableDeviation
+	 *            The acceptable deviation of the Task.
+	 * @param resman
+	 *            | The resource manager
+	 * @param prerequisiteTasks
+	 *            The prerequisites Tasks for this Task.
+	 * @param requiredResources
+	 *            | The required resources for the Task.
+	 * @param alternativeFor
+	 *            The Task this new task will replace.
+	 * @param taskStatus
+	 *            The Status of the Task.
+	 * @param startTime
+	 *            The start time of the Task.
+	 * @param endTime
+	 *            The end time of the Task.
+	 * @param plannedStartTime
+	 *            | The planned start time of the Task
+	 * @param plannedDevelopers
+	 *            | The assigned developers of the Task
+	 * @return True if and only the creation of a Task with a given status was
+	 *         successful.
 	 */
 	public boolean createTask(String description, 
 						int estimatedDuration, 
@@ -169,7 +183,6 @@ public class Project implements Dependant {
 						LocalDateTime plannedStartTime,
 						List<ResourceView> plannedDevelopers) {
 
-		int newTaskID = nextTaskID;
 		if(isFinished()) {
 			return false;
 		}
@@ -191,9 +204,7 @@ public class Project implements Dependant {
 		
 		try{
 			if(taskStatus != null) {
-				newTask = new Task(
-						newTaskID, 
-						description, 
+				newTask = new Task(description, 
 						estimatedDuration, 
 						acceptableDeviation, 
 						resMan, 
@@ -207,9 +218,7 @@ public class Project implements Dependant {
 						plannedDevelopers);
 			}
 			else {
-				newTask = new Task(
-						newTaskID, 
-						description, 
+				newTask = new Task(description, 
 						estimatedDuration, 
 						acceptableDeviation, 
 						resMan, 
@@ -225,7 +234,6 @@ public class Project implements Dependant {
 		
 		if(success) {
 			newTask.register(this);
-			nextTaskID++;
 		}
 		return success;
 	}
@@ -325,7 +333,7 @@ public class Project implements Dependant {
 	 * 
 	 * @param 	newStatus
 	 * 			The Status to change to.
-	 * @return	True if and only if the Status change was succesful.
+	 * @return	True if and only if the Status change was successful.
 	 */
 	public boolean setProjectStatus(ProjectStatus newStatus) {
 		this.state = newStatus;
@@ -364,15 +372,6 @@ public class Project implements Dependant {
 			throw new IllegalArgumentException("The endtime is already set");
 		}
 		this.endTime = endTime;
-	}
-
-	/**
-	 * Returns the ID of the Project.
-	 * 
-	 * @return	The ID of the Project.
-	 */
-	public int getID() {
-		return projectID;
 	}
 	
 	/**
@@ -500,6 +499,15 @@ public class Project implements Dependant {
 //		
 //	}
 	
+	/**
+	 * Finish a given task on a given timestamp
+	 * 
+	 * @param t
+	 *            | The task to finish
+	 * @param endTime
+	 *            | The given end time of the task
+	 * @return True if the task was finished, false otherwise
+	 */
 	public boolean setTaskFinished(TaskView t, LocalDateTime endTime) {
 		if(!isValidTaskView(t)) {
 			return false;
@@ -529,13 +537,10 @@ public class Project implements Dependant {
 	 * 
 	 * @param 	task
 	 * 			the id of the given task
-	 * @param 	startTime
-	 * 			the start time of the given task
 	 * @param 	endTime
 	 * 			the end time of the given task
 	 * @return	True if setting the task to failed was successful,
 	 * 			False if it was unsuccessful
-	 * 			False is the ID isn't a valid one
 	 * 			False if the start time is null
 	 * 			False if the start time is before creation time
 	 */
@@ -549,6 +554,15 @@ public class Project implements Dependant {
 		return unwrapTaskView(t).fail(endTime);
 	}
 	
+	/**
+	 * Start executing a given task on a given timestamp
+	 * 
+	 * @param task
+	 *            | The task to execute
+	 * @param startTime
+	 *            | The actual begin time of the task
+	 * @return True if the task started executing, false otherwise
+	 */
 	public boolean setTaskExecuting(TaskView task, LocalDateTime startTime){
 		if(!isValidTaskView(task)) {
 			return false;
@@ -657,6 +671,17 @@ public class Project implements Dependant {
 		return unwrapTaskView(task).getPossibleTaskStartingTimes(amount);
 	}
 
+	/**
+	 * Remove all reservations of a finished or failed task that are still
+	 * scheduled to happen. This method will also free up reserved resources by
+	 * said task if the reservation is still ongoing.
+	 * 
+	 * @param task
+	 *            | The ended task
+	 * @param currentTime
+	 *            | The current time
+	 * @return True if the operation was successful, false otherwise
+	 */
 	public boolean flushFutureReservations(TaskView task, LocalDateTime currentTime) {
 		Task t = unwrapTaskView(task);
 		if(t == null) {
@@ -665,6 +690,20 @@ public class Project implements Dependant {
 		return t.flushFutureReservations(currentTime);
 	}
 
+	/**
+	 * Reserve a resource for a task from a given start time to a given end time
+	 * 
+	 * @param resource
+	 *            | The resource to reserve
+	 * @param task
+	 *            | The reserving task
+	 * @param startTime
+	 *            | The start time of the new reservation
+	 * @param endTime
+	 *            | The end time of the new reservation
+	 * @return True if the resource was reserved by the given task, false
+	 *         otherwise
+	 */
 	public boolean reserve(ResourceView resource, TaskView task,
 			LocalDateTime startTime, LocalDateTime endTime) {
 		Task t = unwrapTaskView(task);
@@ -674,6 +713,13 @@ public class Project implements Dependant {
 		return t.reserve(resource, startTime, endTime);
 	}
 	
+	/**
+	 * Retrieve a list of all tasks that can be updated by a given user
+	 * 
+	 * @param user
+	 *            | The user who wants to update a task
+	 * @return an immutable list of tasks that can be updated by a given user
+	 */
 	public List<TaskView> getUpdatableTasksForUser(ResourceView user){
 		Builder<TaskView> list = ImmutableList.builder();
 		for (Task task : taskList){
