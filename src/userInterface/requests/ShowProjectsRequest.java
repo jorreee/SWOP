@@ -94,11 +94,11 @@ public class ShowProjectsRequest extends Request {
 				if(taskAmount > 0) {
 					for(int i = 0 ; i < taskAmount ; i++) {
 						StringBuilder taskiHead = new StringBuilder();
-						taskiHead.append("  *");
+						taskiHead.append("  {" + i + "}");
 						if(tasks.get(i).isUnacceptableOverdue(facade.getCurrentTime())) {
 							taskiHead.append("!");
 						}
-						taskiHead.append(" Task " + i + ": " + tasks.get(i).getStatusAsString());
+						taskiHead.append(" Task \"" + tasks.get(i).getDescription() + "\": " + tasks.get(i).getStatusAsString());
 						if(tasks.get(i).isOnTime(facade.getCurrentTime())) {
 							taskiHead.append(", on time");
 						} else {
@@ -148,18 +148,18 @@ public class ShowProjectsRequest extends Request {
 						taskHeader.append(", depends on");
 						for(int i = 0 ; i < prereqs.size() ; i++) {
 							if(i == 0)
-								taskHeader.append(" task " + prereqs.get(i).getID());
+								taskHeader.append(" task \"" + prereqs.get(i).getDescription() + "\"");
 							else
-								taskHeader.append(prereqs.get(i).getID());
+								taskHeader.append("\"" + prereqs.get(i).getDescription() + "\"");
 							if(i < prereqs.size() - 1)
 								taskHeader.append(" and ");
 						}
 					}
 					if(task.isAlternative()) {
-						taskHeader.append(", alternative to task " + task.getAlternativeTo().getID());
+						taskHeader.append(", alternative to task \"" + task.getAlternativeTo().getDescription() + "\"");
 					}
 					if(task.hasEnded()){
-						taskHeader.append(", started " + task.getStartTime().toString() + " , finished " + task.getEndTime().format(dateTimeFormatter));
+						taskHeader.append(", started " + task.getStartTime().format(dateTimeFormatter) + " , finished " + task.getEndTime().format(dateTimeFormatter));
 					}
 					System.out.println(taskHeader.toString()); // PRINT SELECTED TASK HEADER
 

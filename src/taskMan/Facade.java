@@ -137,18 +137,18 @@ public class Facade implements IFacade {
 	}
 
 	@Override
-	public String getCurrentUsername() {
+	public ResourceView getCurrentUser() {
 		return taskMan.getCurrentUserName();
 	}
 
 	@Override
-	public List<ResourceView> getPossibleUsernames() {
+	public List<ResourceView> getPossibleUsers() {
 		return taskMan.getPossibleUsernames();
 	}
 
 	@Override
-	public boolean changeToUser(String name) {
-		return taskMan.changeToUser(name);
+	public boolean changeToUser(ResourceView user) {
+		return taskMan.changeToUser(user);
 	}
 
 	@Override

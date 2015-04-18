@@ -27,7 +27,7 @@ public class ResolvePlanningConflictRequest extends Request {
 		// Show conflicting tasks
 		for(ProjectView project : conflictingTasks.keySet()) {
 			for(TaskView conflictingTask : conflictingTasks.get(project)) {
-				System.out.println("Planning conflicts with project: " + project.getID() + ", task: " + conflictingTask.getID());
+				System.out.println("Planning conflicts with project: " + project.getName() + ", task: \"" + conflictingTask.getDescription() + "\"");
 			}
 		}
 		System.out.println("Move task currently being scheduled? (Y/N)");

@@ -31,14 +31,6 @@ public class ProjectView {
 		this.project = p;
 	}
 
-	@Deprecated
-	/**
-	 * Use getName() instead
-	 */
-	public int getID() {
-		return project.getID();
-	}
-
 	/**
 	 * Retrieve the name of the project
 	 * 
