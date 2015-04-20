@@ -22,4 +22,13 @@ public interface Dependant {
 	 */
 	public boolean updateDependency(Task preTask);
 
+	/**
+	 * Get the longest possible duration that a series of dependants (this one and
+	 * its dependants) could require to finish (estimated)
+	 * 
+	 * @return the longest possible duration as a TimeSpan for this dependant and its
+	 *         dependants to finish (estimated)
+	 */
+	public TimeSpan getMaxDelayChain();
+
 }
