@@ -5,14 +5,11 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
-
-
-
-
 import java.util.Optional;
 
 import org.junit.Before;
@@ -20,10 +17,6 @@ import org.junit.Test;
 
 import taskMan.Task;
 import taskMan.resource.ResourceManager;
-import taskMan.state.AvailableTask;
-import taskMan.state.ExecutingTask;
-import taskMan.state.TaskStatus;
-import taskMan.state.UnavailableTask;
 import taskMan.util.TimeSpan;
 import taskMan.view.ResourceView;
 
@@ -40,12 +33,15 @@ public class TaskTest {
 	private ResourceView carDef;	//car0
 	private ResourceView boardDef;	//board0
 	
+	private final Optional<LocalTime> emptyAvailabilityPeriodStart = Optional.empty(),
+			emptyAvailabilityPeriodEnd = Optional.empty();
+	
 	@Before
 	public final void initialize(){
 		//Prepare the resources
 		resMan = new ResourceManager();
-		resMan.createResourcePrototype("car", Optional.empty(), Optional.empty());
-		resMan.createResourcePrototype("whiteboard",  Optional.empty(), Optional.empty());
+		resMan.createResourcePrototype("car", emptyAvailabilityPeriodStart, emptyAvailabilityPeriodEnd);
+		resMan.createResourcePrototype("whiteboard",  emptyAvailabilityPeriodStart, emptyAvailabilityPeriodEnd);
 		for(int i = 0;i<5;i++){
 			resMan.declareConcreteResource("car" + i, resMan.getResourcePrototypes().get(0));
 		}
@@ -240,7 +236,7 @@ public class TaskTest {
 	
 	@Test
 	public void replaceWithTestNotFailed(){
-		Task temp = new Task("temp",20,3,new ResourceManager(),new ArrayList<>(),new HashMap<ResourceView,Integer>(),null);
+		Task temp = new Task("temp",20,3,new ResourceManager(),new ArrayList<Task>(),new HashMap<ResourceView,Integer>(),null);
 		assertFalse(defaultTest.isFailed());
 		assertFalse(defaultTest.replaceWith(temp));
 	}
@@ -250,8 +246,8 @@ public class TaskTest {
 		defaultTest.plan(LocalDateTime.of(2015, 2, 11, 16, 0),concreteResDef);
 		defaultTest.execute(LocalDateTime.of(2015, 2, 11, 16, 0));
 		defaultTest.fail(LocalDateTime.of(2015, 2, 12, 16, 0));
-		Task temp = new Task("temp",20,3,new ResourceManager(),new ArrayList<>(),defaultTest.getRequiredResources(),null);
-		Task temp2 = new Task("temp",20,3,new ResourceManager(),new ArrayList<>(),defaultTest.getRequiredResources(),null);
+		Task temp = new Task("temp",20,3,new ResourceManager(),new ArrayList<Task>(),defaultTest.getRequiredResources(),null);
+		Task temp2 = new Task("temp",20,3,new ResourceManager(),new ArrayList<Task>(),defaultTest.getRequiredResources(),null);
 		assertTrue(defaultTest.replaceWith(temp));
 		assertFalse(defaultTest.replaceWith(temp2));
 	}
@@ -293,7 +289,7 @@ public class TaskTest {
 	
 	@Test
 	public void registerTestValid(){
-		Task temp = new Task("temp",20,3,new ResourceManager(),new ArrayList<>(),
+		Task temp = new Task("temp",20,3,new ResourceManager(),new ArrayList<Task>(),
 				new HashMap<ResourceView,Integer>(),null);
 		assertTrue(defaultTest.register(temp));
 	}

@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -45,6 +46,8 @@ public class UseCase7AdvanceTimeTest {
 			task01Res = new HashMap<ResourceView,Integer>(),
 			task02Res = new HashMap<ResourceView,Integer>(),
 			task03Res = new HashMap<ResourceView,Integer>();
+	private final Optional<LocalTime> emptyAvailabilityPeriodStart = Optional.empty(),
+			emptyAvailabilityPeriodEnd = Optional.empty();
 
 	/**
 	 * - project 0 START 9 feb 8u DUE 13 feb midnight
@@ -58,11 +61,11 @@ public class UseCase7AdvanceTimeTest {
 		taskManager = new Facade(startDate);
 		
 		//create resources
-		taskManager.createResourcePrototype("car", Optional.empty(), Optional.empty());
+		taskManager.createResourcePrototype("car", emptyAvailabilityPeriodStart, emptyAvailabilityPeriodEnd);
 		for(int i = 0;i<=6;i++){
 			taskManager.declareConcreteResource("car" + i, taskManager.getResourcePrototypes().get(0));
 		}
-		taskManager.createResourcePrototype("whiteboard", Optional.empty(), Optional.empty());
+		taskManager.createResourcePrototype("whiteboard", emptyAvailabilityPeriodStart, emptyAvailabilityPeriodEnd);
 		for(int i = 0;i<=6;i++){
 			taskManager.declareConcreteResource("whiteboard" + i, taskManager.getResourcePrototypes().get(1));
 		}

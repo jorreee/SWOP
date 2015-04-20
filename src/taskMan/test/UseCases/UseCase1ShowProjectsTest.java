@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -66,13 +67,15 @@ public class UseCase1ShowProjectsTest {
 			task30Dependencies = new ArrayList<TaskView>(),
 			task31Dependencies = new ArrayList<TaskView>();
 	private final ArrayList<ResourceView> task00ConcreteResources = new ArrayList<ResourceView>(),
-			task10ConcreteResources = new ArrayList<ResourceView>(),
+			task10ConcreteResources = new ArrayList<ResourceView>(), // TODO concreResources invulling geven voor het plannen
 			task11ConcreteResources = new ArrayList<ResourceView>(),
 			task12ConcreteResources = new ArrayList<ResourceView>(),
 			task13ConcreteResources = new ArrayList<ResourceView>(),
 			task20ConcreteResources = new ArrayList<ResourceView>(),
 			task30ConcreteResources = new ArrayList<ResourceView>(),
 			task31ConcreteResources = new ArrayList<ResourceView>();
+	private final Optional<LocalTime> emptyAvailabilityStart = Optional.empty(),
+			emptyAvailabilityEnd = Optional.empty();
 	
 	/**
 	 * - project 0 START 9 feb 8u DUE 31 feb midnight
@@ -97,16 +100,15 @@ public class UseCase1ShowProjectsTest {
 		// INIT system 
 		taskManager = new Facade(startDate);
 		//INIT resources
-		taskManager.createResourcePrototype("car", Optional.empty(), Optional.empty());
+		taskManager.createResourcePrototype("car", emptyAvailabilityStart, emptyAvailabilityEnd);
 		for(int i = 0;i<=5;i++){
 			taskManager.declareConcreteResource("car" + i, taskManager.getResourcePrototypes().get(0));
 		}
-		taskManager.createResourcePrototype("whiteboard", Optional.empty(), Optional.empty());
+		taskManager.createResourcePrototype("whiteboard", emptyAvailabilityStart, emptyAvailabilityEnd);
 		for(int i = 0;i<=5;i++){
 			taskManager.declareConcreteResource("whiteboard" + i, taskManager.getResourcePrototypes().get(1));
 		}
 		//Create first project
-		System.out.println(taskManager.getConcreteResourcesForPrototype(taskManager.getResourcePrototypes().get(0)).size());
 		assertTrue(taskManager.createProject("Project 0", "Describing proj 0", project0DueDate));
 		ProjectView project0 = taskManager.getProjects().get(0);
 		// 00 AVAILABLE
@@ -171,7 +173,9 @@ public class UseCase1ShowProjectsTest {
 		assertTrue(taskManager.setTaskExecuting(project1, task11, task11Start));
 		assertTrue(taskManager.setTaskFailed(project1, task11, task11End));
 		// 13 AVAILABLE
-		assertTrue(taskManager.createTask(project1, "TASK 13", task13EstDur, task13Dev, task13Dependencies,task11.getRequiredResources() ,task11));			
+		assertTrue(taskManager.createTask(project1, "TASK 13", task13EstDur, task13Dev, task13Dependencies,task11.getRequiredResources() ,task11));
+		TaskView task13 = project1.getTasks().get(3);
+		assertTrue(taskManager.planTask(project1, task13, task11Start, task11ConcreteResources));
 			
 		// Stap verder:
 		// maak het vierde project aan en maak zijn TASK lijst

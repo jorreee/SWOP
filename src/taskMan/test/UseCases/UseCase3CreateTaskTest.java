@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -47,6 +48,8 @@ public class UseCase3CreateTaskTest {
 	private final ArrayList<ResourceView> task00ConcreteResources = new ArrayList<ResourceView>(),
 			task01ConcreteResources = new ArrayList<ResourceView>(),
 			newTaskConcreteResources = new ArrayList<ResourceView>();
+	private final Optional<LocalTime> emptyAvailabilityPeriodStart = Optional.empty(),
+			emptyAvailabilityPeriodEnd = Optional.empty();
 
 	/**
 	 * - project 1 START 9 feb 8u DUE 13 feb midnight
@@ -57,11 +60,11 @@ public class UseCase3CreateTaskTest {
 		taskManager = new Facade(startDate);
 
 		assertTrue(taskManager.createProject("Test1", "testing 1", project0DueDate));
-		taskManager.createResourcePrototype("car", Optional.empty(), Optional.empty());
+		taskManager.createResourcePrototype("car", emptyAvailabilityPeriodStart, emptyAvailabilityPeriodEnd);
 		for(int i = 0;i<=5;i++){
 			taskManager.declareConcreteResource("car" + i, taskManager.getResourcePrototypes().get(0));
 		}
-		taskManager.createResourcePrototype("whiteboard", Optional.empty(), Optional.empty());
+		taskManager.createResourcePrototype("whiteboard", emptyAvailabilityPeriodStart, emptyAvailabilityPeriodEnd);
 		for(int i = 0;i<=5;i++){
 			taskManager.declareConcreteResource("whiteboard" + i, taskManager.getResourcePrototypes().get(1));
 		}
