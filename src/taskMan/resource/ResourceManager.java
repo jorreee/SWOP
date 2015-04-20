@@ -314,6 +314,16 @@ public class ResourceManager {
 		return true;
 	}
 	
+	/**
+	 * Picks the Unreserved Resource instances of a given Resource Prototype for the given time period.
+	 * @param 	rp
+	 * 			The resource prototype.
+	 * @param 	start
+	 * 			The start time for the reservation.
+	 * @param 	end
+	 * 			The end time for the reservation.
+	 * @return 	A list of Unreserved Concrete Resources of the Prototype. If none were found, return null.
+	 */
 	private ConcreteResource pickUnreservedResource(ResourcePrototype rp, LocalDateTime start, LocalDateTime end) {
 		List<ConcreteResource> options = getPoolOf(rp).getConcreteResourceList();
 		for(ConcreteResource cr : options) {
@@ -324,6 +334,12 @@ public class ResourceManager {
 		return null;
 	}
 	
+	/**
+	 * Gets the Resource Pool of a given Prototype.
+	 * @param 	rp
+	 * 			The resource prototype
+	 * @return	If the pool exists, return the pool. Else return null.
+	 */
 	private ResourcePool getPoolOf(ResourcePrototype rp) {
 		for(ResourcePool pool : resPools) {
 			if(pool.hasAsPrototype(rp)) {
