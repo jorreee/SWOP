@@ -268,7 +268,7 @@ public class ResourceManager {
 					toReserve = cr;
 				}
 			}
-			if(toReserve == null || canReserve(toReserve,startTime,endTime)) {
+			if(toReserve == null || !canReserve(toReserve,startTime,endTime)) {
 				error = true;
 				break;
 			} else {
@@ -286,10 +286,25 @@ public class ResourceManager {
 		
 		return true;
 	}
-	
-	public boolean pickDevs(List<User> devs, Task reservingTask, LocalDateTime start, LocalDateTime end) {
+
+	/**
+	 * A method to find the assigned developers and make a reservation for each
+	 * one. The reservation(s) will be made by the reserving task from the given
+	 * start time and the given end time.
+	 * 
+	 * @param devs
+	 *            | The developers to assign
+	 * @param reservingTask
+	 *            | The task reserving the developers
+	 * @param start
+	 *            | The start time of the new reservations
+	 * @param end
+	 *            | The end time of the new reservations
+	 * @return True if the developers were assigned and reserved
+	 */
+	public List<User> pickDevs(List<ResourceView> devs, Task reservingTask, LocalDateTime start, LocalDateTime end) {
 		//TODO vroem vroem genned bouwer stoppel
-		return true;
+		return null;
 	}
 	
 	/**
@@ -424,6 +439,7 @@ public class ResourceManager {
 			Builder<ResourceView> conResList = ImmutableList.builder();
 			return conResList.build();
 		}
+
 		List<ConcreteResource> concreteRes = getPoolOf(rprot).getConcreteResourceList();
 		Builder<ResourceView> conResList = ImmutableList.builder();
 		for (ConcreteResource res : concreteRes  ){
@@ -485,7 +501,10 @@ public class ResourceManager {
 	 *            | A map linking resourcePrototypes with a specified amount
 	 * @return True if enough resources exist, false otherwise
 	 */
+
 	public Map<ResourcePrototype, Integer> isValidRequiredResources(Map<ResourceView,Integer> reqRes) {
+		if(reqRes == null)
+			return null;
 		Map<ResourcePrototype, Integer> resProtList = new HashMap<ResourcePrototype, Integer>();
 		for(ResourceView rv : reqRes.keySet()) {
 			ResourcePrototype rp = unWrapResourcePrototypeView(rv);
@@ -625,40 +644,40 @@ public class ResourceManager {
 		return posTimes;
 	}
 	
-	/**
-	 * This method will remove all future reservations for a given
-	 * (finished/failed) task. If there are any active reservations that have
-	 * already started, but not yet finished, a reservation until this point
-	 * will be maintained, but the resources will be made available again (i.e.
-	 * the reservation will end now).
-	 * 
-	 * @param task
-	 *            | The finished or failed task
-	 * @param currentTime
-	 *            | The current time in the system
-	 * @return true if all required changes were successfully made
-	 */
-	public boolean flushFutureReservations(Task task, LocalDateTime currentTime) {
-		boolean succesful = false;
-		for (Reservation res : activeReservations){
-			if (res.getReservingTask().equals(task)){
-				activeReservations.remove(res);
-				succesful = true;
-			}
-		}
-		for (Reservation res : allReservations){
-			if (res.getReservingTask().equals(task)){
-				if(res.getEndTime().isAfter(currentTime)){
-					ConcreteResource reserved = res.getReservedResource();
-					Task resTask = res.getReservingTask();
-					LocalDateTime start = res.getStartTime();
-					allReservations.remove(res);
-					allReservations.add(new Reservation(reserved,resTask,start,currentTime));
-				}
-			}
-		}
-		return succesful;
-	}
+//	/**
+//	 * This method will remove all future reservations for a given
+//	 * (finished/failed) task. If there are any active reservations that have
+//	 * already started, but not yet finished, a reservation until this point
+//	 * will be maintained, but the resources will be made available again (i.e.
+//	 * the reservation will end now).
+//	 * 
+//	 * @param task
+//	 *            | The finished or failed task
+//	 * @param currentTime
+//	 *            | The current time in the system
+//	 * @return true if all required changes were successfully made
+//	 */
+//	public boolean flushFutureReservations(Task task, LocalDateTime currentTime) {
+//		boolean succesful = false;
+//		for (Reservation res : activeReservations){
+//			if (res.getReservingTask().equals(task)){
+//				activeReservations.remove(res);
+//				succesful = true;
+//			}
+//		}
+//		for (Reservation res : allReservations){
+//			if (res.getReservingTask().equals(task)){
+//				if(res.getEndTime().isAfter(currentTime)){
+//					ConcreteResource reserved = res.getReservedResource();
+//					Task resTask = res.getReservingTask();
+//					LocalDateTime start = res.getStartTime();
+//					allReservations.remove(res);
+//					allReservations.add(new Reservation(reserved,resTask,start,currentTime));
+//				}
+//			}
+//		}
+//		return succesful;
+//	}
 	
 	/**
 	 * An ended task can call this method to release all active reservations made
@@ -680,12 +699,16 @@ public class ResourceManager {
 		return activeReservations.removeAll(toRemove);
 	}
 
+
+
+
 	/**
 	 * Return an immutable list of all the reservations present in the resource
 	 * manager
 	 * 
 	 * @return all reservations
 	 */
+
 	public List<Reservation> getAllReservations() {
 		Builder<Reservation> reservations = ImmutableList.builder();
 		reservations.addAll(allReservations);

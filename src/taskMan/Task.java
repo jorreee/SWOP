@@ -186,7 +186,7 @@ public class Task implements Dependant {
 		if(taskStatus != null) {
 //			plan(plannedStartTime);
 			plan.setPlannedBeginTime(plannedStartTime);
-			if(!plan.setDevelopers(plannedDevelopers)) {
+			if(!plan.setDevelopers(resMan.pickDevs(plannedDevelopers, this, startTime, endTime))) {
 				throw new IllegalArgumentException("Very bad developers, very bad! ## dit is een zéér gaye fout");
 			}
 			state.makeAvailable();
@@ -760,7 +760,7 @@ public class Task implements Dependant {
 		return true;
 	}
 	
-	public boolean plan(LocalDateTime startTime, List<ResourceView> concRes, List<User> devs) {
+	public boolean plan(LocalDateTime startTime, List<ResourceView> concRes, List<ResourceView> devs) {
 //		if(!resMan.hasActiveReservations(this, requiredResources)) { 
 // 		TODO bij init bestaan de reservaties nog niet (task moet bestaan voor reservatie kan bestaan)
 //			return false;
@@ -771,7 +771,11 @@ public class Task implements Dependant {
 		if(!resMan.reserve(concRes, this, startTime, plan.getPlannedEndTime())) {
 			return false;
 		}
-		if(!resMan.pickDevs(devs, this, startTime, plan.getPlannedEndTime())) {
+		List<User> developers = resMan.pickDevs(devs, this, startTime, getPlannedEndTime());
+		if(developers == null) {
+			return false;
+		}
+		if(!plan.setDevelopers(developers)) {
 			return false;
 		}
 		state.makeAvailable();
@@ -779,16 +783,16 @@ public class Task implements Dependant {
 		
 	}
 	
-	/**
-	 * Assign a list of developers to this task
-	 * 
-	 * @param plannedDevelopers
-	 *            | The developers to add
-	 * @return True when the developers were successfully added
-	 */
-	public boolean planDevelopers(List<ResourceView> plannedDevelopers) {
-		return plan.setDevelopers(plannedDevelopers);
-	}
+//	/**
+//	 * Assign a list of developers to this task
+//	 * 
+//	 * @param plannedDevelopers
+//	 *            | The developers to add
+//	 * @return True when the developers were successfully added
+//	 */
+//	public boolean planDevelopers(List<ResourceView> plannedDevelopers) {
+//		return plan.setDevelopers(plannedDevelopers);
+//	}
 
 	
 	/**
@@ -815,18 +819,18 @@ public class Task implements Dependant {
 		return reqRes;
 	}
 	
-	/**
-	 * Remove all reservations of this task that are still
-	 * scheduled to happen. This method will also free up reserved resources by
-	 * said task if the reservation is still ongoing.
-	 * 
-	 * @param currentTime
-	 *            | The current time
-	 * @return True if the operation was successful, false otherwise
-	 */
-	public boolean flushFutureReservations(LocalDateTime currentTime) {
-		return resMan.flushFutureReservations(this, currentTime);
-	}
+//	/**
+//	 * Remove all reservations of this task that are still
+//	 * scheduled to happen. This method will also free up reserved resources by
+//	 * said task if the reservation is still ongoing.
+//	 * 
+//	 * @param currentTime
+//	 *            | The current time
+//	 * @return True if the operation was successful, false otherwise
+//	 */
+//	public boolean flushFutureReservations(LocalDateTime currentTime) {
+//		return resMan.flushFutureReservations(this, currentTime);
+//	}
 
 //	public boolean reserve(ResourceView resource, LocalDateTime startTime,
 //			LocalDateTime endTime) {
@@ -842,8 +846,8 @@ public class Task implements Dependant {
 	 * @return True if the given developer is assigned to this task
 	 */
 	public boolean hasDeveloper(ResourceView user){
-		for(ResourceView dev : plan.getPlannedDevelopers()){
-			if (dev.equals(user)){
+		for(User dev : plan.getPlannedDevelopers()){
+			if (user.hasAsResource(dev)){
 				return true;
 			}
 		}
@@ -856,7 +860,7 @@ public class Task implements Dependant {
 	 * @return an immutable list of developers (wrapped in views) planned to
 	 *         work on this task
 	 */
-	public List<ResourceView> getPlannedDevelopers(){
+	public List<User> getPlannedDevelopers(){
 		return plan.getPlannedDevelopers();
 	}
 	

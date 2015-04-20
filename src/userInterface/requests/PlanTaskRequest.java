@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import taskMan.resource.user.User;
 import taskMan.view.ProjectView;
 import taskMan.view.ResourceView;
 import taskMan.view.TaskView;
@@ -113,7 +112,7 @@ public class PlanTaskRequest extends Request {
 							if(input.toLowerCase().equals("quit")) { return null; }
 							if(input.toLowerCase().equals("any")) {
 								planning.addSeveralToReservationList(requiredResource, amountLeft);
-								break;
+								amountLeft = 0;
 							} else {
 //								// if resource is already reserved initiate resolve conflict request
 //								Map<ProjectView, List<TaskView>> conflictingTasks = facade.reservationConflict(concreteResources.get(Integer.parseInt(input)), project, task, planning.getPlanningStartTime());
@@ -132,6 +131,27 @@ public class PlanTaskRequest extends Request {
 					}
 				}
 
+				// Show list of developers
+				List<ResourceView> devs = facade.getDeveloperList();
+				System.out.println("Possible developers to assign:");
+				for(int i = 0; i < devs.size() ; i++) {
+					System.out.println("(" + i + ") " + devs.get(i).getName());
+				}
+				System.out.println("Choose the developers you wish to assign (their numbers on one line, seperated by spaces) (type quit to exit)");
+				input = inputReader.readLine();
+				// User quits
+				if(input.toLowerCase().equals("quit")) { return null; }
+				// User selects developers
+				String[] devIDs = input.split(" ");
+				List<ResourceView> devNames = new ArrayList<>();
+				for(String devID : devIDs) {
+					devNames.add(devs.get(Integer.parseInt(devID)));
+				}
+				for(ResourceView dev : devNames) {
+					planning.addDeveloper(dev);
+				}
+				
+				
 				// show list of possible starting times
 				List<LocalDateTime> possibleStartingTimes = task.getPossibleStartingTimes(planning.getResourcesToReserve(),3);
 				//TODO wat als er GEEN zijn? NOOIT.
@@ -151,22 +171,6 @@ public class PlanTaskRequest extends Request {
 				System.out.println("Time slot selected from " + timeSlotStart.toString() + " until " + timeSlotStart.plusMinutes(task.getEstimatedDuration()).toString());
 				planning.setPlanBeginTime(timeSlotStart);
 				
-				// Show list of developers
-				List<ResourceView> devs = facade.getDeveloperList(); //TODO enkel available op tijdstip tonen?
-				System.out.println("Possible developers to assign:");
-				for(int i = 0; i < devs.size() ; i++) {
-					System.out.println("(" + i + ") " + devs.get(i));
-				}
-				System.out.println("Choose the developers you wish to assign (their numbers on one line, seperated by spaces) (type quit to exit)");
-				input = inputReader.readLine();
-				// User quits
-				if(input.toLowerCase().equals("quit")) { return null; }
-				// User selects developers
-				String[] devIDs = input.split(" ");
-				List<ResourceView> devNames = new ArrayList<>();
-				for(String devID : devIDs) {
-					devNames.add(devs.get(Integer.parseInt(devID)));
-				} //TODO devs toevoegen aan planningScheme?
 
 				// If selected dev conflicts with another task planning init resolve conflict request
 				Map<ProjectView, List<TaskView>> conflictingTasks = facade.findConflictingDeveloperPlannings(project, task, devNames, timeSlotStart);
@@ -192,7 +196,7 @@ class PlanningScheme {
 
 	private LocalDateTime timeSlotStartTime;
 	private List<ResourceView> resourcesToReserve;
-	private List<User> developers;
+	private List<ResourceView> developers;
 
 	public void setPlanBeginTime(LocalDateTime timeSlotStartTime) {
 		this.timeSlotStartTime = timeSlotStartTime;
@@ -217,16 +221,11 @@ class PlanningScheme {
 		return resourcesToReserve;
 	}
 	
-	public void addDeveloper(User d) {
+	public void addDeveloper(ResourceView d) {
 		developers.add(d);
 	}
 	
-	public List<User> getDevelopers() {
+	public List<ResourceView> getDevelopers() {
 		return developers;
 	}
 }
-
-
-
-
-
