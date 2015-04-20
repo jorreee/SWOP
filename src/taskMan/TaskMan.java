@@ -491,12 +491,12 @@ public class TaskMan {
 	}
 
 	public boolean planTask(ProjectView project, TaskView task,
-			LocalDateTime plannedStartTime, List<ResourceView> concRes) {
+			LocalDateTime plannedStartTime, List<ResourceView> concRes, List<User> devs) {
 		Project p = unwrapProjectView(project);
 		if(p == null) {
 			return false;
 		}
-		return p.planTask(task, plannedStartTime, concRes);
+		return p.planTask(task, plannedStartTime, concRes, devs);
 	}
 
 	/**

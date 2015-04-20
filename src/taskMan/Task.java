@@ -8,6 +8,7 @@ import java.util.Map;
 
 import taskMan.resource.ResourceManager;
 import taskMan.resource.ResourcePrototype;
+import taskMan.resource.user.User;
 import taskMan.state.TaskStatus;
 import taskMan.state.UnavailableTask;
 import taskMan.util.Dependant;
@@ -185,7 +186,7 @@ public class Task implements Dependant {
 		if(taskStatus != null) {
 //			plan(plannedStartTime);
 			plan.setPlannedBeginTime(plannedStartTime);
-			if(!planDevelopers(plannedDevelopers)) {
+			if(!plan.setDevelopers(plannedDevelopers)) {
 				throw new IllegalArgumentException("Very bad developers, very bad! ## dit is een zéér gaye fout");
 			}
 			state.makeAvailable();
@@ -592,7 +593,13 @@ public class Task implements Dependant {
 	 * @return	True if and only if the updates succeeds.
 	 */
 	public boolean finish(LocalDateTime endTime) {
-		return state.finish(endTime);
+		if(!state.finish(endTime)) {
+			return false;
+		}
+		if(!resMan.releaseResources(this)) {
+			return false;
+		}
+		return true;
 	}
 
 	/**
@@ -603,7 +610,13 @@ public class Task implements Dependant {
 	 * @return	True if and only if the updates succeeds.
 	 */
 	public boolean fail(LocalDateTime endTime) {
-		return state.fail(endTime);
+		if(!state.fail(endTime)) {
+			return false;
+		}
+		if(!resMan.releaseResources(this)) {
+			return false;
+		}
+		return true;
 	}
 	
 	/**
@@ -751,7 +764,7 @@ public class Task implements Dependant {
 		return true;
 	}
 	
-	public boolean plan(LocalDateTime startTime, List<ResourceView> concRes) {
+	public boolean plan(LocalDateTime startTime, List<ResourceView> concRes, List<User> devs) {
 //		if(!resMan.hasActiveReservations(this, requiredResources)) { 
 // 		TODO bij init bestaan de reservaties nog niet (task moet bestaan voor reservatie kan bestaan)
 //			return false;
@@ -762,8 +775,12 @@ public class Task implements Dependant {
 		if(!resMan.reserve(concRes, this, startTime, plan.getPlannedEndTime())) {
 			return false;
 		}
+		if(!resMan.pickDevs(devs, this, startTime, plan.getPlannedEndTime())) {
+			return false;
+		}
 		state.makeAvailable();
 		return true;
+		
 	}
 	
 	/**
@@ -774,7 +791,7 @@ public class Task implements Dependant {
 	 * @return True when the developers were successfully added
 	 */
 	public boolean planDevelopers(List<ResourceView> plannedDevelopers) {
-		return plan.planDevelopers(plannedDevelopers);
+		return plan.setDevelopers(plannedDevelopers);
 	}
 
 	

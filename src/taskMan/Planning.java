@@ -237,7 +237,7 @@ public class Planning {
 	 * @return true when the developers were added to the planning, false
 	 *         otherwise
 	 */
-	public boolean planDevelopers(List<ResourceView> plannedDevelopers) {
+	public boolean setDevelopers(List<ResourceView> plannedDevelopers) {
 		// TODO Actual developers?
 		this.plannedDevelopers = plannedDevelopers;
 		return true;              

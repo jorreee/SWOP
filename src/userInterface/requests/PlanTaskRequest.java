@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import taskMan.resource.user.User;
 import taskMan.view.ProjectView;
 import taskMan.view.ResourceView;
 import taskMan.view.TaskView;
@@ -58,7 +59,10 @@ public class PlanTaskRequest extends Request {
 				}
 
 				// Assign developers to task, assign planning to task, reserve selected resource(types)
-				boolean success = facade.planTask(project, task, planning.getPlanningStartTime(),planning.getResourcesToReserve());
+				boolean success = facade.planTask(project, task, 
+						planning.getPlanningStartTime(), 
+						planning.getResourcesToReserve(),
+						planning.getDevelopers());
 
 				if(!success) { System.out.println("Failed to plan task, try again"); continue; }
 //				else {
@@ -188,6 +192,7 @@ class PlanningScheme {
 
 	private LocalDateTime timeSlotStartTime;
 	private List<ResourceView> resourcesToReserve;
+	private List<User> developers;
 
 	public void setPlanBeginTime(LocalDateTime timeSlotStartTime) {
 		this.timeSlotStartTime = timeSlotStartTime;
@@ -210,6 +215,14 @@ class PlanningScheme {
 
 	public List<ResourceView> getResourcesToReserve() {
 		return resourcesToReserve;
+	}
+	
+	public void addDeveloper(User d) {
+		developers.add(d);
+	}
+	
+	public List<User> getDevelopers() {
+		return developers;
 	}
 }
 

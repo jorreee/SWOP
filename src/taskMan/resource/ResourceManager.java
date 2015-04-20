@@ -287,6 +287,11 @@ public class ResourceManager {
 		return true;
 	}
 	
+	public boolean pickDevs(List<User> devs, Task reservingTask, LocalDateTime start, LocalDateTime end) {
+		//TODO vroem vroem genned bouwer stoppel
+		return true;
+	}
+	
 	private boolean canReserve(ConcreteResource resource, LocalDateTime start, LocalDateTime end) {
 		for(Reservation reservation : activeReservations) {
 			if(reservation.getReservedResource().equals(resource)) {
@@ -618,6 +623,26 @@ public class ResourceManager {
 			}
 		}
 		return succesful;
+	}
+	
+	/**
+	 * An ended task can call this method to release all active reservations made
+	 * by this task. 
+	 * 
+	 * @param task
+	 * @return
+	 */
+	public boolean releaseResources(Task task) {
+		if(!task.hasEnded()) {
+			return false;
+		}
+		List<Reservation> toRemove = new ArrayList<Reservation>();
+		for(Reservation r : activeReservations) {
+			if(r.getReservingTask().equals(task)) {
+				toRemove.add(r);
+			}
+		}
+		return activeReservations.removeAll(toRemove);
 	}
 
 	/**
