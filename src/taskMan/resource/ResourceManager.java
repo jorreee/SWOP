@@ -424,7 +424,12 @@ public class ResourceManager {
 			Builder<ResourceView> conResList = ImmutableList.builder();
 			return conResList.build();
 		}
-		return getPoolOf(rprot).getConcreteResourceViewList();
+		List<ConcreteResource> concreteRes = getPoolOf(rprot).getConcreteResourceList();
+		Builder<ResourceView> conResList = ImmutableList.builder();
+		for (ConcreteResource res : concreteRes  ){
+			conResList.add(new ResourceView(res));
+		}
+		return conResList.build();
 	}
 	
 	/**
