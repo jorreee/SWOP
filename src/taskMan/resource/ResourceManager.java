@@ -34,7 +34,8 @@ public class ResourceManager {
 	
 	// The resource manager has a list of resource pools (and users)
 	private List<ResourcePool> resPools;
-	private List<User> userList;
+	private ResourcePool userPool; // TODO REFACTOR TO USE THIS
+//	private List<User> userList;
 	
 	// A list of (active) reservations
 	private List<Reservation> activeReservations;
@@ -48,6 +49,7 @@ public class ResourceManager {
 	public ResourceManager() {
 		this.resPools = new ArrayList<>();
 		this.userList = new ArrayList<>();
+		
 		userList.add(new ProjectManager("admin"));
 		
 		activeReservations = new ArrayList<>();
@@ -300,10 +302,20 @@ public class ResourceManager {
 	 *            | The start time of the new reservations
 	 * @param end
 	 *            | The end time of the new reservations
-	 * @return True if the developers were assigned and reserved
+	 * @return The list of users for whom the reservation was made, null if there was an error
 	 */
 	public List<User> pickDevs(List<ResourceView> devs, Task reservingTask, LocalDateTime start, LocalDateTime end) {
-		//TODO vroem vroem genned bouwer stoppel
+		List<User> users = new ArrayList<>();
+		for(ResourceView dev : devs) {
+			User user = unWrapUserView(dev);
+			if(user == null) {
+				return null;
+			}
+			users.add(user);
+		}
+		for(User user : users) {
+			reserve(); // TODO
+		}
 		return null;
 	}
 	
@@ -487,6 +499,27 @@ public class ResourceManager {
 		for(ResourcePool pool : resPools) {
 			if (view.hasAsResource(pool.getPrototype())) {
 				return pool.getPrototype();
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Unwrap a resourceView to its user contents. This method
+	 * will return null if the resource cannot be found
+	 * 
+	 * @param view
+	 *            | The given user
+	 * @return the user found in the resourceView, null if it
+	 *         cannot be found in the resource manager's user list
+	 */
+	private User unWrapUserView(ResourceView view){
+		if(view == null) {
+			return null;
+		}
+		for(User user : userList) {
+			if (view.hasAsResource(user)) {
+				return user;
 			}
 		}
 		return null;

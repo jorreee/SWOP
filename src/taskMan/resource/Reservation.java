@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import taskMan.Task;
 
 /**
- * A reservation will link a concrete resource with a task (reserving the
+ * A reservation will link a resource (a concrete resource or a user) with a task (reserving the
  * resource). A reservation has a start and an end time. When this reservation
  * is active, the same resource should not be reserved again in a timeslot
  * overlapping with this reservation.
@@ -16,7 +16,7 @@ import taskMan.Task;
 public class Reservation {
 	
 	// Reservation consists of:
-	// An abstract resource (type or concrete)
+	// A concrete resource or a user
 	private final ConcreteResource reservedResource;
 	// A task
 	private final Task reservingTask;

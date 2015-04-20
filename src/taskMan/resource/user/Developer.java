@@ -9,8 +9,8 @@ public class Developer extends User {
 	 * @param name
 	 *            | The name this developer will have
 	 */
-	public Developer(String name){
-		super(name);
+	public Developer(String name, UserPrototype prototype){
+		super(name, prototype);
 		addCredential(UserCredential.DEVELOPER);
 	}
 	
