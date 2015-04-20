@@ -740,4 +740,11 @@ public class Project implements Dependant {
 		return list.build();
 	}
 
+	@Override
+	public TimeSpan getMaxDelayChain() {
+		// A project will add no more delay (a project will finish immediately
+		// when its tasks finish)
+		return new TimeSpan(0);
+	}
+
 }

@@ -393,8 +393,11 @@ public class ResourceManager {
 	 */
 	public List<ResourceView> getConcreteResourcesForPrototype(ResourceView resourcePrototype) {
 		ResourcePrototype rprot = unWrapResourcePrototypeView(resourcePrototype);
-		getPoolOf(rprot).getConcreteResourceViewList();
-		return null;
+		if(rprot == null) {
+			Builder<ResourceView> conResList = ImmutableList.builder();
+			return conResList.build();
+		}
+		return getPoolOf(rprot).getConcreteResourceViewList();
 	}
 	
 	/**

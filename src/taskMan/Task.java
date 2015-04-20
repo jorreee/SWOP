@@ -544,13 +544,9 @@ public class Task implements Dependant {
 		TimeSpan longest = getEstimatedDuration();
 		TimeSpan candidate;
 		for(Dependant d : dependants) {
-			try {
-				candidate = getEstimatedDuration().add(((Task) d).getMaxDelayChain());
-				if(candidate.isLonger(longest)) {
-					longest = candidate;
-				}
-			} catch(ClassCastException e) {
-				System.out.println("dirty."); //TODO niet doen
+			candidate = getEstimatedDuration().add(d.getMaxDelayChain());
+			if(candidate.isLonger(longest)) {
+				longest = candidate;
 			}
 		}
 		if(alternativeFor != null) {
