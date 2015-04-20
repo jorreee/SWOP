@@ -5,13 +5,18 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import taskMan.Facade;
 import taskMan.view.ProjectView;
+import taskMan.view.ResourceView;
 import taskMan.view.TaskView;
 import userInterface.IFacade;
 
@@ -37,6 +42,12 @@ public class UseCase7AdvanceTimeTest {
 			task01Dependencies = new ArrayList<TaskView>(),
 			task02Dependencies = new ArrayList<TaskView>(),
 			task03Dependencies = new ArrayList<TaskView>();
+	private final Map<ResourceView,Integer> task00Res = new HashMap<ResourceView,Integer>(),
+			task01Res = new HashMap<ResourceView,Integer>(),
+			task02Res = new HashMap<ResourceView,Integer>(),
+			task03Res = new HashMap<ResourceView,Integer>();
+	private final Optional<LocalTime> emptyAvailabilityPeriodStart = Optional.empty(),
+			emptyAvailabilityPeriodEnd = Optional.empty();
 
 	/**
 	 * - project 0 START 9 feb 8u DUE 13 feb midnight
@@ -48,17 +59,37 @@ public class UseCase7AdvanceTimeTest {
 	@Before
 	public final void initialize() {
 		taskManager = new Facade(startDate);
+		
+		//create resources
+		taskManager.createResourcePrototype("car", emptyAvailabilityPeriodStart, emptyAvailabilityPeriodEnd);
+		for(int i = 0;i<=6;i++){
+			taskManager.declareConcreteResource("car" + i, taskManager.getResourcePrototypes().get(0));
+		}
+		taskManager.createResourcePrototype("whiteboard", emptyAvailabilityPeriodStart, emptyAvailabilityPeriodEnd);
+		for(int i = 0;i<=6;i++){
+			taskManager.declareConcreteResource("whiteboard" + i, taskManager.getResourcePrototypes().get(1));
+		}
+		
+		//assign resources to Hashsets for later use
+		task00Res.put(taskManager.getResourcePrototypes().get(0), 1);
+		task00Res.put(taskManager.getResourcePrototypes().get(1), 1);
+		task01Res.put(taskManager.getResourcePrototypes().get(0), 2);
+		task01Res.put(taskManager.getResourcePrototypes().get(1), 1);
+		task02Res.put(taskManager.getResourcePrototypes().get(0), 1);
+		task02Res.put(taskManager.getResourcePrototypes().get(1), 1);
+		task03Res.put(taskManager.getResourcePrototypes().get(0), 2);
+		task03Res.put(taskManager.getResourcePrototypes().get(1), 2);
 
 		assertTrue(taskManager.createProject("Test1", "testing 1", project0DueDate));
 		ProjectView project0 = taskManager.getProjects().get(0);
 
-		assertTrue(taskManager.createTask(project0, "Design system", task00EstDur, task00Dev, task00Dependencies, null));		// TASK 1
+		assertTrue(taskManager.createTask(project0, "Design system", task00EstDur, task00Dev, task00Dependencies, task00Res, null));		// TASK 1
 		task01Dependencies.add(project0.getTasks().get(0));
-		assertTrue(taskManager.createTask(project0, "Implement Native", task01EstDur, task01Dev, task01Dependencies, null));	// TASK 2
+		assertTrue(taskManager.createTask(project0, "Implement Native", task01EstDur, task01Dev, task01Dependencies, task01Res, null));	// TASK 2
 		task02Dependencies.add(project0.getTasks().get(1));
-		assertTrue(taskManager.createTask(project0, "Test code", task02EstDur, task02Dev, task02Dependencies, null));			// TASK 3
+		assertTrue(taskManager.createTask(project0, "Test code", task02EstDur, task02Dev, task02Dependencies, task02Res, null));			// TASK 3
 		task03Dependencies.add(project0.getTasks().get(1));
-		assertTrue(taskManager.createTask(project0, "Document code", task03EstDur, task03Dev, task03Dependencies, null));		// TASK 4
+		assertTrue(taskManager.createTask(project0, "Document code", task03EstDur, task03Dev, task03Dependencies, task03Res, null));		// TASK 4
 
 	}
 

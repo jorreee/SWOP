@@ -58,11 +58,13 @@ public class ResourcePool {
 		return concreteResList.add(conRes);
 	}
 
+
 	/**
 	 * Return a list of concrete resources in the pool
 	 * 
 	 * @return an immutable list of concrete resource in the pool
 	 */
+
 	public List<ConcreteResource> getConcreteResourceList(){
 		return concreteResList;
 	}
@@ -81,6 +83,7 @@ public class ResourcePool {
 		}
 		return list.build();
 	}
+
 	
 	/**
 	 * Check whether this resource pool is based on the given resource prototype
@@ -102,5 +105,6 @@ public class ResourcePool {
 	public int size(){
 		return concreteResList.size();
 	}
+
 
 }

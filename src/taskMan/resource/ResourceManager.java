@@ -495,7 +495,10 @@ public class ResourceManager {
 	 *            | A map linking resourcePrototypes with a specified amount
 	 * @return True if enough resources exist, false otherwise
 	 */
+
 	public Map<ResourcePrototype, Integer> isValidRequiredResources(Map<ResourceView,Integer> reqRes) {
+		if(reqRes == null)
+			return null;
 		Map<ResourcePrototype, Integer> resProtList = new HashMap<ResourcePrototype, Integer>();
 		for(ResourceView rv : reqRes.keySet()) {
 			ResourcePrototype rp = unWrapResourcePrototypeView(rv);
@@ -690,12 +693,16 @@ public class ResourceManager {
 		return activeReservations.removeAll(toRemove);
 	}
 
+
+
+
 	/**
 	 * Return an immutable list of all the reservations present in the resource
 	 * manager
 	 * 
 	 * @return all reservations
 	 */
+
 	public List<Reservation> getAllReservations() {
 		Builder<Reservation> reservations = ImmutableList.builder();
 		reservations.addAll(allReservations);
