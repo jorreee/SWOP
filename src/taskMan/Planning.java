@@ -4,10 +4,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import taskMan.resource.user.User;
 import taskMan.util.TimeSpan;
-import taskMan.view.ResourceView;
-
-import com.google.common.collect.ImmutableList;
 
 /**
  * A planning contains data essential for the execution of a task. Every task
@@ -32,7 +30,7 @@ public class Planning {
 	private final TimeSpan estimatedDuration;
 	private final int acceptableDeviation;
 	
-	private List<ResourceView> plannedDevelopers = new ArrayList<ResourceView>();
+	private List<User> plannedDevelopers = new ArrayList<User>();
 	
 	/**
 	 * Construct a new planning instance for a task with an estimated duration
@@ -237,7 +235,7 @@ public class Planning {
 	 * @return true when the developers were added to the planning, false
 	 *         otherwise
 	 */
-	public boolean setDevelopers(List<ResourceView> plannedDevelopers) {
+	public boolean setDevelopers(List<User> plannedDevelopers) {
 		// TODO Actual developers?
 		this.plannedDevelopers = plannedDevelopers;
 		return true;              
@@ -249,10 +247,8 @@ public class Planning {
 	 * 
 	 * @return an immutable list of developers (wrapped in views)
 	 */
-	public List<ResourceView> getPlannedDevelopers(){
-		ImmutableList.Builder<ResourceView> plannedDevs = ImmutableList.builder();
-		plannedDevs.addAll(plannedDevelopers);
-		return plannedDevs.build();
+	public List<User> getPlannedDevelopers(){
+		return plannedDevelopers;
 	}
 
 }

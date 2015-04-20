@@ -464,24 +464,24 @@ public class TaskMan {
 		return resMan.getDeveloperList();
 	}
 
-	/**
-	 * Remove all reservations of a finished or failed task that are still
-	 * scheduled to happen. This method will also free up reserved resources by
-	 * said task if the reservation is still ongoing.
-	 * 
-	 * @param project
-	 *            | The project the task belongs to
-	 * @param task
-	 *            | The ended task
-	 * @return True if the operation was successful, false otherwise
-	 */
-	public boolean flushFutureReservations(ProjectView project, TaskView task) {
-		Project p = unwrapProjectView(project);
-		if (p == null) {
-			return false;
-		}
-		return p.flushFutureReservations(task, currentTime);
-	}
+//	/**
+//	 * Remove all reservations of a finished or failed task that are still
+//	 * scheduled to happen. This method will also free up reserved resources by
+//	 * said task if the reservation is still ongoing.
+//	 * 
+//	 * @param project
+//	 *            | The project the task belongs to
+//	 * @param task
+//	 *            | The ended task
+//	 * @return True if the operation was successful, false otherwise
+//	 */
+//	public boolean flushFutureReservations(ProjectView project, TaskView task) {
+//		Project p = unwrapProjectView(project);
+//		if (p == null) {
+//			return false;
+//		}
+//		return p.flushFutureReservations(task, currentTime);
+//	}
 
 	public Map<ProjectView, List<TaskView>> reservationConflict(
 			ResourceView requiredResource, ProjectView project, TaskView task,
@@ -491,7 +491,7 @@ public class TaskMan {
 	}
 
 	public boolean planTask(ProjectView project, TaskView task,
-			LocalDateTime plannedStartTime, List<ResourceView> concRes, List<User> devs) {
+			LocalDateTime plannedStartTime, List<ResourceView> concRes, List<ResourceView> devs) {
 		Project p = unwrapProjectView(project);
 		if(p == null) {
 			return false;
