@@ -69,21 +69,6 @@ public class ResourcePool {
 		return concreteResList;
 	}
 	
-	/**
-	 * Return a list of resourceViews based of all the concrete resources in the
-	 * pool
-	 * 
-	 * @return an immutable list of resourceViews, one for each concrete
-	 *         resource in the pool
-	 */
-	public List<ResourceView> getConcreteResourceViewList(){
-		Builder<ResourceView> list = ImmutableList.builder();
-		for (Resource res : concreteResList){
-			list.add(new ResourceView(res));
-		}
-		return list.build();
-	}
-
 	
 	/**
 	 * Check whether this resource pool is based on the given resource prototype

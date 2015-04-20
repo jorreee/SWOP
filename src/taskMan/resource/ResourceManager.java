@@ -286,10 +286,25 @@ public class ResourceManager {
 		
 		return true;
 	}
-	
-	public boolean pickDevs(List<User> devs, Task reservingTask, LocalDateTime start, LocalDateTime end) {
+
+	/**
+	 * A method to find the assigned developers and make a reservation for each
+	 * one. The reservation(s) will be made by the reserving task from the given
+	 * start time and the given end time.
+	 * 
+	 * @param devs
+	 *            | The developers to assign
+	 * @param reservingTask
+	 *            | The task reserving the developers
+	 * @param start
+	 *            | The start time of the new reservations
+	 * @param end
+	 *            | The end time of the new reservations
+	 * @return True if the developers were assigned and reserved
+	 */
+	public List<User> pickDevs(List<ResourceView> devs, Task reservingTask, LocalDateTime start, LocalDateTime end) {
 		//TODO vroem vroem genned bouwer stoppel
-		return true;
+		return null;
 	}
 	
 	/**
@@ -424,7 +439,13 @@ public class ResourceManager {
 			Builder<ResourceView> conResList = ImmutableList.builder();
 			return conResList.build();
 		}
-		return getPoolOf(rprot).getConcreteResourceViewList();
+
+		List<ConcreteResource> concreteRes = getPoolOf(rprot).getConcreteResourceList();
+		Builder<ResourceView> conResList = ImmutableList.builder();
+		for (ConcreteResource res : concreteRes  ){
+			conResList.add(new ResourceView(res));
+		}
+		return conResList.build();
 	}
 	
 	/**
@@ -623,40 +644,40 @@ public class ResourceManager {
 		return posTimes;
 	}
 	
-	/**
-	 * This method will remove all future reservations for a given
-	 * (finished/failed) task. If there are any active reservations that have
-	 * already started, but not yet finished, a reservation until this point
-	 * will be maintained, but the resources will be made available again (i.e.
-	 * the reservation will end now).
-	 * 
-	 * @param task
-	 *            | The finished or failed task
-	 * @param currentTime
-	 *            | The current time in the system
-	 * @return true if all required changes were successfully made
-	 */
-	public boolean flushFutureReservations(Task task, LocalDateTime currentTime) {
-		boolean succesful = false;
-		for (Reservation res : activeReservations){
-			if (res.getReservingTask().equals(task)){
-				activeReservations.remove(res);
-				succesful = true;
-			}
-		}
-		for (Reservation res : allReservations){
-			if (res.getReservingTask().equals(task)){
-				if(res.getEndTime().isAfter(currentTime)){
-					ConcreteResource reserved = res.getReservedResource();
-					Task resTask = res.getReservingTask();
-					LocalDateTime start = res.getStartTime();
-					allReservations.remove(res);
-					allReservations.add(new Reservation(reserved,resTask,start,currentTime));
-				}
-			}
-		}
-		return succesful;
-	}
+//	/**
+//	 * This method will remove all future reservations for a given
+//	 * (finished/failed) task. If there are any active reservations that have
+//	 * already started, but not yet finished, a reservation until this point
+//	 * will be maintained, but the resources will be made available again (i.e.
+//	 * the reservation will end now).
+//	 * 
+//	 * @param task
+//	 *            | The finished or failed task
+//	 * @param currentTime
+//	 *            | The current time in the system
+//	 * @return true if all required changes were successfully made
+//	 */
+//	public boolean flushFutureReservations(Task task, LocalDateTime currentTime) {
+//		boolean succesful = false;
+//		for (Reservation res : activeReservations){
+//			if (res.getReservingTask().equals(task)){
+//				activeReservations.remove(res);
+//				succesful = true;
+//			}
+//		}
+//		for (Reservation res : allReservations){
+//			if (res.getReservingTask().equals(task)){
+//				if(res.getEndTime().isAfter(currentTime)){
+//					ConcreteResource reserved = res.getReservedResource();
+//					Task resTask = res.getReservingTask();
+//					LocalDateTime start = res.getStartTime();
+//					allReservations.remove(res);
+//					allReservations.add(new Reservation(reserved,resTask,start,currentTime));
+//				}
+//			}
+//		}
+//		return succesful;
+//	}
 	
 	/**
 	 * An ended task can call this method to release all active reservations made

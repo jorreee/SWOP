@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import taskMan.resource.user.User;
 import taskMan.resource.user.UserCredential;
 import taskMan.view.ProjectView;
 import taskMan.view.ResourceView;
@@ -84,13 +83,13 @@ public interface IFacade {
 			ResourceView resourcePrototype);
 
 	public boolean planTask(ProjectView project, TaskView task,
-			LocalDateTime planningStartTime, List<ResourceView> concRes, List<User> devs);
+			LocalDateTime planningStartTime, List<ResourceView> concRes, List<ResourceView> devs);
 
 	public Map<ProjectView, List<TaskView>> reservationConflict(ResourceView requiredResource,
 			ProjectView project, TaskView task, LocalDateTime planningStartTime);
 
-	public boolean flushFutureReservations(ProjectView project,
-			TaskView conflictingTask);
+//	public boolean flushFutureReservations(ProjectView project,
+//			TaskView conflictingTask);
 
 	public boolean currentUserHasCredential(UserCredential credential);
 	

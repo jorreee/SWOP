@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import taskMan.resource.Reservation;
-import taskMan.resource.user.User;
 import taskMan.resource.user.UserCredential;
 import taskMan.view.ProjectView;
 import taskMan.view.ResourceView;
@@ -216,7 +215,7 @@ public class Facade implements IFacade {
 
 	@Override
 	public boolean planTask(ProjectView project, TaskView task,
-			LocalDateTime plannedStartTime, List<ResourceView> concRes, List<User> devs) {
+			LocalDateTime plannedStartTime, List<ResourceView> concRes, List<ResourceView> devs) {
 		return taskMan.planTask(project, task, plannedStartTime, concRes, devs);
 	}
 
@@ -226,12 +225,12 @@ public class Facade implements IFacade {
 			LocalDateTime plannedStartTime) {
 		return taskMan.reservationConflict(requiredResource, project, task, plannedStartTime);
 	}
-
-	@Override
-	public boolean flushFutureReservations(ProjectView project,
-			TaskView task) {
-		return taskMan.flushFutureReservations(project, task);
-	}
+	
+//	@Override
+//	public boolean flushFutureReservations(ProjectView project,
+//			TaskView task) {
+//		return taskMan.flushFutureReservations(project, task);
+//	}
 
 	@Override
 	public boolean addRequirementsToResource(List<ResourceView> resourcesToAdd,

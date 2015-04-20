@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import taskMan.resource.ResourceManager;
-import taskMan.resource.user.User;
 import taskMan.state.OngoingProject;
 import taskMan.state.ProjectStatus;
 import taskMan.util.Dependant;
@@ -572,7 +571,7 @@ public class Project implements Dependant {
 	}
 	
 	public boolean planTask(TaskView task, LocalDateTime plannedStartTime,
-			List<ResourceView> concRes, List<User> devs) {
+			List<ResourceView> concRes, List<ResourceView> devs) {
 		Task t = unwrapTaskView(task);
 		if(t == null) {
 			return false;
@@ -681,24 +680,24 @@ public class Project implements Dependant {
 //		return unwrapTaskView(task).getPossibleTaskStartingTimes(amount);
 //	}
 
-	/**
-	 * Remove all reservations of a finished or failed task that are still
-	 * scheduled to happen. This method will also free up reserved resources by
-	 * said task if the reservation is still ongoing.
-	 * 
-	 * @param task
-	 *            | The ended task
-	 * @param currentTime
-	 *            | The current time
-	 * @return True if the operation was successful, false otherwise
-	 */
-	public boolean flushFutureReservations(TaskView task, LocalDateTime currentTime) {
-		Task t = unwrapTaskView(task);
-		if(t == null) {
-			return false;
-		}
-		return t.flushFutureReservations(currentTime);
-	}
+//	/**
+//	 * Remove all reservations of a finished or failed task that are still
+//	 * scheduled to happen. This method will also free up reserved resources by
+//	 * said task if the reservation is still ongoing.
+//	 * 
+//	 * @param task
+//	 *            | The ended task
+//	 * @param currentTime
+//	 *            | The current time
+//	 * @return True if the operation was successful, false otherwise
+//	 */
+//	public boolean flushFutureReservations(TaskView task, LocalDateTime currentTime) {
+//		Task t = unwrapTaskView(task);
+//		if(t == null) {
+//			return false;
+//		}
+//		return t.flushFutureReservations(currentTime);
+//	}
 	
 //	/**
 //	 * Reserve a resource for a task from a given start time to a given end time

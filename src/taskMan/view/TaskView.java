@@ -6,6 +6,7 @@ import java.util.Map;
 
 import taskMan.Task;
 import taskMan.resource.ResourcePrototype;
+import taskMan.resource.user.User;
 import taskMan.util.TimeSpan;
 
 import com.google.common.collect.ImmutableList;
@@ -335,7 +336,11 @@ public class TaskView {
 	 *         work on this task
 	 */
 	public List<ResourceView> getPlannedDevelopers() {
-		return task.getPlannedDevelopers();
+		ImmutableList.Builder<ResourceView> plannedDevs = ImmutableList.builder();
+		for(User u : task.getPlannedDevelopers()) {
+			plannedDevs.add(new ResourceView(u));
+		}
+		return plannedDevs.build();
 	}
 
 	/**
