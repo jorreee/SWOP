@@ -3,6 +3,7 @@ package taskMan.resource;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -286,6 +287,22 @@ public class ResourceManager {
 		return true;
 	}
 	
+	public boolean pickDevs(List<User> devs, Task reservingTask, LocalDateTime start, LocalDateTime end) {
+		//TODO vroem vroem genned bouwer stoppel
+		return true;
+	}
+	
+	/**
+	 * Checks whether the given resource can be reserved from the given start time to the given end time.
+	 * 
+	 * @param 	resource
+	 * 			The resource to check.
+	 * @param 	start
+	 * 			The start time of the reservation.
+	 * @param 	end
+	 * 			The end time of the reservation.
+	 * @return 	true if the resource can be reserved in the given time slot, else false.
+	 */
 	private boolean canReserve(ConcreteResource resource, LocalDateTime start, LocalDateTime end) {
 		for(Reservation reservation : activeReservations) {
 			if(reservation.getReservedResource().equals(resource)) {
@@ -297,6 +314,16 @@ public class ResourceManager {
 		return true;
 	}
 	
+	/**
+	 * Picks the Unreserved Resource instances of a given Resource Prototype for the given time period.
+	 * @param 	rp
+	 * 			The resource prototype.
+	 * @param 	start
+	 * 			The start time for the reservation.
+	 * @param 	end
+	 * 			The end time for the reservation.
+	 * @return 	A list of Unreserved Concrete Resources of the Prototype. If none were found, return null.
+	 */
 	private ConcreteResource pickUnreservedResource(ResourcePrototype rp, LocalDateTime start, LocalDateTime end) {
 		List<ConcreteResource> options = getPoolOf(rp).getConcreteResourceList();
 		for(ConcreteResource cr : options) {
@@ -307,6 +334,12 @@ public class ResourceManager {
 		return null;
 	}
 	
+	/**
+	 * Gets the Resource Pool of a given Prototype.
+	 * @param 	rp
+	 * 			The resource prototype
+	 * @return	If the pool exists, return the pool. Else return null.
+	 */
 	private ResourcePool getPoolOf(ResourcePrototype rp) {
 		for(ResourcePool pool : resPools) {
 			if(pool.hasAsPrototype(rp)) {
@@ -440,34 +473,33 @@ public class ResourceManager {
 
 	/**
 	 * Check whether or not the given resources and their supplied amount exist
-	 * in the resource manager's resource pools
+	 * in the resource manager's resource pools. Returns the list of Prototypes 
+	 * if they are valid. Returns NULL if they aren't
 	 * 
 	 * @param reqRes
 	 *            | A map linking resourcePrototypes with a specified amount
 	 * @return True if enough resources exist, false otherwise
 	 */
-	public boolean isValidRequiredResources(Map<ResourceView,Integer> reqRes) {
+
+	public Map<ResourcePrototype, Integer> isValidRequiredResources(Map<ResourceView,Integer> reqRes) {
 		if(reqRes == null)
-			return false;
+			return null;
+		Map<ResourcePrototype, Integer> resProtList = new HashMap<ResourcePrototype, Integer>();
 		for(ResourceView rv : reqRes.keySet()) {
 			ResourcePrototype rp = unWrapResourcePrototypeView(rv);
 			if(rp == null) {
-				return false;
+				return null;
 			}
 			int i = reqRes.get(rv);
 			if(i <= 0) {
-				return false;
+				return null;
 			}
-//			for(ResourcePool pool : resPools) {
-//				if(pool.hasAsPrototype(rp)) {
-					if(i > getPoolOf(rp).size()) {
-						return false;
-					}
-//					break;
-//				}
-//			}
+			if(i > getPoolOf(rp).size()) {
+				return null;
+			}
+			resProtList.put(rp, reqRes.get(rv));
 		}
-		return true;
+		return resProtList;
 	}
 
 	/**
@@ -624,6 +656,26 @@ public class ResourceManager {
 			}
 		}
 		return succesful;
+	}
+	
+	/**
+	 * An ended task can call this method to release all active reservations made
+	 * by this task. 
+	 * 
+	 * @param task
+	 * @return
+	 */
+	public boolean releaseResources(Task task) {
+		if(!task.hasEnded()) {
+			return false;
+		}
+		List<Reservation> toRemove = new ArrayList<Reservation>();
+		for(Reservation r : activeReservations) {
+			if(r.getReservingTask().equals(task)) {
+				toRemove.add(r);
+			}
+		}
+		return activeReservations.removeAll(toRemove);
 	}
 
 

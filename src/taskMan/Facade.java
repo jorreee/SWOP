@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import taskMan.resource.Reservation;
+import taskMan.resource.user.User;
 import taskMan.resource.user.UserCredential;
 import taskMan.view.ProjectView;
 import taskMan.view.ResourceView;
@@ -215,8 +216,8 @@ public class Facade implements IFacade {
 
 	@Override
 	public boolean planTask(ProjectView project, TaskView task,
-			LocalDateTime plannedStartTime, List<ResourceView> concRes) {
-		return taskMan.planTask(project, task, plannedStartTime, concRes);
+			LocalDateTime plannedStartTime, List<ResourceView> concRes, List<User> devs) {
+		return taskMan.planTask(project, task, plannedStartTime, concRes, devs);
 	}
 
 	@Override

@@ -5,9 +5,11 @@ import java.util.List;
 import java.util.Map;
 
 import taskMan.Task;
+import taskMan.resource.ResourcePrototype;
 import taskMan.util.TimeSpan;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * A taskView is a wrapper for tasks. The taskView only has limited access to
@@ -278,7 +280,11 @@ public class TaskView {
 	 *         required quantities
 	 */
 	public Map<ResourceView, Integer> getRequiredResources() {
-		return task.getRequiredResources();
+		ImmutableMap.Builder<ResourceView,Integer> reqRes = ImmutableMap.builder();
+		for(ResourcePrototype p : task.getRequiredResources().keySet()) {
+			reqRes.put(new ResourceView(p), task.getRequiredResources().get(p));
+		}
+		return reqRes.build();
 	}
 
 	// public List<ResourceView> getPossibleResourceInstances(ResourceView

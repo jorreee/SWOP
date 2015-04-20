@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import taskMan.resource.ResourceManager;
+import taskMan.resource.user.User;
 import taskMan.state.OngoingProject;
 import taskMan.state.ProjectStatus;
 import taskMan.util.Dependant;
@@ -571,12 +572,12 @@ public class Project implements Dependant {
 	}
 	
 	public boolean planTask(TaskView task, LocalDateTime plannedStartTime,
-			List<ResourceView> concRes) {
+			List<ResourceView> concRes, List<User> devs) {
 		Task t = unwrapTaskView(task);
 		if(t == null) {
 			return false;
 		}
-		return t.plan(plannedStartTime, concRes);
+		return t.plan(plannedStartTime, concRes, devs);
 	}
 
 	/**

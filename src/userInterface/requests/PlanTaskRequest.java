@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import taskMan.resource.user.User;
 import taskMan.view.ProjectView;
 import taskMan.view.ResourceView;
 import taskMan.view.TaskView;
@@ -58,14 +59,17 @@ public class PlanTaskRequest extends Request {
 				}
 
 				// Assign developers to task, assign planning to task, reserve selected resource(types)
-				boolean success = facade.planTask(project, task, planning.getPlanningStartTime());
+				boolean success = facade.planTask(project, task, 
+						planning.getPlanningStartTime(), 
+						planning.getResourcesToReserve(),
+						planning.getDevelopers());
 
 				if(!success) { System.out.println("Failed to plan task, try again"); continue; }
-				else {
-					for(ResourceView resourceToReserve : planning.getResourcesToReserve()) {
-						facade.reserveResource(resourceToReserve, project, task);
-					}
-				}
+//				else {
+//					for(ResourceView resourceToReserve : planning.getResourcesToReserve()) {
+//						facade.reserveResource(resourceToReserve, project, task);
+//					}
+//				}
 
 			} catch(Exception e) {
 				System.out.println("Invalid input");
@@ -79,7 +83,7 @@ public class PlanTaskRequest extends Request {
 
 	public PlanningScheme planTask(ProjectView project, TaskView task) {
 
-		PlanningScheme planning = null;
+		PlanningScheme planning = new PlanningScheme();
 		String input;
 		
 		// Ask user for time slot
@@ -145,10 +149,10 @@ public class PlanTaskRequest extends Request {
 				// Confirm time slot
 				LocalDateTime timeSlotStart = possibleStartingTimes.get(Integer.parseInt(input));
 				System.out.println("Time slot selected from " + timeSlotStart.toString() + " until " + timeSlotStart.plusMinutes(task.getEstimatedDuration()).toString());
-				planning = new PlanningScheme(timeSlotStart);
+				planning.setPlanBeginTime(timeSlotStart);
 				
 				// Show list of developers
-				List<ResourceView> devs = facade.getDeveloperList();
+				List<ResourceView> devs = facade.getDeveloperList(); //TODO enkel available op tijdstip tonen?
 				System.out.println("Possible developers to assign:");
 				for(int i = 0; i < devs.size() ; i++) {
 					System.out.println("(" + i + ") " + devs.get(i));
@@ -162,7 +166,7 @@ public class PlanTaskRequest extends Request {
 				List<ResourceView> devNames = new ArrayList<>();
 				for(String devID : devIDs) {
 					devNames.add(devs.get(Integer.parseInt(devID)));
-				}
+				} //TODO devs toevoegen aan planningScheme?
 
 				// If selected dev conflicts with another task planning init resolve conflict request
 				Map<ProjectView, List<TaskView>> conflictingTasks = facade.findConflictingDeveloperPlannings(project, task, devNames, timeSlotStart);
@@ -188,8 +192,9 @@ class PlanningScheme {
 
 	private LocalDateTime timeSlotStartTime;
 	private List<ResourceView> resourcesToReserve;
+	private List<User> developers;
 
-	public PlanningScheme(LocalDateTime timeSlotStartTime) {
+	public void setPlanBeginTime(LocalDateTime timeSlotStartTime) {
 		this.timeSlotStartTime = timeSlotStartTime;
 	}
 
@@ -210,6 +215,14 @@ class PlanningScheme {
 
 	public List<ResourceView> getResourcesToReserve() {
 		return resourcesToReserve;
+	}
+	
+	public void addDeveloper(User d) {
+		developers.add(d);
+	}
+	
+	public List<User> getDevelopers() {
+		return developers;
 	}
 }
 
