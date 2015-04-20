@@ -82,6 +82,16 @@ public class Reservation {
 		return endTime;
 	}
 	
+
+	/**
+	 * Returns whether the reservation overlaps with a given start and end date.
+	 * 
+	 * @param 	start
+	 * 			The start date
+	 * @param 	end
+	 * 			The end date
+	 * @return true if it overlaps, false otherwise
+	 */
 	public boolean overlaps(LocalDateTime start, LocalDateTime end) {
 		//             ###############
 		//     nnnnnnn
