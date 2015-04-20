@@ -292,6 +292,17 @@ public class ResourceManager {
 		return true;
 	}
 	
+	/**
+	 * Checks whether the given resource can be reserved from the given start time to the given end time.
+	 * 
+	 * @param 	resource
+	 * 			The resource to check.
+	 * @param 	start
+	 * 			The start time of the reservation.
+	 * @param 	end
+	 * 			The end time of the reservation.
+	 * @return 	true if the resource can be reserved in the given time slot, else false.
+	 */
 	private boolean canReserve(ConcreteResource resource, LocalDateTime start, LocalDateTime end) {
 		for(Reservation reservation : activeReservations) {
 			if(reservation.getReservedResource().equals(resource)) {
