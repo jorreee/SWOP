@@ -267,7 +267,7 @@ public class ResourceManager {
 					toReserve = cr;
 				}
 			}
-			if(toReserve == null || canReserve(toReserve,startTime,endTime)) {
+			if(toReserve == null || !canReserve(toReserve,startTime,endTime)) {
 				error = true;
 				break;
 			} else {
