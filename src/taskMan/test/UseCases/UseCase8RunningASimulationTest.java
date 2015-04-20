@@ -1,6 +1,6 @@
 package taskMan.test.UseCases;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -91,7 +91,28 @@ public class UseCase8RunningASimulationTest {
 	}
 	
 	@Test
-	public void succesCaseSimple(){
-		
+	public void succesCaseSimpleRevertMem(){
+		taskManager.storeInMemento();
+		ProjectView project0 = taskManager.getProjects().get(0);
+		HashMap<ResourceView, Integer> reqResTest = new HashMap<>();
+		taskManager.createTask(project0, "test", 50, 5, new ArrayList<TaskView>(), reqResTest, null);
+		assertEquals(1,taskManager.getProjects().size());
+		assertEquals(3,taskManager.getProjects().get(0).getTasks().size());
+		assertTrue(taskManager.revertFromMemento());
+		assertEquals(1,taskManager.getProjects().size());
+		assertEquals(2,taskManager.getProjects().get(0).getTasks().size());
+	}
+	
+	@Test
+	public void succesCaseSimpleDiscardMem(){
+		taskManager.storeInMemento();
+		ProjectView project0 = taskManager.getProjects().get(0);
+		HashMap<ResourceView, Integer> reqResTest = new HashMap<>();
+		taskManager.createTask(project0, "test", 50, 5, new ArrayList<TaskView>(), reqResTest, null);
+		assertEquals(1,taskManager.getProjects().size());
+		assertEquals(3,taskManager.getProjects().get(0).getTasks().size());
+		assertTrue(taskManager.discardMemento());
+		assertEquals(1,taskManager.getProjects().size());
+		assertEquals(3,taskManager.getProjects().get(0).getTasks().size());
 	}
 }
