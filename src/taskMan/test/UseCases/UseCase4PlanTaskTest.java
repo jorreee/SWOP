@@ -140,7 +140,28 @@ public class UseCase4PlanTaskTest {
 	
 	@Test
 	public void succesCaseTestFinishedAltOfPreReq(){
-		
+		//Set up
+		ProjectView project0 = taskManager.getProjects().get(0);
+		TaskView task00 = project0.getTasks().get(0);
+		TaskView task01 = project0.getTasks().get(1);
+		ArrayList<ResourceView> concRes = new ArrayList<>();
+		concRes.add(taskManager.getConcreteResourcesForPrototype(taskManager.getResourcePrototypes().get(0)).get(0));
+		concRes.add(taskManager.getConcreteResourcesForPrototype(taskManager.getResourcePrototypes().get(1)).get(0));
+		ArrayList<ResourceView> devs = new ArrayList<>();
+		devs.add(dev1);
+		//Plan task00 and let it fail
+		assertTrue(taskManager.planTask(project0, task00, task00StartDateGood, concRes, devs));
+		assertTrue(taskManager.setTaskExecuting(project0, task00, task00StartDateGood));
+		assertTrue(taskManager.setTaskFailed(project0, task00, task00EndDateGood));
+		assertTrue(taskManager.createTask(project0, "Alt", task00EstDur, task00Dev, task00Dependencies, task00Res, task00));
+		assertFalse(taskManager.planTask(project0, task01, task01StartDateGood, task01ConcreteResources, devs));
+		//Create an alt for task00 and let it succeed
+		TaskView taskAlt = project0.getTasks().get(project0.getTasks().size()-1);
+		assertTrue(taskManager.planTask(project0, taskAlt, LocalDateTime.of(2015,2,9,10,2), task01ConcreteResources, devs));
+		assertTrue(taskManager.setTaskExecuting(project0, taskAlt, LocalDateTime.of(2015,2,9,10,2)));
+		assertTrue(taskManager.setTaskFinished(project0, taskAlt, LocalDateTime.of(2015,2,9,14,0)));
+		//Plan task01 dependent on task00
+		assertTrue(taskManager.planTask(project0, task01, LocalDateTime.of(2015,2,9,14,15), task01ConcreteResources, devs));
 	}
 	
 	@Test
