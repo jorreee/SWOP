@@ -173,10 +173,10 @@ public class Facade implements IFacade {
 //		return taskMan.reserveResource(resource, project, task);
 //	}
 	
-//	@Override
-//	public boolean reserveResource(ResourceView resource, ProjectView project, TaskView task, LocalDateTime startTime, LocalDateTime endTime) {
-//		return taskMan.reserveResource(resource, project, task, startTime, endTime);
-//	}
+	@Override
+	public boolean reserveResource(ResourceView resource, ProjectView project, TaskView task, LocalDateTime startTime, LocalDateTime endTime) {
+		return taskMan.reserveResource(resource, project, task, startTime, endTime);
+	}
 
 //	@Override
 //	public List<LocalDateTime> getPossibleTaskStartingTimes(ProjectView project, TaskView task,
@@ -219,12 +219,12 @@ public class Facade implements IFacade {
 		return taskMan.planTask(project, task, plannedStartTime, concRes, devs);
 	}
 
-	@Override
-	public Map<ProjectView, List<TaskView>> reservationConflict(
-			ResourceView requiredResource, ProjectView project, TaskView task,
-			LocalDateTime plannedStartTime) {
-		return taskMan.reservationConflict(requiredResource, project, task, plannedStartTime);
-	}
+//	@Override
+//	public Map<ProjectView, List<TaskView>> reservationConflict(
+//			ResourceView requiredResource, ProjectView project, TaskView task,
+//			LocalDateTime plannedStartTime) {
+//		return taskMan.reservationConflict(requiredResource, project, task, plannedStartTime);
+//	}
 	
 //	@Override
 //	public boolean flushFutureReservations(ProjectView project,

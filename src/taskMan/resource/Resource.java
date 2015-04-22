@@ -18,7 +18,7 @@ public abstract class Resource {
 	protected List<ResourcePrototype> reqResourcesList;
 	protected List<ResourcePrototype> conResourcesList;
 	
-	protected AvailabilityPeriod dailyAvailable;
+	protected AvailabilityPeriod availabilityPeriod;
 	
 	/**
 	 * Construct a new resource with all the required information. The
@@ -38,7 +38,7 @@ public abstract class Resource {
 		this.resName = resourceName;
 		this.reqResourcesList = requiredResourcesList;
 		this.conResourcesList = conflictingResourcesList;
-		this.dailyAvailable = dailyAvailability;
+		this.availabilityPeriod = dailyAvailability;
 	}
 	
 	/**
@@ -65,7 +65,7 @@ public abstract class Resource {
 	 * @return true if there is an availability period available, false if it is
 	 *         not present
 	 */
-	public boolean isDailyAvailable() { return dailyAvailable != null; }
+	public boolean isDailyAvailable() { return availabilityPeriod != null; }
 	
 	/**
 	 * A getter to retrieve the start time of the availability period
@@ -74,10 +74,10 @@ public abstract class Resource {
 	 *         begins, null if there is no availability period
 	 */
 	public LocalTime getDailyAvailabilityStartTime() {
-		if(dailyAvailable == null) {
+		if(availabilityPeriod == null) {
 			return null;
 		}
-		return dailyAvailable.getStartTime();
+		return availabilityPeriod.getStartTime();
 	}
 	
 	/**
@@ -87,9 +87,9 @@ public abstract class Resource {
 	 *         end, null if there is no availability period
 	 */
 	public LocalTime getDailyAvailabilityEndTime() {
-		if(dailyAvailable == null) {
+		if(availabilityPeriod == null) {
 			return null;
 		}
-		return dailyAvailable.getEndTime();
+		return availabilityPeriod.getEndTime();
 	}
 }

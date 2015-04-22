@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.Lists;
+
 import taskMan.resource.ResourceManager;
 import taskMan.resource.ResourcePrototype;
 import taskMan.resource.user.User;
@@ -627,6 +629,25 @@ public class Task implements Dependant {
 	}
 	
 	/**
+	 * Tries to renew all reservations made for this task. Fails if the new
+	 * reservation date doesn't fall before the planned start time or after
+	 * the planned end time.
+	 * 
+	 * @param newReservationDate
+	 * @return
+	 */
+	public boolean refreshReservations(LocalDateTime newReservationDate) {
+		if(getPlannedBeginTime() == null) {
+			return false;
+		}
+		if(    !newReservationDate.isBefore(getPlannedBeginTime()) 
+			&& !newReservationDate.isAfter(plan.getPlannedEndTime())) {
+			return false;
+		}
+		return resMan.refreshReservations(this, newReservationDate, plan.getPlannedEndTime());
+	}
+	
+	/**
 	 * Replace this task with another one
 	 * 
 	 * @param t
@@ -768,8 +789,17 @@ public class Task implements Dependant {
 		if(!plan.setPlannedBeginTime(startTime)) {
 			return false;
 		}
-		if(!resMan.reserve(concRes, this, startTime, plan.getPlannedEndTime())) {
-			return false;
+		if(resMan.hasActiveReservations(this)) {
+			if(!refreshReservations(startTime)) {
+				return false;
+			}
+		} else {
+			if(!resMan.reserve(concRes, this, startTime, plan.getPlannedEndTime())) {
+				return false;
+			}
+		}
+		if(!resMan.hasActiveReservations(this)) {
+			return false; // verkeerde hoeveelheid reservaties enzo
 		}
 		List<User> developers = resMan.pickDevs(devs, this, startTime, getPlannedEndTime());
 		if(developers == null) {
@@ -802,8 +832,8 @@ public class Task implements Dependant {
 	 * 			The amount of possible starting times wanted.
 	 * @return	The possible starting times of the Task
 	 */
-	public List<LocalDateTime> getPossibleTaskStartingTimes(List<ResourceView> concRes, int amount) {
-		return resMan.getPossibleStartingTimes(this,concRes,amount);
+	public List<LocalDateTime> getPossibleTaskStartingTimes(List<ResourceView> concRes, LocalDateTime currentTime, int amount) {
+		return resMan.getPossibleStartingTimes(this,concRes,currentTime,amount);
 	}
 	
 	/**
@@ -832,10 +862,21 @@ public class Task implements Dependant {
 //		return resMan.flushFutureReservations(this, currentTime);
 //	}
 
-//	public boolean reserve(ResourceView resource, LocalDateTime startTime,
-//			LocalDateTime endTime) {
-//		return resMan.reserve(resource, this, startTime, endTime);
-//	}
+	/**
+	 * Reserve a resource at init
+	 * 
+	 * @param resource
+	 *            | Resource to reserve
+	 * @param startTime
+	 *            | The start time of the reservation
+	 * @param endTime
+	 *            | The end time of the reservation
+	 * @return True if the reservation was successful, false otherwise
+	 */
+	public boolean reserve(ResourceView resource, LocalDateTime startTime,
+			LocalDateTime endTime) {
+		return resMan.reserve(Lists.newArrayList(resource), this, startTime, endTime);
+	}
 	
 	/**
 	 * Check whether or not this task has a specific developer assigned to this

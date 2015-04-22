@@ -3,11 +3,6 @@ package taskMan.resource;
 import java.util.ArrayList;
 import java.util.List;
 
-import taskMan.view.ResourceView;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableList.Builder;
-
 /**
  * A resource pool is a collection of concrete resources based on one specific
  * resource prototype

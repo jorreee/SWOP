@@ -2,8 +2,8 @@ package taskMan.resource.user;
 import java.util.ArrayList;
 import java.util.List;
 
-import taskMan.resource.Resource;
-import taskMan.resource.ResourcePrototype;
+import taskMan.resource.AvailabilityPeriod;
+import taskMan.resource.ConcreteResource;
 
 /**
  * Users in our system are the people using it. The current user using the
@@ -16,7 +16,7 @@ import taskMan.resource.ResourcePrototype;
  * @author Tim Van Den Broecke, Joran Van de Woestijne, Vincent Van Gestel and
  *         Eli Vangrieken
  */
-public abstract class User extends Resource {
+public abstract class User extends ConcreteResource {
 	
 	private List<UserCredential> userCredentials;
 	
@@ -28,8 +28,9 @@ public abstract class User extends Resource {
 	 * @param name
 	 *            | The name of the new user
 	 */
-	public User(String name){
-		super(name,new ArrayList<ResourcePrototype>(),new ArrayList<ResourcePrototype>(),null);
+	public User(String name, UserPrototype prototype){
+		super(name, prototype.getRequiredResources(), prototype.getConflictingResources(), new AvailabilityPeriod(prototype.getDailyAvailabilityStartTime(),prototype.getDailyAvailabilityEndTime()), prototype);
+//		super(name,new ArrayList<ResourcePrototype>(),new ArrayList<ResourcePrototype>(),null);
 		userCredentials = new ArrayList<>();
 	}
 	

@@ -35,7 +35,7 @@ public class ResourcePrototype extends Resource {
 	 * @return the concrete resource with the given name based on this prototype
 	 */
 	public ConcreteResource instantiate(String instanceName) {
-		return new ConcreteResource(instanceName, reqResourcesList, conResourcesList, dailyAvailable,this);
+		return new ConcreteResource(instanceName, reqResourcesList, conResourcesList, availabilityPeriod,this);
 	}
 	
 	/**
@@ -61,4 +61,5 @@ public class ResourcePrototype extends Resource {
 	public boolean addConflictingResource(ResourcePrototype conflictingResource) {
 		return conResourcesList.add(conflictingResource);
 	}
+	
 }
