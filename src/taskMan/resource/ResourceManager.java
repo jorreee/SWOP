@@ -9,8 +9,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import taskMan.Task;
-import taskMan.resource.user.Developer;
-import taskMan.resource.user.ProjectManager;
 import taskMan.resource.user.User;
 import taskMan.resource.user.UserCredential;
 import taskMan.resource.user.UserPrototype;
@@ -271,9 +269,14 @@ public class ResourceManager {
 			if(r != null) {
 				toReserve = pickUnreservedResource(r, startTime, endTime);
 			} else {
-				ConcreteResource cr = unWrapConcreteResourceView(resource);
-				if(cr != null) {
-					toReserve = cr;
+				User user = unWrapUserView(resource);
+				if(user != null) {
+					toReserve = user;
+				} else {
+					ConcreteResource cr = unWrapConcreteResourceView(resource);
+					if(cr != null) {
+						toReserve = cr;
+					}
 				}
 			}
 			if(toReserve == null || !canReserve(toReserve,startTime,endTime)) {
@@ -319,10 +322,12 @@ public class ResourceManager {
 			}
 			users.add(user);
 		}
-		for(User user : users) {
-			reserve(); // TODO
+		boolean success = reserve(devs, reservingTask, start, end);
+		if(!success) {
+			return null;
+		} else {
+			return users;
 		}
-		return null;
 	}
 	
 	/**
@@ -381,10 +386,6 @@ public class ResourceManager {
 		}
 		return null;
 	}
-	
-//	public ImmutableList<ResourceView> getPossibleResourceInstances(ResourceView resourceType){
-//		return null; //TODO implement (is het wel nodig?)
-//	}
 	
 	/**
 	 * This method will return a list of all prototypes present in the resource
