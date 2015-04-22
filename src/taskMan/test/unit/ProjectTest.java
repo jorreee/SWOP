@@ -85,7 +85,7 @@ public class ProjectTest {
 	@Test
 	public void setFinishedTest(){
 		assertFalse(defaultProject.isFinished());
-		defaultProject.setProjectStatus(new FinishedProject(defaultProject));
+		defaultProject.setProjectStatus(new FinishedProject());
 		assertTrue(defaultProject.isFinished());
 	}
 	

@@ -189,7 +189,7 @@ public class TimeSpanTest {
 				thursday1521280, monday152980));
 		assertEquals(0,TimeSpan.getDifferenceWorkingMinutes(
 				friday15213160, monday1521680));
-		assertEquals(sevenDaysFourHours25Minutes,TimeSpan.getDifferenceWorkingMinutes(
+		assertEquals(sevenDaysFourHours25Minutes - 60,TimeSpan.getDifferenceWorkingMinutes( // - 60 to take developer pauze into account
 				monday152980, wednesday152181225));
 		assertEquals(0,TimeSpan.getDifferenceWorkingMinutes(
 				wednesday152181225, monday152980));

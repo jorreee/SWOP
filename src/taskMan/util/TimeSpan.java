@@ -1,6 +1,7 @@
 package taskMan.util;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 
@@ -347,8 +348,14 @@ public class TimeSpan {
 		if (startTime.getYear() == endTime.getYear()
 				&& startTime.getMonthValue() == endTime.getMonthValue()
 				&& startTime.getDayOfMonth() == endTime.getDayOfMonth()) {
-			// TODO hier kan voor pauze worden gecontroleerd
-			return (int) startTime.until(endTime, ChronoUnit.MINUTES);
+			LocalTime pauzeStart = LocalTime.of(11, 0);
+			LocalTime pauzeEnd = LocalTime.of(14, 0);
+			
+			int timeLeft = (int) startTime.until(endTime, ChronoUnit.MINUTES);
+			if(startTime.toLocalTime().isBefore(pauzeEnd) && endTime.toLocalTime().isAfter(pauzeStart)) {
+				timeLeft -= 60;
+			}
+			return timeLeft;
 		}
 
 		long minutesLeftToday;
@@ -367,7 +374,7 @@ public class TimeSpan {
 			break;
 		default:
 			minutesLeftToday = startTime.until(timeToCallItADayStart,
-					ChronoUnit.MINUTES);
+					ChronoUnit.MINUTES) - 60;
 			break;
 		}
 
