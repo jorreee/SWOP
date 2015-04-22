@@ -247,9 +247,6 @@ public class TaskView {
 	 * 
 	 * @return The percentage of overdue.
 	 */
-	// TODO we kunnen ook stellen dat een taak enkel overtime is wanneer hij
-	// voorbij
-	// de unacceptable delay is.
 	public int getOverTimePercentage(LocalDateTime currentTime) {
 		if (isOnTime(currentTime)) {
 			return 0;

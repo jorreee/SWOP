@@ -789,8 +789,14 @@ public class Task implements Dependant {
 		if(!plan.setPlannedBeginTime(startTime)) {
 			return false;
 		}
-		if(!resMan.reserve(concRes, this, startTime, plan.getPlannedEndTime())) {
-			return false;
+		if(resMan.hasActiveReservations(this)) {
+			if(!refreshReservations(startTime)) {
+				return false;
+			}
+		} else {
+			if(!resMan.reserve(concRes, this, startTime, plan.getPlannedEndTime())) {
+				return false;
+			}
 		}
 		if(!resMan.hasActiveReservations(this)) {
 			return false; // verkeerde hoeveelheid reservaties enzo
