@@ -33,7 +33,7 @@ public class ResourceManager {
 	
 	// The resource manager has a list of resource pools (and users)
 	private List<ResourcePool> resPools;
-//	private ResourcePool userPool; // TODO REFACTOR TO USE THIS
+//	private ResourcePool userPool; 
 	private List<User> userList;
 	//The prototype for Users
 	private UserPrototype userProt;
@@ -51,10 +51,9 @@ public class ResourceManager {
 		this.resPools = new ArrayList<>();
 		
 		userProt = new UserPrototype("User",null);
+		userList = new ArrayList<User>();
 		userList.add(userProt.instantiateProjectManager("admin"));
 		
-//		userPool = new ResourcePool(new UserPrototype("User",null));
-//		userPool.createResourceInstance("admin");
 		
 		activeReservations = new ArrayList<>();
 		allReservations = new ArrayList<>();
@@ -534,12 +533,13 @@ public class ResourceManager {
 
 	/**
 	 * Check whether or not the given resources and their supplied amount exist
-	 * in the resource manager's resource pools. Returns the list of Prototypes 
-	 * if they are valid. Returns NULL if they aren't
+	 * in the resource manager's resource pools. Also checks whether the required resources for each prototype are present, 
+	 * and conflicting resources are not. 
+	 * Returns the list of Prototypes if they are valid. Returns NULL if they aren't
 	 * 
 	 * @param reqRes
 	 *            | A map linking resourcePrototypes with a specified amount
-	 * @return True if enough resources exist, false otherwise
+	 * @return The list of prototype if the resources are valid, else return null.
 	 */
 
 	public Map<ResourcePrototype, Integer> isValidRequiredResources(Map<ResourceView,Integer> reqRes) {
@@ -558,7 +558,19 @@ public class ResourceManager {
 			if(i > getPoolOf(rp).size()) {
 				return null;
 			}
-			resProtList.put(rp, reqRes.get(rv));
+			resProtList.put(rp, i);
+		}
+		for(ResourcePrototype prot : resProtList.keySet()){
+			for (ResourcePrototype req : prot.getRequiredResources()){
+				if (!resProtList.containsKey(req)){
+					return null;
+				}
+			}
+			for (ResourcePrototype confl : prot.getConflictingResources()){
+				if (resProtList.containsKey(confl)){
+					return null;
+				}
+			}
 		}
 		return resProtList;
 	}
@@ -605,8 +617,6 @@ public class ResourceManager {
 	 * @return True if the new requirements were successfully added to the
 	 *         prototype
 	 */
-	// TODO deze nieuwe reqs zouden ook aan alle concrete resources van het
-	// prototype moeten toegevoegd worden
 //TODO verwijder activeResources wanneer de task end
 	public boolean addRequirementsToResource(List<ResourceView> reqToAdd, ResourceView prototype){
 		ResourcePrototype rprot = unWrapResourcePrototypeView(prototype);
@@ -640,8 +650,6 @@ public class ResourceManager {
 	 * @return True if the new conflicts were successfully added to the
 	 *         prototype
 	 */
-	// TODO deze nieuwe cons zouden ook aan alle concrete resources van het
-	// prototype moeten toegevoegd worden
 	public boolean addConflictsToResource(List<ResourceView> conToAdd, ResourceView prototype){
 		ResourcePrototype rprot = unWrapResourcePrototypeView(prototype);
 		if(rprot == null) {
