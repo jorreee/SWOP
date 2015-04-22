@@ -265,7 +265,7 @@ public class ResourceManager {
 			ConcreteResource toReserve = null;
 			ResourcePrototype r = unWrapResourcePrototypeView(resource);
 			if(r != null) {
-				toReserve = pickUnreservedResource(r, startTime, endTime, newReservations);
+				toReserve = pickUnreservedResource(r, startTime, endTime, newReservations, new ArrayList<ConcreteResource>());
 			} else {
 				User user = unWrapUserView(resource);
 				if(user != null) {
@@ -357,22 +357,30 @@ public class ResourceManager {
 	}
 	
 	/**
-	 * Picks the Unreserved Resource instances of a given Resource Prototype for the given time period.
-	 * @param 	rp
-	 * 			The resource prototype.
-	 * @param 	start
-	 * 			The start time for the reservation.
-	 * @param 	end
-	 * 			The end time for the reservation.
-	 * @return 	A list of Unreserved Concrete Resources of the Prototype. If none were found, return null.
+	 * Picks the Unreserved Resource instances of a given Resource Prototype for
+	 * the given time period.
+	 * 
+	 * @param rp
+	 *            The resource prototype.
+	 * @param start
+	 *            The start time for the reservation.
+	 * @param end
+	 *            The end time for the reservation.
+	 * @param alreadyReserved
+	 *            Reservations that were already made
+	 * @param dontReserve
+	 *            Concrete resources to ignore
+	 * @return A list of Unreserved Concrete Resources of the Prototype. If none
+	 *         were found, return null.
 	 */
 	private ConcreteResource pickUnreservedResource(ResourcePrototype rp, 
 			LocalDateTime start, 
 			LocalDateTime end, 
-			List<Reservation> alreadyReserved) {
+			List<Reservation> alreadyReserved,
+			List<ConcreteResource> dontReserve) {
 		List<ConcreteResource> options = getPoolOf(rp).getConcreteResourceList();
 		for(ConcreteResource cr : options) {
-			if(canReserve(cr, start, end, alreadyReserved)) {
+			if(!dontReserve.contains(cr) && canReserve(cr, start, end, alreadyReserved)) {
 				return cr;
 			}
 		}
@@ -721,27 +729,50 @@ public class ResourceManager {
 			hour.withMinute(0);
 		}
 		
+		// These are already chosen
+		List<ConcreteResource> alreadyReserved = new ArrayList<>();
+		for(ResourceView resource : allResources) {
+			ConcreteResource cr = unWrapConcreteResourceView(resource);
+			if(cr != null) {
+				alreadyReserved.add(cr);
+			}
+		}
+		
 		// Until amount (Check hour)
 		while(amount > 0) {
+			boolean validTimeStamp = true;
 			// For each resource
 			for(ResourceView resource : allResources) {
 				ConcreteResource cr = unWrapConcreteResourceView(resource);
 				// if Concrete resource
 				if(cr != null) {
 					// Available from hour until hour + task.getEstimatedDuration()
-					
+					if(!canReserve(cr, hour, TimeSpan.addSpanToLDT(hour,task.getEstimatedDuration()), new ArrayList<Reservation>())) {
+						validTimeStamp = false;
+						break;
+					}
 					continue;
 				}
-				ResourcePrototype pr = unWrapResourcePrototypeView(resource);
+				ResourcePrototype rp = unWrapResourcePrototypeView(resource);
 				// if Prototype
-				if(pr != null) {
+				if(rp != null) {
 					// Find concrete resource (not yet present) which is available from ...
-
-					// Add cr to list
-					
+					cr = pickUnreservedResource(rp, hour, TimeSpan.addSpanToLDT(hour,task.getEstimatedDuration()), new ArrayList<Reservation>(), alreadyReserved);
 					// No cr to be found (Oh nooes)
-					
+					if(cr == null) {
+						validTimeStamp = false;
+						break;
+					}
+					// Add cr to list
+					alreadyReserved.add(cr);
+					continue;
 				}
+				return null; // The resources in allResources must be concrete or prototype
+			}
+			// If everything checks out, good job!
+			if(validTimeStamp) {
+				posTimes.add(hour);
+				amount--;
 			}
 			// Add hour
 			hour = TimeSpan.addSpanToLDT(hour, new TimeSpan(60));
