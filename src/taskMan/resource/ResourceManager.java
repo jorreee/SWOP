@@ -573,12 +573,13 @@ public class ResourceManager {
 	 *            reservations
 	 * @return true if every required resource has enough active reservations
 	 */
-	public boolean hasActiveReservations(Task reservedTask, Map<ResourceView,Integer> requiredResources){
-		Map<ResourceView,Integer> checkList = requiredResources;
+	public boolean hasActiveReservations(Task reservedTask, Map<ResourcePrototype,Integer> requiredResources){
+		Map<ResourcePrototype,Integer> checkList = new HashMap<ResourcePrototype, Integer>();
+		checkList.putAll(requiredResources);
 		for (Reservation res: activeReservations){
 			if (res.getReservingTask().equals(reservedTask)){
-				for (ResourceView resource : checkList.keySet()){
-					if(resource.hasAsResource(res.getReservedResource().getPrototype())){
+				for (ResourcePrototype resource : checkList.keySet()){
+					if(res.getReservedResource().getPrototype().equals(resource)) {
 						checkList.put(resource, checkList.get(resource) - 1);
 					}
 						
@@ -586,7 +587,7 @@ public class ResourceManager {
 			}
 		}
 		boolean largerZero = false;
-		for (ResourceView resource : checkList.keySet()){
+		for(ResourcePrototype resource : checkList.keySet()) {
 			if(checkList.get(resource) > 0){
 				largerZero = true;
 			}
@@ -738,7 +739,27 @@ public class ResourceManager {
 		return activeReservations.removeAll(toRemove);
 	}
 
-
+	public boolean refreshReservations(Task reservingTask, LocalDateTime newStartDate, LocalDateTime newEndDate) {
+		if(!hasActiveReservations(reservingTask, reservingTask.getRequiredResources())) {
+			return false;
+		}
+		//get active reservations
+		List<Reservation> reservationsForTask = new ArrayList<Reservation>();
+		List<ResourceView> reservedResourcesForTask = new ArrayList<ResourceView>();
+		for(Reservation r : activeReservations) {
+			if(r.getReservingTask().equals(reservingTask)) {
+				reservationsForTask.add(r);
+				reservedResourcesForTask.add(new ResourceView(r.getReservedResource()));
+			}
+		}
+		
+		activeReservations.removeAll(reservationsForTask);
+		if(!reserve(reservedResourcesForTask, reservingTask, newStartDate, newEndDate)) {
+			activeReservations.addAll(reservationsForTask);
+			return false;
+		}
+		return true;
+	}
 
 
 	/**

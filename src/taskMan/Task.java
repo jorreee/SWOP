@@ -627,6 +627,25 @@ public class Task implements Dependant {
 	}
 	
 	/**
+	 * Tries to renew all reservations made for this task. Fails if the new
+	 * reservation date doesn't fall before the planned start time or after
+	 * the planned end time.
+	 * 
+	 * @param newReservationDate
+	 * @return
+	 */
+	public boolean refreshReservations(LocalDateTime newReservationDate) {
+		if(getPlannedBeginTime() == null) {
+			return false;
+		}
+		if(    !newReservationDate.isBefore(getPlannedBeginTime()) 
+			&& !newReservationDate.isAfter(plan.getPlannedEndTime())) {
+			return false;
+		}
+		return resMan.refreshReservations(this, newReservationDate, plan.getPlannedEndTime());
+	}
+	
+	/**
 	 * Replace this task with another one
 	 * 
 	 * @param t

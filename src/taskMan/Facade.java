@@ -219,12 +219,12 @@ public class Facade implements IFacade {
 		return taskMan.planTask(project, task, plannedStartTime, concRes, devs);
 	}
 
-	@Override
-	public Map<ProjectView, List<TaskView>> reservationConflict(
-			ResourceView requiredResource, ProjectView project, TaskView task,
-			LocalDateTime plannedStartTime) {
-		return taskMan.reservationConflict(requiredResource, project, task, plannedStartTime);
-	}
+//	@Override
+//	public Map<ProjectView, List<TaskView>> reservationConflict(
+//			ResourceView requiredResource, ProjectView project, TaskView task,
+//			LocalDateTime plannedStartTime) {
+//		return taskMan.reservationConflict(requiredResource, project, task, plannedStartTime);
+//	}
 	
 //	@Override
 //	public boolean flushFutureReservations(ProjectView project,

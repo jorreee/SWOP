@@ -483,12 +483,11 @@ public class TaskMan {
 //		return p.flushFutureReservations(task, currentTime);
 //	}
 
-	public Map<ProjectView, List<TaskView>> reservationConflict(
-			ResourceView requiredResource, ProjectView project, TaskView task,
-			LocalDateTime plannedStartTime) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+//	public Map<ProjectView, List<TaskView>> reservationConflict(
+//			ResourceView requiredResource, ProjectView project, TaskView task,
+//			LocalDateTime plannedStartTime) {
+//		return null;
+//	}
 
 	public boolean planTask(ProjectView project, TaskView task,
 			LocalDateTime plannedStartTime, List<ResourceView> concRes, List<ResourceView> devs) {
