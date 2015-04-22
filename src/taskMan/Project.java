@@ -699,28 +699,28 @@ public class Project implements Dependant {
 //		return t.flushFutureReservations(currentTime);
 //	}
 	
-//	/**
-//	 * Reserve a resource for a task from a given start time to a given end time
-//	 * 
-//	 * @param resource
-//	 *            | The resource to reserve
-//	 * @param task
-//	 *            | The reserving task
-//	 * @param startTime
-//	 *            | The start time of the new reservation
-//	 * @param endTime
-//	 *            | The end time of the new reservation
-//	 * @return True if the resource was reserved by the given task, false
-//	 *         otherwise
-//	 */
-//	public boolean reserve(ResourceView resource, TaskView task,
-//			LocalDateTime startTime, LocalDateTime endTime) {
-//		Task t = unwrapTaskView(task);
-//		if(t == null) {
-//			return false;
-//		}
-//		return t.reserve(resource, startTime, endTime);
-//	}
+	/**
+	 * Reserve a resource for a task from a given start time to a given end time
+	 * 
+	 * @param resource
+	 *            | The resource to reserve
+	 * @param task
+	 *            | The reserving task
+	 * @param startTime
+	 *            | The start time of the new reservation
+	 * @param endTime
+	 *            | The end time of the new reservation
+	 * @return True if the resource was reserved by the given task, false
+	 *         otherwise
+	 */
+	public boolean reserve(ResourceView resource, TaskView task,
+			LocalDateTime startTime, LocalDateTime endTime) {
+		Task t = unwrapTaskView(task);
+		if(t == null) {
+			return false;
+		}
+		return t.reserve(resource, startTime, endTime);
+	}
 	
 	/**
 	 * Retrieve a list of all tasks that can be updated by a given user

@@ -173,10 +173,10 @@ public class Facade implements IFacade {
 //		return taskMan.reserveResource(resource, project, task);
 //	}
 	
-//	@Override
-//	public boolean reserveResource(ResourceView resource, ProjectView project, TaskView task, LocalDateTime startTime, LocalDateTime endTime) {
-//		return taskMan.reserveResource(resource, project, task, startTime, endTime);
-//	}
+	@Override
+	public boolean reserveResource(ResourceView resource, ProjectView project, TaskView task, LocalDateTime startTime, LocalDateTime endTime) {
+		return taskMan.reserveResource(resource, project, task, startTime, endTime);
+	}
 
 //	@Override
 //	public List<LocalDateTime> getPossibleTaskStartingTimes(ProjectView project, TaskView task,

@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.Lists;
+
 import taskMan.resource.ResourceManager;
 import taskMan.resource.ResourcePrototype;
 import taskMan.resource.user.User;
@@ -832,10 +834,21 @@ public class Task implements Dependant {
 //		return resMan.flushFutureReservations(this, currentTime);
 //	}
 
-//	public boolean reserve(ResourceView resource, LocalDateTime startTime,
-//			LocalDateTime endTime) {
-//		return resMan.reserve(resource, this, startTime, endTime);
-//	}
+	/**
+	 * Reserve a resource at init
+	 * 
+	 * @param resource
+	 *            | Resource to reserve
+	 * @param startTime
+	 *            | The start time of the reservation
+	 * @param endTime
+	 *            | The end time of the reservation
+	 * @return True if the reservation was successful, false otherwise
+	 */
+	public boolean reserve(ResourceView resource, LocalDateTime startTime,
+			LocalDateTime endTime) {
+		return resMan.reserve(Lists.newArrayList(resource), this, startTime, endTime);
+	}
 	
 	/**
 	 * Check whether or not this task has a specific developer assigned to this
