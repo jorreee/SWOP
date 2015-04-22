@@ -793,7 +793,7 @@ public class Task implements Dependant {
 			return false;
 		}
 		if(!resMan.hasActiveReservations(this)) {
-			return false; // verkeerde hoeveelheid reservaties en shit.
+			return false; // verkeerde hoeveelheid reservaties enzo
 		}
 		List<User> developers = resMan.pickDevs(devs, this, startTime, getPlannedEndTime());
 		if(developers == null) {
