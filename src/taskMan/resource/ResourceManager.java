@@ -257,8 +257,6 @@ public class ResourceManager {
 			return false;
 		}
 		
-		//TODO check of task juiste hoeveelheid van juiste dingen reserveert
-		
 		List<Reservation> newReservations = new ArrayList<Reservation>();
 		
 		boolean error = false;
@@ -266,7 +264,7 @@ public class ResourceManager {
 			ConcreteResource toReserve = null;
 			ResourcePrototype r = unWrapResourcePrototypeView(resource);
 			if(r != null) {
-				toReserve = pickUnreservedResource(r, startTime, endTime);
+				toReserve = pickUnreservedResource(r, startTime, endTime, newReservations);
 			} else {
 				User user = unWrapUserView(resource);
 				if(user != null) {
@@ -278,7 +276,7 @@ public class ResourceManager {
 					}
 				}
 			}
-			if(toReserve == null || !canReserve(toReserve,startTime,endTime)) {
+			if(toReserve == null || !canReserve(toReserve,startTime,endTime, newReservations)) {
 				error = true;
 				break;
 			} else {
@@ -340,7 +338,13 @@ public class ResourceManager {
 	 * 			The end time of the reservation.
 	 * @return 	true if the resource can be reserved in the given time slot, else false.
 	 */
-	private boolean canReserve(ConcreteResource resource, LocalDateTime start, LocalDateTime end) {
+	private boolean canReserve(ConcreteResource resource, 
+			LocalDateTime start, 
+			LocalDateTime end, 
+			List<Reservation> alreadyReserved) {
+		List<Reservation> toCheck = new ArrayList<Reservation>();
+		toCheck.addAll(activeReservations);
+		toCheck.addAll(alreadyReserved);
 		for(Reservation reservation : activeReservations) {
 			if(reservation.getReservedResource().equals(resource)) {
 				if(reservation.overlaps(start,end)) {
@@ -361,10 +365,13 @@ public class ResourceManager {
 	 * 			The end time for the reservation.
 	 * @return 	A list of Unreserved Concrete Resources of the Prototype. If none were found, return null.
 	 */
-	private ConcreteResource pickUnreservedResource(ResourcePrototype rp, LocalDateTime start, LocalDateTime end) {
+	private ConcreteResource pickUnreservedResource(ResourcePrototype rp, 
+			LocalDateTime start, 
+			LocalDateTime end, 
+			List<Reservation> alreadyReserved) {
 		List<ConcreteResource> options = getPoolOf(rp).getConcreteResourceList();
 		for(ConcreteResource cr : options) {
-			if(canReserve(cr, start, end)) {
+			if(canReserve(cr, start, end, alreadyReserved)) {
 				return cr;
 			}
 		}
@@ -586,9 +593,9 @@ public class ResourceManager {
 	 *            reservations
 	 * @return true if every required resource has enough active reservations
 	 */
-	public boolean hasActiveReservations(Task reservedTask, Map<ResourcePrototype,Integer> requiredResources){
+	public boolean hasActiveReservations(Task reservedTask){
 		Map<ResourcePrototype,Integer> checkList = new HashMap<ResourcePrototype, Integer>();
-		checkList.putAll(requiredResources);
+		checkList.putAll(reservedTask.getRequiredResources());
 		for (Reservation res: activeReservations){
 			if (res.getReservingTask().equals(reservedTask)){
 				for (ResourcePrototype resource : checkList.keySet()){
@@ -736,7 +743,7 @@ public class ResourceManager {
 	}
 
 	public boolean refreshReservations(Task reservingTask, LocalDateTime newStartDate, LocalDateTime newEndDate) {
-		if(!hasActiveReservations(reservingTask, reservingTask.getRequiredResources())) {
+		if(!hasActiveReservations(reservingTask)) {
 			return false;
 		}
 		//get active reservations
