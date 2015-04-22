@@ -24,9 +24,6 @@ public class TaskTest {
 
 	private Task defaultTest;
 	private Task TaskAsPrerequisite;
-	//These Task are dependent of the previous Task
-	private Task TaskDep1;
-	private Task TaskDep2;
 	
 	private ResourceManager resMan;
 	private List<ResourceView> concreteResDef, devList;
@@ -71,8 +68,6 @@ public class TaskTest {
 		TaskAsPrerequisite = new Task("PreTask",30,5,resMan,new ArrayList<Task>(),new HashMap<ResourceView,Integer>(),null);
 		ArrayList<Task> pre = new ArrayList<>();
 		pre.add(TaskAsPrerequisite);
-		TaskDep1 = new Task("Dep1",30,5,resMan,pre,new HashMap<ResourceView,Integer>(),null);
-		TaskDep2 = new Task("Dep2",30,5,resMan,pre,new HashMap<ResourceView,Integer>(),null);
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
@@ -130,19 +125,19 @@ public class TaskTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void createTaskConstr2FailBadStatus(){
 		new Task("test",30,5,resMan,new ArrayList<Task>(),new HashMap<ResourceView,Integer>(),null,"fail",
-				LocalDateTime.of(2015, 2, 11, 16, 0),LocalDateTime.of(2015, 2, 12, 16, 0),null,null);
+				LocalDateTime.of(2015, 2, 11, 16, 0),LocalDateTime.of(2015, 2, 12, 16, 0),LocalDateTime.of(2015, 2, 12, 16, 0),null);
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void createTaskConstr2FailBadTime(){
 		new Task("test",30,5,resMan,new ArrayList<Task>(),new HashMap<ResourceView,Integer>(),null,"failed",
-				LocalDateTime.of(2015, 2, 12, 16, 0),LocalDateTime.of(2015, 2, 11, 16, 0),null,new ArrayList<ResourceView>());
+				LocalDateTime.of(2015, 2, 12, 16, 0),LocalDateTime.of(2015, 2, 11, 16, 0),LocalDateTime.of(2015, 2, 12, 16, 0),new ArrayList<ResourceView>());
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void createTaskConstr2FailBadTime2(){
 		new Task("test",30,5,resMan,new ArrayList<Task>(),new HashMap<ResourceView,Integer>(),null,"finished",
-				LocalDateTime.of(2015, 2, 12, 16, 0),LocalDateTime.of(2015, 2, 11, 16, 0),null,new ArrayList<ResourceView>());
+				LocalDateTime.of(2015, 2, 12, 16, 0),LocalDateTime.of(2015, 2, 11, 16, 0),LocalDateTime.of(2015, 2, 12, 16, 0),new ArrayList<ResourceView>());
 	}
 	
 	@Test

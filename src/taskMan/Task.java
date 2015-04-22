@@ -180,31 +180,28 @@ public class Task implements Dependant {
 		if (taskStatus != null && !isValidTaskStatus(taskStatus)) {
 			throw new IllegalArgumentException("Very bad taskStatus");
 		}
-		if (plannedStartTime != null) {
-			// plan(plannedStartTime);
-			plan.setPlannedBeginTime(plannedStartTime);
-			if (!plan.setDevelopers(resMan.pickDevs(plannedDevelopers, this,
-					startTime, endTime))) {
-				throw new IllegalArgumentException(
-						"Very bad developers, very bad! ## dit is een zéér gaye fout");
-			}
-			state.makeAvailable(this);
-			if (taskStatus != null) {
-				state.execute(this, startTime);
-				if (taskStatus.equalsIgnoreCase("failed")) {
-					if (!state.fail(this, endTime)) {
-						throw new IllegalArgumentException("Zéér gaye fout");
-					}
-				} else if (taskStatus.equalsIgnoreCase("finished")) {
-					if (!state.finish(this, endTime)) {
-						throw new IllegalArgumentException("Zéér gaye fout");
-					}
+		if (plannedStartTime == null) {
+			throw new IllegalArgumentException("A planned start time is required for this kind of creation");
+		}
+		// plan(plannedStartTime);
+		plan.setPlannedBeginTime(plannedStartTime);
+		if (!plan.setDevelopers(resMan.pickDevs(plannedDevelopers, this,
+				startTime, endTime))) {
+			throw new IllegalArgumentException(
+					"Very bad developers, very bad! ## dit is een zéér gaye fout");
+		}
+		state.makeAvailable(this);
+		if (taskStatus != null) {
+			state.execute(this, startTime);
+			if (taskStatus.equalsIgnoreCase("failed")) {
+				if (!state.fail(this, endTime)) {
+					throw new IllegalArgumentException("Zéér gaye fout");
+				}
+			} else if (taskStatus.equalsIgnoreCase("finished")) {
+				if (!state.finish(this, endTime)) {
+					throw new IllegalArgumentException("Zéér gaye fout");
 				}
 			}
-//			else {
-//				throw new IllegalArgumentException(
-//						"Time stamps are only allowed if a task is finished or failed");
-//			}
 		}
 	}
 
