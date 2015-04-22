@@ -14,6 +14,7 @@ import org.junit.Test;
 
 import userInterface.IFacade;
 import taskMan.Facade;
+import taskMan.TaskMan;
 import taskMan.view.ProjectView;
 import taskMan.view.ResourceView;
 import taskMan.view.TaskView;
@@ -24,7 +25,7 @@ public class UseCase8RunningASimulationTest {
 	private IFacade taskManager;
 	private final LocalDateTime startDate = LocalDateTime.of(2015, 2, 9, 8, 0),
 			workDate1 = LocalDateTime.of(2015, 2, 9, 11, 0),
-			workDate2 = LocalDateTime.of(2015, 	2, 11, 8, 0),
+			workDate2 = LocalDateTime.of(2015, 	2, 11, 15, 0),
 			project0DueDate = LocalDateTime.of(2015, 2, 13, 23, 59),
 			project1DueDate = LocalDateTime.of(2015, 2, 15, 10, 0),
 			task00Start = startDate,
@@ -53,6 +54,13 @@ public class UseCase8RunningASimulationTest {
 			task01ConcRes,
 			task02ConcRes,
 			task10ConcRes;
+	private ResourceView dev1,
+			dev2,
+			dev3;
+	private ArrayList<ResourceView> task00Devs,
+			task01Devs,
+			task02Devs,
+			task10Devs;
 	private final Optional<LocalTime> emptyAvailabilityStart = Optional.empty(),
 			emptyAvailabilityEnd = Optional.empty();
 
@@ -93,6 +101,19 @@ public class UseCase8RunningASimulationTest {
 		task10Dependencies = new ArrayList<TaskView>();
 		reqResTask10 = new HashMap<>();
 		task10ConcRes = new ArrayList<>();
+		//Create Developers
+		taskManager.createDeveloper("Achilles");
+		dev1 = taskManager.getDeveloperList().get(0);
+		taskManager.createDeveloper("Ajax");
+		dev2 = taskManager.getDeveloperList().get(1);
+		taskManager.createDeveloper("Odysseus");
+		dev3 = taskManager.getDeveloperList().get(2);
+		//Create Developers lists
+		task00Devs.add(dev1);
+		task00Devs.add(dev2);
+		task01Devs = task00Devs;
+		task02Devs = task00Devs;
+		task10Devs.add(dev3);
 		//Create first project
 		assertTrue(taskManager.createProject("Project 0", "Describing proj 0", project0DueDate));
 		ProjectView project0 = taskManager.getProjects().get(0);
@@ -123,7 +144,7 @@ public class UseCase8RunningASimulationTest {
 		task00ConcRes.add(taskManager.getConcreteResourcesForPrototype(taskManager.getResourcePrototypes().get(0)).get(0));
 		task00ConcRes.add(taskManager.getConcreteResourcesForPrototype(taskManager.getResourcePrototypes().get(0)).get(1));
 		task00ConcRes.add(taskManager.getConcreteResourcesForPrototype(taskManager.getResourcePrototypes().get(1)).get(0));
-		assertTrue(taskManager.planTask(project0, task00, task00Start, task00ConcRes));
+		assertTrue(taskManager.planTask(project0, task00, task00Start, task00ConcRes, task00Devs));
 		//Execute and finish task00
 		assertTrue(taskManager.setTaskExecuting(project0, task00, task00Start));
 		assertTrue(taskManager.advanceTimeTo(workDate1));
@@ -131,18 +152,26 @@ public class UseCase8RunningASimulationTest {
 		//plan task01
 		task01ConcRes.add((taskManager.getResourcePrototypes().get(0)));
 		task01ConcRes.add((taskManager.getResourcePrototypes().get(1)));
-		assertTrue(taskManager.planTask(project0, task01, task01Start, task01ConcRes));
+		assertTrue(taskManager.planTask(project0, task01, task01Start, task01ConcRes, task01Devs));
 		//Execute and fail task01
 		assertTrue(taskManager.setTaskExecuting(project0, task01, task01Start));
 		assertTrue(taskManager.setTaskFailed(project0, task01, task01End));
-		assertTrue(taskManager.planTask(project0, task, planningStartTime, concRes, devs));
+		task02ConcRes.add(taskManager.getResourcePrototypes().get(0));
+		assertFalse(taskManager.planTask(project0, task02, task02Start, task02ConcRes, task02Devs));
 		//Plan task10
 		task10ConcRes.add(taskManager.getResourcePrototypes().get(1));
-		assertTrue(taskManager.planTask(project1, task10, task10Start, task10ConcRes, devs));
+		assertTrue(taskManager.planTask(project1, task10, task10Start, task10ConcRes, task10Devs));
 		//create an alternative
+		assertTrue(taskManager.createTask(project0, "Alt", 60, 5, task01Dependencies, reqResTask01, task01));
+		TaskView taskAlt = taskManager.getProjects().get(0).getTasks().get(3);
 		//Plan alternative
+		assertTrue(taskManager.planTask(project0, taskAlt, LocalDateTime.of(2015, 2, 11, 8, 0), task01ConcRes, task01Devs));
 		//Succeed Alternative
+		assertTrue(taskManager.advanceTimeTo(workDate2));
+		assertTrue(taskManager.setTaskExecuting(project0, taskAlt, LocalDateTime.of(2015, 2, 11, 8, 0)));
+		assertTrue(taskManager.setTaskFailed(project0, taskAlt, LocalDateTime.of(2015, 2, 11, 9, 0)));
 		//Plan task02
+		assertTrue(taskManager.planTask(project0, task02, task02Start, task02ConcRes, task02Devs));
 	}
 	
 	@Test
@@ -156,7 +185,7 @@ public class UseCase8RunningASimulationTest {
 		assertTrue(taskManager.revertFromMemento());
 		assertEquals(1,taskManager.getProjects().size());
 		assertEquals(2,taskManager.getProjects().get(0).getTasks().size());
-		assertEquals(expected, actual);
+		
 	}
 	
 	@Test
