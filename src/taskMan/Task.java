@@ -642,7 +642,7 @@ public class Task implements Dependant {
 		}
 		if(    !newReservationDate.isBefore(getPlannedBeginTime()) 
 			&& !newReservationDate.isAfter(plan.getPlannedEndTime())) {
-			return false;
+			return true;
 		}
 		return resMan.refreshReservations(this, newReservationDate, plan.getPlannedEndTime());
 	}

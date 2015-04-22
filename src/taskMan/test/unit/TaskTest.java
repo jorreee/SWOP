@@ -138,13 +138,13 @@ public class TaskTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void createTaskConstr2FailBadTime(){
 		new Task("test",30,5,resMan,new ArrayList<Task>(),new HashMap<ResourceView,Integer>(),null,"failed",
-				LocalDateTime.of(2015, 2, 12, 16, 0),LocalDateTime.of(2015, 2, 11, 16, 0),null,null);
+				LocalDateTime.of(2015, 2, 12, 16, 0),LocalDateTime.of(2015, 2, 11, 16, 0),null,new ArrayList<ResourceView>());
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void createTaskConstr2FailBadTime2(){
 		new Task("test",30,5,resMan,new ArrayList<Task>(),new HashMap<ResourceView,Integer>(),null,"finished",
-				LocalDateTime.of(2015, 2, 12, 16, 0),LocalDateTime.of(2015, 2, 11, 16, 0),null,null);
+				LocalDateTime.of(2015, 2, 12, 16, 0),LocalDateTime.of(2015, 2, 11, 16, 0),null,new ArrayList<ResourceView>());
 	}
 	
 	@Test
@@ -214,10 +214,10 @@ public class TaskTest {
 	
 	@Test
 	public void finishedEndpointTestSelf(){
-		defaultTest.plan(LocalDateTime.of(2015, 2, 12, 15, 0),concreteResDef,devList);
-		defaultTest.execute(LocalDateTime.of(2015, 2, 12, 15, 0));
+		assertTrue(defaultTest.plan(LocalDateTime.of(2015, 2, 12, 15, 0),concreteResDef,devList));
+		assertTrue(defaultTest.execute(LocalDateTime.of(2015, 2, 12, 15, 0)));
 		assertFalse(defaultTest.hasFinishedEndpoint());
-		defaultTest.finish(LocalDateTime.of(2015, 2, 12, 16, 0));
+		assertTrue(defaultTest.finish(LocalDateTime.of(2015, 2, 12, 16, 0)));
 		assertTrue(defaultTest.hasFinishedEndpoint());
 	}
 	
@@ -258,8 +258,8 @@ public class TaskTest {
 		defaultTest.plan(LocalDateTime.of(2015, 2, 11, 16, 0),concreteResDef,devList);
 		defaultTest.execute(LocalDateTime.of(2015, 2, 11, 16, 0));
 		defaultTest.fail(LocalDateTime.of(2015, 2, 12, 16, 0));
-		Task temp = new Task("temp",20,3,new ResourceManager(),new ArrayList<Task>(),resDef,null);
-		Task temp2 = new Task("temp",20,3,new ResourceManager(),new ArrayList<Task>(),resDef,null);
+		Task temp = new Task("temp",20,3,new ResourceManager(),new ArrayList<Task>(),new HashMap<ResourceView,Integer>(),null);
+		Task temp2 = new Task("temp",20,3,new ResourceManager(),new ArrayList<Task>(),new HashMap<ResourceView,Integer>(),null);
 		assertTrue(defaultTest.replaceWith(temp));
 		assertFalse(defaultTest.replaceWith(temp2));
 	}
@@ -402,13 +402,13 @@ public class TaskTest {
 	@Test
 	public void possibleStartTimesTest(){
 		//TODO
-		defaultTest.getPossibleTaskStartingTimes(null,3);
+//		defaultTest.getPossibleTaskStartingTimes(null,3);
 	}
 	
 	@Test
 	public void requiredResourcesTest(){
 		//TODO
-		defaultTest.getRequiredResources();
+//		defaultTest.getRequiredResources();
 	}
 	
 	
