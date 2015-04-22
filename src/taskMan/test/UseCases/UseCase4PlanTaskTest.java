@@ -198,6 +198,7 @@ public class UseCase4PlanTaskTest {
 		concRes = new ArrayList<>();
 		concRes.add(null);
 		assertFalse(taskManager.planTask(project0, task00, task00StartDateGood, concRes, devs));
+		//TODO conflict case?
 	}
 	
 	@Test
@@ -216,6 +217,7 @@ public class UseCase4PlanTaskTest {
 		devs = new ArrayList<>();
 		devs.add(new ResourceView( new Developer("Spartacus")));
 		assertFalse(taskManager.planTask(project0, task00, task00StartDateGood, concRes, devs));
+		//TODO conflict case?
 	}
 	
 	@Test
@@ -238,7 +240,6 @@ public class UseCase4PlanTaskTest {
 		assertTrue(taskManager.setTaskExecuting(project0, task00, task00StartDateGood));
 		assertTrue(taskManager.setTaskFinished(project0, task00, task00EndDateGood));
 		assertFalse(taskManager.planTask(project0, task01, LocalDateTime.of(2015,2,9,9,0), concRes, devs));
-		//
 	}
 	
 	@Test
