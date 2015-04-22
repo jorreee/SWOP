@@ -307,8 +307,8 @@ public class TaskView {
 	 *         planned at
 	 */
 	public List<LocalDateTime> getPossibleStartingTimes(
-			List<ResourceView> concRes, int amount) {
-		return task.getPossibleTaskStartingTimes(concRes, amount);
+			List<ResourceView> concRes, LocalDateTime currentTime, int amount) {
+		return task.getPossibleTaskStartingTimes(concRes, currentTime, amount);
 	}
 
 	/**

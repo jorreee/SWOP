@@ -832,8 +832,8 @@ public class Task implements Dependant {
 	 * 			The amount of possible starting times wanted.
 	 * @return	The possible starting times of the Task
 	 */
-	public List<LocalDateTime> getPossibleTaskStartingTimes(List<ResourceView> concRes, int amount) {
-		return resMan.getPossibleStartingTimes(this,concRes,amount);
+	public List<LocalDateTime> getPossibleTaskStartingTimes(List<ResourceView> concRes, LocalDateTime currentTime, int amount) {
+		return resMan.getPossibleStartingTimes(this,concRes,currentTime,amount);
 	}
 	
 	/**
