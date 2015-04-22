@@ -1,24 +1,23 @@
 package taskMan.test.UseCases;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import userInterface.IFacade;
 import taskMan.Facade;
-import taskMan.TaskMan;
 import taskMan.view.ProjectView;
 import taskMan.view.ResourceView;
 import taskMan.view.TaskView;
+import userInterface.IFacade;
 
 //TODO Add Devs
 public class UseCase8RunningASimulationTest {

@@ -175,31 +175,30 @@ public class Task implements Dependant {
 			LocalDateTime plannedStartTime,
 			List<ResourceView> plannedDevelopers) throws IllegalArgumentException {
 		
-		this(	taskDescription, 
-				estimatedDuration, 
-				acceptableDeviation, 
-				resMan, 
-				prerequisiteTasks,
-				requiredResources, 
-				alternativeFor);
-		if(!isValidTaskStatus(taskStatus)) {
+		this(taskDescription, estimatedDuration, acceptableDeviation, resMan,
+				prerequisiteTasks, requiredResources, alternativeFor);
+		if (taskStatus != null && !isValidTaskStatus(taskStatus)) {
 			throw new IllegalArgumentException("Very bad taskStatus");
 		}
-		if(taskStatus != null) {
-//			plan(plannedStartTime);
+		if (plannedStartTime != null) {
+			// plan(plannedStartTime);
 			plan.setPlannedBeginTime(plannedStartTime);
-			if(!plan.setDevelopers(resMan.pickDevs(plannedDevelopers, this, startTime, endTime))) {
-				throw new IllegalArgumentException("Very bad developers, very bad! ## dit is een zéér gaye fout");
+			if (!plan.setDevelopers(resMan.pickDevs(plannedDevelopers, this,
+					startTime, endTime))) {
+				throw new IllegalArgumentException(
+						"Very bad developers, very bad! ## dit is een zéér gaye fout");
 			}
 			state.makeAvailable(this);
-			state.execute(this, startTime);
-			if(taskStatus.equalsIgnoreCase("failed")) {
-				if(!state.fail(this, endTime)) {
-					throw new IllegalArgumentException("Zéér gaye fout");
-				}
-			} else if(taskStatus.equalsIgnoreCase("finished")) {
-				if(!state.finish(this, endTime)) {
-					throw new IllegalArgumentException("Zéér gaye fout");
+			if (taskStatus != null) {
+				state.execute(this, startTime);
+				if (taskStatus.equalsIgnoreCase("failed")) {
+					if (!state.fail(this, endTime)) {
+						throw new IllegalArgumentException("Zéér gaye fout");
+					}
+				} else if (taskStatus.equalsIgnoreCase("finished")) {
+					if (!state.finish(this, endTime)) {
+						throw new IllegalArgumentException("Zéér gaye fout");
+					}
 				}
 			}
 //			else {

@@ -199,7 +199,7 @@ public class Project implements Dependant {
 		Task newTask = null;
 		
 		try{
-			if(taskStatus != null) {
+			if(plannedStartTime != null) {
 				newTask = new Task(description, 
 						estimatedDuration, 
 						acceptableDeviation, 
