@@ -59,8 +59,6 @@ public class TaskTest {
 		resDef = new HashMap<ResourceView,Integer>();
 		resDef.put(resMan.getResourcePrototypes().get(0), 1);
 		resDef.put(resMan.getResourcePrototypes().get(1), 1);
-		System.out.println(resMan.getResourcePrototypes().get(0).toString());
-		System.out.println(resMan.getConcreteResourcesForPrototype(resMan.getResourcePrototypes().get(0)).size());
 		carDef = resMan.getConcreteResourcesForPrototype(resMan.getResourcePrototypes().get(0)).get(0);
 		boardDef = resMan.getConcreteResourcesForPrototype(resMan.getResourcePrototypes().get(1)).get(0);
 		concreteResDef = new ArrayList<>();

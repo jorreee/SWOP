@@ -93,15 +93,19 @@ public class UseCase8RunningASimulationTest {
 		task00Dependencies = new ArrayList<TaskView>();
 		reqResTask00 = new HashMap<>();
 		task00ConcRes = new ArrayList<>();
+		task00Devs = new ArrayList<>();
 		task01Dependencies = new ArrayList<TaskView>();
 		reqResTask01 = new HashMap<>();
 		task01ConcRes = new ArrayList<>();
+		task01Devs = new ArrayList<>();
 		task02Dependencies = new ArrayList<TaskView>();
 		reqResTask02 = new HashMap<>();
 		task02ConcRes = new ArrayList<>();
+		task02Devs = new ArrayList<>();
 		task10Dependencies = new ArrayList<TaskView>();
 		reqResTask10 = new HashMap<>();
 		task10ConcRes = new ArrayList<>();
+		task10Devs = new ArrayList<>();
 		//Create Developers
 		taskManager.createDeveloper("Achilles");
 		dev1 = taskManager.getDeveloperList().get(0);
@@ -147,8 +151,8 @@ public class UseCase8RunningASimulationTest {
 		task00ConcRes.add(taskManager.getConcreteResourcesForPrototype(taskManager.getResourcePrototypes().get(1)).get(0));
 		assertTrue(taskManager.planTask(project0, task00, task00Start, task00ConcRes, task00Devs));
 		//Execute and finish task00
-		assertTrue(taskManager.setTaskExecuting(project0, task00, task00Start));
 		assertTrue(taskManager.advanceTimeTo(workDate1));
+		assertTrue(taskManager.setTaskExecuting(project0, task00, task00Start));
 		assertTrue(taskManager.setTaskFinished(project0, task00, task00End));
 		//plan task01
 		task01ConcRes.add((taskManager.getResourcePrototypes().get(0)));
