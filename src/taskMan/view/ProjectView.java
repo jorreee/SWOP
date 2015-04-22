@@ -185,12 +185,16 @@ public class ProjectView {
 	 *            | The other view to compare to
 	 * @return True if the other view contains the same project as this one
 	 */
-	public boolean equals(ProjectView otherView) {
+	public boolean equals(Object otherView) {
 		if (this == otherView)
 			return true;
 		if (otherView == null)
 			return false;
-		return otherView.hasAsProject(project);
+		try {
+			return ((ProjectView) otherView).hasAsProject(project);	
+		} catch(ClassCastException e) {
+			return false;
+		}
 	}
 
 	/**

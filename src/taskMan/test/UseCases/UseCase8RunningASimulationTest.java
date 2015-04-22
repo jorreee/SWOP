@@ -190,8 +190,8 @@ public class UseCase8RunningASimulationTest {
 		assertEquals(2,taskManager.getProjects().size());
 		assertEquals(5,taskManager.getProjects().get(0).getTasks().size());
 		assertTrue(taskManager.revertFromMemento());
-		assertEquals(1,taskManager.getProjects().size());
-		assertEquals(2,taskManager.getProjects().get(0).getTasks().size());
+		assertEquals(2,taskManager.getProjects().size());
+		assertEquals(4,taskManager.getProjects().get(0).getTasks().size());
 		
 	}
 	

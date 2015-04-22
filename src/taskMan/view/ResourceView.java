@@ -120,11 +120,15 @@ public class ResourceView {
 	 *            | The other view to compare to
 	 * @return True if the other view contains the same resource as this one
 	 */
-	public boolean equals(ResourceView otherView) {
+	public boolean equals(Object otherView) {
 		if (this == otherView)
 			return true;
 		if (otherView == null)
 			return false;
-		return otherView.hasAsResource(resource);
+		try {
+			return ((ResourceView) otherView).hasAsResource(resource);	
+		} catch(ClassCastException e) {
+			return false;
+		}
 	}
 }

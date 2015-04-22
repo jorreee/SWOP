@@ -183,10 +183,6 @@ public class Project implements Dependant {
 						LocalDateTime plannedStartTime,
 						List<ResourceView> plannedDevelopers) {
 
-		if(isFinished()) {
-			return false;
-		}
-		
 		if(!isValidAlternative(alternativeFor)) {
 			return false;
 		}
@@ -233,6 +229,7 @@ public class Project implements Dependant {
 		boolean success = taskList.add(newTask);
 		
 		if(success) {
+			setProjectStatus(new OngoingProject());
 			newTask.register(this);
 		}
 		return success;

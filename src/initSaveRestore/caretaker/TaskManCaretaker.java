@@ -186,7 +186,7 @@ public class TaskManCaretaker {
 				plannedDevelopers += devs.next();
 				if(devs.hasNext()) { plannedDevelopers += ","; };
 			}
-			tman.append("\n  - plannedStartTime : " + pcd.getPlannedStartTime() // Planning start time
+			tman.append("\n  - plannedStartTime : \"" + pcd.getPlannedStartTime().format(dateTimeFormatter) + "\""// Planning start time
 					+ "\n    developers       : [" + plannedDevelopers + "]"); // Planned developers
 		}
 		
@@ -196,7 +196,7 @@ public class TaskManCaretaker {
 			List<TaskView> tasks = project.getTasks();
 			for(TaskView task : tasks) {
 				tman.append("\n  - project            : " + existingProjects.indexOf(project) // project
-						+ "\n    description        : \"" + task.getDescription() // description
+						+ "\n    description        : \"" + task.getDescription() + "\"" // description
 						+ "\n    estimatedDuration  : " + task.getEstimatedDuration() // estimatedDuration
 						+ "\n    acceptableDeviation: " + task.getAcceptableDeviation()); // acceptableDeviation
 				TaskView alternative = task.getAlternativeTo();
@@ -252,10 +252,13 @@ public class TaskManCaretaker {
 		// reservations
 		tman.append("\nreservations:");
 		for(Reservation reservation : existingReservations) {
-			tman.append("\n  - resource:   " + concreteResources.indexOf(reservation.getReservedResource())
-					+ "\n    task:       " + existingTasks.indexOf(new TaskView(reservation.getReservingTask()))
-					+ "\n    startTime:  " + reservation.getStartTime().format(dateTimeFormatter)
-					+ "\n    endTime:    " + reservation.getEndTime().format(dateTimeFormatter));
+			int resourceIndex = concreteResources.indexOf(new ResourceView(reservation.getReservedResource()));
+			if(resourceIndex != -1) { // The reservation of a developer
+				tman.append("\n  - resource:   " + resourceIndex
+						+ "\n    task:       " + existingTasks.indexOf(new TaskView(reservation.getReservingTask()))
+						+ "\n    startTime:  \"" + reservation.getStartTime().format(dateTimeFormatter) + "\""
+						+ "\n    endTime:    \"" + reservation.getEndTime().format(dateTimeFormatter) + "\"");
+			}
 		}
 			
 		return tman.toString();
