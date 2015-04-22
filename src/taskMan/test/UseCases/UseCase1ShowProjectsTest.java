@@ -74,6 +74,9 @@ public class UseCase1ShowProjectsTest {
 			task20ConcreteResources = new ArrayList<ResourceView>(),
 			task30ConcreteResources = new ArrayList<ResourceView>(),
 			task31ConcreteResources = new ArrayList<ResourceView>();
+	private final List<ResourceView> devList1 = new ArrayList<ResourceView>(),
+			devList2 = new ArrayList<ResourceView>();
+	private ResourceView weer, blunderbus;
 	private final Optional<LocalTime> emptyAvailabilityStart = Optional.empty(),
 			emptyAvailabilityEnd = Optional.empty();
 	
@@ -108,16 +111,23 @@ public class UseCase1ShowProjectsTest {
 		for(int i = 0;i<=5;i++){
 			taskManager.declareConcreteResource("whiteboard" + i, taskManager.getResourcePrototypes().get(1));
 		}
+		taskManager.createDeveloper("Weer");
+		taskManager.createDeveloper("Blunderbus");
+		weer = taskManager.getDeveloperList().get(0);
+		blunderbus = taskManager.getDeveloperList().get(1);
+		devList1.add(weer);
+		devList2.add(blunderbus);
+		
 		//Create first project
 		assertTrue(taskManager.createProject("Project 0", "Describing proj 0", project0DueDate));
 		ProjectView project0 = taskManager.getProjects().get(0);
 		// 00 AVAILABLE
 		Map<ResourceView, Integer> reqResTask00 = new HashMap<>();
-		reqResTask00.put(taskManager.getResourcePrototypes().get(0), 2);
-		reqResTask00.put(taskManager.getResourcePrototypes().get(1), 1);
+//		reqResTask00.put(taskManager.getResourcePrototypes().get(0), 2);
+//		reqResTask00.put(taskManager.getResourcePrototypes().get(1), 1);
 		assertTrue(taskManager.createTask(project0, "TASK 00", task00EstDur, task00Dev, task00Dependencies,reqResTask00,null));	
 		TaskView task00 = project0.getTasks().get(0);
-		assertTrue(taskManager.planTask(project0, task00, task00Start,task00ConcreteResources));
+		assertTrue(taskManager.planTask(project0, task00, task00Start,task00ConcreteResources,devList1));
 		assertTrue(taskManager.setTaskExecuting(project0, task00, task00Start));
 				
 		// Stap verder:
@@ -128,12 +138,12 @@ public class UseCase1ShowProjectsTest {
 		
 		// 10 AVAILABLE
 		Map<ResourceView, Integer> reqResTask10 = new HashMap<>();
-		reqResTask10.put(taskManager.getResourcePrototypes().get(0), 1);
-		reqResTask10.put(taskManager.getResourcePrototypes().get(1), 1);
+//		reqResTask10.put(taskManager.getResourcePrototypes().get(0), 1);
+//		reqResTask10.put(taskManager.getResourcePrototypes().get(1), 1);
 		assertTrue(taskManager.createTask(project1, "TASK 10", task10EstDur, task10Dev, task10Dependencies,reqResTask10, null));			
 		// 11 AVAILABLE
 		Map<ResourceView, Integer> reqResTask11 = new HashMap<>();
-		reqResTask11.put(taskManager.getResourcePrototypes().get(1), 3);
+//		reqResTask11.put(taskManager.getResourcePrototypes().get(1), 3);
 		assertTrue(taskManager.createTask(project1, "TASK 11", task11EstDur, task11Dev, task11Dependencies,reqResTask11, null));			
 				
 		TaskView task10 = project1.getTasks().get(0);
@@ -165,17 +175,17 @@ public class UseCase1ShowProjectsTest {
 		assertTrue(taskManager.setTaskFinished(project0, task00, task00End));										
 		//----------------------------------------------------
 		// 10 FINISHED
-		assertTrue(taskManager.planTask(project1, task10, task10Start, task10ConcreteResources));
+		assertTrue(taskManager.planTask(project1, task10, task10Start, task10ConcreteResources,devList1));
 		assertTrue(taskManager.setTaskExecuting(project1, task10, task10Start));
 		assertTrue(taskManager.setTaskFinished(project1, task10, task10End));
 		// 11 FAILED
-		assertTrue(taskManager.planTask(project1, task11, task11Start, task11ConcreteResources));
+		assertTrue(taskManager.planTask(project1, task11, task11Start, task11ConcreteResources,devList1));
 		assertTrue(taskManager.setTaskExecuting(project1, task11, task11Start));
 		assertTrue(taskManager.setTaskFailed(project1, task11, task11End));
 		// 13 AVAILABLE
 		assertTrue(taskManager.createTask(project1, "TASK 13", task13EstDur, task13Dev, task13Dependencies,task11.getRequiredResources() ,task11));
 		TaskView task13 = project1.getTasks().get(3);
-		assertTrue(taskManager.planTask(project1, task13, task11Start, task11ConcreteResources));
+		assertTrue(taskManager.planTask(project1, task13, task11Start, task11ConcreteResources,devList1));
 			
 		// Stap verder:
 		// maak het vierde project aan en maak zijn TASK lijst
@@ -184,8 +194,8 @@ public class UseCase1ShowProjectsTest {
 		ProjectView project3 = taskManager.getProjects().get(3);
 		// 30 AVAILABLE
 		Map<ResourceView, Integer> reqResTask30 = new HashMap<>();
-		reqResTask30.put(taskManager.getResourcePrototypes().get(0), 2);
-		reqResTask30.put(taskManager.getResourcePrototypes().get(1), 3);
+//		reqResTask30.put(taskManager.getResourcePrototypes().get(0), 2);
+//		reqResTask30.put(taskManager.getResourcePrototypes().get(1), 3);
 		assertTrue(taskManager.createTask(project3, "TASK 30", task30EstDur, task30Dev, task30Dependencies,reqResTask30, null));	
 		// 31 AVAILABLE
 		Map<ResourceView, Integer> reqResTask31 = new HashMap<>();
@@ -198,7 +208,7 @@ public class UseCase1ShowProjectsTest {
 		assertTrue(taskManager.advanceTimeTo(workdate5));
 		TaskView task30 = project3.getTasks().get(0);
 		// 30 FAILED DELAYED
-		assertTrue(taskManager.planTask(project3, task30, task30Start,task30ConcreteResources));
+		assertTrue(taskManager.planTask(project3, task30, task30Start,task30ConcreteResources,devList2));
 		assertTrue(taskManager.setTaskExecuting(project3, task30, task30Start));
 		assertTrue(taskManager.setTaskFailed(project3, task30, task30End));										
 

@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -84,7 +85,7 @@ public class UseCase8RunningASimulationTest {
 		for(int i = 0;i<=5;i++){
 			taskManager.declareConcreteResource("car" + i, taskManager.getResourcePrototypes().get(0));
 		}
-		taskManager.createResourcePrototype("whiteboard", Optional.empty(), Optional.empty());
+		taskManager.createResourcePrototype("whiteboard", emptyAvailabilityStart, emptyAvailabilityEnd);
 		for(int i = 0;i<=5;i++){
 			taskManager.declareConcreteResource("whiteboard" + i, taskManager.getResourcePrototypes().get(1));
 		}
