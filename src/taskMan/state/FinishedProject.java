@@ -13,20 +13,15 @@ import taskMan.Task;
  */
 public class FinishedProject implements ProjectStatus {
 	
-//	private Project project;
-	
 	/**
 	 * Construct a new finished status
 	 * 
-	 * @param p
-	 *            | The project that this status belongs to
 	 */
-	public FinishedProject(Project p) {
-//		this.project = p;
+	public FinishedProject() {
 	}
 
 	@Override
-	public boolean finish(List<Task> tasks, Task lastTask) {
+	public boolean finish(Project project, List<Task> tasks, Task lastTask) {
 		return false;
 	}
 

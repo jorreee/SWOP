@@ -13,35 +13,30 @@ import taskMan.util.Dependant;
  */
 public class FinishedTask implements TaskStatus {
 
-	private Task task;
-
 	/**
 	 * Construct a new finished status
 	 * 
-	 * @param t
-	 *            | The task that this status belongs to
 	 */
-	public FinishedTask(Task t) {
-		task = t;
+	public FinishedTask() {
 	}
 
 	@Override
-	public boolean makeAvailable() {
+	public boolean makeAvailable(Task task) {
 		return false;
 	}
 	
 	@Override
-	public boolean execute(LocalDateTime beginTime) {
+	public boolean execute(Task task, LocalDateTime beginTime) {
 		return false;
 	}
 
 	@Override
-	public boolean finish(LocalDateTime endTime) {
+	public boolean finish(Task task, LocalDateTime endTime) {
 		return false;
 	}
 
 	@Override
-	public boolean fail(LocalDateTime endTime) {
+	public boolean fail(Task task, LocalDateTime endTime) {
 		return false;
 	}
 
@@ -71,7 +66,7 @@ public class FinishedTask implements TaskStatus {
 	}
 
 	@Override
-	public boolean register(Dependant d) {
+	public boolean register(Task task, Dependant d) {
 		task.addDependant(d);
 		task.notifyDependants();
 		return true;

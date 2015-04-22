@@ -13,26 +13,21 @@ import taskMan.Task;
  */
 public class OngoingProject implements ProjectStatus {
 	
-	private Project project;
-	
 	/**
 	 * Construct a new ongoing status
 	 * 
-	 * @param p
-	 *            | The project that this status belongs to
 	 */
-	public OngoingProject(Project p) {
-		this.project = p;
+	public OngoingProject() {
 	}
 
 	@Override
-	public boolean finish(List<Task> tasks, Task lastTask) {
+	public boolean finish(Project project, List<Task> tasks, Task lastTask) {
 		for (Task t : tasks) {
 			if(!t.hasFinishedEndpoint()) {
 				return false;
 			}
 		}
-		project.setProjectStatus(new FinishedProject(project));
+		project.setProjectStatus(new FinishedProject());
 		project.setEndTime(lastTask.getEndTime());
 		return true;
 	}

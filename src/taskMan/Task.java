@@ -111,7 +111,7 @@ public class Task implements Dependant {
 		}
 		this.requiredResources = reqRes;
 		
-		this.state = new UnavailableTask(this);
+		this.state = new UnavailableTask();
 
 		this.dependants = new ArrayList<Dependant>();
 		this.prerequisites = new ArrayList<Task>();
@@ -191,14 +191,14 @@ public class Task implements Dependant {
 			if(!plan.setDevelopers(resMan.pickDevs(plannedDevelopers, this, startTime, endTime))) {
 				throw new IllegalArgumentException("Very bad developers, very bad! ## dit is een zéér gaye fout");
 			}
-			state.makeAvailable();
-			state.execute(startTime);
+			state.makeAvailable(this);
+			state.execute(this, startTime);
 			if(taskStatus.equalsIgnoreCase("failed")) {
-				if(!state.fail(endTime)) {
+				if(!state.fail(this, endTime)) {
 					throw new IllegalArgumentException("Zéér gaye fout");
 				}
 			} else if(taskStatus.equalsIgnoreCase("finished")) {
-				if(!state.finish(endTime)) {
+				if(!state.finish(this, endTime)) {
 					throw new IllegalArgumentException("Zéér gaye fout");
 				}
 			}
@@ -221,7 +221,7 @@ public class Task implements Dependant {
 		if(!isValidDependant(t)) {
 			return false;
 		}
-		return state.register(t);
+		return state.register(this, t);
 	}
 	
 	/**
@@ -292,7 +292,7 @@ public class Task implements Dependant {
 		}
 		prerequisites.remove(preIndex);
 
-		state.makeAvailable();
+		state.makeAvailable(this);
 		
 		return true;
 	}
@@ -591,7 +591,7 @@ public class Task implements Dependant {
 	 * @return	True if and only if the updates succeeds.
 	 */
 	public boolean finish(LocalDateTime endTime) {
-		if(!state.finish(endTime)) {
+		if(!state.finish(this, endTime)) {
 			return false;
 		}
 		if(!resMan.releaseResources(this)) {
@@ -608,7 +608,7 @@ public class Task implements Dependant {
 	 * @return	True if and only if the updates succeeds.
 	 */
 	public boolean fail(LocalDateTime endTime) {
-		if(!state.fail(endTime)) {
+		if(!state.fail(this, endTime)) {
 			return false;
 		}
 		if(!resMan.releaseResources(this)) {
@@ -625,7 +625,7 @@ public class Task implements Dependant {
 	 * @return True if this task is now executing
 	 */
 	public boolean execute(LocalDateTime startTime) {
-		return state.execute(startTime);
+		return state.execute(this, startTime);
 	}
 	
 	/**
@@ -804,7 +804,7 @@ public class Task implements Dependant {
 		if(!plan.setDevelopers(developers)) {
 			return false;
 		}
-		state.makeAvailable();
+		state.makeAvailable(this);
 		return true;
 		
 	}

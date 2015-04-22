@@ -2,6 +2,7 @@ package taskMan.state;
 
 import java.util.List;
 
+import taskMan.Project;
 import taskMan.Task;
 
 /**
@@ -17,13 +18,15 @@ public interface ProjectStatus {
 	/**
 	 * Change the status to a finished status
 	 * 
+	 * @param project
+	 *            | The project to finish
 	 * @param tasks
 	 *            | A list of tasks belonging to the project
 	 * @param lastTask
 	 *            | The last task to end
 	 * @return True if the status changed to a finished status, false otherwise
 	 */
-	public boolean finish(List<Task> tasks, Task lastTask);
+	public boolean finish(Project project, List<Task> tasks, Task lastTask);
 
 	/**
 	 * Check whether or not the project is finished

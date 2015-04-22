@@ -13,20 +13,17 @@ import taskMan.util.Dependant;
  */
 public class UnavailableTask implements TaskStatus {
 
-	private Task task;
-
 	/**
 	 * Construct a new unavailable status
 	 * 
 	 * @param t
 	 *            | The task that this status belongs to
 	 */
-	public UnavailableTask(Task t) {
-		task = t;
+	public UnavailableTask() {
 	}
 
 	@Override
-	public boolean makeAvailable() {
+	public boolean makeAvailable(Task task) {
 		for(Task t : task.getPrerequisites()) {
 			if(!t.hasFinishedEndpoint()) {
 				return false; //unfulfilled prereqs
@@ -35,22 +32,22 @@ public class UnavailableTask implements TaskStatus {
 		if(task.getPlannedBeginTime() == null) {
 			return false; //not planned
 		}
-		task.setTaskStatus(new AvailableTask(task));
+		task.setTaskStatus(new AvailableTask());
 		return true;
 	}
 	
 	@Override
-	public boolean execute(LocalDateTime beginTime) {
+	public boolean execute(Task task, LocalDateTime beginTime) {
 		return false;
 	}
 
 	@Override
-	public boolean finish(LocalDateTime endTime) {
+	public boolean finish(Task task, LocalDateTime endTime) {
 		return false;
 	}
 
 	@Override
-	public boolean fail(LocalDateTime endTime) {
+	public boolean fail(Task task, LocalDateTime endTime) {
 		return false;
 	}
 
@@ -81,7 +78,7 @@ public class UnavailableTask implements TaskStatus {
 	}
 
 	@Override
-	public boolean register(Dependant d) {
+	public boolean register(Task task, Dependant d) {
 		task.addDependant(d);
 		return true;
 	}
