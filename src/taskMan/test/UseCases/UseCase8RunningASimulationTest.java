@@ -190,9 +190,15 @@ public class UseCase8RunningASimulationTest {
 		assertEquals(2,taskManager.getProjects().size());
 		assertEquals(5,taskManager.getProjects().get(0).getTasks().size());
 		assertTrue(taskManager.revertFromMemento());
+		assertEquals(1, taskManager.getProjects().get(1).getTasks().size());
+		assertTrue(taskManager.getProjects().get(1).getTasks().get(0).isPlanned());
 		assertEquals(2,taskManager.getProjects().size());
 		assertEquals(4,taskManager.getProjects().get(0).getTasks().size());
-		
+		project0 = taskManager.getProjects().get(0);
+		assertEquals("finished",project0.getTasks().get(0).getStatusAsString().toLowerCase());
+		assertEquals("failed",project0.getTasks().get(1).getStatusAsString().toLowerCase());
+		assertTrue(project0.getTasks().get(2).isPlanned());
+		assertEquals("finished",project0.getTasks().get(3).getStatusAsString().toLowerCase());
 	}
 	
 	@Test
@@ -204,7 +210,16 @@ public class UseCase8RunningASimulationTest {
 		assertEquals(2,taskManager.getProjects().size());
 		assertEquals(5,taskManager.getProjects().get(0).getTasks().size());
 		assertTrue(taskManager.discardMemento());
+		assertEquals(1, taskManager.getProjects().get(1).getTasks().size());
+		assertTrue(taskManager.getProjects().get(1).getTasks().get(0).isPlanned());
 		assertEquals(2,taskManager.getProjects().size());
 		assertEquals(5,taskManager.getProjects().get(0).getTasks().size());
+		project0 = taskManager.getProjects().get(0);
+		assertEquals("finished",project0.getTasks().get(0).getStatusAsString().toLowerCase());
+		assertEquals("failed",project0.getTasks().get(1).getStatusAsString().toLowerCase());
+		assertTrue(project0.getTasks().get(2).isPlanned());
+		assertEquals("finished",project0.getTasks().get(3).getStatusAsString().toLowerCase());
+		assertTrue(project0.getTasks().get(4).isUnavailable());
+
 	}
 }
