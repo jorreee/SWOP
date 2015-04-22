@@ -12,6 +12,7 @@ import taskMan.Task;
 import taskMan.resource.user.User;
 import taskMan.resource.user.UserCredential;
 import taskMan.resource.user.UserPrototype;
+import taskMan.util.TimeSpan;
 import taskMan.view.ResourceView;
 
 import com.google.common.collect.ImmutableList;
@@ -698,25 +699,53 @@ public class ResourceManager {
 		}
 		
 		// Shift hour to inside workday
+		if(hour.toLocalTime().isAfter(workDayEnd)) {
+			hour.withHour(8);
+			hour.plusDays(1);
+		}
+		if(hour.toLocalTime().isBefore(workDayStart)) {
+			hour.withHour(8);
+		}
+		switch (hour.getDayOfWeek()) {
+		case SATURDAY:
+			hour.plusDays(2);
+			break;
+		case SUNDAY:
+			hour.plusDays(1);
+			break;
+		default:
+			break;
+		}
+		if(hour.getMinute() != 0) {
+			hour.plusHours(1);
+			hour.withMinute(0);
+		}
 		
 		// Until amount (Check hour)
 		while(amount > 0) {
 			// For each resource
+			for(ResourceView resource : allResources) {
+				ConcreteResource cr = unWrapConcreteResourceView(resource);
 				// if Concrete resource
+				if(cr != null) {
 					// Available from hour until hour + task.getEstimatedDuration()
-		
+					
+					continue;
+				}
+				ResourcePrototype pr = unWrapResourcePrototypeView(resource);
 				// if Prototype
+				if(pr != null) {
 					// Find concrete resource (not yet present) which is available from ...
 
 					// Add cr to list
-			
+					
 					// No cr to be found (Oh nooes)
-			// Amount reached, return
-		
+					
+				}
+			}
 			// Add hour
-
+			hour = TimeSpan.addSpanToLDT(hour, new TimeSpan(60));
 		} // Repeat
-		
 		return posTimes;
 	}
 	
