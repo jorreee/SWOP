@@ -9,8 +9,8 @@ public class ProjectManager extends User {
 	 * @param username
 	 *            | The username for this project manager
 	 */
-	public ProjectManager(String username){
-		super(username); // There can only be one PM (admin) in the system, otherwise change constructor to allow dynamic creation index
+	public ProjectManager(String username, UserPrototype prototype){
+		super(username, prototype); // There can only be one PM (admin) in the system, otherwise change constructor to allow dynamic creation index
 		addCredential(UserCredential.PROJECTMANAGER);
 	}
 }

@@ -9,10 +9,10 @@ import java.util.Map;
 import java.util.Optional;
 
 import taskMan.Task;
-import taskMan.resource.user.Developer;
-import taskMan.resource.user.ProjectManager;
 import taskMan.resource.user.User;
 import taskMan.resource.user.UserCredential;
+import taskMan.resource.user.UserPrototype;
+import taskMan.util.TimeSpan;
 import taskMan.view.ResourceView;
 
 import com.google.common.collect.ImmutableList;
@@ -34,7 +34,10 @@ public class ResourceManager {
 	
 	// The resource manager has a list of resource pools (and users)
 	private List<ResourcePool> resPools;
+//	private ResourcePool userPool; 
 	private List<User> userList;
+	//The prototype for Users
+	private UserPrototype userProt;
 	
 	// A list of (active) reservations
 	private List<Reservation> activeReservations;
@@ -47,8 +50,11 @@ public class ResourceManager {
 	 */
 	public ResourceManager() {
 		this.resPools = new ArrayList<>();
-		this.userList = new ArrayList<>();
-		userList.add(new ProjectManager("admin"));
+		
+		userProt = new UserPrototype("User",null);
+		userList = new ArrayList<User>();
+		userList.add(userProt.instantiateProjectManager("admin"));
+		
 		
 		activeReservations = new ArrayList<>();
 		allReservations = new ArrayList<>();
@@ -215,7 +221,7 @@ public class ResourceManager {
 		if(name == null) {
 			return false;
 		}
-		boolean success = userList.add(new Developer(name));
+		boolean success = userList.add(userProt.instantiateDeveloper(name));
 		if(success) {
 			return true;
 		} else {
@@ -252,8 +258,6 @@ public class ResourceManager {
 			return false;
 		}
 		
-		//TODO check of task juiste hoeveelheid van juiste dingen reserveert
-		
 		List<Reservation> newReservations = new ArrayList<Reservation>();
 		
 		boolean error = false;
@@ -261,14 +265,19 @@ public class ResourceManager {
 			ConcreteResource toReserve = null;
 			ResourcePrototype r = unWrapResourcePrototypeView(resource);
 			if(r != null) {
-				toReserve = pickUnreservedResource(r, startTime, endTime);
+				toReserve = pickUnreservedResource(r, startTime, endTime, newReservations);
 			} else {
-				ConcreteResource cr = unWrapConcreteResourceView(resource);
-				if(cr != null) {
-					toReserve = cr;
+				User user = unWrapUserView(resource);
+				if(user != null) {
+					toReserve = user;
+				} else {
+					ConcreteResource cr = unWrapConcreteResourceView(resource);
+					if(cr != null) {
+						toReserve = cr;
+					}
 				}
 			}
-			if(toReserve == null || !canReserve(toReserve,startTime,endTime)) {
+			if(toReserve == null || !canReserve(toReserve,startTime,endTime, newReservations)) {
 				error = true;
 				break;
 			} else {
@@ -300,11 +309,23 @@ public class ResourceManager {
 	 *            | The start time of the new reservations
 	 * @param end
 	 *            | The end time of the new reservations
-	 * @return True if the developers were assigned and reserved
+	 * @return The list of users for whom the reservation was made, null if there was an error
 	 */
 	public List<User> pickDevs(List<ResourceView> devs, Task reservingTask, LocalDateTime start, LocalDateTime end) {
-		//TODO vroem vroem genned bouwer stoppel
-		return null;
+		List<User> users = new ArrayList<>();
+		for(ResourceView dev : devs) {
+			User user = unWrapUserView(dev);
+			if(user == null) {
+				return null;
+			}
+			users.add(user);
+		}
+		boolean success = reserve(devs, reservingTask, start, end);
+		if(!success) {
+			return null;
+		} else {
+			return users;
+		}
 	}
 	
 	/**
@@ -318,7 +339,13 @@ public class ResourceManager {
 	 * 			The end time of the reservation.
 	 * @return 	true if the resource can be reserved in the given time slot, else false.
 	 */
-	private boolean canReserve(ConcreteResource resource, LocalDateTime start, LocalDateTime end) {
+	private boolean canReserve(ConcreteResource resource, 
+			LocalDateTime start, 
+			LocalDateTime end, 
+			List<Reservation> alreadyReserved) {
+		List<Reservation> toCheck = new ArrayList<Reservation>();
+		toCheck.addAll(activeReservations);
+		toCheck.addAll(alreadyReserved);
 		for(Reservation reservation : activeReservations) {
 			if(reservation.getReservedResource().equals(resource)) {
 				if(reservation.overlaps(start,end)) {
@@ -339,10 +366,13 @@ public class ResourceManager {
 	 * 			The end time for the reservation.
 	 * @return 	A list of Unreserved Concrete Resources of the Prototype. If none were found, return null.
 	 */
-	private ConcreteResource pickUnreservedResource(ResourcePrototype rp, LocalDateTime start, LocalDateTime end) {
+	private ConcreteResource pickUnreservedResource(ResourcePrototype rp, 
+			LocalDateTime start, 
+			LocalDateTime end, 
+			List<Reservation> alreadyReserved) {
 		List<ConcreteResource> options = getPoolOf(rp).getConcreteResourceList();
 		for(ConcreteResource cr : options) {
-			if(canReserve(cr, start, end)) {
+			if(canReserve(cr, start, end, alreadyReserved)) {
 				return cr;
 			}
 		}
@@ -363,10 +393,6 @@ public class ResourceManager {
 		}
 		return null;
 	}
-	
-//	public ImmutableList<ResourceView> getPossibleResourceInstances(ResourceView resourceType){
-//		return null; //TODO implement (is het wel nodig?)
-//	}
 	
 	/**
 	 * This method will return a list of all prototypes present in the resource
@@ -491,15 +517,37 @@ public class ResourceManager {
 		}
 		return null;
 	}
+	
+	/**
+	 * Unwrap a resourceView to its user contents. This method
+	 * will return null if the resource cannot be found
+	 * 
+	 * @param view
+	 *            | The given user
+	 * @return the user found in the resourceView, null if it
+	 *         cannot be found in the resource manager's user list
+	 */
+	private User unWrapUserView(ResourceView view){
+		if(view == null) {
+			return null;
+		}
+		for(User user : userList) {
+			if (view.hasAsResource(user)) {
+				return user;
+			}
+		}
+		return null;
+	}
 
 	/**
 	 * Check whether or not the given resources and their supplied amount exist
-	 * in the resource manager's resource pools. Returns the list of Prototypes 
-	 * if they are valid. Returns NULL if they aren't
+	 * in the resource manager's resource pools. Also checks whether the required resources for each prototype are present, 
+	 * and conflicting resources are not. 
+	 * Returns the list of Prototypes if they are valid. Returns NULL if they aren't
 	 * 
 	 * @param reqRes
 	 *            | A map linking resourcePrototypes with a specified amount
-	 * @return True if enough resources exist, false otherwise
+	 * @return The list of prototype if the resources are valid, else return null.
 	 */
 
 	public Map<ResourcePrototype, Integer> isValidRequiredResources(Map<ResourceView,Integer> reqRes) {
@@ -518,7 +566,19 @@ public class ResourceManager {
 			if(i > getPoolOf(rp).size()) {
 				return null;
 			}
-			resProtList.put(rp, reqRes.get(rv));
+			resProtList.put(rp, i);
+		}
+		for(ResourcePrototype prot : resProtList.keySet()){
+			for (ResourcePrototype req : prot.getRequiredResources()){
+				if (!resProtList.containsKey(req)){
+					return null;
+				}
+			}
+			for (ResourcePrototype confl : prot.getConflictingResources()){
+				if (resProtList.containsKey(confl)){
+					return null;
+				}
+			}
 		}
 		return resProtList;
 	}
@@ -534,12 +594,13 @@ public class ResourceManager {
 	 *            reservations
 	 * @return true if every required resource has enough active reservations
 	 */
-	public boolean hasActiveReservations(Task reservedTask, Map<ResourceView,Integer> requiredResources){
-		Map<ResourceView,Integer> checkList = requiredResources;
+	public boolean hasActiveReservations(Task reservedTask){
+		Map<ResourcePrototype,Integer> checkList = new HashMap<ResourcePrototype, Integer>();
+		checkList.putAll(reservedTask.getRequiredResources());
 		for (Reservation res: activeReservations){
 			if (res.getReservingTask().equals(reservedTask)){
-				for (ResourceView resource : checkList.keySet()){
-					if(resource.hasAsResource(res.getReservedResource().getPrototype())){
+				for (ResourcePrototype resource : checkList.keySet()){
+					if(res.getReservedResource().getPrototype().equals(resource)) {
 						checkList.put(resource, checkList.get(resource) - 1);
 					}
 						
@@ -547,7 +608,7 @@ public class ResourceManager {
 			}
 		}
 		boolean largerZero = false;
-		for (ResourceView resource : checkList.keySet()){
+		for(ResourcePrototype resource : checkList.keySet()) {
 			if(checkList.get(resource) > 0){
 				largerZero = true;
 			}
@@ -565,17 +626,11 @@ public class ResourceManager {
 	 * @return True if the new requirements were successfully added to the
 	 *         prototype
 	 */
-	// TODO deze nieuwe reqs zouden ook aan alle concrete resources van het
-	// prototype moeten toegevoegd worden
-//TODO verwijder activeResources wanneer de task end
 	public boolean addRequirementsToResource(List<ResourceView> reqToAdd, ResourceView prototype){
 		ResourcePrototype rprot = unWrapResourcePrototypeView(prototype);
 		if(rprot == null) {
 			return false;
 		}
-//		for(ResourcePool pool : resPools) {
-//			ResourcePrototype prot = pool.getPrototype();
-//			if (prototype.hasAsResource(prot)) {
 		for (ResourceView req : reqToAdd ){
 			ResourcePrototype unwrapReq = unWrapResourcePrototypeView(req);
 			if (unwrapReq == null){
@@ -584,10 +639,7 @@ public class ResourceManager {
 				rprot.addRequiredResource(unwrapReq);
 			}
 		}
-//				return true;
-//			}
-//		}
-		return false;
+		return true;
 	}
 	
 	/**
@@ -600,16 +652,11 @@ public class ResourceManager {
 	 * @return True if the new conflicts were successfully added to the
 	 *         prototype
 	 */
-	// TODO deze nieuwe cons zouden ook aan alle concrete resources van het
-	// prototype moeten toegevoegd worden
 	public boolean addConflictsToResource(List<ResourceView> conToAdd, ResourceView prototype){
 		ResourcePrototype rprot = unWrapResourcePrototypeView(prototype);
 		if(rprot == null) {
 			return false;
 		}
-//		for(ResourcePool pool : resPools) {
-//			ResourcePrototype prot = pool.getPrototype();
-//			if (prototype.hasAsResource(prot)) {
 		for (ResourceView req : conToAdd ){
 			ResourcePrototype unwrapReq = unWrapResourcePrototypeView(req);
 			if (unwrapReq == null){
@@ -618,10 +665,7 @@ public class ResourceManager {
 				rprot.addConflictingResource(unwrapReq);
 			}
 		}
-//				return true;
-//			}
-//		}
-		return false;
+		return true;
 	}
 	
 	/**
@@ -638,9 +682,70 @@ public class ResourceManager {
 	 * @return a list of timestamps when a planning could be made without
 	 *         conflicts
 	 */
-	public List<LocalDateTime> getPossibleStartingTimes(Task task, List<ResourceView> allResources, int amount) {
+	public List<LocalDateTime> getPossibleStartingTimes(Task task, List<ResourceView> allResources, LocalDateTime currentTime, int amount) {
 		List<LocalDateTime> posTimes = new ArrayList<LocalDateTime>();
-		//TODO het zware werk
+		// Workday timings
+		LocalTime workDayStart = LocalTime.of(8,0);
+		LocalTime workDayEnd = LocalTime.of(17, 0);
+		
+		// Initial time to check (last planned end time of prerequisite task)
+		LocalDateTime hour = currentTime;
+		if(!task.getPrerequisites().isEmpty()) {
+			LocalDateTime latest = currentTime;
+			for(Task prereq : task.getPrerequisites()) {
+				latest = (prereq.getPlannedEndTime().isAfter(latest)) ? prereq.getPlannedEndTime() : latest;
+			}
+			hour = latest;
+		}
+		
+		// Shift hour to inside workday
+		if(hour.toLocalTime().isAfter(workDayEnd)) {
+			hour.withHour(8);
+			hour.plusDays(1);
+		}
+		if(hour.toLocalTime().isBefore(workDayStart)) {
+			hour.withHour(8);
+		}
+		switch (hour.getDayOfWeek()) {
+		case SATURDAY:
+			hour.plusDays(2);
+			break;
+		case SUNDAY:
+			hour.plusDays(1);
+			break;
+		default:
+			break;
+		}
+		if(hour.getMinute() != 0) {
+			hour.plusHours(1);
+			hour.withMinute(0);
+		}
+		
+		// Until amount (Check hour)
+		while(amount > 0) {
+			// For each resource
+			for(ResourceView resource : allResources) {
+				ConcreteResource cr = unWrapConcreteResourceView(resource);
+				// if Concrete resource
+				if(cr != null) {
+					// Available from hour until hour + task.getEstimatedDuration()
+					
+					continue;
+				}
+				ResourcePrototype pr = unWrapResourcePrototypeView(resource);
+				// if Prototype
+				if(pr != null) {
+					// Find concrete resource (not yet present) which is available from ...
+
+					// Add cr to list
+					
+					// No cr to be found (Oh nooes)
+					
+				}
+			}
+			// Add hour
+			hour = TimeSpan.addSpanToLDT(hour, new TimeSpan(60));
+		} // Repeat
 		return posTimes;
 	}
 	
@@ -699,7 +804,27 @@ public class ResourceManager {
 		return activeReservations.removeAll(toRemove);
 	}
 
-
+	public boolean refreshReservations(Task reservingTask, LocalDateTime newStartDate, LocalDateTime newEndDate) {
+		if(!hasActiveReservations(reservingTask)) {
+			return false;
+		}
+		//get active reservations
+		List<Reservation> reservationsForTask = new ArrayList<Reservation>();
+		List<ResourceView> reservedResourcesForTask = new ArrayList<ResourceView>();
+		for(Reservation r : activeReservations) {
+			if(r.getReservingTask().equals(reservingTask)) {
+				reservationsForTask.add(r);
+				reservedResourcesForTask.add(new ResourceView(r.getReservedResource()));
+			}
+		}
+		
+		activeReservations.removeAll(reservationsForTask);
+		if(!reserve(reservedResourcesForTask, reservingTask, newStartDate, newEndDate)) {
+			activeReservations.addAll(reservationsForTask);
+			return false;
+		}
+		return true;
+	}
 
 
 	/**

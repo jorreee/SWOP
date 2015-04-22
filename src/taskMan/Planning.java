@@ -236,7 +236,6 @@ public class Planning {
 	 *         otherwise
 	 */
 	public boolean setDevelopers(List<User> plannedDevelopers) {
-		// TODO Actual developers?
 		this.plannedDevelopers = plannedDevelopers;
 		return true;              
 	}

@@ -32,17 +32,13 @@ public class AvailableTask implements TaskStatus {
 	
 	@Override
 	public boolean execute(LocalDateTime beginTime) {
-//		if(beginTime.isBefore(task.getPlannedBeginTime()) || beginTime.isAfter(task.getPlannedEndTime())) {
-//			if(!task.refreshReservations(beginTime)) { // TODO kijk hier nog eens naar wanneer we meer van de reservations hebben gedaan
-//				return false;
-//			}
-//		}
-//		
-//		return task.setBeginTime(beginTime);
-		
 		if(!task.setBeginTime(beginTime)) {
 			return false;
 		}
+		if(!task.refreshReservations(beginTime)) {
+			return false;
+		}
+		
 		task.setTaskStatus(new ExecutingTask(task));
 		return true;
 		

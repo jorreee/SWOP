@@ -153,8 +153,7 @@ public class PlanTaskRequest extends Request {
 				
 				
 				// show list of possible starting times
-				List<LocalDateTime> possibleStartingTimes = task.getPossibleStartingTimes(planning.getResourcesToReserve(),3);
-				//TODO wat als er GEEN zijn? NOOIT.
+				List<LocalDateTime> possibleStartingTimes = task.getPossibleStartingTimes(planning.getResourcesToReserve(),facade.getCurrentTime(),3);
 				// (3 first possible (enough res and devs available))
 				for(int i = 0 ; i < possibleStartingTimes.size() ; i++) {
 					System.out.println("Possible task starting time " + i + ": " + possibleStartingTimes.get(i).toString());
