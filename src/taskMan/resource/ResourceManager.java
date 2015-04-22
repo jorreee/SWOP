@@ -617,15 +617,11 @@ public class ResourceManager {
 	 * @return True if the new requirements were successfully added to the
 	 *         prototype
 	 */
-//TODO verwijder activeResources wanneer de task end
 	public boolean addRequirementsToResource(List<ResourceView> reqToAdd, ResourceView prototype){
 		ResourcePrototype rprot = unWrapResourcePrototypeView(prototype);
 		if(rprot == null) {
 			return false;
 		}
-//		for(ResourcePool pool : resPools) {
-//			ResourcePrototype prot = pool.getPrototype();
-//			if (prototype.hasAsResource(prot)) {
 		for (ResourceView req : reqToAdd ){
 			ResourcePrototype unwrapReq = unWrapResourcePrototypeView(req);
 			if (unwrapReq == null){
@@ -634,10 +630,7 @@ public class ResourceManager {
 				rprot.addRequiredResource(unwrapReq);
 			}
 		}
-//				return true;
-//			}
-//		}
-		return false;
+		return true;
 	}
 	
 	/**
@@ -655,9 +648,6 @@ public class ResourceManager {
 		if(rprot == null) {
 			return false;
 		}
-//		for(ResourcePool pool : resPools) {
-//			ResourcePrototype prot = pool.getPrototype();
-//			if (prototype.hasAsResource(prot)) {
 		for (ResourceView req : conToAdd ){
 			ResourcePrototype unwrapReq = unWrapResourcePrototypeView(req);
 			if (unwrapReq == null){
@@ -666,10 +656,7 @@ public class ResourceManager {
 				rprot.addConflictingResource(unwrapReq);
 			}
 		}
-//				return true;
-//			}
-//		}
-		return false;
+		return true;
 	}
 	
 	/**
