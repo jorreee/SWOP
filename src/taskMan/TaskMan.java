@@ -392,28 +392,9 @@ public class TaskMan {
 		return resMan.createDeveloper(name);
 	}
 
-	/**
-	 * Reserve a resource for a task from the task's planned start time until
-	 * the planned end time
-	 * 
-	 * @param resource
-	 *            | The resource to reserve
-	 * @param project
-	 *            | The project the task belongs to
-	 * @param task
-	 *            | The reserving task
-	 * @return True if the resource was reserved by the given task, false
-	 *         otherwise
-	 */
-	public boolean reserveResource(ResourceView resource, ProjectView project,
-			TaskView task) {
-		return false;
-		// TODO reservations mister!
-	}
-
-//
 //	/**
-//	 * Reserve a resource for a task from a given start time to a given end time
+//	 * Reserve a resource for a task from the task's planned start time until
+//	 * the planned end time
 //	 * 
 //	 * @param resource
 //	 *            | The resource to reserve
@@ -421,21 +402,39 @@ public class TaskMan {
 //	 *            | The project the task belongs to
 //	 * @param task
 //	 *            | The reserving task
-//	 * @param startTime
-//	 *            | The start time of the new reservation
-//	 * @param endTime
-//	 *            | The end time of the new reservation
 //	 * @return True if the resource was reserved by the given task, false
 //	 *         otherwise
 //	 */
 //	public boolean reserveResource(ResourceView resource, ProjectView project,
-//			TaskView task, LocalDateTime startTime, LocalDateTime endTime) {
-//		Project p = unwrapProjectView(project);
-//		if (p == null) {
-//			return false;
-//		}
-//		return p.reserve(resource, task, startTime, endTime);
+//			TaskView task) {
+//		return false;
+//		// TODO reservations mister!
 //	}
+
+	/**
+	 * Reserve a resource for a task from a given start time to a given end time
+	 * 
+	 * @param resource
+	 *            | The resource to reserve
+	 * @param project
+	 *            | The project the task belongs to
+	 * @param task
+	 *            | The reserving task
+	 * @param startTime
+	 *            | The start time of the new reservation
+	 * @param endTime
+	 *            | The end time of the new reservation
+	 * @return True if the resource was reserved by the given task, false
+	 *         otherwise
+	 */
+	public boolean reserveResource(ResourceView resource, ProjectView project,
+			TaskView task, LocalDateTime startTime, LocalDateTime endTime) {
+		Project p = unwrapProjectView(project);
+		if (p == null) {
+			return false;
+		}
+		return p.reserve(resource, task, startTime, endTime);
+	}
 
 //	/**
 //	 * Returns an amount of possible Task starting times for a given Task.

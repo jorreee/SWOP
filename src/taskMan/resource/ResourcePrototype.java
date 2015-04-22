@@ -61,4 +61,5 @@ public class ResourcePrototype extends Resource {
 	public boolean addConflictingResource(ResourcePrototype conflictingResource) {
 		return conResourcesList.add(conflictingResource);
 	}
+	
 }
