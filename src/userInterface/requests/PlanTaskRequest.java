@@ -196,11 +196,15 @@ class PlanningScheme {
 	private LocalDateTime timeSlotStartTime;
 	private List<ResourceView> resourcesToReserve;
 	private List<ResourceView> developers;
+	
+	public PlanningScheme() {
+		resourcesToReserve = new ArrayList<>();
+		developers = new ArrayList<>();
+	}
 
 	public void setPlanBeginTime(LocalDateTime timeSlotStartTime) {
 		this.timeSlotStartTime = timeSlotStartTime;
 	}
-
 
 	public LocalDateTime getPlanningStartTime() {
 		return timeSlotStartTime;

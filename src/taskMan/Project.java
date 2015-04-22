@@ -74,7 +74,7 @@ public class Project implements Dependant {
 		
 		this.taskList = new ArrayList<Task>();
 		
-		this.state = new OngoingProject(this);
+		this.state = new OngoingProject();
 
 	}
 
@@ -353,7 +353,7 @@ public class Project implements Dependant {
 		if (!preTask.hasEnded()){
 			return false;
 		}
-		return state.finish(taskList, preTask);
+		return state.finish(this, taskList, preTask);
 	}
 
 	/**

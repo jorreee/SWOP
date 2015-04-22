@@ -2,12 +2,13 @@ package taskMan.state;
 
 import java.time.LocalDateTime;
 
+import taskMan.Task;
 import taskMan.util.Dependant;
 
 /**
  * The status of a task is contained in classes implementing this interface.
- * This follows the state pattern. A task will ask its status to change to another
- * and the implementation will determine if it is possible to change.
+ * This follows the state pattern. A task will ask its status to change to
+ * another and the implementation will determine if it is possible to change.
  * 
  * @author Tim Van Den Broecke, Joran Van de Woestijne, Vincent Van Gestel and
  *         Eli Vangrieken
@@ -17,45 +18,55 @@ public interface TaskStatus {
 	/**
 	 * Change the status to an available status
 	 * 
+	 * @param task
+	 *            | The task to make available
 	 * @return True if the new status is available, False if it remained
 	 *         unchanged
 	 */
-	public boolean makeAvailable();
+	public boolean makeAvailable(Task task);
 
 	/**
 	 * Change the status to an executing status
 	 * 
+	 * @param task
+	 *            | The task to execute
 	 * @param beginTime
 	 * @return True if the new status is executing, False if it remained
 	 *         unchanged
 	 */
-	public boolean execute(LocalDateTime beginTime);
+	public boolean execute(Task task, LocalDateTime beginTime);
 
 	/**
 	 * Change the status to a finished status
 	 * 
+	 * @param task
+	 *            | The task to finish
 	 * @param endTime
 	 * @return True if the new status is finished, False if it remained
 	 *         unchanged
 	 */
-	public boolean finish(LocalDateTime endTime);
+	public boolean finish(Task task, LocalDateTime endTime);
 
 	/**
 	 * Change the status to a failed status
 	 * 
+	 * @param task
+	 *            | The task to fail
 	 * @param endTime
 	 * @return True if the new status is failed, False if it remained unchanged
 	 */
-	public boolean fail(LocalDateTime endTime);
+	public boolean fail(Task task, LocalDateTime endTime);
 
 	/**
 	 * Register a new dependant to the current task
 	 * 
+	 * @param task
+	 *            | The task to register the dependant to
 	 * @param d
 	 *            | The new dependant
 	 * @return true if the dependant was added
 	 */
-	public boolean register(Dependant d);
+	public boolean register(Task task, Dependant d);
 
 	/**
 	 * Is this state an available state

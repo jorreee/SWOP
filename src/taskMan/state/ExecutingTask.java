@@ -13,30 +13,25 @@ import taskMan.util.Dependant;
  */
 public class ExecutingTask implements TaskStatus{
 	
-	private Task task;
-	
 	/**
 	 * Construct a new executing status
 	 * 
-	 * @param t
-	 *            | The task that this status belongs to
 	 */
-	public ExecutingTask(Task t) {
-		task = t;
+	public ExecutingTask() {
 	}
 
 	@Override
-	public boolean makeAvailable() {
+	public boolean makeAvailable(Task task) {
 		return false;
 	}
 	
 	@Override
-	public boolean execute(LocalDateTime beginTime) {
+	public boolean execute(Task task, LocalDateTime beginTime) {
 		return false;
 	}
 
 	@Override
-	public boolean finish(LocalDateTime endTime) {
+	public boolean finish(Task task, LocalDateTime endTime) {
 		if(!isValidTimeStamps(task.getBeginTime(), endTime)) {
 			return false;
 		}
@@ -44,7 +39,7 @@ public class ExecutingTask implements TaskStatus{
 			return false;
 		}
 
-		task.setTaskStatus(new FinishedTask(task));
+		task.setTaskStatus(new FinishedTask());
 
 		task.notifyDependants();
 
@@ -52,7 +47,7 @@ public class ExecutingTask implements TaskStatus{
 	}
 
 	@Override
-	public boolean fail(LocalDateTime endTime) {
+	public boolean fail(Task task, LocalDateTime endTime) {
 		if(!isValidTimeStamps(task.getBeginTime(), endTime)) {
 			return false;
 		}
@@ -60,7 +55,7 @@ public class ExecutingTask implements TaskStatus{
 			return false;
 		}
 
-		task.setTaskStatus(new FailedTask(task));
+		task.setTaskStatus(new FailedTask());
 
 		return true;
 	}
@@ -115,7 +110,7 @@ public class ExecutingTask implements TaskStatus{
 	}
 
 	@Override
-	public boolean register(Dependant d) {
+	public boolean register(Task task, Dependant d) {
 		task.addDependant(d);
 		return true;
 	}
