@@ -325,7 +325,7 @@ public class TimeSpan {
 		}
 
 		int workDayStart = 8;
-		int workDayEnd = 16;
+		int workDayEnd = 17;
 
 		if (startTime.equals(endTime)) {
 			return 0;

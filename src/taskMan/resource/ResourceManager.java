@@ -674,9 +674,33 @@ public class ResourceManager {
 	 * @return a list of timestamps when a planning could be made without
 	 *         conflicts
 	 */
-	public List<LocalDateTime> getPossibleStartingTimes(Task task, List<ResourceView> allResources, int amount) {
+	public List<LocalDateTime> getPossibleStartingTimes(Task task, List<ResourceView> allResources, LocalDateTime currentTime, int amount) {
 		List<LocalDateTime> posTimes = new ArrayList<LocalDateTime>();
-		//TODO het zware werk
+		// Workday timings
+		LocalTime workDayStart = LocalTime.of(8,0);
+		LocalTime workDayEnd = LocalTime.of(17, 0);
+		
+		// Initial time to check (last planned end time of prerequisite task)
+		LocalDateTime hour
+		
+		// Until amount (Check hour)
+		while(amount > 0) {
+			// For each resource
+				// if Concrete resource
+					// Available from hour until hour + task.getEstimatedDuration()
+		
+				// if Prototype
+					// Find concrete resource (not yet present) which is available from ...
+
+					// Add cr to list
+			
+					// No cr to be found (Oh nooes)
+			// Amount reached, return
+		
+			// Add hour
+			hour
+		} // Repeat
+		
 		return posTimes;
 	}
 	
