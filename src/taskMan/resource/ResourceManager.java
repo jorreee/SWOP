@@ -13,6 +13,7 @@ import taskMan.resource.user.Developer;
 import taskMan.resource.user.ProjectManager;
 import taskMan.resource.user.User;
 import taskMan.resource.user.UserCredential;
+import taskMan.resource.user.UserPrototype;
 import taskMan.view.ResourceView;
 
 import com.google.common.collect.ImmutableList;
@@ -34,8 +35,10 @@ public class ResourceManager {
 	
 	// The resource manager has a list of resource pools (and users)
 	private List<ResourcePool> resPools;
-	private ResourcePool userPool; // TODO REFACTOR TO USE THIS
-//	private List<User> userList;
+//	private ResourcePool userPool; // TODO REFACTOR TO USE THIS
+	private List<User> userList;
+	//The prototype for Users
+	private UserPrototype userProt;
 	
 	// A list of (active) reservations
 	private List<Reservation> activeReservations;
@@ -48,9 +51,12 @@ public class ResourceManager {
 	 */
 	public ResourceManager() {
 		this.resPools = new ArrayList<>();
-		this.userList = new ArrayList<>();
 		
-		userList.add(new ProjectManager("admin"));
+		userProt = new UserPrototype("User",null);
+		userList.add(userProt.instantiateProjectManager("admin"));
+		
+//		userPool = new ResourcePool(new UserPrototype("User",null));
+//		userPool.createResourceInstance("admin");
 		
 		activeReservations = new ArrayList<>();
 		allReservations = new ArrayList<>();
@@ -217,7 +223,7 @@ public class ResourceManager {
 		if(name == null) {
 			return false;
 		}
-		boolean success = userList.add(new Developer(name));
+		boolean success = userList.add(userProt.instantiateDeveloper(name));
 		if(success) {
 			return true;
 		} else {
