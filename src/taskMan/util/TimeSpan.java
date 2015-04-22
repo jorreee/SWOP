@@ -14,6 +14,9 @@ import java.util.Arrays;
 public class TimeSpan {
 
 	private final int[] span;
+	
+	private static int workDayStart = 8;
+	private static int workDayEnd = 17;
 
 	/**
 	 * Construct a TimeSpan object from 2 LocalDateTime objects.
@@ -324,9 +327,6 @@ public class TimeSpan {
 			return 0;
 		}
 
-		int workDayStart = 8;
-		int workDayEnd = 17;
-
 		if (startTime.equals(endTime)) {
 			return 0;
 		}
@@ -391,8 +391,7 @@ public class TimeSpan {
 
 		int minutes = span.getSpanMinutes();
 
-		int workDayStart = 8;
-		int workDayEnd = 16;
+
 		if (minutes == 0) {
 			return offset;
 		}

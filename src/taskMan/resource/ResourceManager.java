@@ -681,7 +681,16 @@ public class ResourceManager {
 		LocalTime workDayEnd = LocalTime.of(17, 0);
 		
 		// Initial time to check (last planned end time of prerequisite task)
-		LocalDateTime hour
+		LocalDateTime hour = currentTime;
+		if(!task.getPrerequisites().isEmpty()) {
+			LocalDateTime latest = currentTime;
+			for(Task prereq : task.getPrerequisites()) {
+				latest = (prereq.getPlannedEndTime().isAfter(latest)) ? prereq.getPlannedEndTime() : latest;
+			}
+			hour = latest;
+		}
+		
+		// Shift hour to inside workday
 		
 		// Until amount (Check hour)
 		while(amount > 0) {
@@ -698,7 +707,7 @@ public class ResourceManager {
 			// Amount reached, return
 		
 			// Add hour
-			hour
+
 		} // Repeat
 		
 		return posTimes;
