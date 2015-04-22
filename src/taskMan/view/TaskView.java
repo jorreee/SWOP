@@ -318,13 +318,16 @@ public class TaskView {
 	 *            | The other view to compare with
 	 * @return True if the views are identical or share the same task
 	 */
-	public boolean equals(TaskView otherView) {
+	public boolean equals(Object otherView) {
 		if (this == otherView)
 			return true;
 		if (otherView == null)
 			return false;
-		return otherView.hasAsTask(task);
-	}
+		try {
+			return ((TaskView) otherView).hasAsTask(task);	
+		} catch(ClassCastException e) {
+			return false;
+		}	}
 
 	/**
 	 * Return a list of the developers planned to work on this task
