@@ -114,7 +114,6 @@ public class ExecutingTask implements TaskStatus{
 		return "Executing";
 	}
 
-	//TODO needs to be specified
 	@Override
 	public boolean register(Dependant d) {
 		task.addDependant(d);
