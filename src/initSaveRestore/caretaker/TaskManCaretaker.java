@@ -54,6 +54,7 @@ public class TaskManCaretaker {
 	 */
 	public void storeInMemento() {
 		String taskman = buildMemento();
+		System.out.println(taskman);
 		mementos.push(new TaskManMemento(taskman));
 	}
 	
@@ -165,7 +166,7 @@ public class TaskManCaretaker {
 		
 		// currentUser
 		tman.append("\ncurrentUser:");
-		tman.append("\n  - name: \"" + facade.getCurrentUser() + "\""); // Current logged in person (admin or dev)
+		tman.append("\n  - name: \"" + facade.getCurrentUser().getName() + "\""); // Current logged in person (admin or dev)
 		
 		// projects
 		tman.append("\nprojects:");
@@ -242,7 +243,7 @@ public class TaskManCaretaker {
 				if(!taskStatus.isEmpty()) {
 					tman.append("\n    startTime          : \"" + task.getStartTime().format(dateTimeFormatter) + "\""); // startTime
 				}
-				if(!taskStatus.isEmpty() || !taskStatus.equalsIgnoreCase("executing")) {
+				if(!taskStatus.isEmpty() && !taskStatus.equalsIgnoreCase("executing")) {
 					tman.append("\n    endTime            : \"" + task.getEndTime().format(dateTimeFormatter) + "\""); // endTime
 				}
 			}
