@@ -1,6 +1,7 @@
 package taskMan.view;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 
@@ -212,8 +213,9 @@ public class TaskView {
 			startTime = getPlannedBeginTime();
 		}
 		TimeSpan acceptableSpan = task.getEstimatedDuration();
+		LocalTime[] availabilityPeriod = task.getAvailabilityPeriodBoundWorkingTimes();
 		LocalDateTime acceptableEndDate = TimeSpan.addSpanToLDT(
-				startTime, acceptableSpan, null, null);
+				startTime, acceptableSpan, availabilityPeriod[0], availabilityPeriod[1]);
 
 		if (hasEnded()) {
 			return !task.getEndTime().isAfter(acceptableEndDate);
@@ -239,8 +241,9 @@ public class TaskView {
 		}
 		TimeSpan acceptableSpan = task.getEstimatedDuration()
 				.getAcceptableSpan(getAcceptableDeviation());
+		LocalTime[] availabilityPeriod = task.getAvailabilityPeriodBoundWorkingTimes();
 		LocalDateTime acceptableEndDate = TimeSpan.addSpanToLDT(startTime,
-				acceptableSpan, null, null);
+				acceptableSpan, availabilityPeriod[0], availabilityPeriod[1]);
 
 		if (hasEnded()) {
 			return getEndTime().isAfter(acceptableEndDate);

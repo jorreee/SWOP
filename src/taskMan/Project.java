@@ -1,6 +1,7 @@
 package taskMan;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -604,10 +605,11 @@ public class Project implements Dependant {
 		}
 		LocalDateTime candidate = furthestEndDate;
 		for(Task t : availableTasks) {
+			LocalTime[] availabilityPeriod = t.getAvailabilityPeriodBoundWorkingTimes();
 			if(t.getBeginTime() != null) {
-				candidate = TimeSpan.addSpanToLDT(t.getBeginTime(), t.getMaxDelayChain(), null, null);
+				candidate = TimeSpan.addSpanToLDT(t.getBeginTime(), t.getMaxDelayChain(), availabilityPeriod[0], availabilityPeriod[1]);
 			} else { 
-				candidate = TimeSpan.addSpanToLDT(currentTime, t.getMaxDelayChain(), null, null);
+				candidate = TimeSpan.addSpanToLDT(currentTime, t.getMaxDelayChain(), availabilityPeriod[0], availabilityPeriod[1]);
 			}
 			if(candidate.isAfter(furthestEndDate)) {
 				furthestEndDate = candidate;

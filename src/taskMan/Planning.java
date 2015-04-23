@@ -1,6 +1,7 @@
 package taskMan;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -176,7 +177,7 @@ public class Planning {
 	 * @throws 	IllegalArgumentException 
 	 * 			When the start time of the task is after the time given.
 	 */
-	public TimeSpan getTimeSpent(LocalDateTime currentTime) {
+	public TimeSpan getTimeSpent(LocalDateTime currentTime, LocalTime availabilityStart, LocalTime availabilityEnd) {
 		if(currentTime == null) {
 			return new TimeSpan(0);
 		}
@@ -187,7 +188,7 @@ public class Planning {
 			return new TimeSpan(0);
 		}
 		if(endTime != null) {
-			return new TimeSpan(TimeSpan.getDifferenceWorkingMinutes(beginTime, endTime, null, null));
+			return new TimeSpan(TimeSpan.getDifferenceWorkingMinutes(beginTime, endTime, availabilityStart, availabilityEnd));
 		}
 		
 		int currentTimeSpent = TimeSpan.getDifferenceWorkingMinutes(
@@ -204,14 +205,14 @@ public class Planning {
 	 * 
 	 * @return the planned end time
 	 */
-	public LocalDateTime getPlannedEndTime() {
+	public LocalDateTime getPlannedEndTime(LocalTime availabilityStart, LocalTime availabilityEnd) {
 		if(plannedBeginTime == null) {
 			return null;
 		}
 		if(beginTime == null) {
-			return TimeSpan.addSpanToLDT(plannedBeginTime, estimatedDuration, null, null);
+			return TimeSpan.addSpanToLDT(plannedBeginTime, estimatedDuration, availabilityStart, availabilityEnd);
 		}
-		return TimeSpan.addSpanToLDT(beginTime, estimatedDuration, null, null);
+		return TimeSpan.addSpanToLDT(beginTime, estimatedDuration, availabilityStart, availabilityEnd);
 	}
 	
 	/**
@@ -220,11 +221,11 @@ public class Planning {
 	 * 
 	 * @return the last possible acceptable end time
 	 */
-	public LocalDateTime getAcceptableEndTime() {
+	public LocalDateTime getAcceptableEndTime(LocalTime availabilityStart, LocalTime availabilityEnd) {
 		if(getBeginTime() == null) {
 			return null;
 		}
-		return TimeSpan.addSpanToLDT(beginTime, estimatedDuration.getAcceptableSpan(acceptableDeviation), null, null);
+		return TimeSpan.addSpanToLDT(beginTime, estimatedDuration.getAcceptableSpan(acceptableDeviation), availabilityStart, availabilityEnd);
 	}
 
 	/**
