@@ -615,13 +615,13 @@ public class ResourceManager {
 				}
 			}
 		}
-		boolean largerZero = false;
-		for(ResourcePrototype resource : checkList.keySet()) {
-			if(checkList.get(resource) > 0){
-				largerZero = true;
+
+		for(Integer i : checkList.values()) {
+			if(!i.equals(0)) {
+				return false;
 			}
 		}
-		return (!largerZero);
+		return true;
 	}
 	
 	/**

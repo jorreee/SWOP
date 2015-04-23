@@ -286,7 +286,7 @@ public class Task implements Dependant {
 		if(preIndex < 0) {
 			return false;
 		}
-		prerequisites.remove(preIndex);
+//		prerequisites.remove(preIndex);
 
 		state.makeAvailable(this);
 		
@@ -777,7 +777,41 @@ public class Task implements Dependant {
 		return true;
 	}
 	
+	private boolean isValidPlannedStartTime(LocalDateTime start) {
+		if(prerequisites.isEmpty()) {
+			return true;
+		}
+		for(Task t : prerequisites) {
+			if(!checkTask(t,start)) {
+				return false;
+			}
+		}
+		
+		return true;
+	}
+	
+	private boolean checkTask(Task t, LocalDateTime start) {
+		if(t.isUnavailable() || (t.isFailed() && (t.getReplacement() == null))) {
+			return false; // Heeft een prereq die nog niet KAN worden afgewerkt
+		}
+		if((t.isAvailable() || t.isExecuting()) && t.getPlannedEndTime().isAfter(start)) {
+			return false; // Heeft een prereq die eindigt NA de gekozen planned start time
+		}
+		if(t.isFailed() && (t.getReplacement() != null)) {
+			return checkTask(t.getReplacement(), start);
+		}
+		return true;
+	}
+	
 	public boolean plan(LocalDateTime startTime, List<ResourceView> concRes, List<ResourceView> devs) {
+		for(Task t : prerequisites) {
+			if(t.isFailed() && (t.getReplacement() == null)) {
+				return false;
+			}
+		}
+		if(!isValidPlannedStartTime(startTime)) {
+			return false;
+		}
 		if(!plan.setPlannedBeginTime(startTime)) {
 			return false;
 		}
@@ -791,13 +825,16 @@ public class Task implements Dependant {
 			}
 		}
 		if(!resMan.hasActiveReservations(this)) {
+			resMan.releaseResources(this);
 			return false; // verkeerde hoeveelheid reservaties enzo
 		}
 		List<User> developers = resMan.pickDevs(devs, this, startTime, getPlannedEndTime());
 		if(developers == null) {
+			resMan.releaseResources(this);
 			return false;
 		}
 		if(!plan.setDevelopers(developers)) {
+			resMan.releaseResources(this);
 			return false;
 		}
 		state.makeAvailable(this);
