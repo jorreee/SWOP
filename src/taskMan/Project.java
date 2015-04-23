@@ -564,7 +564,10 @@ public class Project implements Dependant {
 	public boolean setTaskExecuting(TaskView task, LocalDateTime startTime){
 		if(!isValidTaskView(task)) {
 			return false;
-		}return unwrapTaskView(task).execute(startTime);
+		}
+		if(startTime.isBefore(creationTime))
+			return false;
+		return unwrapTaskView(task).execute(startTime);
 		
 	}
 	
