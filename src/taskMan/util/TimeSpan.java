@@ -291,15 +291,15 @@ public class TimeSpan {
 	 * @throws IllegalArgumentException
 	 *             if other == null
 	 */
-	public int[] minus(TimeSpan other) throws IllegalArgumentException {
+	public TimeSpan minus(TimeSpan other) throws IllegalArgumentException {
 		if (other == null)
 			throw new IllegalArgumentException("Invalid other");
 		if (other.isLonger(this)) {
 			int newSpan = other.getSpanMinutes() - this.getSpanMinutes();
-			return new TimeSpan(newSpan).getSpan();
+			return new TimeSpan(newSpan);
 		} else {
 			int newSpan = this.getSpanMinutes() - other.getSpanMinutes();
-			return new TimeSpan(newSpan).getSpan();
+			return new TimeSpan(newSpan);
 		}
 
 	}
@@ -437,25 +437,18 @@ public class TimeSpan {
 
 	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + Arrays.hashCode(span);
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
+	public boolean equals(Object other) {
+		if (this == other)
 			return true;
-		if (obj == null)
+		if (other == null)
 			return false;
-		if (getClass() != obj.getClass())
+		try {
+			if (!Arrays.equals(span, ((TimeSpan) other).getSpan())) {
+				return false;
+			}
+		} catch(ClassCastException e) {
 			return false;
-		TimeSpan other = (TimeSpan) obj;
-		if (!Arrays.equals(span, other.span))
-			return false;
+		}
 		return true;
 	}
 

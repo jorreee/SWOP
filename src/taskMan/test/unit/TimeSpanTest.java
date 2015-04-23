@@ -394,9 +394,9 @@ public class TimeSpanTest {
 	public void minusSuccessTest() {
 		TimeSpan original = new TimeSpan(10);
 
-		assertTrue(Arrays.equals(new int[]{0,0,0,0,10},original.minus(new TimeSpan(0))));
-		assertTrue(Arrays.equals(new int[]{0,0,0,0,10},original.minus(new TimeSpan(20))));
-		assertTrue(Arrays.equals(new int[]{0,0,0,0,0},original.minus(new TimeSpan(10))));
+		assertTrue(new TimeSpan(10).equals(original.minus(new TimeSpan(0))));
+		assertTrue(new TimeSpan(10).equals(original.minus(new TimeSpan(20))));
+		assertTrue(new TimeSpan(0).equals(original.minus(new TimeSpan(10))));
 		
 	}
 	

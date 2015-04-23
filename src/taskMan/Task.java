@@ -548,7 +548,7 @@ public class Task implements Dependant {
 			}
 		}
 		if(alternativeFor != null) {
-			candidate = alternativeFor.getMaxDelayChain();
+			candidate = alternativeFor.getMaxDelayChain().minus(alternativeFor.getEstimatedDuration());
 			if(candidate.isLonger(longest)) {
 				longest = candidate;
 			}

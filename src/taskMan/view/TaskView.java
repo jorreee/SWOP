@@ -204,12 +204,16 @@ public class TaskView {
 	 *         after beginTime + EstimatedDur (in working minutes)
 	 */
 	public boolean isOnTime(LocalDateTime currentTime) {
-		if (getStartTime() == null) {
-			return false;
+		if (getStartTime() == null && getPlannedBeginTime() == null) {
+			return true;
+		}
+		LocalDateTime startTime = getStartTime();
+		if(startTime == null) {
+			startTime = getPlannedBeginTime();
 		}
 		TimeSpan acceptableSpan = task.getEstimatedDuration();
 		LocalDateTime acceptableEndDate = TimeSpan.addSpanToLDT(
-				task.getBeginTime(), acceptableSpan);
+				startTime, acceptableSpan);
 
 		if (hasEnded()) {
 			return !task.getEndTime().isAfter(acceptableEndDate);
@@ -226,12 +230,16 @@ public class TaskView {
 	 *         otherwise.
 	 */
 	public boolean isUnacceptableOverdue(LocalDateTime currentTime) {
-		if (getStartTime() == null) {
-			return true;
+		if (getStartTime() == null && getPlannedBeginTime() == null) {
+			return false;
+		}
+		LocalDateTime startTime = getStartTime();
+		if(startTime == null) {
+			startTime = getPlannedBeginTime();
 		}
 		TimeSpan acceptableSpan = task.getEstimatedDuration()
 				.getAcceptableSpan(getAcceptableDeviation());
-		LocalDateTime acceptableEndDate = TimeSpan.addSpanToLDT(getStartTime(),
+		LocalDateTime acceptableEndDate = TimeSpan.addSpanToLDT(startTime,
 				acceptableSpan);
 
 		if (hasEnded()) {
@@ -253,7 +261,7 @@ public class TaskView {
 		}
 		int overdue = task.getTimeSpent(currentTime).getDifferenceMinute(
 				task.getEstimatedDuration());
-		return (overdue / task.getEstimatedDuration().getSpanMinutes()) * 100;
+		return (overdue* 100) / task.getEstimatedDuration().getSpanMinutes();
 	}
 
 	/**
