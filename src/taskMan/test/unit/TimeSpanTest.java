@@ -178,48 +178,48 @@ public class TimeSpanTest {
 		int sevenDaysFourHours25Minutes = 7*8*60+4*60+25;
 		
 		assertEquals(10,TimeSpan.getDifferenceWorkingMinutes(
-				monday152980, monday1529810));
+				monday152980, monday1529810, null, null));
 		assertEquals(0,TimeSpan.getDifferenceWorkingMinutes(
-				monday1529810, monday152980));
+				monday1529810, monday152980, null, null));
 		assertEquals(0,TimeSpan.getDifferenceWorkingMinutes(
-				monday152980, monday152980));
+				monday152980, monday152980, null, null));
 		assertEquals(threeDays,TimeSpan.getDifferenceWorkingMinutes(
-				monday152980, thursday1521280));
+				monday152980, thursday1521280, null, null));
 		assertEquals(0,TimeSpan.getDifferenceWorkingMinutes(
-				thursday1521280, monday152980));
+				thursday1521280, monday152980, null, null));
 		assertEquals(0,TimeSpan.getDifferenceWorkingMinutes(
-				friday15213160, monday1521680));
+				friday15213160, monday1521680, null, null));
 		assertEquals(sevenDaysFourHours25Minutes - 60,TimeSpan.getDifferenceWorkingMinutes( // - 60 to take developer pauze into account
-				monday152980, wednesday152181225));
+				monday152980, wednesday152181225, null, null));
 		assertEquals(0,TimeSpan.getDifferenceWorkingMinutes(
-				wednesday152181225, monday152980));
+				wednesday152181225, monday152980, null, null));
 		assertEquals(10,TimeSpan.getDifferenceWorkingMinutes(
-				monday15291555,tuesday1521085));
+				monday15291555,tuesday1521085, null, null));
 	}
 	
 	@Test
 	public void GetDiffWorkingMinAfterWorkdayEndSuccesTest() {
 		LocalDateTime end = LocalDateTime.of(2015,  2, 9, 18, 0);
 		assertEquals(480,TimeSpan.getDifferenceWorkingMinutes(
-				monday152980, end));
+				monday152980, end, null, null));
 	}
 	
 	@Test
 	public void GetDiffWorkingMinBeforeWorkdaySuccesTest(){
 		LocalDateTime start = LocalDateTime.of(2015,  2, 9, 7, 0);
 		assertEquals(10,TimeSpan.getDifferenceWorkingMinutes(
-				start, monday1529810));
+				start, monday1529810, null, null));
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void GetDiffWorkingMinBadLDTFailTest() {
-		TimeSpan.getDifferenceWorkingMinutes(thursday1521280, null);
+		TimeSpan.getDifferenceWorkingMinutes(thursday1521280, null, null, null);
 		
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void GetDiffWorkingMinBadLDTFailTest2() {
-		TimeSpan.getDifferenceWorkingMinutes(null, thursday1521280);
+		TimeSpan.getDifferenceWorkingMinutes(null, thursday1521280, null, null);
 		
 	}
 	
@@ -394,9 +394,9 @@ public class TimeSpanTest {
 	public void minusSuccessTest() {
 		TimeSpan original = new TimeSpan(10);
 
-		assertTrue(Arrays.equals(new int[]{0,0,0,0,10},original.minus(new TimeSpan(0))));
-		assertTrue(Arrays.equals(new int[]{0,0,0,0,10},original.minus(new TimeSpan(20))));
-		assertTrue(Arrays.equals(new int[]{0,0,0,0,0},original.minus(new TimeSpan(10))));
+		assertTrue(new TimeSpan(10).equals(original.minus(new TimeSpan(0))));
+		assertTrue(new TimeSpan(10).equals(original.minus(new TimeSpan(20))));
+		assertTrue(new TimeSpan(0).equals(original.minus(new TimeSpan(10))));
 		
 	}
 	

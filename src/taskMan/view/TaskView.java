@@ -1,6 +1,7 @@
 package taskMan.view;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 
@@ -204,12 +205,17 @@ public class TaskView {
 	 *         after beginTime + EstimatedDur (in working minutes)
 	 */
 	public boolean isOnTime(LocalDateTime currentTime) {
-		if (getStartTime() == null) {
-			return false;
+		if (getStartTime() == null && getPlannedBeginTime() == null) {
+			return true;
+		}
+		LocalDateTime startTime = getStartTime();
+		if(startTime == null) {
+			startTime = getPlannedBeginTime();
 		}
 		TimeSpan acceptableSpan = task.getEstimatedDuration();
+		LocalTime[] availabilityPeriod = task.getAvailabilityPeriodBoundWorkingTimes();
 		LocalDateTime acceptableEndDate = TimeSpan.addSpanToLDT(
-				task.getBeginTime(), acceptableSpan);
+				startTime, acceptableSpan, availabilityPeriod[0], availabilityPeriod[1]);
 
 		if (hasEnded()) {
 			return !task.getEndTime().isAfter(acceptableEndDate);
@@ -226,13 +232,18 @@ public class TaskView {
 	 *         otherwise.
 	 */
 	public boolean isUnacceptableOverdue(LocalDateTime currentTime) {
-		if (getStartTime() == null) {
-			return true;
+		if (getStartTime() == null && getPlannedBeginTime() == null) {
+			return false;
+		}
+		LocalDateTime startTime = getStartTime();
+		if(startTime == null) {
+			startTime = getPlannedBeginTime();
 		}
 		TimeSpan acceptableSpan = task.getEstimatedDuration()
 				.getAcceptableSpan(getAcceptableDeviation());
-		LocalDateTime acceptableEndDate = TimeSpan.addSpanToLDT(getStartTime(),
-				acceptableSpan);
+		LocalTime[] availabilityPeriod = task.getAvailabilityPeriodBoundWorkingTimes();
+		LocalDateTime acceptableEndDate = TimeSpan.addSpanToLDT(startTime,
+				acceptableSpan, availabilityPeriod[0], availabilityPeriod[1]);
 
 		if (hasEnded()) {
 			return getEndTime().isAfter(acceptableEndDate);
@@ -253,7 +264,7 @@ public class TaskView {
 		}
 		int overdue = task.getTimeSpent(currentTime).getDifferenceMinute(
 				task.getEstimatedDuration());
-		return (overdue / task.getEstimatedDuration().getSpanMinutes()) * 100;
+		return (overdue* 100) / task.getEstimatedDuration().getSpanMinutes();
 	}
 
 	/**
