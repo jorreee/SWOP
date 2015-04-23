@@ -187,12 +187,12 @@ public class Planning {
 			return new TimeSpan(0);
 		}
 		if(endTime != null) {
-			return new TimeSpan(TimeSpan.getDifferenceWorkingMinutes(beginTime, endTime));
+			return new TimeSpan(TimeSpan.getDifferenceWorkingMinutes(beginTime, endTime, null, null));
 		}
 		
 		int currentTimeSpent = TimeSpan.getDifferenceWorkingMinutes(
 				beginTime, 
-				currentTime);
+				currentTime, null, null);
 		
 		return new TimeSpan(currentTimeSpent);
 		
@@ -209,9 +209,9 @@ public class Planning {
 			return null;
 		}
 		if(beginTime == null) {
-			return TimeSpan.addSpanToLDT(plannedBeginTime, estimatedDuration);
+			return TimeSpan.addSpanToLDT(plannedBeginTime, estimatedDuration, null, null);
 		}
-		return TimeSpan.addSpanToLDT(beginTime, estimatedDuration);
+		return TimeSpan.addSpanToLDT(beginTime, estimatedDuration, null, null);
 	}
 	
 	/**
@@ -224,7 +224,7 @@ public class Planning {
 		if(getBeginTime() == null) {
 			return null;
 		}
-		return TimeSpan.addSpanToLDT(beginTime, estimatedDuration.getAcceptableSpan(acceptableDeviation));
+		return TimeSpan.addSpanToLDT(beginTime, estimatedDuration.getAcceptableSpan(acceptableDeviation), null, null);
 	}
 
 	/**

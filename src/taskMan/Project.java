@@ -605,9 +605,9 @@ public class Project implements Dependant {
 		LocalDateTime candidate = furthestEndDate;
 		for(Task t : availableTasks) {
 			if(t.getBeginTime() != null) {
-				candidate = TimeSpan.addSpanToLDT(t.getBeginTime(), t.getMaxDelayChain());
+				candidate = TimeSpan.addSpanToLDT(t.getBeginTime(), t.getMaxDelayChain(), null, null);
 			} else { 
-				candidate = TimeSpan.addSpanToLDT(currentTime, t.getMaxDelayChain());
+				candidate = TimeSpan.addSpanToLDT(currentTime, t.getMaxDelayChain(), null, null);
 			}
 			if(candidate.isAfter(furthestEndDate)) {
 				furthestEndDate = candidate;

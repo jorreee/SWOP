@@ -213,7 +213,7 @@ public class TaskView {
 		}
 		TimeSpan acceptableSpan = task.getEstimatedDuration();
 		LocalDateTime acceptableEndDate = TimeSpan.addSpanToLDT(
-				startTime, acceptableSpan);
+				startTime, acceptableSpan, null, null);
 
 		if (hasEnded()) {
 			return !task.getEndTime().isAfter(acceptableEndDate);
@@ -240,7 +240,7 @@ public class TaskView {
 		TimeSpan acceptableSpan = task.getEstimatedDuration()
 				.getAcceptableSpan(getAcceptableDeviation());
 		LocalDateTime acceptableEndDate = TimeSpan.addSpanToLDT(startTime,
-				acceptableSpan);
+				acceptableSpan, null, null);
 
 		if (hasEnded()) {
 			return getEndTime().isAfter(acceptableEndDate);

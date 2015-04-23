@@ -138,7 +138,7 @@ public class ProjectView {
 		}
 
 		return new TimeSpan(TimeSpan.getDifferenceWorkingMinutes(
-				project.getDueTime(), estimatedEndTime)).getSpan();
+				project.getDueTime(), estimatedEndTime, null, null)).getSpan();
 
 	}
 

@@ -409,7 +409,7 @@ public class Task implements Dependant {
 			return new TimeSpan(0);
 		}
 		else if (hasEnded()) {
-			int timeSpent = TimeSpan.getDifferenceWorkingMinutes(getBeginTime(), getEndTime());
+			int timeSpent = TimeSpan.getDifferenceWorkingMinutes(getBeginTime(), getEndTime(), null, null);
 			if(alternativeFor != null) {
 				timeSpent += alternativeFor.getTimeSpent(currentTime).getSpanMinutes();
 			}
@@ -418,7 +418,7 @@ public class Task implements Dependant {
 		else {
 			int currentTimeSpent = TimeSpan.getDifferenceWorkingMinutes(
 					getBeginTime(), 
-					currentTime);
+					currentTime, null, null);
 			
 			if(alternativeFor != null) {
 				currentTimeSpent = currentTimeSpent
