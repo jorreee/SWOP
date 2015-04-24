@@ -10,11 +10,16 @@ public class UserPrototype extends ResourcePrototype {
 	}
 	
 	public User instantiateDeveloper(String name){
-		return new Developer(name,this);
+		User user =  new User(name,this);
+		user.addCredential(UserCredential.DEVELOPER);
+		return user;
+		
 	}
 	
 	public User instantiateProjectManager(String name){
-		return new ProjectManager(name,this);
+		User user =  new User(name,this);
+		user.addCredential(UserCredential.PROJECTMANAGER);
+		return user;
 	}
 
 }

@@ -18,7 +18,6 @@ import taskMan.Facade;
 import taskMan.resource.AvailabilityPeriod;
 import taskMan.resource.Resource;
 import taskMan.resource.ResourcePrototype;
-import taskMan.resource.user.Developer;
 import taskMan.resource.user.UserPrototype;
 import taskMan.view.ProjectView;
 import taskMan.view.ResourceView;
@@ -215,7 +214,8 @@ public class UseCase4PlanTaskTest {
 		
 		//Onbestaande Dev
 		devs = new ArrayList<>();
-		devs.add(new ResourceView(new Developer("Spartacus",new UserPrototype("Wat", null))));
+		UserPrototype watProt = new UserPrototype("Wat", null);
+		devs.add(new ResourceView(watProt.instantiateDeveloper("Spartacus")));
 		assertFalse(taskManager.planTask(project0, task00, task00StartDateGood, concRes, devs));
 		//TODO conflict case?
 	}

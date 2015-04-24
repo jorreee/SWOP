@@ -16,7 +16,7 @@ import taskMan.resource.ConcreteResource;
  * @author Tim Van Den Broecke, Joran Van de Woestijne, Vincent Van Gestel and
  *         Eli Vangrieken
  */
-public abstract class User extends ConcreteResource {
+public class User extends ConcreteResource {
 	
 	private List<UserCredential> userCredentials;
 	
