@@ -56,7 +56,8 @@ public class UseCase4PlanTaskTest {
 	private final Map<ResourceView,Integer> task00Res = new HashMap<ResourceView,Integer>(),
 			task01Res = new HashMap<ResourceView,Integer>(),
 			task02Res = new HashMap<ResourceView,Integer>(),
-			newTaskRes = new HashMap<ResourceView,Integer>();
+			newTaskRes = new HashMap<ResourceView,Integer>(),
+			noReq = new HashMap<ResourceView, Integer>();
 	private final ArrayList<ResourceView> task00ConcreteResources = new ArrayList<ResourceView>(),
 			task01ConcreteResources = new ArrayList<ResourceView>(),
 			task02ConcreteResources = new ArrayList<ResourceView>(),
@@ -147,20 +148,30 @@ public class UseCase4PlanTaskTest {
 		ProjectView project0 = taskManager.getProjects().get(0);
 		TaskView task00 = project0.getTasks().get(0);
 		TaskView task01 = project0.getTasks().get(1);
-		ArrayList<ResourceView> concRes = new ArrayList<>();
-		concRes.add(taskManager.getConcreteResourcesForPrototype(taskManager.getResourcePrototypes().get(0)).get(0));
-		concRes.add(taskManager.getConcreteResourcesForPrototype(taskManager.getResourcePrototypes().get(1)).get(0));
+		ArrayList<ResourceView> concRes1 = new ArrayList<>();
+		concRes1.add(taskManager.getConcreteResourcesForPrototype(taskManager.getResourcePrototypes().get(0)).get(0));
+		concRes1.add(taskManager.getConcreteResourcesForPrototype(taskManager.getResourcePrototypes().get(1)).get(0));
+		ArrayList<ResourceView> concRes2 = new ArrayList<>();
+		concRes2.add(taskManager.getConcreteResourcesForPrototype(taskManager.getResourcePrototypes().get(0)).get(1));
+		concRes2.add(taskManager.getConcreteResourcesForPrototype(taskManager.getResourcePrototypes().get(1)).get(1));
+		
 		//Plan task00 and let it fail
-		assertTrue(taskManager.planTask(project0, task00, task00StartDateGood, concRes, devList1));
+		assertTrue(taskManager.planTask(project0, task00, task00StartDateGood, concRes1, devList1));
 		assertTrue(taskManager.setTaskExecuting(project0, task00, task00StartDateGood));
 		assertTrue(taskManager.setTaskFailed(project0, task00, task00EndDateGood));
-		assertTrue(taskManager.createTask(project0, "Alt", task00EstDur, task00Dev, task00Dependencies, task00Res, task00));
+
+		task01ConcreteResources.add(taskManager.getConcreteResourcesForPrototype(taskManager.getResourcePrototypes().get(0)).get(3));
+		task01ConcreteResources.add(taskManager.getConcreteResourcesForPrototype(taskManager.getResourcePrototypes().get(0)).get(4));
+		task01ConcreteResources.add(taskManager.getConcreteResourcesForPrototype(taskManager.getResourcePrototypes().get(1)).get(2));
 		assertFalse(taskManager.planTask(project0, task01, task01StartDateGood, task01ConcreteResources, devList1));
+		
 		//Create an alt for task00 and let it succeed
-		TaskView taskAlt = project0.getTasks().get(project0.getTasks().size()-1);
-		assertTrue(taskManager.planTask(project0, taskAlt, LocalDateTime.of(2015,2,9,10,2), task01ConcreteResources, devList1));
+		assertTrue(taskManager.createTask(project0, "Alt", task00EstDur, task00Dev, task00Dependencies, noReq, task00));
+		TaskView taskAlt = project0.getTasks().get(3);
+		assertTrue(taskManager.planTask(project0, taskAlt, LocalDateTime.of(2015,2,9,10,2), new ArrayList<ResourceView>(), devList1));
 		assertTrue(taskManager.setTaskExecuting(project0, taskAlt, LocalDateTime.of(2015,2,9,10,2)));
 		assertTrue(taskManager.setTaskFinished(project0, taskAlt, LocalDateTime.of(2015,2,9,14,0)));
+		
 		//Plan task01 dependent on task00
 		assertTrue(taskManager.planTask(project0, task01, LocalDateTime.of(2015,2,9,14,15), task01ConcreteResources, devList1));
 	}
@@ -226,22 +237,26 @@ public class UseCase4PlanTaskTest {
 		ProjectView project0 = taskManager.getProjects().get(0);
 		TaskView task00 = project0.getTasks().get(0);
 		TaskView task01 = project0.getTasks().get(1);
-		ArrayList<ResourceView> concRes = new ArrayList<>();
-		concRes.add(taskManager.getResourcePrototypes().get(0));
-		concRes.add(taskManager.getResourcePrototypes().get(1));
+		ArrayList<ResourceView> concRes1 = new ArrayList<>();
+		concRes1.add(taskManager.getResourcePrototypes().get(0));
+		concRes1.add(taskManager.getResourcePrototypes().get(1));
+		ArrayList<ResourceView> concRes2 = new ArrayList<>();
+		concRes2.add(taskManager.getResourcePrototypes().get(0));
+		concRes2.add(taskManager.getResourcePrototypes().get(0));
+		concRes2.add(taskManager.getResourcePrototypes().get(1));
 		
 		//null date
-		assertFalse(taskManager.planTask(project0, task00, null, concRes, devList1));
+		assertFalse(taskManager.planTask(project0, task00, null, concRes1, devList1));
 	
 		//To early for planned enddates of preReq's
-		assertTrue(taskManager.planTask(project0, task01, task01EndDateGood, concRes, devList1));
+		assertTrue(taskManager.planTask(project0, task00, task00StartDateGood, concRes1, devList1));
 		assertTrue(taskManager.setTaskExecuting(project0, task00, task00StartDateGood));
-		assertTrue(taskManager.setTaskFinished(project0, task00, task00EndDateGood));
-		assertFalse(taskManager.planTask(project0, task01, LocalDateTime.of(2015,2,9,9,0), concRes, devList1));
+//		assertTrue(taskManager.setTaskFinished(project0, task00, task00EndDateGood));
+		assertFalse(taskManager.planTask(project0, task01, LocalDateTime.of(2015,2,9,9,0), concRes2, devList1));
 	}
 	
 	@Test
-	public void failCaseBadState(){
+	public void failCaseBadStateAllButFinished(){
 		//Set Up
 		ProjectView project0 = taskManager.getProjects().get(0);
 		TaskView task00 = project0.getTasks().get(0);
@@ -260,14 +275,24 @@ public class UseCase4PlanTaskTest {
 		//Already failed
 		assertTrue(taskManager.setTaskFailed(project0, task00, task00EndDateGood));
 		assertFalse(taskManager.planTask(project0, task00, task00StartDateGood, concRes, devList1));
-		//Already finished
-		task02Res.put(taskManager.getResourcePrototypes().get(0), 1);
-		assertTrue(taskManager.createTask(project0, "Design system", task02EstDur, task02Dev, task02Dependencies,task02Res, null));
-		TaskView task02 = taskManager.getProjects().get(0).getTasks().get(2);
-		assertTrue(taskManager.planTask(project0, task02, task02StartDateGood, concRes, devList1));
-		assertTrue(taskManager.setTaskExecuting(project0, task02, task02EndDateGood));
-		assertTrue(taskManager.setTaskFinished(project0, task02, task02EndDateGood));
-		assertFalse(taskManager.planTask(project0, task02, task02StartDateGood, concRes, devList1));
+	}
+	
+	@Test
+	public void failCaseBadStateFinished(){
+		//Set Up
+		ProjectView project0 = taskManager.getProjects().get(0);
+		TaskView task00 = project0.getTasks().get(0);
+		ArrayList<ResourceView> concRes = new ArrayList<>();
+		concRes.add(taskManager.getConcreteResourcesForPrototype(taskManager.getResourcePrototypes().get(0)).get(0));
+		concRes.add(taskManager.getConcreteResourcesForPrototype(taskManager.getResourcePrototypes().get(1)).get(0));
+		assertTrue(taskManager.planTask(project0, task00, task00StartDateGood, concRes, devList1));
+
+		
+		assertFalse(taskManager.planTask(project0, task00, task00StartDateGood, concRes, devList1));
+		assertTrue(taskManager.setTaskExecuting(project0, task00, task00StartDateGood));
+		assertFalse(taskManager.planTask(project0, task00, task00StartDateGood, concRes, devList1));
+		assertTrue(taskManager.setTaskFinished(project0, task00, task00EndDateGood));
+		assertFalse(taskManager.planTask(project0, task00, task00StartDateGood, concRes, devList1));
 	}
 	
 	@Test

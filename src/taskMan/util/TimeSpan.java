@@ -16,8 +16,8 @@ public class TimeSpan {
 
 	private final int[] span;
 	
-	private static int workDayStart = 8;
-	private static int workDayEnd = 17;
+	private static LocalTime defaultWorkDayStart = LocalTime.of(8,0);
+	private static LocalTime defaultWorkDayEnd = LocalTime.of(17,0);
 
 	/**
 	 * Construct a TimeSpan object from 2 LocalDateTime objects.
@@ -291,15 +291,15 @@ public class TimeSpan {
 	 * @throws IllegalArgumentException
 	 *             if other == null
 	 */
-	public int[] minus(TimeSpan other) throws IllegalArgumentException {
+	public TimeSpan minus(TimeSpan other) throws IllegalArgumentException {
 		if (other == null)
 			throw new IllegalArgumentException("Invalid other");
 		if (other.isLonger(this)) {
 			int newSpan = other.getSpanMinutes() - this.getSpanMinutes();
-			return new TimeSpan(newSpan).getSpan();
+			return new TimeSpan(newSpan);
 		} else {
 			int newSpan = this.getSpanMinutes() - other.getSpanMinutes();
-			return new TimeSpan(newSpan).getSpan();
+			return new TimeSpan(newSpan);
 		}
 
 	}
@@ -318,7 +318,7 @@ public class TimeSpan {
 	 *             timestamps
 	 */
 	public static int getDifferenceWorkingMinutes(LocalDateTime startTime,
-			LocalDateTime endTime) throws IllegalArgumentException {
+			LocalDateTime endTime, LocalTime workDayStart, LocalTime workDayEnd) throws IllegalArgumentException {
 
 		if (startTime == null)
 			throw new IllegalArgumentException("Invalid start time");
@@ -331,18 +331,25 @@ public class TimeSpan {
 		if (startTime.equals(endTime)) {
 			return 0;
 		}
+		
+		if(workDayStart == null) {
+			workDayStart = defaultWorkDayStart;
+		}
+		if(workDayEnd == null) {
+			workDayEnd = defaultWorkDayEnd;
+		}
 
 		LocalDateTime timeToCallItADayEnd = LocalDateTime.of(endTime.getYear(),
-				endTime.getMonth(), endTime.getDayOfMonth(), workDayEnd, 0);
+				endTime.getMonth(), endTime.getDayOfMonth(), workDayEnd.getHour(), workDayEnd.getMinute());
 		if (endTime.isAfter(timeToCallItADayEnd)) {
-			return getDifferenceWorkingMinutes(startTime, timeToCallItADayEnd);
+			return getDifferenceWorkingMinutes(startTime, timeToCallItADayEnd, workDayStart, workDayEnd);
 		}
 
 		LocalDateTime timeToBeginStart = LocalDateTime.of(startTime.getYear(),
-				startTime.getMonth(), startTime.getDayOfMonth(), workDayStart,
-				0);
+				startTime.getMonth(), startTime.getDayOfMonth(), workDayStart.getHour(),
+				workDayStart.getMinute());
 		if (startTime.isBefore(timeToBeginStart)) {
-			return getDifferenceWorkingMinutes(timeToBeginStart, endTime);
+			return getDifferenceWorkingMinutes(timeToBeginStart, endTime, workDayStart, workDayEnd);
 		}
 
 		if (startTime.getYear() == endTime.getYear()
@@ -361,7 +368,7 @@ public class TimeSpan {
 		long minutesLeftToday;
 		LocalDateTime timeToCallItADayStart = LocalDateTime.of(
 				startTime.getYear(), startTime.getMonth(),
-				startTime.getDayOfMonth(), workDayEnd, 0);
+				startTime.getDayOfMonth(), workDayEnd.getHour(), workDayEnd.getMinute());
 		LocalDateTime midnightStart = LocalDateTime.of(startTime.getYear(),
 				startTime.getMonth(), startTime.getDayOfMonth(), 0, 0)
 				.plusDays(1);
@@ -380,7 +387,7 @@ public class TimeSpan {
 
 		return (int) minutesLeftToday
 				+ getDifferenceWorkingMinutes(
-						midnightStart.plusHours(workDayStart), endTime);
+						midnightStart.plusHours(workDayStart.getHour()).plusMinutes(workDayStart.getMinute()), endTime, workDayStart, workDayEnd);
 	}
 
 	/**
@@ -394,7 +401,7 @@ public class TimeSpan {
 	 *            | The duration that should be added
 	 * @return the new timestamp
 	 */
-	public static LocalDateTime addSpanToLDT(LocalDateTime offset, TimeSpan span) {
+	public static LocalDateTime addSpanToLDT(LocalDateTime offset, TimeSpan span, LocalTime workDayStart, LocalTime workDayEnd) {
 
 		int minutes = span.getSpanMinutes();
 
@@ -402,16 +409,23 @@ public class TimeSpan {
 		if (minutes == 0) {
 			return offset;
 		}
+		
+		if(workDayStart == null) {
+			workDayStart = defaultWorkDayStart;
+		}
+		if(workDayEnd == null) {
+			workDayEnd = defaultWorkDayEnd;
+		}
 
 		LocalDateTime timeToCallItADay = LocalDateTime.of(offset.getYear(),
-				offset.getMonthValue(), offset.getDayOfMonth(), workDayEnd, 0);
+				offset.getMonthValue(), offset.getDayOfMonth(), workDayEnd.getHour(), workDayEnd.getMinute());
 
 		LocalDateTime midnight = LocalDateTime.of(offset.getYear(),
 				offset.getMonthValue(), offset.getDayOfMonth(), 0, 0).plusDays(
 				1);
 
 		if (offset.isAfter(timeToCallItADay)) {
-			return addSpanToLDT(midnight.plusHours(workDayStart), span);
+			return addSpanToLDT(midnight.plusHours(workDayStart.getHour()).plusMinutes(workDayStart.getMinute()), span, workDayStart, workDayEnd);
 		}
 
 		long minutesLeftToday;
@@ -429,33 +443,26 @@ public class TimeSpan {
 		}
 
 		if (minutesLeftToday <= minutes) {
-			return addSpanToLDT(midnight.plusHours(workDayStart), new TimeSpan(
-					(int) (minutes - minutesLeftToday)));
+			return addSpanToLDT(midnight.plusHours(workDayStart.getHour()).plusMinutes(workDayStart.getMinute()), new TimeSpan(
+					(int) (minutes - minutesLeftToday)), workDayStart, workDayEnd);
 		} else {
-			return addSpanToLDT(offset.plusMinutes(minutes), new TimeSpan(0));
+			return addSpanToLDT(offset.plusMinutes(minutes), new TimeSpan(0), workDayStart, workDayEnd);
 		}
 
 	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + Arrays.hashCode(span);
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
+	public boolean equals(Object other) {
+		if (this == other)
 			return true;
-		if (obj == null)
+		if (other == null)
 			return false;
-		if (getClass() != obj.getClass())
+		try {
+			if (!Arrays.equals(span, ((TimeSpan) other).getSpan())) {
+				return false;
+			}
+		} catch(ClassCastException e) {
 			return false;
-		TimeSpan other = (TimeSpan) obj;
-		if (!Arrays.equals(span, other.span))
-			return false;
+		}
 		return true;
 	}
 

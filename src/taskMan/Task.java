@@ -1,12 +1,11 @@
 package taskMan;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.google.common.collect.Lists;
 
 import taskMan.resource.ResourceManager;
 import taskMan.resource.ResourcePrototype;
@@ -16,6 +15,8 @@ import taskMan.state.UnavailableTask;
 import taskMan.util.Dependant;
 import taskMan.util.TimeSpan;
 import taskMan.view.ResourceView;
+
+import com.google.common.collect.Lists;
 
 /**
  * The Task object. A task always has a description, a state, a link to the
@@ -286,7 +287,7 @@ public class Task implements Dependant {
 		if(preIndex < 0) {
 			return false;
 		}
-		prerequisites.remove(preIndex);
+//		prerequisites.remove(preIndex);
 
 		state.makeAvailable(this);
 		
@@ -409,7 +410,7 @@ public class Task implements Dependant {
 			return new TimeSpan(0);
 		}
 		else if (hasEnded()) {
-			int timeSpent = TimeSpan.getDifferenceWorkingMinutes(getBeginTime(), getEndTime());
+			int timeSpent = TimeSpan.getDifferenceWorkingMinutes(getBeginTime(), getEndTime(), null, null);
 			if(alternativeFor != null) {
 				timeSpent += alternativeFor.getTimeSpent(currentTime).getSpanMinutes();
 			}
@@ -418,7 +419,7 @@ public class Task implements Dependant {
 		else {
 			int currentTimeSpent = TimeSpan.getDifferenceWorkingMinutes(
 					getBeginTime(), 
-					currentTime);
+					currentTime, null, null);
 			
 			if(alternativeFor != null) {
 				currentTimeSpent = currentTimeSpent
@@ -444,7 +445,36 @@ public class Task implements Dependant {
 	 * @return	The planned end time of the Task.
 	 */
 	public LocalDateTime getPlannedEndTime() {
-		return plan.getPlannedEndTime();
+		LocalTime[] availabilityPeriod = getAvailabilityPeriodBoundWorkingTimes();
+		return plan.getPlannedEndTime(availabilityPeriod[0], availabilityPeriod[1]);
+	}
+	
+	/**
+	 * Find the starting and ending working day timestamps bound by availability
+	 * periods of the required resources
+	 * 
+	 * @return An array with the first element the starting time and the second
+	 *         element the end time of the new work day hours. They are null if
+	 *         no resource has an availability period.
+	 */
+	public LocalTime[] getAvailabilityPeriodBoundWorkingTimes() {
+		LocalTime availabilityStart = null, availabilityEnd = null;
+		for(ResourcePrototype resource : requiredResources.keySet()) {
+			if(resource.isDailyAvailable()) {
+				if(availabilityStart != null) {
+					if(resource.getDailyAvailabilityStartTime().isAfter(availabilityStart)) {
+						availabilityStart = resource.getDailyAvailabilityStartTime();
+					}
+					if(resource.getDailyAvailabilityEndTime().isBefore(availabilityEnd)) {
+						availabilityEnd = resource.getDailyAvailabilityEndTime();
+					}
+				} else {
+					availabilityStart = resource.getDailyAvailabilityStartTime();
+					availabilityEnd = resource.getDailyAvailabilityEndTime();
+				}
+			}
+		}
+		return new LocalTime[]{availabilityStart, availabilityEnd};
 	}
 
 	/**
@@ -548,7 +578,7 @@ public class Task implements Dependant {
 			}
 		}
 		if(alternativeFor != null) {
-			candidate = alternativeFor.getMaxDelayChain();
+			candidate = alternativeFor.getMaxDelayChain().minus(alternativeFor.getEstimatedDuration());
 			if(candidate.isLonger(longest)) {
 				longest = candidate;
 			}
@@ -637,10 +667,10 @@ public class Task implements Dependant {
 			return false;
 		}
 		if(    !newReservationDate.isBefore(getPlannedBeginTime()) 
-			&& !newReservationDate.isAfter(plan.getPlannedEndTime())) {
+			&& !newReservationDate.isAfter(getPlannedEndTime())) {
 			return true;
 		}
-		return resMan.refreshReservations(this, newReservationDate, plan.getPlannedEndTime());
+		return resMan.refreshReservations(this, newReservationDate, getPlannedEndTime());
 	}
 	
 	/**
@@ -777,7 +807,41 @@ public class Task implements Dependant {
 		return true;
 	}
 	
+	private boolean isValidPlannedStartTime(LocalDateTime start) {
+		if(prerequisites.isEmpty()) {
+			return true;
+		}
+		for(Task t : prerequisites) {
+			if(!checkTask(t,start)) {
+				return false;
+			}
+		}
+		
+		return true;
+	}
+	
+	private boolean checkTask(Task t, LocalDateTime start) {
+		if(t.isUnavailable() || (t.isFailed() && (t.getReplacement() == null))) {
+			return false; // Heeft een prereq die nog niet KAN worden afgewerkt
+		}
+		if((t.isAvailable() || t.isExecuting()) && t.getPlannedEndTime().isAfter(start)) {
+			return false; // Heeft een prereq die eindigt NA de gekozen planned start time
+		}
+		if(t.isFailed() && (t.getReplacement() != null)) {
+			return checkTask(t.getReplacement(), start);
+		}
+		return true;
+	}
+	
 	public boolean plan(LocalDateTime startTime, List<ResourceView> concRes, List<ResourceView> devs) {
+		for(Task t : prerequisites) {
+			if(t.isFailed() && (t.getReplacement() == null)) {
+				return false;
+			}
+		}
+		if(!isValidPlannedStartTime(startTime)) {
+			return false;
+		}
 		if(!plan.setPlannedBeginTime(startTime)) {
 			return false;
 		}
@@ -786,18 +850,21 @@ public class Task implements Dependant {
 				return false;
 			}
 		} else {
-			if(!resMan.reserve(concRes, this, startTime, plan.getPlannedEndTime())) {
+			if(!resMan.reserve(concRes, this, startTime, getPlannedEndTime())) {
 				return false;
 			}
 		}
 		if(!resMan.hasActiveReservations(this)) {
+			resMan.releaseResources(this);
 			return false; // verkeerde hoeveelheid reservaties enzo
 		}
 		List<User> developers = resMan.pickDevs(devs, this, startTime, getPlannedEndTime());
 		if(developers == null) {
+			resMan.releaseResources(this);
 			return false;
 		}
 		if(!plan.setDevelopers(developers)) {
+			resMan.releaseResources(this);
 			return false;
 		}
 		state.makeAvailable(this);

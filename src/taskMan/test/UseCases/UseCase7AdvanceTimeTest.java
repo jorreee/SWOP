@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -79,12 +80,26 @@ public class UseCase7AdvanceTimeTest {
 		task02Res.put(taskManager.getResourcePrototypes().get(1), 1);
 		task03Res.put(taskManager.getResourcePrototypes().get(0), 2);
 		task03Res.put(taskManager.getResourcePrototypes().get(1), 2);
+		
+		//Get a list of concrete resources to plan task00
+		List<ResourceView> task00concRes = new ArrayList<>();
+		task00concRes.add(taskManager.getConcreteResourcesForPrototype(
+				taskManager.getResourcePrototypes().get(0)
+				).get(0));
+		task00concRes.add(taskManager.getConcreteResourcesForPrototype(
+				taskManager.getResourcePrototypes().get(1)
+				).get(0));
+		List<ResourceView> devList1 = new ArrayList<>();
+		taskManager.createDeveloper("Patrick Star");
+		devList1.add(taskManager.getDeveloperList().get(0));
 
 		assertTrue(taskManager.createProject("Test1", "testing 1", project0DueDate));
 		ProjectView project0 = taskManager.getProjects().get(0);
 
 		assertTrue(taskManager.createTask(project0, "Design system", task00EstDur, task00Dev, task00Dependencies, task00Res, null));		// TASK 1
-		task01Dependencies.add(project0.getTasks().get(0));
+		TaskView task00 = project0.getTasks().get(0);
+		assertTrue(taskManager.planTask(project0, task00, taskManager.getCurrentTime(), task00concRes, devList1));
+		task01Dependencies.add(task00);
 		assertTrue(taskManager.createTask(project0, "Implement Native", task01EstDur, task01Dev, task01Dependencies, task01Res, null));	// TASK 2
 		task02Dependencies.add(project0.getTasks().get(1));
 		assertTrue(taskManager.createTask(project0, "Test code", task02EstDur, task02Dev, task02Dependencies, task02Res, null));			// TASK 3

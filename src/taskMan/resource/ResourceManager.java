@@ -243,6 +243,7 @@ public class ResourceManager {
 	 *            | The end time of the reservation
 	 * @return True if the new reservation was made and added to the system
 	 */
+	// TODO make a new reservation for every day (only within working hours and taking availability period into account)
 	public boolean reserve(
 			List<ResourceView> resources, 
 			Task reservingTask, 
@@ -615,13 +616,13 @@ public class ResourceManager {
 				}
 			}
 		}
-		boolean largerZero = false;
-		for(ResourcePrototype resource : checkList.keySet()) {
-			if(checkList.get(resource) > 0){
-				largerZero = true;
+
+		for(Integer i : checkList.values()) {
+			if(!i.equals(0)) {
+				return false;
 			}
 		}
-		return (!largerZero);
+		return true;
 	}
 	
 	/**
@@ -747,7 +748,7 @@ public class ResourceManager {
 				// if Concrete resource
 				if(cr != null) {
 					// Available from hour until hour + task.getEstimatedDuration()
-					if(!canReserve(cr, hour, TimeSpan.addSpanToLDT(hour,task.getEstimatedDuration()), new ArrayList<Reservation>())) {
+					if(!canReserve(cr, hour, TimeSpan.addSpanToLDT(hour,task.getEstimatedDuration(), cr.getDailyAvailabilityStartTime(), cr.getDailyAvailabilityEndTime()), new ArrayList<Reservation>())) {
 						validTimeStamp = false;
 						break;
 					}
@@ -757,7 +758,7 @@ public class ResourceManager {
 				// if Prototype
 				if(rp != null) {
 					// Find concrete resource (not yet present) which is available from ...
-					cr = pickUnreservedResource(rp, hour, TimeSpan.addSpanToLDT(hour,task.getEstimatedDuration()), new ArrayList<Reservation>(), alreadyReserved);
+					cr = pickUnreservedResource(rp, hour, TimeSpan.addSpanToLDT(hour,task.getEstimatedDuration(), rp.getDailyAvailabilityStartTime(), rp.getDailyAvailabilityEndTime()), new ArrayList<Reservation>(), alreadyReserved);
 					// No cr to be found (Oh nooes)
 					if(cr == null) {
 						validTimeStamp = false;
@@ -775,7 +776,7 @@ public class ResourceManager {
 				amount--;
 			}
 			// Add hour
-			hour = TimeSpan.addSpanToLDT(hour, new TimeSpan(60));
+			hour = TimeSpan.addSpanToLDT(hour, new TimeSpan(60), null, null);
 		} // Repeat
 		return posTimes;
 	}
