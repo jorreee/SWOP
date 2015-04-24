@@ -1,7 +1,6 @@
 package taskMan.test.UseCases;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -315,7 +314,37 @@ public class UseCase4PlanTaskTest {
 	}
 	
 
+	@Test
+	public void planTaskWithResourceAvailabilitySuccess(){
+		//Set up
+		assertTrue(taskManager.createResourcePrototype("Beamer", Optional.of(LocalTime.of(8, 0)), Optional.of(LocalTime.of(12, 0))));
+		assertTrue(taskManager.declareConcreteResource("TheOnlyBeamer", taskManager.getResourcePrototypes().get(3)));
+		assertEquals(4,taskManager.getResourcePrototypes().size());
+		ProjectView project0 = taskManager.getProjects().get(0);
+		HashMap<ResourceView, Integer> reqResNewTask = new HashMap<>();
+		reqResNewTask.put(taskManager.getResourcePrototypes().get(3),1);
+		assertTrue(taskManager.createTask(project0, "newTask", 60, 0, new ArrayList<TaskView>(), reqResNewTask, null));
+		//Plan the task
+		TaskView newTask = taskManager.getProjects().get(0).getTasks().get(3);
+		ArrayList<ResourceView> concRes = new ArrayList<>();
+		concRes.add(taskManager.getResourcePrototypes().get(3));
+		assertTrue(taskManager.planTask(project0, newTask, task00StartDateGood, concRes, devList1));
+	}
 	
-	
-	
+	@Test
+	public void planTaskWithResourceAvailabilityFailTestStartTimeAfterResourceEndTime(){
+		//Set up
+		assertTrue(taskManager.createResourcePrototype("Beamer", Optional.of(LocalTime.of(8, 0)), Optional.of(LocalTime.of(12, 0))));
+		assertTrue(taskManager.declareConcreteResource("TheOnlyBeamer", taskManager.getResourcePrototypes().get(3)));
+		assertEquals(4,taskManager.getResourcePrototypes().size());
+		ProjectView project0 = taskManager.getProjects().get(0);
+		HashMap<ResourceView, Integer> reqResNewTask = new HashMap<>();
+		reqResNewTask.put(taskManager.getResourcePrototypes().get(3),1);
+		assertTrue(taskManager.createTask(project0, "newTask", 60, 0, new ArrayList<TaskView>(), reqResNewTask, null));
+		//Plan the task
+		TaskView newTask = taskManager.getProjects().get(0).getTasks().get(3);
+		ArrayList<ResourceView> concRes = new ArrayList<>();
+		concRes.add(taskManager.getResourcePrototypes().get(3));
+		assertFalse(taskManager.planTask(project0, newTask, LocalDateTime.of(2015, 2, 9, 13, 0), concRes, devList1));
+	}
 }

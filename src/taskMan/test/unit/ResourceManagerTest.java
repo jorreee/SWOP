@@ -63,6 +63,14 @@ public class ResourceManagerTest {
 		assertTrue(resMan.getPossibleStartingTimes(testTask, new ArrayList<ResourceView>(), currentTime, 3).contains(LocalDateTime.of(2015, 04, 23, 12, 0)));
 	}
 	
+	@Test
+	public void createResourcePrototypeTestSuccess(){
+		Optional<LocalTime> start = Optional.of(LocalTime.of(10, 0));
+		Optional<LocalTime> end = Optional.of(LocalTime.of(14, 0));
+		assertTrue(resMan.createResourcePrototype("Pencil", start,end));
+	}
+	
+	
 	
 	
 	
