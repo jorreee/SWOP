@@ -17,6 +17,7 @@ import taskMan.Task;
 import taskMan.resource.ResourceManager;
 import taskMan.resource.ResourcePrototype;
 import taskMan.resource.user.User;
+import taskMan.resource.user.UserPrototype;
 import taskMan.view.ResourceView;
 
 public class ResourceManagerTest {
@@ -52,17 +53,6 @@ public class ResourceManagerTest {
 		weer = resMan.getDeveloperList().get(0);
 		blunderbus = resMan.getDeveloperList().get(1);
 		
-	}
-	
-	@Test
-	public void getPossibleStartingTimesTest() {
-		Task testTask = new Task("Descr", 60, 0, resMan, new ArrayList<Task>(), new HashMap<ResourceView, Integer>(), null);
-		LocalDateTime currentTime = LocalDateTime.of(2015, 04, 23, 10, 0);
-		
-		assertEquals(LocalDateTime.of(2015, 04, 23, 10, 0), resMan.getPossibleStartingTimes(testTask, new ArrayList<ResourceView>(), currentTime, 1).get(0));
-		assertTrue(resMan.getPossibleStartingTimes(testTask, new ArrayList<ResourceView>(), currentTime, 3).contains(LocalDateTime.of(2015, 04, 23, 10, 0)));
-		assertTrue(resMan.getPossibleStartingTimes(testTask, new ArrayList<ResourceView>(), currentTime, 3).contains(LocalDateTime.of(2015, 04, 23, 11, 0)));
-		assertTrue(resMan.getPossibleStartingTimes(testTask, new ArrayList<ResourceView>(), currentTime, 3).contains(LocalDateTime.of(2015, 04, 23, 12, 0)));
 	}
 	
 	@Test
@@ -136,5 +126,67 @@ public class ResourceManagerTest {
 		List<User> res = resMan.pickDevs(devs, testTask, start, end);
 		assertEquals(0,res.size());
 	}
+	
+	@Test
+	public void pickDevsTestFailNonExistentUser(){
+		Task testTask = new Task("Descr", 60, 0, resMan, new ArrayList<Task>(), new HashMap<ResourceView, Integer>(), null);
+		LocalDateTime start = LocalDateTime.of(2015, 4, 4, 10, 0);
+		LocalDateTime end = LocalDateTime.of(2015, 4, 4, 12, 0);
+		List<ResourceView> devs = new ArrayList<>();
+		
+		devs.add(new ResourceView(new User("Fail", new UserPrototype("bum", null))));
+		List<User> res = resMan.pickDevs(devs, testTask, start, end);
+		assertNull(res);
+	}
+	
+	@Test
+	public void getPossibleStartingTimesTestSuccessSimple() {
+		//Simple Test without planned resources
+		Task testTask = new Task("Descr", 60, 0, resMan, new ArrayList<Task>(), new HashMap<ResourceView, Integer>(), null);
+		LocalDateTime currentTime = LocalDateTime.of(2015, 04, 23, 10, 0);
+		
+		List<LocalDateTime> possibleTimes = resMan.getPossibleStartingTimes(
+				testTask, new ArrayList<ResourceView>(), currentTime, 10);
+		
+		assertEquals(10,possibleTimes.size());
+		assertTrue(possibleTimes.contains(LocalDateTime.of(2015, 04, 23, 10, 0)));
+		assertTrue(possibleTimes.contains(LocalDateTime.of(2015, 04, 23, 11, 0)));
+		assertTrue(possibleTimes.contains(LocalDateTime.of(2015, 04, 23, 12, 0)));
+		assertFalse(possibleTimes.contains(LocalDateTime.of(2015, 04, 23, 17, 0)));
+		assertFalse(possibleTimes.contains(LocalDateTime.of(2015, 04, 23, 18, 0)));
+		assertFalse(possibleTimes.contains(LocalDateTime.of(2015, 04, 24, 7, 0)));
+		assertTrue(possibleTimes.contains(LocalDateTime.of(2015, 04, 24, 8, 0)));
+	}
+	
+	@Test
+	public void getPossibleStartingTimesTestSuccessCurrentTimeNonWorking() {
+		//Test with currenTime being a non working time
+		Task testTask = new Task("Descr", 60, 0, resMan, new ArrayList<Task>(), new HashMap<ResourceView, Integer>(), null);
+		LocalDateTime currentTime = LocalDateTime.of(2015, 04, 22, 18, 0);
+		
+		List<LocalDateTime> possibleTimes = resMan.getPossibleStartingTimes(
+				testTask, new ArrayList<ResourceView>(), currentTime, 10);
+		
+		assertEquals(10,possibleTimes.size());
+		assertFalse(possibleTimes.contains(LocalDateTime.of(2015, 04, 23, 7, 0)));
+		//TODO Error: Het eerste element van de lijst is de currentTime ipv 
+		//	   het eerste uur de volgende dag
+		assertTrue(possibleTimes.contains(LocalDateTime.of(2015, 04, 23, 8, 0)));
+		assertTrue(possibleTimes.contains(LocalDateTime.of(2015, 04, 23, 12, 0)));
+		assertFalse(possibleTimes.contains(LocalDateTime.of(2015, 04, 23, 17, 0)));
+		assertFalse(possibleTimes.contains(LocalDateTime.of(2015, 04, 23, 18, 0)));
+		assertFalse(possibleTimes.contains(LocalDateTime.of(2015, 04, 24, 7, 0)));
+		assertTrue(possibleTimes.contains(LocalDateTime.of(2015, 04, 24, 8, 0)));
+	}
 
+	@Test
+	public void getPossibleStartingTimesTestSuccessReqResourcesOccupied(){
+		//The required resources are occupied by another task, 
+		//the method must give a time after the planned time of the other task.
+	}
+	
+	@Test
+	public void getPossibleStartingTimesTestSuccessReqResourcesHaveAvailability(){
+		//The required resources have an availability period
+	}
 }

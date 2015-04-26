@@ -345,7 +345,7 @@ public class UseCase4PlanTaskTest {
 		TaskView newTask = taskManager.getProjects().get(0).getTasks().get(3);
 		ArrayList<ResourceView> concRes = new ArrayList<>();
 		concRes.add(taskManager.getResourcePrototypes().get(3));
-		//TODO Het is nog mogelijk om taak te plannen als de beschikbaarheid van de resource al verlopen is
+		//TODO Error:  Het is nog mogelijk om taak te plannen als de beschikbaarheid van de resource al verlopen is
 		assertFalse(taskManager.planTask(project0, newTask, LocalDateTime.of(2015, 2, 9, 13, 0), concRes, devList1));
 	}
 }

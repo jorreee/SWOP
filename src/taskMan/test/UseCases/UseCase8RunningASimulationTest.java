@@ -2,6 +2,8 @@ package taskMan.test.UseCases;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
+
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -191,7 +193,7 @@ public class UseCase8RunningASimulationTest {
 		assertTrue(taskManager.setTaskExecuting(project0, task01, task01Start));
 		assertTrue(taskManager.setTaskFailed(project0, task01, task01End));
 		task02ConcRes.add(taskManager.getResourcePrototypes().get(0));
-		//TODO	Project kan niet gepland worden als prereq nog niet voldaan zijn	
+		//TODO	Error: Project kan niet gepland worden als prereq nog niet voldaan zijn	
 		//assertFalse(taskManager.planTask(project0, task02, task02Start, task02ConcRes, task02Devs));
 		//Plan task10
 		task10ConcRes.add(taskManager.getResourcePrototypes().get(1));
