@@ -15,6 +15,8 @@ import org.junit.Test;
 
 import taskMan.Task;
 import taskMan.resource.ResourceManager;
+import taskMan.resource.ResourcePrototype;
+import taskMan.resource.user.User;
 import taskMan.view.ResourceView;
 
 public class ResourceManagerTest {
@@ -70,9 +72,69 @@ public class ResourceManagerTest {
 		assertTrue(resMan.createResourcePrototype("Pencil", start,end));
 	}
 	
+	@Test
+	public void createResourcePrototypeTestBadDates(){
+		Optional<LocalTime> start = Optional.of(LocalTime.of(10, 0));
+		Optional<LocalTime> end = Optional.of(LocalTime.of(14, 0));
+		Optional<LocalTime> nul = Optional.empty();
+		assertFalse(resMan.createResourcePrototype("fail", start, nul));
+		assertFalse(resMan.createResourcePrototype("fail", nul, end));
+		assertFalse(resMan.createResourcePrototype("fail", end, start));
+	}
 	
+	@Test
+	public void createResourcePrototypeTestBadName(){
+		Optional<LocalTime> start = Optional.of(LocalTime.of(10, 0));
+		Optional<LocalTime> end = Optional.of(LocalTime.of(14, 0));
+		assertFalse(resMan.createResourcePrototype(null, start, end));
+	}
 	
+	@Test
+	public void declareConcreteResourceTestSuccess(){
+		Optional<LocalTime> start = Optional.of(LocalTime.of(10, 0));
+		Optional<LocalTime> end = Optional.of(LocalTime.of(14, 0));
+		assertTrue(resMan.createResourcePrototype("Pencil", start,end));
+		
+		assertTrue(resMan.declareConcreteResource("pencil1", resMan.getResourcePrototypes().get(2)));
+	}
 	
+	@Test
+	public void declareConcreteResourceTestFailBadPrototype(){
+		assertFalse(resMan.declareConcreteResource("pencil1", new ResourceView(new ResourcePrototype("fail",null))));
+	}
 	
+	@Test
+	public void createDevSuccess(){
+		assertTrue(resMan.createDeveloper("testDev"));
+	}
+	
+	@Test
+	public void createDevFailNull(){
+		assertFalse(resMan.createDeveloper(null));
+	}
+	
+	@Test
+	public void pickDevsTestSucess(){
+		Task testTask = new Task("Descr", 60, 0, resMan, new ArrayList<Task>(), new HashMap<ResourceView, Integer>(), null);
+		LocalDateTime start = LocalDateTime.of(2015, 4, 4, 10, 0);
+		LocalDateTime end = LocalDateTime.of(2015, 4, 4, 12, 0);
+		List<ResourceView> devs = new ArrayList<>();
+		
+		devs.add(weer);
+		List<User> res = resMan.pickDevs(devs, testTask, start, end);
+		assertEquals("Weer",res.get(0).getName());
+		assertEquals(1, res.size());
+	}
+	
+	@Test
+	public void pickDevsTestFailEmptyList(){
+		Task testTask = new Task("Descr", 60, 0, resMan, new ArrayList<Task>(), new HashMap<ResourceView, Integer>(), null);
+		LocalDateTime start = LocalDateTime.of(2015, 4, 4, 10, 0);
+		LocalDateTime end = LocalDateTime.of(2015, 4, 4, 12, 0);
+		List<ResourceView> devs = new ArrayList<>();
+		
+		List<User> res = resMan.pickDevs(devs, testTask, start, end);
+		assertEquals(0,res.size());
+	}
 
 }
