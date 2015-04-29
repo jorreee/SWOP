@@ -125,21 +125,6 @@ public class Project implements Dependant {
 		}
 		return true;
 	}
-	
-//	/**
-//	 * Find a specific task in this project by id
-//	 * 
-//	 * @param taskID
-//	 *            the ID of the task to look for
-//	 * @return The task with the specified ID or null when no task is found
-//	 */
-//	private Task findTask(int taskID) {
-//		for(Task t : taskList) {
-//			if(t.getID() == taskID)
-//				return t;
-//		}
-//		return null;
-//	}
 
 	/**
 	 * Creates a new Task with a status of failed or finished.
@@ -235,41 +220,6 @@ public class Project implements Dependant {
 		}
 		return success;
 	}
-	
-//	/**
-//	 * Creates a new Task without a set status.
-//	 * 
-//	 * @param 	description
-//	 * 			The description of the given Task.
-//	 * @param 	estimatedDuration
-//	 * 			The estimated duration of the Task.
-//	 * @param 	acceptableDeviation
-//	 * 			The acceptable deviation of the Task.
-//	 * @param 	alternativeFor
-//	 * 			The alternative Task.
-//	 * @param 	prerequisiteTasks
-//	 * 			The prerequisites Tasks for this Task.
-//	 * @return	True if the creation of a new Task was successful.
-//	 */
-//	public boolean createTask(String description, 
-//			int estimatedDuration, 
-//			int acceptableDeviation, 
-//			ResourceManager resMan, 
-//			List<TaskView> prerequisiteTasks, 
-//			Map<ResourceView, Integer> requiredResources, 
-//			TaskView alternativeFor) {
-//		
-//		return createTask(description, 
-//				estimatedDuration, 
-//				acceptableDeviation, 
-//				resMan, 
-//				prerequisiteTasks,
-//				requiredResources, 
-//				alternativeFor, 
-//				null,
-//				null, 
-//				null);
-//	}
 	
 	/**
 	 * Checks whether the given TaskView is a valid TaskView representing a valid Task.
@@ -454,49 +404,6 @@ public class Project implements Dependant {
 		return availableTasks;
 	}
 	
-	
-
-//	/**
-//	 * Returns whether the project is on time;
-//	 * 
-//	 * @param 	current
-//	 * 			The current time to compare with.
-//	 * @return	True if the end time comes before the due time
-//	 * 			True if the project has not yet finished
-//	 * 			False otherwise.
-//	 */
-//	public boolean isOnTime(LocalDateTime current){
-//		return new TimeSpan(getEstimatedDelay(current)).isZero();
-//		if(endTime == null) {
-//			if(current.isAfter(dueTime)) {
-//				return false;
-//			} else {
-//				return true;
-//			}
-//		}
-//		else{
-//			return endTime.isBefore(dueTime);
-//		}
-//	}
-//
-//	/**
-//	 * Returns the real-time delay of the project. It compares the current time to the
-//	 * due date of the project.
-//	 * 
-//	 * @param 	current
-//	 * 			The current time to check with.
-//	 * @return	The delay of the project
-//	 * 			a zero array if there isn't any.
-//	 */
-//	public int[] getDelay(LocalDateTime current){
-//		if (current.isBefore(dueTime)) {
-//			return new int[] { 0,0,0,0,0 };		
-//		} 
-//		TimeSpan delay = new TimeSpan(dueTime, current);
-//		return delay.getSpan();
-//		
-//	}
-	
 	/**
 	 * Finish a given task on a given timestamp
 	 * 
@@ -510,25 +417,8 @@ public class Project implements Dependant {
 		if(!isValidTaskView(t)) {
 			return false;
 		}
-//		if(startTime.isBefore(creationTime)) {
-//			return false;
-//		}
 		return unwrapTaskView(t).finish(endTime);
 	}
-	
-//	private boolean markTaskFinished(Task task) {
-//		if(task == null) {
-//			return true;
-//		}
-//		int taskIndex = unfinishedTaskList.indexOf(task);
-//		if(taskIndex < 0) {
-//			return false;
-//		}
-//		unfinishedTaskList.remove(taskIndex);
-//
-//		return true;
-////		return markTaskFinished(task.getAlternativeFor());
-//	}
 
 	/**
 	 * Sets the task with the given task id to failed
@@ -546,9 +436,6 @@ public class Project implements Dependant {
 		if(!isValidTaskView(t)) {
 			return false;
 		}
-//		if(startTime.isBefore(creationTime)) {
-//			return false;
-//		}
 		return unwrapTaskView(t).fail(endTime);
 	}
 	
@@ -571,6 +458,22 @@ public class Project implements Dependant {
 		
 	}
 	
+	/**
+	 * Passes its arguments to the provided task (if it exists) and tries to
+	 * plan it by invoking the plan(...) method on it.
+	 * 
+	 * @param task
+	 * 			| the task to plan
+	 * @param plannedStartTime
+	 * 			| the planned start time for the task
+	 * @param concRes
+	 * 			| the concrete resources to plan for the task
+	 * @param devs
+	 * 			| the developers to plan for the task
+	 * @return
+	 * 			| whether the task has succesfully planned. Also false if the supplied 
+	 * 			| task parameter is invalid
+	 */
 	public boolean planTask(TaskView task, LocalDateTime plannedStartTime,
 			List<ResourceView> concRes, List<ResourceView> devs) {
 		Task t = unwrapTaskView(task);
@@ -622,84 +525,6 @@ public class Project implements Dependant {
 		return furthestEndDate;
 		
 	}
-//
-//	/**
-//	 * Returns the estimated time that the project will be finished over time.
-//	 * 
-//	 * e.g. if the due time is tomorrow and there's an estimated 2 more days needed,
-//	 * 		this method will return [0,0,1,0,0]
-//	 * 
-//	 * @param	projectID
-//	 * 			the id of the given project
-//	 * @return	The amount of years, months, days, hours and minutes
-//	 * 			that are estimated to be required to finish the project
-//	 */
-//	public int[] getEstimatedDelay(LocalDateTime currentTime) {
-//		if(getAvailableTasks().size() == 0) {
-//			return new TimeSpan(0).getSpan();
-//		}
-//
-//		LocalDateTime estimatedEndTime = getEstimatedEndTime(currentTime);
-////		LocalDateTime estimatedEndTime = TimeSpan.addSpanToLDT(currentTime, getMaxTimeChainTask());
-//		if(dueTime.isAfter(estimatedEndTime)) {
-//			return new TimeSpan(0).getSpan();
-//		}
-//		
-//		return new TimeSpan(TimeSpan.getDifferenceWorkingMinutes(estimatedEndTime, dueTime)).getSpan();
-//		
-//	}
-	
-//	private TimeSpan getMaxTimeChainTask() {
-//		List<Task> availableTasks = getAvailableTasks();
-//		
-//		// FOR EACH AVAILABLE TASK CALCULATE CHAIN
-//		int availableBranches = availableTasks.size();
-//		TimeSpan[] timeChains = new TimeSpan[availableBranches];
-//		for(int i = 0 ; i < availableBranches ; i++) {
-//			timeChains[i] = availableTasks.get(i).getMaxDelayChain();
-//		}
-//		
-//		// FIND LONGEST CHAIN
-//		TimeSpan longest = new TimeSpan(0);
-//		for(TimeSpan span : timeChains) {
-//			if(span.isLonger(longest)) {
-//				longest = span;
-//			}
-//		}
-//		return longest;
-//	}
-//	
-//	/**
-//	 * Returns an amount of possible Task starting times for a given Task.
-//	 * 
-//	 * @param 	task
-//	 * 			The Task to get the starting times from.
-//	 * @param 	amount
-//	 * 			The amount of possible starting times wanted.
-//	 * @return	The possible starting times of the Task
-//	 */
-//	public List<LocalDateTime> getPossibleTaskStartingTimes(TaskView task, int amount){
-//		return unwrapTaskView(task).getPossibleTaskStartingTimes(amount);
-//	}
-
-//	/**
-//	 * Remove all reservations of a finished or failed task that are still
-//	 * scheduled to happen. This method will also free up reserved resources by
-//	 * said task if the reservation is still ongoing.
-//	 * 
-//	 * @param task
-//	 *            | The ended task
-//	 * @param currentTime
-//	 *            | The current time
-//	 * @return True if the operation was successful, false otherwise
-//	 */
-//	public boolean flushFutureReservations(TaskView task, LocalDateTime currentTime) {
-//		Task t = unwrapTaskView(task);
-//		if(t == null) {
-//			return false;
-//		}
-//		return t.flushFutureReservations(currentTime);
-//	}
 	
 	/**
 	 * Reserve a resource for a task from a given start time to a given end time
@@ -741,6 +566,14 @@ public class Project implements Dependant {
 		return list.build();
 	}
 
+	/**
+	 * Answers the question from tasks of how much delay this Dependant adds
+	 * to the total time chain it is investigating. Always returns a TimeSpan
+	 * object with length 0.
+	 * 
+	 * @return
+	 * 			| a TimeSpam with length 0
+	 */
 	@Override
 	public TimeSpan getMaxDelayChain() {
 		// A project will add no more delay (a project will finish immediately
