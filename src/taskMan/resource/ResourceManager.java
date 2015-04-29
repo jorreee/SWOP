@@ -871,5 +871,16 @@ public class ResourceManager {
 		reservations.addAll(allReservations);
 		return reservations.build();
 	}
+	
+	public List<ResourceView> getReservedResourcesForTask(Task task){
+		ArrayList<Reservation> reservationsForTask = new ArrayList<>();
+		Builder<ResourceView> resources = ImmutableList.builder();
+		for(User resources : userList) {
+			if(user.hasAsCredential(UserCredential.DEVELOPER)) {
+				usernames.add(new ResourceView(user));
+			}
+		}
+		return usernames.build();
+	}
 
 }

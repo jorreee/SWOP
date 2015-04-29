@@ -3,6 +3,7 @@ package taskMan;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -430,7 +431,7 @@ public class TaskMan {
 //	public boolean reserveResource(ResourceView resource, ProjectView project,
 //			TaskView task) {
 //		return false;
-//		// TODO reservations mister!
+//		
 //	}
 
 	/**
@@ -627,6 +628,33 @@ public class TaskMan {
 	 */
 	public List<Reservation> getAllReservations() {
 		return resMan.getAllReservations();
+	}
+	
+	/**
+	 * Finds all the conflicting plannings for the given developers and resources of a planning for a given task within a given project.
+	 * @param 	project
+	 * 			The project with the task to check for conflicting plannings
+	 * @param 	task
+	 * 			The task to check whether there are other tasks with conflicting plannings.
+	 * @param 	developers
+	 * 			The reserved developers to check for conflicts
+	 * @param 	resources
+	 * 			The reserved resources to check for conflicts
+	 * @param 	plannedStartTime
+	 * 			The planned start time of the reservation
+	 * @return	A list of conflicting planned tasks.
+	 */
+	public HashMap<ProjectView, List<TaskView>> findConflictingPlannings(
+			TaskView task,
+			List<ResourceView> developers, List<ResourceView> resources, LocalDateTime plannedStartTime) {
+		HashMap<ProjectView, List<TaskView>> conflicts = new HashMap<>();
+		for (Project proj : projectList){
+			List<TaskView> conflictingTasks = proj.findConflictingPlannings(task, developers, resources, plannedStartTime);
+			if (!conflictingTasks.isEmpty()){
+			conflicts.put(new ProjectView(proj), proj.findConflictingPlannings(task, developers, resources, plannedStartTime));
+			}
+		}
+		return conflicts;
 	}
 
 }

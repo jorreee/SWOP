@@ -91,6 +91,7 @@ public class PlanTaskRequest extends Request {
 
 				// Show each required resource
 				Map<ResourceView, Integer> requiredResources = task.getRequiredResources();
+				List<ResourceView> reservedResources = new ArrayList<ResourceView>();
 				
 				if(!requiredResources.isEmpty()) {
 					System.out.println("The following resources are required: ");
@@ -124,7 +125,9 @@ public class PlanTaskRequest extends Request {
 //										return planTask(project, task);
 //									}
 //								}
-								planning.addToReservationList(concreteResources.get(Integer.parseInt(input)));
+								ResourceView resourceReserved = concreteResources.get(Integer.parseInt(input));
+								reservedResources.add(resourceReserved);
+								planning.addToReservationList(resourceReserved);
 								amountLeft--;
 							}
 						}
@@ -172,7 +175,7 @@ public class PlanTaskRequest extends Request {
 				
 
 				// If selected dev conflicts with another task planning init resolve conflict request
-				Map<ProjectView, List<TaskView>> conflictingTasks = facade.findConflictingDeveloperPlannings(project, task, devNames, timeSlotStart);
+				Map<ProjectView, List<TaskView>> conflictingTasks = facade.findConflictingPlannings(task, devNames, reservedResources, timeSlotStart);
 
 				if(!conflictingTasks.isEmpty()) {
 					ResolvePlanningConflictRequest resolveConflictRequest = new ResolvePlanningConflictRequest(facade, inputReader, conflictingTasks);

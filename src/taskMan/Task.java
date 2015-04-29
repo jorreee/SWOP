@@ -14,7 +14,9 @@ import taskMan.state.TaskStatus;
 import taskMan.state.UnavailableTask;
 import taskMan.util.Dependant;
 import taskMan.util.TimeSpan;
+import taskMan.view.ProjectView;
 import taskMan.view.ResourceView;
+import taskMan.view.TaskView;
 
 import com.google.common.collect.Lists;
 
@@ -963,5 +965,19 @@ public class Task implements Dependant {
 	public List<User> getPlannedDevelopers(){
 		return plan.getPlannedDevelopers();
 	}
+
+	public HashMap<ProjectView, List<TaskView>> findConflictingPlannings(
+			List<ResourceView> developers, List<ResourceView> resources,
+			LocalDateTime plannedStartTime) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public boolean hasPlanned(List<ResourceView> developers,
+			List<ResourceView> resources, LocalDateTime plannedStartTime) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 	
 }
