@@ -10,7 +10,6 @@ import java.util.Optional;
 
 import taskMan.Task;
 import taskMan.resource.user.User;
-import taskMan.resource.user.UserCredential;
 import taskMan.resource.user.UserPrototype;
 import taskMan.util.TimeSpan;
 import taskMan.view.ResourceView;
@@ -36,6 +35,7 @@ public class ResourceManager {
 	private List<ResourcePool> resPools;
 //	private ResourcePool userPool; 
 	private List<User> userList;
+	private final User superUser;
 	//The prototype for Users
 	private UserPrototype userProt;
 	
@@ -51,10 +51,10 @@ public class ResourceManager {
 	public ResourceManager() {
 		this.resPools = new ArrayList<>();
 		
-		userProt = new UserPrototype("User",null);
+		userProt = new UserPrototype();
 		userList = new ArrayList<User>();
 		userList.add(userProt.instantiateProjectManager("admin"));
-		
+		superUser = userProt.instantiateSuperUser("Initializer");
 		
 		activeReservations = new ArrayList<>();
 		allReservations = new ArrayList<>();
@@ -187,13 +187,8 @@ public class ResourceManager {
 	 * 
 	 * @return the project manager (default user)
 	 */
-	public User getDefaultUser() {
-		for(User user : userList) {
-			if(user.hasAsCredential(UserCredential.PROJECTMANAGER)) {
-				return user;
-			}
-		}
-		return null;
+	public User getSuperUser() {
+		return superUser;
 	}
 	
 	/**
@@ -428,7 +423,7 @@ public class ResourceManager {
 	public List<ResourceView> getDeveloperList() {
 		Builder<ResourceView> usernames = ImmutableList.builder();
 		for(User user : userList) {
-			if(user.hasAsCredential(UserCredential.DEVELOPER)) {
+			if(user.isDeveloper()) {
 				usernames.add(new ResourceView(user));
 			}
 		}

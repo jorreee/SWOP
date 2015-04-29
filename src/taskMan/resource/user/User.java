@@ -1,9 +1,12 @@
 package taskMan.resource.user;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-import taskMan.resource.AvailabilityPeriod;
 import taskMan.resource.ConcreteResource;
+
+import com.google.common.collect.ImmutableList;
 
 /**
  * Users in our system are the people using it. The current user using the
@@ -17,9 +20,9 @@ import taskMan.resource.ConcreteResource;
  *         Eli Vangrieken
  */
 public class User extends ConcreteResource {
-	
-	private List<UserCredential> userCredentials;
-	
+
+	private List<UserCredential> credentials;
+
 	/**
 	 * Construct a new user. No credentials are known. A user has no
 	 * requirements or conflicts and is not limited by an availability period
@@ -28,32 +31,49 @@ public class User extends ConcreteResource {
 	 * @param name
 	 *            | The name of the new user
 	 */
-	public User(String name, UserPrototype prototype){
-		super(name, prototype.getRequiredResources(), prototype.getConflictingResources(), new AvailabilityPeriod(prototype.getDailyAvailabilityStartTime(),prototype.getDailyAvailabilityEndTime()), prototype);
-//		super(name,new ArrayList<ResourcePrototype>(),new ArrayList<ResourcePrototype>(),null);
-		userCredentials = new ArrayList<>();
+	public User(String name, UserPrototype prototype) {
+		super(name, prototype);
+		credentials = new ArrayList<>();
 	}
+
+	public boolean isDeveloper()      { return credentials.contains(UserCredential.DEVELOPER);      }
+	public boolean isProjectManager() { return credentials.contains(UserCredential.PROJECTMANAGER); }
 	
-	/**
-	 * Check whether or not this user has a specific credential
-	 * 
-	 * @param credential
-	 *            | The credential to check
-	 * @return True if the user has the credential, false otherwise
-	 */
-	public boolean hasAsCredential(UserCredential credential) {
-		return userCredentials.contains(credential);
+	public List<UserPermission> getPermissions() {
+		ImmutableList.Builder<UserPermission> perms = ImmutableList.builder();
+		Set<UserPermission> permsSet = new HashSet<UserPermission>();
+		for(UserCredential c : credentials) {
+			permsSet.addAll(c.getPermissions());
+		}
+		return perms.addAll(permsSet).build();
 	}
 	
 	/**
 	 * Give this specific user a specific credential
 	 * 
-	 * @param credential
+	 * @param cred
 	 *            | The credential to add
-	 * @return True if the credential was added, false otherwise
+	 * @return True if the user now has the credential, false otherwise
 	 */
-	public boolean addCredential(UserCredential credential) {
-		return userCredentials.add(credential);
+	public boolean addCredential(UserCredential cred) {
+		if(credentials.contains(cred)) {
+			return true;
+		}
+		return credentials.add(cred);
 	}
 	
+	/**
+	 * Removes a specific credential from this user
+	 * 
+	 * @param cred
+	 *            | The credential to remove
+	 * @return True if the user no longer has the credential, false otherwise
+	 */
+	public boolean removeCredential(UserCredential cred) {
+		if(!credentials.contains(cred)) {
+			return true;
+		}
+		return credentials.remove(cred);
+	}
+
 }

@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import taskMan.resource.Reservation;
-import taskMan.resource.user.UserCredential;
+import taskMan.resource.user.UserPermission;
 import taskMan.view.ProjectView;
 import taskMan.view.ResourceView;
 import taskMan.view.TaskView;
@@ -21,7 +21,6 @@ public class Facade implements IFacade {
 	private final TaskManCaretaker caretaker;
 	
 	public Facade(LocalDateTime time) {
-		this.taskMan = new TaskMan(time);
 		caretaker = new TaskManCaretaker(this);
 	}
 	
@@ -122,8 +121,11 @@ public class Facade implements IFacade {
 	}
 
 	@Override
-	public void storeInMemento() {
-		caretaker.storeInMemento();
+	public boolean storeInMemento() {
+		if(!taskMan.currentUserHasPermission(UserPermission.SIMULATE)) {
+			return false;
+		}
+		return caretaker.storeInMemento();
 	}
 
 	@Override
@@ -245,8 +247,8 @@ public class Facade implements IFacade {
 	}
 
 	@Override
-	public boolean currentUserHasCredential(UserCredential credential) {
-		return taskMan.currentUserHasCredential(credential);
+	public boolean currentUserHasPermission(UserPermission permission) {
+		return taskMan.currentUserHasPermission(permission);
 	}
 	
 	@Override

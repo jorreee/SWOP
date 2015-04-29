@@ -136,7 +136,7 @@ public class ResourceManagerTest {
 		LocalDateTime end = LocalDateTime.of(2015, 4, 4, 12, 0);
 		List<ResourceView> devs = new ArrayList<>();
 		
-		devs.add(new ResourceView(new User("Fail", new UserPrototype("bum", null))));
+		devs.add(new ResourceView(new User("Fail", new UserPrototype())));
 		List<User> res = resMan.pickDevs(devs, testTask, start, end);
 		assertNull(res);
 	}

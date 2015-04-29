@@ -1,5 +1,8 @@
 package taskMan.resource.user;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Credentials that can be allocated to Users. These credentials could grant
  * elevated access rights to a user to do certain commands in the system. These
@@ -10,7 +13,30 @@ package taskMan.resource.user;
  *         Eli Vangrieken
  */
 public enum UserCredential {
+	PROJECTMANAGER(new UserPermission[]{
+			UserPermission.SHOW_OVERVIEW,
+			UserPermission.ADVANCE_TIME,
+			UserPermission.CREATE_PROJECT,
+			UserPermission.CREATE_TASK,
+			UserPermission.PLAN_TASK,
+			UserPermission.SIMULATE}),
+	DEVELOPER(new UserPermission[]{
+			UserPermission.SHOW_OVERVIEW,
+			UserPermission.ADVANCE_TIME,
+			UserPermission.UPDATE_TASK}),
+	THE_WEER(UserPermission.values());
 	
-	DEVELOPER, PROJECTMANAGER
+	private List<UserPermission> permissions;
+	
+	private UserCredential(UserPermission[] permissions) {
+		this.permissions = new ArrayList<UserPermission>();
+		for(UserPermission p : permissions) {
+			this.permissions.add(p);
+		}
+	}
+	
+	public List<UserPermission> getPermissions() {
+		return this.permissions;
+	}
 	
 }

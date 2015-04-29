@@ -224,7 +224,7 @@ public class UseCase4PlanTaskTest {
 		
 		//Onbestaande Dev
 		devs = new ArrayList<>();
-		UserPrototype watProt = new UserPrototype("Wat", null);
+		UserPrototype watProt = new UserPrototype();
 		devs.add(new ResourceView(watProt.instantiateDeveloper("Spartacus")));
 		assertFalse(taskManager.planTask(project0, task00, task00StartDateGood, concRes, devs));
 		//TODO conflict case?
