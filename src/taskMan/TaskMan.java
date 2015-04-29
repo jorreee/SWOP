@@ -415,25 +415,6 @@ public class TaskMan {
 		return resMan.createDeveloper(name);
 	}
 
-//	/**
-//	 * Reserve a resource for a task from the task's planned start time until
-//	 * the planned end time
-//	 * 
-//	 * @param resource
-//	 *            | The resource to reserve
-//	 * @param project
-//	 *            | The project the task belongs to
-//	 * @param task
-//	 *            | The reserving task
-//	 * @return True if the resource was reserved by the given task, false
-//	 *         otherwise
-//	 */
-//	public boolean reserveResource(ResourceView resource, ProjectView project,
-//			TaskView task) {
-//		return false;
-//		
-//	}
-
 	/**
 	 * Reserve a resource for a task from a given start time to a given end time
 	 * 
@@ -459,23 +440,6 @@ public class TaskMan {
 		return p.reserve(resource, task, startTime, endTime);
 	}
 
-//	/**
-//	 * Returns an amount of possible Task starting times for a given Task.
-//	 * 
-//	 * @param project
-//	 *            | The project the task belongs to
-//	 * @param task
-//	 *            The Task to get the starting times from.
-//	 * @param amount
-//	 *            The amount of possible starting times wanted.
-//	 * @return The possible starting times of the Task
-//	 */
-//	public List<LocalDateTime> getPossibleTaskStartingTimes(
-//			ProjectView project, TaskView task, int amount) {
-//		return unwrapProjectView(project).getPossibleTaskStartingTimes(task,
-//				amount);
-//	}
-
 	/**
 	 * This method will return an immutable list of every user managed by the
 	 * resource manager that has the DEVELOPER credential
@@ -486,31 +450,22 @@ public class TaskMan {
 		return resMan.getDeveloperList();
 	}
 
-//	/**
-//	 * Remove all reservations of a finished or failed task that are still
-//	 * scheduled to happen. This method will also free up reserved resources by
-//	 * said task if the reservation is still ongoing.
-//	 * 
-//	 * @param project
-//	 *            | The project the task belongs to
-//	 * @param task
-//	 *            | The ended task
-//	 * @return True if the operation was successful, false otherwise
-//	 */
-//	public boolean flushFutureReservations(ProjectView project, TaskView task) {
-//		Project p = unwrapProjectView(project);
-//		if (p == null) {
-//			return false;
-//		}
-//		return p.flushFutureReservations(task, currentTime);
-//	}
-
-//	public Map<ProjectView, List<TaskView>> reservationConflict(
-//			ResourceView requiredResource, ProjectView project, TaskView task,
-//			LocalDateTime plannedStartTime) {
-//		return null;
-//	}
-
+	/**
+	 * Plan a task in the system from a given start time. Reservations will be
+	 * made for all the required resources and the developers will be assigned.
+	 * 
+	 * @param project
+	 *            | The project the task belongs to
+	 * @param task
+	 *            | The task to plan
+	 * @param plannedStartTime
+	 *            | The planned begin time
+	 * @param concRes
+	 *            | The resources to plan
+	 * @param devs
+	 *            | The developers to assign
+	 * @return True if the task was planned and all reservations made
+	 */
 	public boolean planTask(ProjectView project, TaskView task,
 			LocalDateTime plannedStartTime, List<ResourceView> concRes, List<ResourceView> devs) {
 		if(!currentUserHasPermission(UserPermission.PLAN_TASK)) {
@@ -616,7 +571,12 @@ public class TaskMan {
 	 * @return an immutable list of tasks that can be updated by a given user
 	 */
 	public List<TaskView> getUpdatableTasksForUser(ProjectView project) {
-		return unwrapProjectView(project).getUpdatableTasksForUser(
+		Project p = unwrapProjectView(project);
+		if(p == null) {
+			Builder<TaskView> bob = ImmutableList.builder();
+			return bob.build();
+		}
+		return p.getUpdatableTasksForUser(
 				new ResourceView(currentUser));
 	}
 
