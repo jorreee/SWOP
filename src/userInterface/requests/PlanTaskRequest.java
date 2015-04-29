@@ -69,6 +69,18 @@ public class PlanTaskRequest extends Request {
 //						facade.reserveResource(resourceToReserve, project, task);
 //					}
 //				}
+				// If selected dev conflicts with another task planning init resolve conflict request
+				Map<ProjectView, List<TaskView>> conflictingTasks = facade.findConflictingPlannings(task);
+				
+
+				if(!conflictingTasks.isEmpty()) {
+					ResolvePlanningConflictRequest resolveConflictRequest = new ResolvePlanningConflictRequest(facade, inputReader, conflictingTasks);
+					System.out.println(resolveConflictRequest.execute());
+					// Conflict dictates that this planning should start over
+					if(resolveConflictRequest.shouldMovePlanningTask()) {
+						return planTask(project, task);
+					}
+				}
 
 			} catch(Exception e) {
 				System.out.println("Invalid input");
@@ -172,17 +184,6 @@ public class PlanTaskRequest extends Request {
 				planning.setPlanBeginTime(timeSlotStart);
 				
 
-				// If selected dev conflicts with another task planning init resolve conflict request
-				Map<ProjectView, List<TaskView>> conflictingTasks = facade.findConflictingPlannings(task, timeSlotStart);
-
-				if(!conflictingTasks.isEmpty()) {
-					ResolvePlanningConflictRequest resolveConflictRequest = new ResolvePlanningConflictRequest(facade, inputReader, conflictingTasks);
-					System.out.println(resolveConflictRequest.execute());
-					// Conflict dictates that this planning should start over
-					if(resolveConflictRequest.shouldMovePlanningTask()) {
-						return planTask(project, task);
-					}
-				}
 				return planning;
 			} catch(Exception e) {
 				System.out.println("Invalid input");

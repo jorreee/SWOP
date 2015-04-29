@@ -631,21 +631,13 @@ public class TaskMan {
 	}
 	
 	/**
-	 * Finds all the conflicting plannings for the given developers and resources of a planning for a given task within a given project.
-	 * @param 	project
-	 * 			The project with the task to check for conflicting plannings
+	 * Finds all the conflicting plannings for the given task.
 	 * @param 	task
 	 * 			The task to check whether there are other tasks with conflicting plannings.
-	 * @param 	developers
-	 * 			The reserved developers to check for conflicts
-	 * @param 	resources
-	 * 			The reserved resources to check for conflicts
-	 * @param 	plannedStartTime
-	 * 			The planned start time of the reservation
 	 * @return	A list of conflicting planned tasks.
 	 */
 	public HashMap<ProjectView, List<TaskView>> findConflictingPlannings(
-			TaskView task, LocalDateTime plannedStartTime) {
+			TaskView task) {
 		HashMap<ProjectView, List<TaskView>> conflicts = new HashMap<>();
 		for (Project proj : projectList){
 			List<TaskView> conflictingTasks = proj.findConflictingPlannings(task);
