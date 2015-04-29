@@ -645,13 +645,12 @@ public class TaskMan {
 	 * @return	A list of conflicting planned tasks.
 	 */
 	public HashMap<ProjectView, List<TaskView>> findConflictingPlannings(
-			TaskView task,
-			List<ResourceView> developers, List<ResourceView> resources, LocalDateTime plannedStartTime) {
+			TaskView task, LocalDateTime plannedStartTime) {
 		HashMap<ProjectView, List<TaskView>> conflicts = new HashMap<>();
 		for (Project proj : projectList){
-			List<TaskView> conflictingTasks = proj.findConflictingPlannings(task, developers, resources, plannedStartTime);
+			List<TaskView> conflictingTasks = proj.findConflictingPlannings(task, plannedStartTime);
 			if (!conflictingTasks.isEmpty()){
-			conflicts.put(new ProjectView(proj), proj.findConflictingPlannings(task, developers, resources, plannedStartTime));
+			conflicts.put(new ProjectView(proj), conflictingTasks);
 			}
 		}
 		return conflicts;

@@ -966,6 +966,10 @@ public class Task implements Dependant {
 		return plan.getPlannedDevelopers();
 	}
 
+	public boolean hasResourceAt(ResourceView resource, LocalDateTime plannedStartTime){
+		for (Resource res : resMan.
+	}
+
 	public HashMap<ProjectView, List<TaskView>> findConflictingPlannings(
 			List<ResourceView> developers, List<ResourceView> resources,
 			LocalDateTime plannedStartTime) {
@@ -979,5 +983,6 @@ public class Task implements Dependant {
 		return false;
 	}
 
+	
 	
 }
