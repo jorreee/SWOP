@@ -193,12 +193,10 @@ public class Facade implements IFacade {
 	}
 
 	@Override
-	public HashMap<ProjectView, List<TaskView>> findConflictingDeveloperPlannings(
-			ProjectView project, TaskView task,
-			List<ResourceView> developers, LocalDateTime plannedStartTime) {
-		return findConflictingDeveloperPlannings(
-				project, task,
-				developers, plannedStartTime);
+	public HashMap<ProjectView, List<TaskView>> findConflictingPlannings(
+			TaskView task,LocalDateTime plannedStartTime) {
+		return taskMan.findConflictingPlannings(
+				task, plannedStartTime);
 	}
 
 	@Override

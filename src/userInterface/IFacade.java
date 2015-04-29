@@ -70,9 +70,8 @@ public interface IFacade {
 
 	public List<ResourceView> getDeveloperList();
 
-	public Map<ProjectView, List<TaskView>> findConflictingDeveloperPlannings(
-			ProjectView projectID, TaskView taskID, List<ResourceView> developerNames,
-			LocalDateTime planningStartTime);
+	public Map<ProjectView, List<TaskView>> findConflictingPlannings(
+			TaskView taskID,LocalDateTime planningStartTime);
 
 	public List<ResourceView> getResourcePrototypes();
 	

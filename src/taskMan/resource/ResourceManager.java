@@ -871,5 +871,22 @@ public class ResourceManager {
 		reservations.addAll(allReservations);
 		return reservations.build();
 	}
+	
+	public List<ResourceView> getReservedResourcesForTask(Task task, LocalDateTime plannedStartTime){
+		ArrayList<Reservation> reservationsForTask = new ArrayList<>();
+		Builder<ResourceView> resources = ImmutableList.builder();
+		for (Reservation res : activeReservations){
+			if (res.getReservingTask().equals(task)){
+				if ( res.getStartTime().isBefore(plannedStartTime) && res.getEndTime().isAfter(plannedStartTime))
+			}
+		}
+		
+		for(User resources : userList) {
+			if(user.hasAsCredential(UserCredential.DEVELOPER)) {
+				usernames.add(new ResourceView(user));
+			}
+		}
+		return resources.build();
+	}
 
 }

@@ -41,7 +41,7 @@ public class UseCase1ShowProjectsTest {
 			task10End = LocalDateTime.of(2015, 2, 13, 10, 0),
 			task11Start = LocalDateTime.of(2015, 2, 13, 10, 15),
 			task11End = LocalDateTime.of(2015, 2, 13, 14, 0),
-			task13Start = LocalDateTime.of(2015, 2, 14, 8, 0),
+			task13Start = LocalDateTime.of(2015, 2, 16, 8, 0),
 			task20start = LocalDateTime.of(2015, 2, 16, 10, 0),
 			task30Start = LocalDateTime.of(2015, 2, 16, 8, 0),
 			task30End = LocalDateTime.of(2015, 2, 16, 9, 45);
@@ -49,7 +49,7 @@ public class UseCase1ShowProjectsTest {
 			task10EstDur = 8*60,
 			task11EstDur = 3*8*60,
 			task12EstDur = 2*8*60,
-			task13EstDur = 2*8*60,
+			task13EstDur = 110,
 			task20EstDur = 35*60,
 			task30EstDur = 60,
 			task31EstDur = 3*8*60;
@@ -349,10 +349,9 @@ public class UseCase1ShowProjectsTest {
 		assertEquals("available", task13.getStatusAsString().toLowerCase());
 		assertEquals(task13.getStartTime(),null);
 		assertEquals(task13.getEndTime(),null);
-		//TODO  Error: Task zou te laat moeten zijn maar wel nog niet onacceptabel laat
 		assertFalse(task13.isOnTime(taskManager.getCurrentTime()));
 		assertFalse(task13.isUnacceptableOverdue(taskManager.getCurrentTime()));
-		assertEquals(12, task13.getOverTimePercentage(taskManager.getCurrentTime()));
+		assertEquals(9, task13.getOverTimePercentage(taskManager.getCurrentTime()));
 		
 		//--------------------------------------------------------------------------
 		// Test Project 2 tasks
@@ -395,7 +394,7 @@ public class UseCase1ShowProjectsTest {
 		assertEquals(task31.getEndTime(),null);
 		assertFalse(task31.isOnTime(taskManager.getCurrentTime()));
 		assertTrue(task31.isUnacceptableOverdue(taskManager.getCurrentTime()));
-		assertEquals(task31.getOverTimePercentage(taskManager.getCurrentTime()),100);
+		assertEquals(41,task31.getOverTimePercentage(taskManager.getCurrentTime()));
 	}
 	
 //	@Test(expected=IndexOutOfBoundsException.class)
