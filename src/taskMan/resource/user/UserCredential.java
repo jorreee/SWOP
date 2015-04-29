@@ -23,8 +23,8 @@ public enum UserCredential {
 	DEVELOPER(new UserPermission[]{
 			UserPermission.SHOW_OVERVIEW,
 			UserPermission.ADVANCE_TIME,
-			UserPermission.UPDATE_TASK});
-	//TODO sudo
+			UserPermission.UPDATE_TASK}),
+	THE_WEER(UserPermission.values());
 	
 	private List<UserPermission> permissions;
 	

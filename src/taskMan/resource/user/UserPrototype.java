@@ -20,5 +20,11 @@ public class UserPrototype extends ResourcePrototype {
 		user.addCredential(UserCredential.PROJECTMANAGER);
 		return user;
 	}
+	
+	public User instantiateSuperUser(String name) {
+		User user = new User(name,this);
+		user.addCredential(UserCredential.THE_WEER);
+		return user;
+	}
 
 }

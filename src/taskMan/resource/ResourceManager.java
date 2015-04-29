@@ -35,6 +35,7 @@ public class ResourceManager {
 	private List<ResourcePool> resPools;
 //	private ResourcePool userPool; 
 	private List<User> userList;
+	private final User superUser;
 	//The prototype for Users
 	private UserPrototype userProt;
 	
@@ -53,7 +54,7 @@ public class ResourceManager {
 		userProt = new UserPrototype();
 		userList = new ArrayList<User>();
 		userList.add(userProt.instantiateProjectManager("admin"));
-		
+		superUser = userProt.instantiateSuperUser("Initializer");
 		
 		activeReservations = new ArrayList<>();
 		allReservations = new ArrayList<>();
@@ -186,13 +187,8 @@ public class ResourceManager {
 	 * 
 	 * @return the project manager (default user)
 	 */
-	public User getDefaultUser() {
-		for(User user : userList) {
-			if(user.isProjectManager()) {
-				return user;
-			}
-		}
-		return null;
+	public User getSuperUser() {
+		return superUser;
 	}
 	
 	/**

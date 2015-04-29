@@ -21,7 +21,6 @@ public class Facade implements IFacade {
 	private final TaskManCaretaker caretaker;
 	
 	public Facade(LocalDateTime time) {
-		this.taskMan = new TaskMan(time);
 		caretaker = new TaskManCaretaker(this);
 	}
 	
