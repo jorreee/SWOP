@@ -54,9 +54,8 @@ public class TaskManCaretaker {
 	 */
 	public boolean storeInMemento() {
 		String taskman = buildMemento();
-		System.out.println(taskman);
 		mementos.push(new TaskManMemento(taskman));
-		return true; //TODO kan hier niks misgaan ofzo?
+		return true;
 	}
 	
 	/**

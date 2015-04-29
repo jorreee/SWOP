@@ -2,8 +2,6 @@ package taskMan.test.UseCases;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
-
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -209,6 +207,8 @@ public class UseCase8RunningASimulationTest {
 		assertTrue(taskManager.setTaskFinished(project0, taskAlt, LocalDateTime.of(2015, 2, 11, 9, 0)));
 		//Plan task02
 		assertTrue(taskManager.planTask(project0, task02, task02Start, task02ConcRes, task02Devs));
+		// INIT current user
+		taskManager.changeToUser(taskManager.getPossibleUsers().get(0));
 	}
 	
 	@Test
@@ -221,6 +221,7 @@ public class UseCase8RunningASimulationTest {
 		taskManager.createTask(project0, "test", 50, 5, new ArrayList<TaskView>(), reqResTest, null);
 		ProjectView proj1 = taskManager.getProjects().get(1);
 		TaskView task10 = proj1.getTasks().get(0);
+		taskManager.changeToUser(taskManager.getPossibleUsers().get(1));
 		assertTrue(taskManager.setTaskExecuting(proj1, task10, task10Start));
 		assertTrue(taskManager.setTaskFinished(proj1, task10, LocalDateTime.of(2015, 2, 10, 14, 0)));
 		assertTrue(proj1.isFinished());
@@ -257,6 +258,7 @@ public class UseCase8RunningASimulationTest {
 		taskManager.createTask(project0, "test", 50, 5, new ArrayList<TaskView>(), reqResTest, null);
 		ProjectView proj1 = taskManager.getProjects().get(1);
 		TaskView task10 = proj1.getTasks().get(0);
+		taskManager.changeToUser(taskManager.getPossibleUsers().get(1));
 		assertTrue(taskManager.setTaskExecuting(proj1, task10, task10Start));
 		assertTrue(taskManager.setTaskFinished(proj1, task10, LocalDateTime.of(2015, 2, 10, 14, 0)));
 		assertTrue(proj1.isFinished());

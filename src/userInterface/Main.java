@@ -140,17 +140,6 @@ public class Main {
 				if(!success) { failInit("creating developer" + dev.getName() + "!"); }
 			}
 
-			// Init current user
-			String username = fileChecker.getCurrentUser();
-			ResourceView currentUser = null;
-			for(ResourceView user : facade.getPossibleUsers()) {
-				if(user.getName().equalsIgnoreCase(username)) {
-					currentUser = user;
-					break;
-				}
-			}
-			success = facade.changeToUser(currentUser);
-			if(!success) { failInit("changing the current user!"); }
 			// --------------------------------
 
 			// Init projects
@@ -238,6 +227,19 @@ public class Main {
 						rcd.getEndTime());
 				if(!success) { failInit("trying to reserve resource " + rcd.getResource() + " for task " + rcd.getTask() + "!"); }
 			}
+			
+			// Init current user
+			String username = fileChecker.getCurrentUser();
+			ResourceView currentUser = null;
+			for(ResourceView user : facade.getPossibleUsers()) {
+				if(user.getName().equalsIgnoreCase(username)) {
+					currentUser = user;
+					break;
+				}
+			}
+			success = facade.changeToUser(currentUser);
+			if(!success) { failInit("changing the current user!"); }
+			
 		} catch(Exception e) {
 			e.printStackTrace();
 			failInit("an exception was thrown!");
