@@ -52,24 +52,21 @@ public class PlanTaskRequest extends Request {
 				TaskView task = project.getUnplannedTasks().get(taskID);
 
 				// PLAN TASK
+				boolean shouldMove = false;
+				boolean success = false;
+				do {
 				PlanningScheme planning = planTask(project, task);
 				if(planning == null) { 
 					return quit();
 				}
 
 				// Assign developers to task, assign planning to task, reserve selected resource(types)
-				boolean success = facade.planTask(project, task, 
+				success = facade.planTask(project, task, 
 						planning.getPlanningStartTime(), 
 						planning.getResourcesToReserve(),
 						planning.getDevelopers());
 
-				if(!success) { System.out.println("Failed to plan task, try again"); continue; }
-//				else {
-//					for(ResourceView resourceToReserve : planning.getResourcesToReserve()) {
-//						facade.reserveResource(resourceToReserve, project, task);
-//					}
-//				}
-				// If selected dev conflicts with another task planning init resolve conflict request
+				// If selected planning conflicts with another task planning init resolve conflict request
 				Map<ProjectView, List<TaskView>> conflictingTasks = facade.findConflictingPlannings(task);
 				
 
@@ -78,9 +75,14 @@ public class PlanTaskRequest extends Request {
 					System.out.println(resolveConflictRequest.execute());
 					// Conflict dictates that this planning should start over
 					if(resolveConflictRequest.shouldMovePlanningTask()) {
-						return planTask(project, task);
+						shouldMove = true;
 					}
 				}
+				}
+				// If task planning needs to be moved, restart process.
+				while (shouldMove == true);
+				
+				if(!success) { System.out.println("Failed to plan task, try again"); continue; }
 
 			} catch(Exception e) {
 				System.out.println("Invalid input");
@@ -172,14 +174,33 @@ public class PlanTaskRequest extends Request {
 					System.out.println("Possible task starting time " + i + ": " + possibleStartingTimes.get(i).toString());
 				}
 
-				System.out.println("Select a time slot (type quit to exit)");
-				input = inputReader.readLine();		
+				System.out.println("Do you want to choose your own time slot? (Yes: Y, No: N) WARNING: Not conflict free!");
+				input = inputReader.readLine();
+				LocalDateTime timeSlotStart = null;
+				switch(input){
+				case "Y" : 
+					System.out.println("Enter a starting time. Format: Y M D H M");
+					
+					if(input.toLowerCase().equals("quit"))	{ return null; }
+					
+					String startTime = inputReader.readLine();
+					String[] startBits = startTime.split(" ");
+					timeSlotStart = LocalDateTime.of(Integer.parseInt(startBits[0]), Integer.parseInt(startBits[1]), Integer.parseInt(startBits[2]), Integer.parseInt(startBits[3]), Integer.parseInt(startBits[4]));
+					break;
+				case "N" :
+					System.out.println("Select a time slot (type quit to exit)");
+					input = inputReader.readLine();		
 
-				// User quits
-				if(input.toLowerCase().equals("quit"))	{ return null; }
+					// User quits
+					if(input.toLowerCase().equals("quit"))	{ return null; }
 
-				// Confirm time slot
-				LocalDateTime timeSlotStart = possibleStartingTimes.get(Integer.parseInt(input));
+					// Confirm time slot
+					timeSlotStart = possibleStartingTimes.get(Integer.parseInt(input));
+					break;
+					
+				}
+				
+				
 				System.out.println("Time slot selected from " + timeSlotStart.toString() + " until " + timeSlotStart.plusMinutes(task.getEstimatedDuration()).toString());
 				planning.setPlanBeginTime(timeSlotStart);
 				

@@ -57,8 +57,6 @@ public class ResolvePlanningConflictRequest extends Request {
 			for(TaskView conflictingTask : conflictingTasks.get(project)) {
 				// Plan specific conflicting task
 				PlanningScheme newPlanning = planTaskRequest.planTask(project, conflictingTask);
-				// Remove planned reservations for conflicting task
-//				facade.flushFutureReservations(project, conflictingTask);
 				
 				// Register newly planned reservations and assign newly planned planning to the conflicting task
 				boolean success = facade.planTask(project, conflictingTask, newPlanning.getPlanningStartTime(),newPlanning.getResourcesToReserve(),newPlanning.getDevelopers());
