@@ -29,7 +29,7 @@ public class User extends ConcreteResource {
 	 *            | The name of the new user
 	 */
 	public User(String name, UserPrototype prototype){
-		super(name, prototype.getRequiredResources(), prototype.getConflictingResources(), new AvailabilityPeriod(prototype.getDailyAvailabilityStartTime(),prototype.getDailyAvailabilityEndTime()), prototype);
+		super(name, prototype);
 //		super(name,new ArrayList<ResourcePrototype>(),new ArrayList<ResourcePrototype>(),null);
 		userCredentials = new ArrayList<>();
 	}

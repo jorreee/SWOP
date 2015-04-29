@@ -5,8 +5,8 @@ import taskMan.resource.ResourcePrototype;
 
 public class UserPrototype extends ResourcePrototype {
 
-	public UserPrototype(String name, AvailabilityPeriod availability) {
-		super(name, availability);
+	public UserPrototype() {
+		super("User", null);
 	}
 	
 	public User instantiateDeveloper(String name){

@@ -1,6 +1,5 @@
 package taskMan.resource;
 
-import java.util.List;
 
 /**
  * This class represents "concrete" resources. These resource are specific
@@ -35,11 +34,12 @@ public class ConcreteResource extends Resource {
 	 *            | The resourceType this concrete resource instantiates
 	 */
 	public ConcreteResource(String resourceName,
-			List<ResourcePrototype> requiredResourcesList,
-			List<ResourcePrototype> conflictingResourcesList,
-			AvailabilityPeriod dailyAvailble, ResourcePrototype prototype) {
-		super(resourceName, requiredResourcesList, conflictingResourcesList,
-				dailyAvailble);
+//			List<ResourcePrototype> requiredResourcesList,
+//			List<ResourcePrototype> conflictingResourcesList,
+//			AvailabilityPeriod dailyAvailble, 
+			ResourcePrototype prototype) {
+		super(resourceName, prototype.getRequiredResources(), prototype.getConflictingResources(),
+				new AvailabilityPeriod(prototype.getDailyAvailabilityStartTime(), prototype.getDailyAvailabilityEndTime()));
 		this.prototype = prototype;
 	}
 	
