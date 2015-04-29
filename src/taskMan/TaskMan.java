@@ -648,7 +648,7 @@ public class TaskMan {
 			TaskView task, LocalDateTime plannedStartTime) {
 		HashMap<ProjectView, List<TaskView>> conflicts = new HashMap<>();
 		for (Project proj : projectList){
-			List<TaskView> conflictingTasks = proj.findConflictingPlannings(task, plannedStartTime);
+			List<TaskView> conflictingTasks = proj.findConflictingPlannings(task);
 			if (!conflictingTasks.isEmpty()){
 			conflicts.put(new ProjectView(proj), conflictingTasks);
 			}

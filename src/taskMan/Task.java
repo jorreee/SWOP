@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import taskMan.resource.Resource;
 import taskMan.resource.ResourceManager;
 import taskMan.resource.ResourcePrototype;
 import taskMan.resource.user.User;
@@ -14,9 +15,7 @@ import taskMan.state.TaskStatus;
 import taskMan.state.UnavailableTask;
 import taskMan.util.Dependant;
 import taskMan.util.TimeSpan;
-import taskMan.view.ProjectView;
 import taskMan.view.ResourceView;
-import taskMan.view.TaskView;
 
 import com.google.common.collect.Lists;
 
@@ -965,22 +964,34 @@ public class Task implements Dependant {
 	public List<User> getPlannedDevelopers(){
 		return plan.getPlannedDevelopers();
 	}
-
-	public boolean hasResourceAt(ResourceView resource, LocalDateTime plannedStartTime){
-		for (Resource res : resMan.
+	
+	/**
+	 * Gets the reserved resources for a given Task
+	 * @return the reserved resources of the Task
+	 */
+	public List<Resource> getReservedResources(){
+		return resMan.getReservedResourcesForTask(this);
 	}
 
-	public HashMap<ProjectView, List<TaskView>> findConflictingPlannings(
-			List<ResourceView> developers, List<ResourceView> resources,
-			LocalDateTime plannedStartTime) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public boolean hasPlanned(List<ResourceView> developers,
-			List<ResourceView> resources, LocalDateTime plannedStartTime) {
-		// TODO Auto-generated method stub
-		return false;
+	/**
+	 * Checks whether there exists a planning conflict with the given task
+	 * @param 	task
+	 * 			The task to check for a conflict.
+	 * @return	True if there exists a planning conflict, else false
+	 */
+	public boolean hasPlanningConflict(Task task) {
+		boolean conflictFound = false;
+		if (!task.getPlannedEndTime().isAfter(this.getPlannedBeginTime()) || !task.getPlannedBeginTime().isBefore(this.getPlannedEndTime())){
+			return false;
+		}
+		else {
+			for(Resource res : task.getReservedResources()){
+				if (this.getReservedResources().contains(res)){
+					conflictFound = true;
+				}
+			}
+		}
+		return conflictFound;
 	}
 
 	

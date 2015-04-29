@@ -749,24 +749,20 @@ public class Project implements Dependant {
 	}
 
 	/**
-	 * Finds all the task in the current project's tasklist who's reservations contain the given developers or resources.
+	 * Finds all the task in the current project's tasklist who's reservations conflict with the given task.
 	 * @param 	task
-	 * 			The task that wants to reserve the developers and resources.
-	 * @param 	developers
-	 * 			The developers that need to be reserved.
-	 * @param 	resources
-	 * 			The resources that need to be reserved.
-	 * @param	plannedStartTime
-	 * 			The planned start time of the reservation.
+	 * 			The task that wants to reserve
 	 * @return	A list of the tasks that conflict with the reservation.
 	 */
-	public List<TaskView> findConflictingPlannings(
-			TaskView task, List<ResourceView> developers,
-			List<ResourceView> resources, LocalDateTime plannedStartTime) {
+	public List<TaskView> findConflictingPlannings(TaskView task) {
 		ArrayList<TaskView> conflictTasks = new ArrayList<TaskView>();
+		Task unwrappedTask = unwrapTaskView(task);
+		if(unwrappedTask == null) {
+			return null;
+		}
 		for (Task t : taskList){
-		if(!task.hasAsTask(t)){
-			if (t.hasPlanned(developers,resources,plannedStartTime)){
+		if(!unwrappedTask.equals(t)){
+			if (t.hasPlanningConflict(unwrappedTask)){
 				conflictTasks.add(new TaskView(t));
 			}
 		}

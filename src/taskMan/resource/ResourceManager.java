@@ -872,18 +872,17 @@ public class ResourceManager {
 		return reservations.build();
 	}
 	
-	public List<ResourceView> getReservedResourcesForTask(Task task, LocalDateTime plannedStartTime){
-		ArrayList<Reservation> reservationsForTask = new ArrayList<>();
-		Builder<ResourceView> resources = ImmutableList.builder();
+	/**
+	 * Returns the reserved resources for a given task.
+	 * @param 	task
+	 * 			The task to get the reserved resources for.
+	 * @return	
+	 */
+	public List<Resource> getReservedResourcesForTask(Task task){
+		Builder<Resource> resources = ImmutableList.builder();
 		for (Reservation res : activeReservations){
 			if (res.getReservingTask().equals(task)){
-				if ( res.getStartTime().isBefore(plannedStartTime) && res.getEndTime().isAfter(plannedStartTime))
-			}
-		}
-		
-		for(User resources : userList) {
-			if(user.hasAsCredential(UserCredential.DEVELOPER)) {
-				usernames.add(new ResourceView(user));
+				resources.add(res.getReservedResource());
 			}
 		}
 		return resources.build();
