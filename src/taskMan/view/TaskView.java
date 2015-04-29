@@ -208,20 +208,26 @@ public class TaskView {
 		if (getStartTime() == null && getPlannedBeginTime() == null) {
 			return true;
 		}
-		LocalDateTime startTime = getStartTime();
-		if(startTime == null) {
-			startTime = getPlannedBeginTime();
-		}
 		TimeSpan acceptableSpan = task.getEstimatedDuration();
-		LocalTime[] availabilityPeriod = task.getAvailabilityPeriodBoundWorkingTimes();
-		LocalDateTime acceptableEndDate = TimeSpan.addSpanToLDT(
-				startTime, acceptableSpan, availabilityPeriod[0], availabilityPeriod[1]);
+		LocalDateTime acceptableEndDate = getAcceptableEndDate(acceptableSpan);
 
 		if (hasEnded()) {
 			return !task.getEndTime().isAfter(acceptableEndDate);
 		}
 
 		return !currentTime.isAfter(acceptableEndDate);
+	}
+	
+	private LocalDateTime getAcceptableEndDate(TimeSpan acceptableSpan) {
+
+		LocalDateTime startTime = getStartTime();
+		if(startTime == null) {
+			startTime = getPlannedBeginTime();
+		}
+		
+		LocalTime[] availabilityPeriod = task.getAvailabilityPeriodBoundWorkingTimes();
+		return TimeSpan.addSpanToLDT(
+				startTime, acceptableSpan, availabilityPeriod[0], availabilityPeriod[1]);
 	}
 
 	/**
@@ -235,15 +241,9 @@ public class TaskView {
 		if (getStartTime() == null && getPlannedBeginTime() == null) {
 			return false;
 		}
-		LocalDateTime startTime = getStartTime();
-		if(startTime == null) {
-			startTime = getPlannedBeginTime();
-		}
 		TimeSpan acceptableSpan = task.getEstimatedDuration()
 				.getAcceptableSpan(getAcceptableDeviation());
-		LocalTime[] availabilityPeriod = task.getAvailabilityPeriodBoundWorkingTimes();
-		LocalDateTime acceptableEndDate = TimeSpan.addSpanToLDT(startTime,
-				acceptableSpan, availabilityPeriod[0], availabilityPeriod[1]);
+		LocalDateTime acceptableEndDate = getAcceptableEndDate(acceptableSpan);
 
 		if (hasEnded()) {
 			return getEndTime().isAfter(acceptableEndDate);
@@ -262,8 +262,17 @@ public class TaskView {
 		if (isOnTime(currentTime)) {
 			return 0;
 		}
-		int overdue = task.getTimeSpent(currentTime).getDifferenceMinute(
-				task.getEstimatedDuration());
+		
+		TimeSpan acceptableSpan = task.getEstimatedDuration();
+		LocalDateTime acceptableEndDate = getAcceptableEndDate(acceptableSpan);
+		if(hasEnded()) {
+			currentTime = getEndTime();
+		}
+		
+		LocalTime[] availabilityPeriod = task.getAvailabilityPeriodBoundWorkingTimes();
+
+		int overdue = TimeSpan.getDifferenceWorkingMinutes(acceptableEndDate, currentTime, availabilityPeriod[0], availabilityPeriod[1]);
+
 		return (overdue* 100) / task.getEstimatedDuration().getSpanMinutes();
 	}
 
