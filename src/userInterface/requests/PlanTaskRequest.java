@@ -85,6 +85,7 @@ public class PlanTaskRequest extends Request {
 				if(!success) { System.out.println("Failed to plan task, try again"); continue; }
 
 			} catch(Exception e) {
+				e.printStackTrace();
 				System.out.println("Invalid input");
 			}
 		}

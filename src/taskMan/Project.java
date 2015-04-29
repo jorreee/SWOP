@@ -589,13 +589,9 @@ public class Project implements Dependant {
 	 */
 	public List<TaskView> findConflictingPlannings(TaskView task) {
 		ArrayList<TaskView> conflictTasks = new ArrayList<TaskView>();
-		Task unwrappedTask = unwrapTaskView(task);
-		if(unwrappedTask == null) {
-			return null;
-		}
 		for (Task t : taskList){
-		if(!unwrappedTask.equals(t)){
-			if (t.hasPlanningConflict(unwrappedTask)){
+		if(!task.hasAsTask(t)){
+			if (t.hasPlanningConflict(task)){
 				conflictTasks.add(new TaskView(t));
 			}
 		}

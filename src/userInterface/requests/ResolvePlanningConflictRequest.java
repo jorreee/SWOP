@@ -23,11 +23,21 @@ public class ResolvePlanningConflictRequest extends Request {
 	public String execute() {
 		System.out.println("A conflict with other tasks has been detected!");
 
+		boolean hasExecuting = false;
 		// Show conflicting tasks
 		for(ProjectView project : conflictingTasks.keySet()) {
 			for(TaskView conflictingTask : conflictingTasks.get(project)) {
+				if (conflictingTask.isExecuting()){
+					hasExecuting = true;
+				}
 				System.out.println("Planning conflicts with project: " + project.getName() + ", task: \"" + conflictingTask.getDescription() + "\"");
 			}
+		}
+		if (hasExecuting){
+			System.out.println("The task conflicts with an executing task. The task currently being scheduled must be moved.");
+			movePlanningTask = true;
+			return "Conflict resolved";
+			
 		}
 		System.out.println("Move task currently being scheduled? (Y/N)");
 

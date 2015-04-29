@@ -16,6 +16,7 @@ import taskMan.state.UnavailableTask;
 import taskMan.util.Dependant;
 import taskMan.util.TimeSpan;
 import taskMan.view.ResourceView;
+import taskMan.view.TaskView;
 
 import com.google.common.collect.Lists;
 
@@ -350,6 +351,10 @@ public class Task implements Dependant {
 		return state.isAvailable();
 	}
 	
+	/**
+	 * Checks whether the task is executing.
+	 * @return True if the task is executing, else false
+	 */
 	public boolean isExecuting(){
 		return state.isExecuting();
 	}
@@ -956,8 +961,11 @@ public class Task implements Dependant {
 	 * 			The task to check for a conflict.
 	 * @return	True if there exists a planning conflict, else false
 	 */
-	public boolean hasPlanningConflict(Task task) {
+	public boolean hasPlanningConflict(TaskView task) {
 		boolean conflictFound = false;
+		if ( plan.getPlannedBeginTime() == null){
+			return false;
+		}
 		if (!task.getPlannedEndTime().isAfter(this.getPlannedBeginTime()) || !task.getPlannedBeginTime().isBefore(this.getPlannedEndTime())){
 			return false;
 		}

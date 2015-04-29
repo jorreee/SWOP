@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import taskMan.Task;
+import taskMan.resource.Resource;
 import taskMan.resource.ResourcePrototype;
 import taskMan.resource.user.User;
 import taskMan.util.TimeSpan;
@@ -363,5 +364,41 @@ public class TaskView {
 	 */
 	public boolean isPlanned() {
 		return (task.getPlannedBeginTime() != null);
+	}
+	
+	/**
+	 * Checks whether the task is executing.
+	 * @return True if the task is executing, else false
+	 */
+	public boolean isExecuting(){
+		return (task.isExecuting());
+	}
+	
+	/**
+	 * Returns the planned end time of the Task.
+	 * 
+	 * @return	The planned end time of the Task.
+	 */
+	public LocalDateTime getPlannedEndTime() {
+		return task.getPlannedEndTime();
+	}
+	
+
+	/**
+	 * Checks whether there exists a planning conflict with the given task
+	 * @param 	task
+	 * 			The task to check for a conflict.
+	 * @return	True if there exists a planning conflict, else false
+	 */
+	public boolean hasPlanningConflict(TaskView taskview) {
+		return task.hasPlanningConflict(taskview);
+	}
+	
+	/**
+	 * Gets the reserved resources for a given Task
+	 * @return the reserved resources of the Task
+	 */
+	public List<Resource> getReservedResources(){
+		return task.getReservedResources();
 	}
 }
