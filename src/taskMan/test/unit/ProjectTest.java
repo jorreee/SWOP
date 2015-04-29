@@ -103,7 +103,7 @@ public class ProjectTest {
 	
 	@Test
 	public void createTaskTestFinishedTask(){
-		assertTrue(defaultProject.createTask("test", 60, 5, resMan, new ArrayList<TaskView>(), new HashMap<ResourceView, Integer>(), null, "finished", LocalDateTime.of(2015,  4, 29, 10, 0), LocalDateTime.of(2015,  4, 29, 11, 0), LocalDateTime.of(2015,  4, 29, 10, 0), new ArrayList<>()));
+		assertTrue(defaultProject.createTask("test", 60, 5, resMan, new ArrayList<TaskView>(), new HashMap<ResourceView, Integer>(), null, "finished", LocalDateTime.of(2015,  4, 29, 10, 0), LocalDateTime.of(2015,  4, 29, 11, 0), LocalDateTime.of(2015,  4, 29, 10, 0), new ArrayList<ResourceView>()));
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
