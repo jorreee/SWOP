@@ -257,6 +257,9 @@ public class UseCase3CreateTaskTest {
 		assertTrue(taskManager.setTaskExecuting(project0, t01, task01StartDateGood));
 		assertTrue(taskManager.setTaskFinished(project0, t01, task01EndDateGood));
 		
+		List<ResourceView> ntConcreteResources = new ArrayList<ResourceView>();
+		ntConcreteResources.add(taskManager.getConcreteResourcesForPrototype(taskManager.getResourcePrototypes().get(0)).get(3));
+		assertTrue(taskManager.planTask(project0, nt, task01EndDateGood, ntConcreteResources, devList1));
 		assertEquals(nt.getStatusAsString(),"Available");
 	}
 
