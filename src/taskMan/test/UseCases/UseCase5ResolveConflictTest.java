@@ -55,7 +55,7 @@ public class UseCase5ResolveConflictTest {
 	/**
 	 * - project 0 START 9 feb 8u DUE 13 feb midnight
 	 * 		task 0			
-	 * 		task 1 
+	 * 		task 1 <-0
 	 * 		task 2 
 	 */
 	@Before
@@ -93,8 +93,6 @@ public class UseCase5ResolveConflictTest {
 		TaskView task00 = project0.getTasks().get(0);
 		task01Dependencies.add(task00);
 		assertTrue(taskManager.createTask(project0, "Implement Native", task01EstDur, task01Dev, task01Dependencies,task01Res, null));	// TASK 2
-		TaskView task01 = project0.getTasks().get(1);
-		task02Dependencies.add(task01);
 
 		assertTrue(taskManager.createTask(project0, "Test code", task02EstDur, task02Dev, task02Dependencies,task02Res, null));			// TASK 3
 
@@ -107,5 +105,19 @@ public class UseCase5ResolveConflictTest {
 		TaskView task00 = project00.getTasks().get(0);
 		TaskView task01 = project00.getTasks().get(1);
 		TaskView task02 = project00.getTasks().get(2);
+		
+		task00ConcreteResources.add(taskManager.getResourcePrototypes().get(0));
+		task00ConcreteResources.add(taskManager.getResourcePrototypes().get(1));
+		
+		task02ConcreteResources.add(taskManager.getResourcePrototypes().get(0));
+		task02ConcreteResources.add(taskManager.getResourcePrototypes().get(1));
+		
+		assertTrue(taskManager.planTask(project00, task00, task00StartDateGood, task00ConcreteResources, devList1));
+		assertTrue(taskManager.planTask(project00, task02, task00StartDateGood, task02ConcreteResources, devList1));
+		
+		Map<ProjectView, List<TaskView>> conflicts = taskManager.findConflictingPlannings(task02);
+
+
+
 	}
 }
