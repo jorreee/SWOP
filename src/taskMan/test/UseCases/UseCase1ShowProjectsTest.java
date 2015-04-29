@@ -224,11 +224,9 @@ public class UseCase1ShowProjectsTest {
 		// 31 AVAILABLE
 		Map<ResourceView, Integer> reqResTask31 = new HashMap<>();
 		reqResTask31.put(taskManager.getResourcePrototypes().get(0), 1);
-		reqResTask31.put(taskManager.getResourcePrototypes().get(1), 1);
 		assertTrue(taskManager.createTask(project3, "TASK 31", task31EstDur, task31Dev, task31Dependencies,reqResTask31, null));
 		TaskView task31 = project3.getTasks().get(1);
 		task31ConcreteResources.add(taskManager.getResourcePrototypes().get(0));
-		task31ConcreteResources.add(taskManager.getResourcePrototypes().get(1));
 		assertTrue(taskManager.planTask(project3, task31, task30Start, task31ConcreteResources,devList3));
 				
 		// Stap verder:

@@ -598,9 +598,6 @@ public class ResourceManager {
 	 * 
 	 * @param reservedTask
 	 *            | The task for which the reservations should be checked
-	 * @param requiredResources
-	 *            | The resources and their amounts that should all have enough
-	 *            reservations
 	 * @return true if every required resource has enough active reservations
 	 */
 	public boolean hasActiveReservations(Task reservedTask){
