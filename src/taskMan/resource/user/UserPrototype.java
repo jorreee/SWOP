@@ -1,6 +1,5 @@
 package taskMan.resource.user;
 
-import taskMan.resource.AvailabilityPeriod;
 import taskMan.resource.ResourcePrototype;
 
 public class UserPrototype extends ResourcePrototype {

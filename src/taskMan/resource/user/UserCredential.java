@@ -14,14 +14,17 @@ import java.util.List;
  */
 public enum UserCredential {
 	PROJECTMANAGER(new UserPermission[]{
+			UserPermission.SHOW_OVERVIEW,
 			UserPermission.ADVANCE_TIME,
 			UserPermission.CREATE_PROJECT,
 			UserPermission.CREATE_TASK,
 			UserPermission.PLAN_TASK,
 			UserPermission.SIMULATE}),
 	DEVELOPER(new UserPermission[]{
+			UserPermission.SHOW_OVERVIEW,
 			UserPermission.ADVANCE_TIME,
 			UserPermission.UPDATE_TASK});
+	//TODO sudo
 	
 	private List<UserPermission> permissions;
 	
@@ -31,12 +34,9 @@ public enum UserCredential {
 			this.permissions.add(p);
 		}
 	}
-
-	public boolean canAdvanceTime()   { return permissions.contains(UserPermission.ADVANCE_TIME);	}
-	public boolean canCreateProject() { return permissions.contains(UserPermission.CREATE_PROJECT);	}
-	public boolean canCreateTask()    { return permissions.contains(UserPermission.CREATE_TASK);    }
-	public boolean canPlanTask()      { return permissions.contains(UserPermission.ADVANCE_TIME);   }
-	public boolean canUpdateTask()    { return permissions.contains(UserPermission.ADVANCE_TIME);   }
-	public boolean canSimulate()      { return permissions.contains(UserPermission.ADVANCE_TIME);   }
+	
+	public List<UserPermission> getPermissions() {
+		return this.permissions;
+	}
 	
 }

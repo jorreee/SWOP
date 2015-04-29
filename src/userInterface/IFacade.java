@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import taskMan.resource.user.UserCredential;
+import taskMan.resource.user.UserPermission;
 import taskMan.view.ProjectView;
 import taskMan.view.ResourceView;
 import taskMan.view.TaskView;
@@ -49,7 +49,7 @@ public interface IFacade {
 
 	public List<ProjectView> getProjects();
 
-	public void storeInMemento();
+	public boolean storeInMemento();
 
 	public boolean revertFromMemento();
 
@@ -91,7 +91,7 @@ public interface IFacade {
 //	public boolean flushFutureReservations(ProjectView project,
 //			TaskView conflictingTask);
 
-	public boolean currentUserHasCredential(UserCredential credential);
+	public boolean currentUserHasPermission(UserPermission permission);
 	
 	public List<TaskView> getUpdatableTasksForUser(ProjectView project);
 	

@@ -16,7 +16,9 @@ public class SimulationRequest extends Request {
 	@Override
 	public String execute() {
 		// Store current system state
-		facade.storeInMemento();
+		if(!facade.storeInMemento()) {
+			return "Error";
+		}
 		LocalDateTime simulationStart = facade.getCurrentTime();
 
 		// Create a user-input-parser to generate requests

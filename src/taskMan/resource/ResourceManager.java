@@ -10,7 +10,6 @@ import java.util.Optional;
 
 import taskMan.Task;
 import taskMan.resource.user.User;
-import taskMan.resource.user.UserCredential;
 import taskMan.resource.user.UserPrototype;
 import taskMan.util.TimeSpan;
 import taskMan.view.ResourceView;
@@ -51,7 +50,7 @@ public class ResourceManager {
 	public ResourceManager() {
 		this.resPools = new ArrayList<>();
 		
-		userProt = new UserPrototype("User",null);
+		userProt = new UserPrototype();
 		userList = new ArrayList<User>();
 		userList.add(userProt.instantiateProjectManager("admin"));
 		
@@ -189,7 +188,7 @@ public class ResourceManager {
 	 */
 	public User getDefaultUser() {
 		for(User user : userList) {
-			if(user.hasAsCredential(UserCredential.PROJECTMANAGER)) {
+			if(user.isProjectManager()) {
 				return user;
 			}
 		}
@@ -428,7 +427,7 @@ public class ResourceManager {
 	public List<ResourceView> getDeveloperList() {
 		Builder<ResourceView> usernames = ImmutableList.builder();
 		for(User user : userList) {
-			if(user.hasAsCredential(UserCredential.DEVELOPER)) {
+			if(user.isDeveloper()) {
 				usernames.add(new ResourceView(user));
 			}
 		}
