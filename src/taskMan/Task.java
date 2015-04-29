@@ -46,7 +46,6 @@ public class Task implements Dependant {
 	private TaskStatus state;
 	
 	private final ResourceManager resMan;
-//	private Map<ResourceView,Integer> requiredResources;
 	private Map<ResourcePrototype,Integer> requiredResources;
 
 	/**
@@ -99,14 +98,9 @@ public class Task implements Dependant {
 		if(!isValidResourceManager(resMan)) {
 			throw new IllegalArgumentException("Invalid resource manager");
 		}
-//		if(!resMan.isValidRequiredResources(requiredResources)) {
-//			throw new IllegalArgumentException("Very bad required resources");
-//		}
 		this.description = taskDescription;
 		this.plan = new Planning(estimatedDuration, acceptableDeviation);
 		this.resMan = resMan;
-//		this.requiredResources = new HashMap<ResourceView, Integer>();
-//		this.requiredResources.putAll(requiredResources);
 		Map<ResourcePrototype, Integer> reqRes = resMan.isValidRequiredResources(requiredResources);
 		if(reqRes == null) {
 			throw new IllegalArgumentException("Very bad required resources");
@@ -185,7 +179,6 @@ public class Task implements Dependant {
 		if (plannedStartTime == null) {
 			throw new IllegalArgumentException("A planned start time is required for this kind of creation");
 		}
-		// plan(plannedStartTime);
 		plan.setPlannedBeginTime(plannedStartTime);
 		if (!plan.setDevelopers(resMan.pickDevs(plannedDevelopers, this,
 				startTime, endTime))) {
@@ -232,21 +225,6 @@ public class Task implements Dependant {
 		dependants.add(d);
 	}
 
-	//TODO met huidig ontwerp wordt dit nooit gebruikt. Kan 
-	// gebruikt worden om dependencies van gefaalde tasks over 
-	// te plaatsen wanneer die wordt vervangen.
-//	public boolean unregister(Dependant t) {
-//		if(!isValidDependant(t)) {
-//			return false;
-//		}
-//		int depIndex = dependants.indexOf(t);
-//		if(depIndex < 0) {
-//			return false;
-//		}
-//		dependants.remove(depIndex);
-//		return true;
-//	}
-	
 	/**
 	 * Check whether the dependant is valid
 	 * 
@@ -288,13 +266,15 @@ public class Task implements Dependant {
 		if(preIndex < 0) {
 			return false;
 		}
-//		prerequisites.remove(preIndex);
 
 		state.makeAvailable(this);
 		
 		return true;
 	}
-	
+
+	/**
+	 * Prevent double storing of dependencies
+	 */
 	private void removeAlternativesDependencies() {
 		if(alternativeFor != null) {
 			int depIndex;
@@ -821,6 +801,16 @@ public class Task implements Dependant {
 		return true;
 	}
 	
+	/**
+	 * Check if a prerequisite task doesn't interfere with a given planned start
+	 * time
+	 * 
+	 * @param t
+	 *            | The prerequisite task
+	 * @param start
+	 *            | The planned begin time
+	 * @return True if the task doesn't interfere
+	 */
 	private boolean checkTask(Task t, LocalDateTime start) {
 		if(t.isUnavailable() || (t.isFailed() && (t.getReplacement() == null))) {
 			return false; // Heeft een prereq die nog niet KAN worden afgewerkt
@@ -834,6 +824,18 @@ public class Task implements Dependant {
 		return true;
 	}
 	
+	/**
+	 * Plan a task in the system from a given start time. Reservations will be
+	 * made for all the required resources and the developers will be assigned.
+	 * 
+	 * @param startTime
+	 *            | The planned begin time
+	 * @param concRes
+	 *            | The resources to plan
+	 * @param devs
+	 *            | The developers to assign
+	 * @return True if the task was planned and all reservations made
+	 */
 	public boolean plan(LocalDateTime startTime, List<ResourceView> concRes, List<ResourceView> devs) {
 		for(Task t : prerequisites) {
 			if(t.isFailed() && (t.getReplacement() == null)) {
@@ -873,18 +875,6 @@ public class Task implements Dependant {
 		
 	}
 	
-//	/**
-//	 * Assign a list of developers to this task
-//	 * 
-//	 * @param plannedDevelopers
-//	 *            | The developers to add
-//	 * @return True when the developers were successfully added
-//	 */
-//	public boolean planDevelopers(List<ResourceView> plannedDevelopers) {
-//		return plan.setDevelopers(plannedDevelopers);
-//	}
-
-	
 	/**
 	 * Returns an amount of possible Task starting times.
 	 * 
@@ -909,19 +899,6 @@ public class Task implements Dependant {
 		return reqRes;
 	}
 	
-//	/**
-//	 * Remove all reservations of this task that are still
-//	 * scheduled to happen. This method will also free up reserved resources by
-//	 * said task if the reservation is still ongoing.
-//	 * 
-//	 * @param currentTime
-//	 *            | The current time
-//	 * @return True if the operation was successful, false otherwise
-//	 */
-//	public boolean flushFutureReservations(LocalDateTime currentTime) {
-//		return resMan.flushFutureReservations(this, currentTime);
-//	}
-
 	/**
 	 * Reserve a resource at init
 	 * 
@@ -993,7 +970,4 @@ public class Task implements Dependant {
 		}
 		return conflictFound;
 	}
-
-	
-	
 }
