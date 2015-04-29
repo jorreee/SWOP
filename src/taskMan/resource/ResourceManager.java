@@ -347,8 +347,8 @@ public class ResourceManager {
 		List<Reservation> toCheck = new ArrayList<Reservation>();
 		toCheck.addAll(activeReservations);
 		toCheck.addAll(alreadyReserved);
-		for(Reservation reservation : activeReservations) {
-			if(reservation.getReservedResource().equals(resource)) {
+		for(Reservation reservation : toCheck) {
+			if(reservation.hasAsResource(resource)) {
 				if(reservation.overlaps(start,end)) {
 					return false;
 				}
@@ -697,6 +697,13 @@ public class ResourceManager {
 		LocalTime workDayStart = LocalTime.of(8,0);
 		LocalTime workDayEnd = LocalTime.of(17, 0);
 		
+		// AvailabilityPeriod
+		LocalTime[] availabilityPeriod = task.getAvailabilityPeriodBoundWorkingTimes();
+		if(availabilityPeriod[0] != null) {
+			workDayStart = availabilityPeriod[0];
+			workDayEnd = availabilityPeriod[1];
+		}
+		
 		// Initial time to check (last planned end time of prerequisite task)
 		LocalDateTime hour = currentTime;
 		if(!task.getPrerequisites().isEmpty()) {
@@ -709,46 +716,47 @@ public class ResourceManager {
 		
 		// Shift hour to inside workday
 		if(hour.toLocalTime().isAfter(workDayEnd)) {
-			hour.withHour(8);
-			hour.plusDays(1);
+			hour = hour.withHour(8);
+			hour = hour.plusDays(1);
 		}
 		if(hour.toLocalTime().isBefore(workDayStart)) {
-			hour.withHour(8);
+			hour = hour.withHour(8);
 		}
 		switch (hour.getDayOfWeek()) {
 		case SATURDAY:
-			hour.plusDays(2);
+			hour = hour.plusDays(2);
 			break;
 		case SUNDAY:
-			hour.plusDays(1);
+			hour = hour.plusDays(1);
 			break;
 		default:
 			break;
 		}
 		if(hour.getMinute() != 0) {
-			hour.plusHours(1);
-			hour.withMinute(0);
-		}
-		
-		// These are already chosen
-		List<ConcreteResource> alreadyReserved = new ArrayList<>();
-		for(ResourceView resource : allResources) {
-			ConcreteResource cr = unWrapConcreteResourceView(resource);
-			if(cr != null) {
-				alreadyReserved.add(cr);
-			}
+			hour = hour.plusHours(1);
+			hour = hour.withMinute(0);
 		}
 		
 		// Until amount (Check hour)
 		while(amount > 0) {
 			boolean validTimeStamp = true;
+			
+			// These are already chosen
+			List<ConcreteResource> alreadyReserved = new ArrayList<>();
+			for(ResourceView resource : allResources) {
+				ConcreteResource cr = unWrapConcreteResourceView(resource);
+				if(cr != null) {
+					alreadyReserved.add(cr);
+				}
+			}
+			
 			// For each resource
 			for(ResourceView resource : allResources) {
 				ConcreteResource cr = unWrapConcreteResourceView(resource);
 				// if Concrete resource
 				if(cr != null) {
 					// Available from hour until hour + task.getEstimatedDuration()
-					if(!canReserve(cr, hour, TimeSpan.addSpanToLDT(hour,task.getEstimatedDuration(), cr.getDailyAvailabilityStartTime(), cr.getDailyAvailabilityEndTime()), new ArrayList<Reservation>())) {
+					if(!canReserve(cr, hour, TimeSpan.addSpanToLDT(hour,task.getEstimatedDuration(), workDayStart, workDayEnd), new ArrayList<Reservation>())) {
 						validTimeStamp = false;
 						break;
 					}
@@ -758,7 +766,7 @@ public class ResourceManager {
 				// if Prototype
 				if(rp != null) {
 					// Find concrete resource (not yet present) which is available from ...
-					cr = pickUnreservedResource(rp, hour, TimeSpan.addSpanToLDT(hour,task.getEstimatedDuration(), rp.getDailyAvailabilityStartTime(), rp.getDailyAvailabilityEndTime()), new ArrayList<Reservation>(), alreadyReserved);
+					cr = pickUnreservedResource(rp, hour, TimeSpan.addSpanToLDT(hour,task.getEstimatedDuration(), workDayStart, workDayEnd), new ArrayList<Reservation>(), alreadyReserved);
 					// No cr to be found (Oh nooes)
 					if(cr == null) {
 						validTimeStamp = false;
@@ -776,7 +784,7 @@ public class ResourceManager {
 				amount--;
 			}
 			// Add hour
-			hour = TimeSpan.addSpanToLDT(hour, new TimeSpan(60), null, null);
+			hour = TimeSpan.addSpanToLDT(hour, new TimeSpan(60), workDayStart, workDayEnd);
 		} // Repeat
 		return posTimes;
 	}

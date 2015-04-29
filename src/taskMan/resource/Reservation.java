@@ -105,5 +105,13 @@ public class Reservation {
 		}
 		return true;		
 	}
+
+	public boolean hasAsResource(ConcreteResource resource) {
+		if(reservedResource == resource) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 	
 }

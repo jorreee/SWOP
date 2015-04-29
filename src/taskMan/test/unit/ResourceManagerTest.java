@@ -13,6 +13,8 @@ import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.google.common.collect.Lists;
+
 import taskMan.Task;
 import taskMan.resource.ResourceManager;
 import taskMan.resource.ResourcePrototype;
@@ -169,8 +171,6 @@ public class ResourceManagerTest {
 		
 		assertEquals(10,possibleTimes.size());
 		assertFalse(possibleTimes.contains(LocalDateTime.of(2015, 04, 23, 7, 0)));
-		//TODO Error: Het eerste element van de lijst is de currentTime ipv 
-		//	   het eerste uur de volgende dag
 		assertTrue(possibleTimes.contains(LocalDateTime.of(2015, 04, 23, 8, 0)));
 		assertTrue(possibleTimes.contains(LocalDateTime.of(2015, 04, 23, 12, 0)));
 		assertFalse(possibleTimes.contains(LocalDateTime.of(2015, 04, 23, 17, 0)));
@@ -213,12 +213,18 @@ public class ResourceManagerTest {
 		devs.add(weer);
 		assertTrue(firstTask.plan(LocalDateTime.of(2015, 04, 23, 10, 0), concRes, devs));
 		
+		ArrayList<ResourceView> conRes2 = new ArrayList<>();
+		conRes2.add(resMan.getResourcePrototypes().get(0));
+		conRes2.add(resMan.getResourcePrototypes().get(0));
+		conRes2.add(resMan.getResourcePrototypes().get(0));
+		conRes2.add(resMan.getResourcePrototypes().get(1));
+		conRes2.add(resMan.getResourcePrototypes().get(1));
+		conRes2.add(resMan.getResourcePrototypes().get(1));
+		
 		List<LocalDateTime> possibleTimes = resMan.getPossibleStartingTimes(
-				secondTask, new ArrayList<ResourceView>(), currentTime, 10);
+				secondTask, conRes2, currentTime, 10);
 		assertEquals(10,possibleTimes.size());
 		assertFalse(possibleTimes.contains(LocalDateTime.of(2015, 04, 23, 7, 0)));
-		//TODO Error: De possible startingtimes houden er geen rekening mee dat de 
-		//	   nodige resources al gereserveerd zijn
 		assertFalse(possibleTimes.contains(LocalDateTime.of(2015, 04, 23, 10, 0)));
 		assertTrue(possibleTimes.contains(LocalDateTime.of(2015, 04, 23, 12, 0)));
 		assertFalse(possibleTimes.contains(LocalDateTime.of(2015, 04, 23, 17, 0)));
@@ -245,12 +251,11 @@ public class ResourceManagerTest {
 		
 		LocalDateTime currentTime = LocalDateTime.of(2015, 04, 23, 10, 0);
 		List<LocalDateTime> possibleTimes = resMan.getPossibleStartingTimes(
-				testTask, new ArrayList<ResourceView>(), currentTime, 10);
+				testTask, Lists.newArrayList(resMan.getResourcePrototypes().get(2)), currentTime, 10);
 		assertEquals(10,possibleTimes.size());
 		assertFalse(possibleTimes.contains(LocalDateTime.of(2015, 04, 23, 7, 0)));
 		assertTrue(possibleTimes.contains(LocalDateTime.of(2015, 04, 23, 10, 0)));
 		assertTrue(possibleTimes.contains(LocalDateTime.of(2015, 04, 23, 11, 0)));
-		//TODO Error: Er wordt geen rekeninggehouden met de beschikbare tijd van een resource
 		assertFalse(possibleTimes.contains(LocalDateTime.of(2015, 04, 23, 12, 0)));
 		assertFalse(possibleTimes.contains(LocalDateTime.of(2015, 04, 23, 15, 0)));
 		assertTrue(possibleTimes.contains(LocalDateTime.of(2015, 04, 24, 8, 0)));
