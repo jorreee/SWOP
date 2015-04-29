@@ -33,7 +33,6 @@ public class ResourceManager {
 	
 	// The resource manager has a list of resource pools (and users)
 	private List<ResourcePool> resPools;
-//	private ResourcePool userPool; 
 	private List<User> userList;
 	private final User superUser;
 	//The prototype for Users
@@ -247,7 +246,7 @@ public class ResourceManager {
 			) {
 		
 		if(resources == null || reservingTask == null ||
-				startTime == null || endTime == null) { // || currentTime == null
+				startTime == null || endTime == null) {
 			return false;
 		}
 		if(endTime.isBefore(startTime)) {
@@ -780,41 +779,6 @@ public class ResourceManager {
 		} // Repeat
 		return posTimes;
 	}
-	
-//	/**
-//	 * This method will remove all future reservations for a given
-//	 * (finished/failed) task. If there are any active reservations that have
-//	 * already started, but not yet finished, a reservation until this point
-//	 * will be maintained, but the resources will be made available again (i.e.
-//	 * the reservation will end now).
-//	 * 
-//	 * @param task
-//	 *            | The finished or failed task
-//	 * @param currentTime
-//	 *            | The current time in the system
-//	 * @return true if all required changes were successfully made
-//	 */
-//	public boolean flushFutureReservations(Task task, LocalDateTime currentTime) {
-//		boolean succesful = false;
-//		for (Reservation res : activeReservations){
-//			if (res.getReservingTask().equals(task)){
-//				activeReservations.remove(res);
-//				succesful = true;
-//			}
-//		}
-//		for (Reservation res : allReservations){
-//			if (res.getReservingTask().equals(task)){
-//				if(res.getEndTime().isAfter(currentTime)){
-//					ConcreteResource reserved = res.getReservedResource();
-//					Task resTask = res.getReservingTask();
-//					LocalDateTime start = res.getStartTime();
-//					allReservations.remove(res);
-//					allReservations.add(new Reservation(reserved,resTask,start,currentTime));
-//				}
-//			}
-//		}
-//		return succesful;
-//	}
 	
 	/**
 	 * An ended task can call this method to release all active reservations made

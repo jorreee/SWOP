@@ -81,9 +81,6 @@ public class Planning {
 		if(newPlannedBeginTime==null) {
 			return false;
 		}
-//		if(getPlannedBeginTime() != null) { // TODO this will happen when conflicts arise
-//			return false; //already set
-//		}
 		if(beginTime != null) {
 			return false; //already started working
 		}

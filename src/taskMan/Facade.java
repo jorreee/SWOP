@@ -170,22 +170,11 @@ public class Facade implements IFacade {
 	public boolean createDeveloper(String name) {
 		return taskMan.createDeveloper(name);
 	}
-
-//	@Override
-//	public boolean reserveResource(ResourceView resource, ProjectView project, TaskView task) {
-//		return taskMan.reserveResource(resource, project, task);
-//	}
 	
 	@Override
 	public boolean reserveResource(ResourceView resource, ProjectView project, TaskView task, LocalDateTime startTime, LocalDateTime endTime) {
 		return taskMan.reserveResource(resource, project, task, startTime, endTime);
 	}
-
-//	@Override
-//	public List<LocalDateTime> getPossibleTaskStartingTimes(ProjectView project, TaskView task,
-//			int amount) {
-//		return taskMan.getPossibleTaskStartingTimes(project,task,amount);
-//	}
 
 	@Override
 	public List<ResourceView> getDeveloperList() {
@@ -217,19 +206,6 @@ public class Facade implements IFacade {
 			LocalDateTime plannedStartTime, List<ResourceView> concRes, List<ResourceView> devs) {
 		return taskMan.planTask(project, task, plannedStartTime, concRes, devs);
 	}
-
-//	@Override
-//	public Map<ProjectView, List<TaskView>> reservationConflict(
-//			ResourceView requiredResource, ProjectView project, TaskView task,
-//			LocalDateTime plannedStartTime) {
-//		return taskMan.reservationConflict(requiredResource, project, task, plannedStartTime);
-//	}
-	
-//	@Override
-//	public boolean flushFutureReservations(ProjectView project,
-//			TaskView task) {
-//		return taskMan.flushFutureReservations(project, task);
-//	}
 
 	@Override
 	public boolean addRequirementsToResource(List<ResourceView> resourcesToAdd,

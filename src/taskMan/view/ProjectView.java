@@ -113,13 +113,6 @@ public class ProjectView {
 		return availableTasks.build();
 	}
 
-	// public int[] getRealDelay(LocalDateTime time) {
-	// if(!project.getEndTime().isAfter(project.getDueTime())) {
-	// return new int[]{ 0,0,0,0,0 };
-	// }
-	// return new TimeSpan(project.getDueTime(),project.getEndTime()).getSpan();
-	// }
-
 	/**
 	 * The amount of working time the current project is delayed by compared to
 	 * a timestamp

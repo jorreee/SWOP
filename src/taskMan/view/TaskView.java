@@ -184,19 +184,6 @@ public class TaskView {
 		return task.hasEnded();
 	}
 
-	//
-	// public boolean isUnacceptableOverdue(LocalDateTime currentTime) {
-	// return task.isUnacceptableOverdue(currentTime);
-	// }
-	//
-	// public boolean isOnTime(LocalDateTime currentTime) {
-	// return task.isOnTime(currentTime);
-	// }
-	//
-	// public int getOvertimePercentage(LocalDateTime currentTime) {
-	// return task.getOverTimePercentage(currentTime);
-	// }
-
 	/**
 	 * Returns whether the current Task is on time, depending on the estimated
 	 * duration
@@ -304,11 +291,6 @@ public class TaskView {
 		}
 		return reqRes.build();
 	}
-
-	// public List<ResourceView> getPossibleResourceInstances(ResourceView
-	// resourceType){
-	// return task.getPossibleResourceInstances(resourceType);
-	// }
 
 	/**
 	 * A method to retrieve a given amount of possible starting times. A task is
