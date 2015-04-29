@@ -39,6 +39,12 @@ public class User extends ConcreteResource {
 	public boolean isDeveloper()      { return credentials.contains(UserCredential.DEVELOPER);      }
 	public boolean isProjectManager() { return credentials.contains(UserCredential.PROJECTMANAGER); }
 	
+	/**
+	 * Returns a full set of all permissions for this User. 
+	 * 
+	 * @return
+	 * 			| a set of all permissions attached to this User's credentials
+	 */
 	public List<UserPermission> getPermissions() {
 		ImmutableList.Builder<UserPermission> perms = ImmutableList.builder();
 		Set<UserPermission> permsSet = new HashSet<UserPermission>();
