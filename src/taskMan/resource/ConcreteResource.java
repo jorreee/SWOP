@@ -17,26 +17,16 @@ public class ConcreteResource extends Resource {
 	 * Construct an instance of a resourceType. This resourceType is contained
 	 * within the resourcePrototype. A concrete resource has a name to identify
 	 * it with, a list of other resourceTypes it requires, a list of
-	 * resourceType it conflicts with and an optional availability period.
+	 * resourceType it conflicts with and an optional availability period. (it
+	 * finds the last three from the supplied prototype)
 	 * During this availability period, the resource is available for use.
 	 * 
 	 * @param resourceName
 	 *            | The name of this instance
-	 * @param requiredResourcesList
-	 *            | The list of resources this resource requires
-	 * @param conflictingResourcesList
-	 *            | The list of resources this resource conflicts with
-	 * @param dailyAvailble
-	 *            | The period during which this resource should be available,
-	 *            if null, this resource is available for use during the entire
-	 *            work day
 	 * @param prototype
 	 *            | The resourceType this concrete resource instantiates
 	 */
 	public ConcreteResource(String resourceName,
-//			List<ResourcePrototype> requiredResourcesList,
-//			List<ResourcePrototype> conflictingResourcesList,
-//			AvailabilityPeriod dailyAvailble, 
 			ResourcePrototype prototype) {
 		super(resourceName, prototype.getRequiredResources(), prototype.getConflictingResources(),
 				new AvailabilityPeriod(prototype.getDailyAvailabilityStartTime(), prototype.getDailyAvailabilityEndTime()));
