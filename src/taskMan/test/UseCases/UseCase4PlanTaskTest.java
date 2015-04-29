@@ -250,7 +250,8 @@ public class UseCase4PlanTaskTest {
 		//To early for planned enddates of preReq's
 		assertTrue(taskManager.planTask(project0, task00, task00StartDateGood, concRes1, devList1));
 		assertTrue(taskManager.setTaskExecuting(project0, task00, task00StartDateGood));
-//		assertTrue(taskManager.setTaskFinished(project0, task00, task00EndDateGood));
+		assertTrue(taskManager.setTaskFinished(project0, task00, task00EndDateGood));
+		//TODO Error: task wordt gepland voor de preReq klaar waren
 		assertFalse(taskManager.planTask(project0, task01, LocalDateTime.of(2015,2,9,9,0), concRes2, devList1));
 	}
 	

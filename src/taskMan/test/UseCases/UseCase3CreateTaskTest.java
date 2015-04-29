@@ -135,8 +135,8 @@ public class UseCase3CreateTaskTest {
 		assertTrue(t01.isAlternative());
 		assertTrue(t01.getAlternativeTo().equals(t00));					//
 		assertFalse(t01.hasPrerequisites());
-//		assertTrue(t01.getStatusAsString().equals("Available"));
-//		assertEquals(project0.getAvailableTasks().size(),1);
+		assertTrue(t01.getStatusAsString().toLowerCase().equals("unavailable"));
+		assertEquals(project0.getAvailableTasks().size(),0);
 		
 	}
 
@@ -152,7 +152,7 @@ public class UseCase3CreateTaskTest {
 		List<TaskView> p0tasks = project0.getTasks();
 		assertTrue(p0tasks.size() == 1);
 		TaskView t00 = p0tasks.get(0);
-//		assertTrue(t00.getStatusAsString().equals("Available"));
+		assertTrue(t00.getStatusAsString().toLowerCase().equals("unavailable"));
 
 		// Step 1 and 2 are implicit
 		// Step 3
@@ -172,7 +172,7 @@ public class UseCase3CreateTaskTest {
 		assertTrue(t01.hasPrerequisites());
 		assertTrue(taskViewListContains(t01.getPrerequisites(),t00));				//
 		assertTrue(t01.getStatusAsString().equals("Unavailable"));
-//		assertEquals(project0.getAvailableTasks().size(),1);
+		assertEquals(project0.getAvailableTasks().size(),0);
 		
 	}
 	
@@ -257,7 +257,7 @@ public class UseCase3CreateTaskTest {
 		assertTrue(taskManager.setTaskExecuting(project0, t01, task01StartDateGood));
 		assertTrue(taskManager.setTaskFinished(project0, t01, task01EndDateGood));
 		
-//		assertEquals(nt.getStatusAsString(),"Available");
+		assertEquals(nt.getStatusAsString(),"Available");
 	}
 
 	@Test
