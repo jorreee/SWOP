@@ -1030,6 +1030,7 @@ public class Task implements Dependant {
 			for(Resource res : task.getReservedResources()){
 				if (this.getReservedResources().contains(res)){
 					conflictFound = true;
+					break;
 				}
 			}
 		}

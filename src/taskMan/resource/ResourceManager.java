@@ -3,6 +3,7 @@ package taskMan.resource;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -268,7 +269,7 @@ public class ResourceManager {
 				if(checkCanReserve) { // Safe method, check for unreserved resource
 					toReserve = pickUnreservedResource(r, startTime, endTime, newReservations, new ArrayList<ConcreteResource>());
 				} else { // Unsafe method, get the first resource (that is not already chosen)
-					List<ResourceView> crList = getConcreteResourcesForPrototype(new ResourceView(r));
+					List<ResourceView> crList = new ArrayList<ResourceView>(getConcreteResourcesForPrototype(new ResourceView(r)));
 					List<ResourceView> invalidCrs = new ArrayList<>();
 					for(ResourceView cr : crList) {
 						for(Reservation res : newReservations) {
