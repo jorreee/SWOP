@@ -61,11 +61,18 @@ public class PlanTaskRequest extends Request {
 				}
 
 				// Assign developers to task, assign planning to task, reserve selected resource(types)
-				success = facade.planTask(project, task, 
-						planning.getPlanningStartTime(), 
-						planning.getResourcesToReserve(),
-						planning.getDevelopers());
-
+				// This can be done safely or not (raw), be sure to check for conflicts when raw
+				if(planning.isSafePlanning()) {
+					success = facade.planTask(project, task, 
+							planning.getPlanningStartTime(), 
+							planning.getResourcesToReserve(),
+							planning.getDevelopers());
+				} else {
+					success = facade.planRawTask(project, task, 
+							planning.getPlanningStartTime(), 
+							planning.getResourcesToReserve(),
+							planning.getDevelopers());
+				}
 				// If selected planning conflicts with another task planning init resolve conflict request
 				Map<ProjectView, List<TaskView>> conflictingTasks = facade.findConflictingPlannings(task);
 				
@@ -187,6 +194,7 @@ public class PlanTaskRequest extends Request {
 					String startTime = inputReader.readLine();
 					String[] startBits = startTime.split(" ");
 					timeSlotStart = LocalDateTime.of(Integer.parseInt(startBits[0]), Integer.parseInt(startBits[1]), Integer.parseInt(startBits[2]), Integer.parseInt(startBits[3]), Integer.parseInt(startBits[4]));
+					planning.setSafePlanning(false);
 					break;
 				case "N" :
 					System.out.println("Select a time slot (type quit to exit)");
@@ -220,10 +228,12 @@ class PlanningScheme {
 	private LocalDateTime timeSlotStartTime;
 	private List<ResourceView> resourcesToReserve;
 	private List<ResourceView> developers;
+	private boolean safe;
 	
 	public PlanningScheme() {
 		resourcesToReserve = new ArrayList<>();
 		developers = new ArrayList<>();
+		safe = true;
 	}
 
 	public void setPlanBeginTime(LocalDateTime timeSlotStartTime) {
@@ -254,5 +264,13 @@ class PlanningScheme {
 	
 	public List<ResourceView> getDevelopers() {
 		return developers;
+	}
+	
+	public void setSafePlanning(boolean safe) {
+		this.safe = safe;
+	}
+	
+	public boolean isSafePlanning() {
+		return safe;
 	}
 }

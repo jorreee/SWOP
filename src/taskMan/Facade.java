@@ -206,6 +206,12 @@ public class Facade implements IFacade {
 			LocalDateTime plannedStartTime, List<ResourceView> concRes, List<ResourceView> devs) {
 		return taskMan.planTask(project, task, plannedStartTime, concRes, devs);
 	}
+	
+	@Override
+	public boolean planRawTask(ProjectView project, TaskView task,
+			LocalDateTime plannedStartTime, List<ResourceView> concRes, List<ResourceView> devs) {
+		return taskMan.planRawTask(project, task, plannedStartTime, concRes, devs);
+	}
 
 	@Override
 	public boolean addRequirementsToResource(List<ResourceView> resourcesToAdd,

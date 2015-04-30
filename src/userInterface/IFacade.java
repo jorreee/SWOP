@@ -83,6 +83,8 @@ public interface IFacade {
 
 	public boolean planTask(ProjectView project, TaskView task,
 			LocalDateTime planningStartTime, List<ResourceView> concRes, List<ResourceView> devs);
+	public boolean planRawTask(ProjectView project, TaskView task,
+			LocalDateTime planningStartTime, List<ResourceView> concRes, List<ResourceView> devs);
 
 //	public Map<ProjectView, List<TaskView>> reservationConflict(ResourceView requiredResource,
 //			ProjectView project, TaskView task, LocalDateTime planningStartTime);

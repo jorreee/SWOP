@@ -482,6 +482,36 @@ public class Project implements Dependant {
 		}
 		return t.plan(plannedStartTime, concRes, devs);
 	}
+	
+	/**
+	 * Passes its arguments to the provided task (if it exists) and tries to
+	 * plan it by invoking the rawPlan(...) method on it. It is however possible
+	 * that this planning will conflict with other plannings in the system. It
+	 * is the responsibility of the user when applying this method to check for
+	 * conflicts using the findConflictingPlannings and handle these conflicts
+	 * appropriately. If you want to be sure to not get into an inconsistent
+	 * state, use planTask instead.
+	 * 
+	 * 
+	 * @param task
+	 *            | the task to plan
+	 * @param plannedStartTime
+	 *            | the planned start time for the task
+	 * @param concRes
+	 *            | the concrete resources to plan for the task
+	 * @param devs
+	 *            | the developers to plan for the task
+	 * @return | whether the task has successfully planned. Also false if the
+	 *         supplied | task parameter is invalid
+	 */
+	public boolean planRawTask(TaskView task, LocalDateTime plannedStartTime,
+			List<ResourceView> concRes, List<ResourceView> devs) {
+		Task t = unwrapTaskView(task);
+		if (t == null) {
+			return false;
+		}
+		return t.rawPlan(plannedStartTime, concRes, devs);
+	}
 
 	/**
 	 * A method to check whether this project is finished

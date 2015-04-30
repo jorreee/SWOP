@@ -182,7 +182,7 @@ public class Task implements Dependant {
 		}
 		plan.setPlannedBeginTime(plannedStartTime);
 		if (!plan.setDevelopers(resMan.pickDevs(plannedDevelopers, this,
-				startTime, endTime))) {
+				startTime, endTime, true))) {
 			throw new IllegalArgumentException(
 					"Very bad developers, very bad! ## dit is een zéér gaye fout");
 		}
@@ -858,7 +858,7 @@ public class Task implements Dependant {
 				return false;
 			}
 		} else {
-			if(!resMan.reserve(concRes, this, startTime, getPlannedEndTime())) {
+			if(!resMan.reserve(concRes, this, startTime, getPlannedEndTime(), true)) {
 				return false;
 			}
 		}
@@ -866,7 +866,64 @@ public class Task implements Dependant {
 			resMan.releaseResources(this);
 			return false; // verkeerde hoeveelheid reservaties enzo
 		}
-		List<User> developers = resMan.pickDevs(devs, this, startTime, getPlannedEndTime());
+		List<User> developers = resMan.pickDevs(devs, this, startTime, getPlannedEndTime(), true);
+		if(developers == null) {
+			resMan.releaseResources(this);
+			return false;
+		}
+		if(!plan.setDevelopers(developers)) {
+			resMan.releaseResources(this);
+			return false;
+		}
+		state.makeAvailable(this);
+		return true;
+		
+	}
+
+	/**
+	 * Plan a task in the system from a given start time. Reservations will be
+	 * made for all the required resources and the developers will be assigned.
+	 * It is however possible that this planning will conflict with other
+	 * plannings in the system. It is the responsibility of the user when
+	 * applying this method to check for conflicts using the
+	 * findConflictingPlannings and handle these conflicts appropriately. If you
+	 * want to be sure to not get into an inconsistent state, use planTask
+	 * instead.
+	 * 
+	 * @param startTime
+	 *            | The planned begin time
+	 * @param concRes
+	 *            | The resources to plan
+	 * @param devs
+	 *            | The developers to assign
+	 * @return True if the task was planned and all reservations made
+	 */
+	public boolean rawPlan(LocalDateTime startTime, List<ResourceView> concRes, List<ResourceView> devs) {
+		for(Task t : prerequisites) {
+			if(t.isFailed() && (t.getReplacement() == null)) {
+				return false;
+			}
+		}
+		if(!isValidPlannedStartTime(startTime)) {
+			return false;
+		}
+		if(!plan.setPlannedBeginTime(startTime)) {
+			return false;
+		}
+		if(resMan.hasActiveReservations(this)) {
+			if(!refreshReservations(startTime)) {
+				return false;
+			}
+		} else {
+			if(!resMan.reserve(concRes, this, startTime, getPlannedEndTime(), false)) {
+				return false;
+			}
+		}
+		if(!resMan.hasActiveReservations(this)) {
+			resMan.releaseResources(this);
+			return false; // verkeerde hoeveelheid reservaties enzo
+		}
+		List<User> developers = resMan.pickDevs(devs, this, startTime, getPlannedEndTime(), false);
 		if(developers == null) {
 			resMan.releaseResources(this);
 			return false;
@@ -917,7 +974,7 @@ public class Task implements Dependant {
 	 */
 	public boolean reserve(ResourceView resource, LocalDateTime startTime,
 			LocalDateTime endTime) {
-		return resMan.reserve(Lists.newArrayList(resource), this, startTime, endTime);
+		return resMan.reserve(Lists.newArrayList(resource), this, startTime, endTime, true);
 	}
 	
 	/**

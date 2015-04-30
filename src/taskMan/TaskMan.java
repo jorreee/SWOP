@@ -477,6 +477,40 @@ public class TaskMan {
 		}
 		return p.planTask(task, plannedStartTime, concRes, devs);
 	}
+	
+	/**
+	 * Plan a task in the system from a given start time. Reservations will be
+	 * made for all the required resources and the developers will be assigned.
+	 * It is however possible that this planning will conflict with other
+	 * plannings in the system. It is the responsibility of the user when
+	 * applying this method to check for conflicts using the
+	 * findConflictingPlannings and handle these conflicts appropriately. If you
+	 * want to be sure to not get into an inconsistent state, use planTask
+	 * instead.
+	 * 
+	 * @param project
+	 *            | The project the task belongs to
+	 * @param task
+	 *            | The task to plan
+	 * @param plannedStartTime
+	 *            | The planned begin time
+	 * @param concRes
+	 *            | The resources to plan
+	 * @param devs
+	 *            | The developers to assign
+	 * @return True if the task was planned and all reservations made
+	 */
+	public boolean planRawTask(ProjectView project, TaskView task,
+			LocalDateTime plannedStartTime, List<ResourceView> concRes, List<ResourceView> devs) {
+		if(!currentUserHasPermission(UserPermission.PLAN_TASK)) {
+			return false;
+		}
+		Project p = unwrapProjectView(project);
+		if(p == null) {
+			return false;
+		}
+		return p.planRawTask(task, plannedStartTime, concRes, devs);
+	}
 
 	/**
 	 * This method will locate the resource pool responsible for the given

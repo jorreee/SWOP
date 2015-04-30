@@ -113,7 +113,7 @@ public class ResourceManagerTest {
 		List<ResourceView> devs = new ArrayList<>();
 		
 		devs.add(weer);
-		List<User> res = resMan.pickDevs(devs, testTask, start, end);
+		List<User> res = resMan.pickDevs(devs, testTask, start, end,true);
 		assertEquals("Weer",res.get(0).getName());
 		assertEquals(1, res.size());
 	}
@@ -125,7 +125,7 @@ public class ResourceManagerTest {
 		LocalDateTime end = LocalDateTime.of(2015, 4, 4, 12, 0);
 		List<ResourceView> devs = new ArrayList<>();
 		
-		List<User> res = resMan.pickDevs(devs, testTask, start, end);
+		List<User> res = resMan.pickDevs(devs, testTask, start, end,true);
 		assertEquals(0,res.size());
 	}
 	
@@ -137,7 +137,7 @@ public class ResourceManagerTest {
 		List<ResourceView> devs = new ArrayList<>();
 		
 		devs.add(new ResourceView(new User("Fail", new UserPrototype())));
-		List<User> res = resMan.pickDevs(devs, testTask, start, end);
+		List<User> res = resMan.pickDevs(devs, testTask, start, end,true);
 		assertNull(res);
 	}
 	

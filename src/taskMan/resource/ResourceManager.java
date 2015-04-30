@@ -235,6 +235,10 @@ public class ResourceManager {
 	 *            | The start time of the reservation
 	 * @param endTime
 	 *            | The end time of the reservation
+	 * @param checkCanReserve
+	 *            | This parameter will define if the method should check if the
+	 *            resource is actually available to reserve from the given start
+	 *            to end time
 	 * @return True if the new reservation was made and added to the system
 	 */
 	// TODO make a new reservation for every day (only within working hours and taking availability period into account)
@@ -242,8 +246,8 @@ public class ResourceManager {
 			List<ResourceView> resources, 
 			Task reservingTask, 
 			LocalDateTime startTime, 
-			LocalDateTime endTime
-			) {
+			LocalDateTime endTime,
+			boolean checkCanReserve) {
 		
 		if(resources == null || reservingTask == null ||
 				startTime == null || endTime == null) {
@@ -260,7 +264,25 @@ public class ResourceManager {
 			ConcreteResource toReserve = null;
 			ResourcePrototype r = unWrapResourcePrototypeView(resource);
 			if(r != null) {
-				toReserve = pickUnreservedResource(r, startTime, endTime, newReservations, new ArrayList<ConcreteResource>());
+				
+				if(checkCanReserve) { // Safe method, check for unreserved resource
+					toReserve = pickUnreservedResource(r, startTime, endTime, newReservations, new ArrayList<ConcreteResource>());
+				} else { // Unsafe method, get the first resource (that is not already chosen)
+					List<ResourceView> crList = getConcreteResourcesForPrototype(new ResourceView(r));
+					List<ResourceView> invalidCrs = new ArrayList<>();
+					for(ResourceView cr : crList) {
+						for(Reservation res : newReservations) {
+							if(res.hasAsResource(unWrapConcreteResourceView(cr))) {
+								invalidCrs.add(cr);
+							}
+						}
+					}
+					crList.removeAll(invalidCrs);
+					if(!crList.isEmpty()) {
+						toReserve = unWrapConcreteResourceView(crList.remove(0));
+					}
+				}
+				
 			} else {
 				User user = unWrapUserView(resource);
 				if(user != null) {
@@ -272,7 +294,7 @@ public class ResourceManager {
 					}
 				}
 			}
-			if(toReserve == null || !canReserve(toReserve,startTime,endTime, newReservations)) {
+			if(toReserve == null || (checkCanReserve && !canReserve(toReserve,startTime,endTime, newReservations))) {
 				error = true;
 				break;
 			} else {
@@ -306,7 +328,7 @@ public class ResourceManager {
 	 *            | The end time of the new reservations
 	 * @return The list of users for whom the reservation was made, null if there was an error
 	 */
-	public List<User> pickDevs(List<ResourceView> devs, Task reservingTask, LocalDateTime start, LocalDateTime end) {
+	public List<User> pickDevs(List<ResourceView> devs, Task reservingTask, LocalDateTime start, LocalDateTime end, boolean checkCanReserve) {
 		List<User> users = new ArrayList<>();
 		for(ResourceView dev : devs) {
 			User user = unWrapUserView(dev);
@@ -315,7 +337,7 @@ public class ResourceManager {
 			}
 			users.add(user);
 		}
-		boolean success = reserve(devs, reservingTask, start, end);
+		boolean success = reserve(devs, reservingTask, start, end, checkCanReserve);
 		if(!success) {
 			return null;
 		} else {
@@ -815,7 +837,7 @@ public class ResourceManager {
 		}
 		
 		activeReservations.removeAll(reservationsForTask);
-		if(!reserve(reservedResourcesForTask, reservingTask, newStartDate, newEndDate)) {
+		if(!reserve(reservedResourcesForTask, reservingTask, newStartDate, newEndDate, true)) {
 			activeReservations.addAll(reservationsForTask);
 			return false;
 		}
