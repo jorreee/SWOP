@@ -20,22 +20,22 @@ public class PlanTaskRequest extends Request {
 	@Override
 	public String execute() {
 
-		// Show a list of projects and their unplanned tasks
-		List<ProjectView> projects = facade.getProjects();
-
-		for(int i = 0 ; i < projects.size() ; i++) {
-			System.out.println("(" + i + ") Project " + projects.get(i).getName() + ":");
-			List<TaskView> unplannedTasks = projects.get(i).getUnplannedTasks();
-			for(int j = 0 ; j < unplannedTasks.size() ; j++) {
-				System.out.println("  {" + j + "} " + unplannedTasks.get(j).getDescription());
-			}
-		}
-
 		// SELECT PROJECT AND TASK TO PLAN
 		int projectID = -1;
 		int taskID = -1;
 		while(true) {
 			try {
+				// Show a list of projects and their unplanned tasks
+				List<ProjectView> projects = facade.getProjects();
+
+				for(int i = 0 ; i < projects.size() ; i++) {
+					System.out.println("(" + i + ") Project " + projects.get(i).getName() + ":");
+					List<TaskView> unplannedTasks = projects.get(i).getUnplannedTasks();
+					for(int j = 0 ; j < unplannedTasks.size() ; j++) {
+						System.out.println("  {" + j + "} " + unplannedTasks.get(j).getDescription());
+					}
+				}				
+				
 				// Ask for user input
 				System.out.println("Select a project and the task you wish to plan (Format: (Project location in list) (Task location in list), type quit to exit)");
 				String input = inputReader.readLine();
@@ -55,38 +55,38 @@ public class PlanTaskRequest extends Request {
 				boolean shouldMove = false;
 				boolean success = false;
 				do {
-				PlanningScheme planning = planTask(project, task);
-				if(planning == null) { 
-					return quit();
-				}
-
-				// Assign developers to task, assign planning to task, reserve selected resource(types)
-				// This can be done safely or not (raw), be sure to check for conflicts when raw
-				if(planning.isSafePlanning()) {
-					success = facade.planTask(project, task, 
-							planning.getPlanningStartTime(), 
-							planning.getResourcesToReserve(),
-							planning.getDevelopers());
-				} else {
-					success = facade.planRawTask(project, task, 
-							planning.getPlanningStartTime(), 
-							planning.getResourcesToReserve(),
-							planning.getDevelopers());
-				}
-				// If selected planning conflicts with another task planning init resolve conflict request
-				Map<ProjectView, List<TaskView>> conflictingTasks = facade.findConflictingPlannings(task);
-				
-
-				if(!conflictingTasks.isEmpty()) {
-					ResolvePlanningConflictRequest resolveConflictRequest = new ResolvePlanningConflictRequest(facade, inputReader, conflictingTasks);
-					System.out.println(resolveConflictRequest.execute());
-					// Conflict dictates that this planning should start over
-					if(resolveConflictRequest.shouldMovePlanningTask()) {
-						shouldMove = true;
+					PlanningScheme planning = planTask(project, task);
+					if(planning == null) { 
+						return quit();
 					}
-				}
-				}
-				// If task planning needs to be moved, restart process.
+	
+					// Assign developers to task, assign planning to task, reserve selected resource(types)
+					// This can be done safely or not (raw), be sure to check for conflicts when raw
+					if(planning.isSafePlanning()) {
+						success = facade.planTask(project, task, 
+								planning.getPlanningStartTime(), 
+								planning.getResourcesToReserve(),
+								planning.getDevelopers());
+					} else {
+						success = facade.planRawTask(project, task, 
+								planning.getPlanningStartTime(), 
+								planning.getResourcesToReserve(),
+								planning.getDevelopers());
+					}
+					// If selected planning conflicts with another task planning init resolve conflict request
+					Map<ProjectView, List<TaskView>> conflictingTasks = facade.findConflictingPlannings(task);
+					
+	
+					if(!conflictingTasks.isEmpty()) {
+						ResolvePlanningConflictRequest resolveConflictRequest = new ResolvePlanningConflictRequest(facade, inputReader, conflictingTasks);
+						System.out.println(resolveConflictRequest.execute());
+						// Conflict dictates that this planning should start over
+						if(resolveConflictRequest.shouldMovePlanningTask()) {
+							shouldMove = true;
+						}
+					}
+					}
+					// If task planning needs to be moved, restart process.
 				while (shouldMove == true);
 				
 				if(!success) { System.out.println("Failed to plan task, try again"); continue; }
@@ -176,7 +176,9 @@ public class PlanTaskRequest extends Request {
 				
 				
 				// show list of possible starting times
-				List<LocalDateTime> possibleStartingTimes = task.getPossibleStartingTimes(planning.getResourcesToReserve(),facade.getCurrentTime(),3);
+				List<ResourceView> toReserve = planning.getResourcesToReserve();
+				toReserve.addAll(planning.getDevelopers());
+				List<LocalDateTime> possibleStartingTimes = task.getPossibleStartingTimes(toReserve,facade.getCurrentTime(),3);
 				// (3 first possible (enough res and devs available))
 				for(int i = 0 ; i < possibleStartingTimes.size() ; i++) {
 					System.out.println("Possible task starting time " + i + ": " + possibleStartingTimes.get(i).toString());
@@ -185,7 +187,7 @@ public class PlanTaskRequest extends Request {
 				System.out.println("Do you want to choose your own time slot? (Yes: Y, No: N) WARNING: Not conflict free!");
 				input = inputReader.readLine();
 				LocalDateTime timeSlotStart = null;
-				switch(input){
+				switch(input.toUpperCase()){
 				case "Y" : 
 					System.out.println("Enter a starting time. Format: Y M D H M");
 					

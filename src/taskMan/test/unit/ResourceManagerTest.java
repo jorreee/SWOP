@@ -234,6 +234,31 @@ public class ResourceManagerTest {
 	}
 	
 	@Test
+	public void getPossibleStartingTimeTestSuccessReqDeveloperAlreadyAssigned() {
+		Task plannedTask = new Task("already planned", 120, 0, resMan, new ArrayList<Task>(), new HashMap<ResourceView, Integer>(), null);
+		LocalDateTime currentTime = LocalDateTime.of(2015, 04, 23, 10, 0);
+		
+		assertTrue(plannedTask.plan(currentTime, new ArrayList<ResourceView>(), Lists.newArrayList(weer)));
+		
+		Task toPlan = new Task("to plan", 60, 0, resMan, new ArrayList<Task>(), new HashMap<ResourceView, Integer>(), null);
+		List<LocalDateTime> possibleTimes = resMan.getPossibleStartingTimes(
+				toPlan, Lists.newArrayList(weer), currentTime, 3);
+		assertEquals(3,possibleTimes.size());
+		assertFalse(possibleTimes.contains(currentTime));
+		assertTrue(possibleTimes.contains(LocalDateTime.of(2015, 04, 23, 12, 0)));
+		assertTrue(possibleTimes.contains(LocalDateTime.of(2015, 04, 23, 13, 0)));
+		assertTrue(possibleTimes.contains(LocalDateTime.of(2015, 04, 23, 14, 0)));
+		
+		Task toPlanAgain = new Task("to plan again", 60, 0, resMan, new ArrayList<Task>(), new HashMap<ResourceView, Integer>(), null);
+		possibleTimes = resMan.getPossibleStartingTimes(
+				toPlanAgain, Lists.newArrayList(blunderbus), currentTime, 3);
+		assertEquals(3,possibleTimes.size());
+		assertTrue(possibleTimes.contains(currentTime));
+		assertTrue(possibleTimes.contains(LocalDateTime.of(2015, 04, 23, 11, 0)));
+		assertTrue(possibleTimes.contains(LocalDateTime.of(2015, 04, 23, 12, 0)));
+	}
+	
+	@Test
 	public void getPossibleStartingTimesTestSuccessReqResourcesHaveAvailability(){
 		//The required resources have an availability period
 		

@@ -790,6 +790,17 @@ public class ResourceManager {
 					alreadyReserved.add(cr);
 					continue;
 				}
+				// if User
+				User us = unWrapUserView(resource);
+				if(us != null) {
+					if(!alreadyReserved.contains(us) && canReserve(us,hour, TimeSpan.addSpanToLDT(hour,task.getEstimatedDuration(), workDayStart, workDayEnd),new ArrayList<Reservation>())) {
+						alreadyReserved.add(us);
+						continue;
+					} else {
+						validTimeStamp = false;
+						break;
+					}
+				}
 				return null; // The resources in allResources must be concrete or prototype
 			}
 			// If everything checks out, good job!

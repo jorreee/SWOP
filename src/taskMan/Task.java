@@ -854,13 +854,12 @@ public class Task implements Dependant {
 			return false;
 		}
 		if(resMan.hasActiveReservations(this)) {
-			if(!refreshReservations(startTime)) {
+			if(!refreshReservations(startTime)) { // TODO bij herplannen moet task toekomstige reservaties eerst droppen, dan hermaken, refreshReservations heeft niet de juiste betekenis
 				return false;
 			}
-		} else {
-			if(!resMan.reserve(concRes, this, startTime, getPlannedEndTime(), true)) {
-				return false;
-			}
+		}
+		if(!resMan.reserve(concRes, this, startTime, getPlannedEndTime(), true)) {
+			return false;
 		}
 		if(!resMan.hasActiveReservations(this)) {
 			resMan.releaseResources(this);
