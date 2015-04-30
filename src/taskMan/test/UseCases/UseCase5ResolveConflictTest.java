@@ -1,6 +1,6 @@
 package taskMan.test.UseCases;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -33,19 +35,24 @@ public class UseCase5ResolveConflictTest {
 			task02EndDateGood = LocalDateTime.of(2015, 2, 9, 14, 0);
 	private final int task00EstDur = 60,
 			task01EstDur = 60,
-			task02EstDur = 60;
+			task02EstDur = 60,
+			task03EstDur = 60;
 	private final int task00Dev = 0,
 			task01Dev = 50,
-			task02Dev = 0;
+			task02Dev = 0,
+			task03Dev = 0;
 	private final ArrayList<TaskView> task00Dependencies = new ArrayList<TaskView>(),
 			task01Dependencies = new ArrayList<TaskView>(),
-			task02Dependencies = new ArrayList<TaskView>();
+			task02Dependencies = new ArrayList<TaskView>(),
+			task03Dependencies = new ArrayList<TaskView>();
 	private final Map<ResourceView,Integer> task00Res = new HashMap<ResourceView,Integer>(),
 			task01Res = new HashMap<ResourceView,Integer>(),
-			task02Res = new HashMap<ResourceView,Integer>();
+			task02Res = new HashMap<ResourceView,Integer>(),
+			task03Res = new HashMap<ResourceView,Integer>();
 	private final ArrayList<ResourceView> task00ConcreteResources = new ArrayList<ResourceView>(),
 			task01ConcreteResources = new ArrayList<ResourceView>(),
-			task02ConcreteResources = new ArrayList<ResourceView>();
+			task02ConcreteResources = new ArrayList<ResourceView>(),
+			task03ConcreteResources = new ArrayList<ResourceView>();
 	private final List<ResourceView> devList1 = new ArrayList<ResourceView>(),
 			devList2 = new ArrayList<ResourceView>();
 	private ResourceView weer, blunderbus;
@@ -66,14 +73,16 @@ public class UseCase5ResolveConflictTest {
 		ProjectView project0 = taskManager.getProjects().get(0);
 
 		//create resources
-		taskManager.createResourcePrototype("car", emptyAvailabilityPeriodStart, emptyAvailabilityPeriodEnd);
+		assertTrue(taskManager.createResourcePrototype("car", emptyAvailabilityPeriodStart, emptyAvailabilityPeriodEnd));
 		for(int i = 0;i<=5;i++){
-			taskManager.declareConcreteResource("car" + i, taskManager.getResourcePrototypes().get(0));
+			assertTrue(taskManager.declareConcreteResource("car" + i, taskManager.getResourcePrototypes().get(0)));
 		}
-		taskManager.createResourcePrototype("whiteboard", emptyAvailabilityPeriodStart, emptyAvailabilityPeriodEnd);
+		assertTrue(taskManager.createResourcePrototype("whiteboard", emptyAvailabilityPeriodStart, emptyAvailabilityPeriodEnd));
 		for(int i = 0;i<=5;i++){
-			taskManager.declareConcreteResource("whiteboard" + i, taskManager.getResourcePrototypes().get(1));
+			assertTrue(taskManager.declareConcreteResource("whiteboard" + i, taskManager.getResourcePrototypes().get(1)));
 		}
+		assertTrue(taskManager.createResourcePrototype("beamer", emptyAvailabilityPeriodStart, emptyAvailabilityPeriodEnd));
+		assertTrue(taskManager.declareConcreteResource("TheOnlyBeamer", taskManager.getResourcePrototypes().get(2)));
 		taskManager.createDeveloper("Weer");
 		taskManager.createDeveloper("Blunderbus");
 		weer = taskManager.getDeveloperList().get(0);
@@ -88,22 +97,25 @@ public class UseCase5ResolveConflictTest {
 		task01Res.put(taskManager.getResourcePrototypes().get(1), 1);
 		task02Res.put(taskManager.getResourcePrototypes().get(0), 1);
 		task02Res.put(taskManager.getResourcePrototypes().get(1), 1);
+		task03Res.put(taskManager.getResourcePrototypes().get(2), 1);
 
-		assertTrue(taskManager.createTask(project0, "Design system", task00EstDur, task00Dev, task00Dependencies,task00Res, null));		// TASK 1
+		assertTrue(taskManager.createTask(project0, "Design system", task00EstDur, task00Dev, task00Dependencies,task00Res, null));		// TASK 0
 		TaskView task00 = project0.getTasks().get(0);
 		task01Dependencies.add(task00);
-		assertTrue(taskManager.createTask(project0, "Implement Native", task01EstDur, task01Dev, task01Dependencies,task01Res, null));	// TASK 2
+		assertTrue(taskManager.createTask(project0, "Implement Native", task01EstDur, task01Dev, task01Dependencies,task01Res, null));	// TASK 1
 
-		assertTrue(taskManager.createTask(project0, "Test code", task02EstDur, task02Dev, task02Dependencies,task02Res, null));			// TASK 3
+		assertTrue(taskManager.createTask(project0, "Test code", task02EstDur, task02Dev, task02Dependencies,task02Res, null));			// TASK 2
+		
+		assertTrue(taskManager.createTask(project0, "beamerTask", task03EstDur, task03Dev, task03Dependencies, task03Res, null));
 
 		//assertTrue(taskManager.advanceTimeTo(workDate)); // Omdat task updates enkel in het verleden kunnen gezet worden
 	}
 	
 	@Test
-	public void successCaseTest(){
+	public void successCaseTestConflictingDeveloper(){
+		//A test with a conflicting planned developer 
 		ProjectView project00 = taskManager.getProjects().get(0);
 		TaskView task00 = project00.getTasks().get(0);
-		TaskView task01 = project00.getTasks().get(1);
 		TaskView task02 = project00.getTasks().get(2);
 		
 		task00ConcreteResources.add(taskManager.getResourcePrototypes().get(0));
@@ -113,11 +125,16 @@ public class UseCase5ResolveConflictTest {
 		task02ConcreteResources.add(taskManager.getResourcePrototypes().get(1));
 		
 		assertTrue(taskManager.planTask(project00, task00, task00StartDateGood, task00ConcreteResources, devList1));
-		assertTrue(taskManager.planTask(project00, task02, task00StartDateGood, task02ConcreteResources, devList1));
+		assertTrue(taskManager.planRawTask(project00, task02, task00StartDateGood, task02ConcreteResources, devList1));
 		
 		Map<ProjectView, List<TaskView>> conflicts = taskManager.findConflictingPlannings(task02);
-
-
-
+		assertEquals(task00, conflicts.get(project00).get(0));
+	}
+	
+	@Test
+	public void successCaseTestConflictingResource(){
+		//A test with conflicting resource
+		ProjectView project00 = taskManager.getProjects().get(0);
+		TaskView task03 = project00.getTasks().get(3);
 	}
 }
