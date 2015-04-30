@@ -129,6 +129,7 @@ public class UseCase5ResolveConflictTest {
 		
 		Map<ProjectView, List<TaskView>> conflicts = taskManager.findConflictingPlannings(task02);
 		assertEquals(task00, conflicts.get(project00).get(0));
+		assertTrue(taskManager.planTask(project00, task00, task02StartDateGood, task00ConcreteResources, devList1));
 	}
 	
 	@Test
