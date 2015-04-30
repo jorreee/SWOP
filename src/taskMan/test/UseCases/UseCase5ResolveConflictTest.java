@@ -137,5 +137,11 @@ public class UseCase5ResolveConflictTest {
 		//A test with conflicting resource
 		ProjectView project00 = taskManager.getProjects().get(0);
 		TaskView task03 = project00.getTasks().get(3);
+		
+		task03ConcreteResources.add(taskManager.getResourcePrototypes().get(2));
+		assertTrue(taskManager.planTask(project00, task03, task00StartDateGood, task03ConcreteResources, devList1));
+		
+		HashMap<ResourceView, Integer >reqRes = new HashMap<ResourceView,Integer>();
+		assertTrue(taskManager.createTask(project00, "test", 60, 5, new ArrayList<TaskView>(), reqRes, null));
 	}
 }
