@@ -7,7 +7,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+//import java.util.Map;
 import java.util.Optional;
 
 import org.junit.Before;
@@ -26,16 +26,16 @@ public class ResourceManagerTest {
 	
 	private ResourceManager resMan;
 	
-	private List<ResourceView> concreteResDef, devList;
-	private Map<ResourceView,Integer> resDef;
-	private ResourceView carDef;	//car0
-	private ResourceView boardDef;	//board0
+//	private List<ResourceView> concreteResDef, devList;
+//	private Map<ResourceView,Integer> resDef;
+//	private ResourceView carDef;	//car0
+//	private ResourceView boardDef;	//board0
 	private ResourceView weer, blunderbus;
 	
 	private final Optional<LocalTime> emptyAvailabilityPeriodStart = Optional.empty(),
-			emptyAvailabilityPeriodEnd = Optional.empty(),
-			availabilityPeriod14 = Optional.of(LocalTime.of(14,0)),
-			availabilityPeriod17 = Optional.of(LocalTime.of(17,0));
+			emptyAvailabilityPeriodEnd = Optional.empty();
+//			availabilityPeriod14 = Optional.of(LocalTime.of(14,0)),
+//			availabilityPeriod17 = Optional.of(LocalTime.of(17,0));
 	
 	
 	@Before

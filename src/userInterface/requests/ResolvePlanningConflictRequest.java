@@ -61,22 +61,36 @@ public class ResolvePlanningConflictRequest extends Request {
 				System.out.println("Invalid input, try again");
 			}
 		}
+
 		// Resolve conflict for each conflicting task
 		PlanTaskRequest planTaskRequest = new PlanTaskRequest(facade, inputReader);
 		for(ProjectView project : conflictingTasks.keySet()) {
 			for(TaskView conflictingTask : conflictingTasks.get(project)) {
-				// Plan specific conflicting task
-				PlanningScheme newPlanning = planTaskRequest.planTask(project, conflictingTask);
-				
-				// Register newly planned reservations and assign newly planned planning to the conflicting task
-				boolean success = facade.planTask(project, conflictingTask, newPlanning.getPlanningStartTime(),newPlanning.getResourcesToReserve(),newPlanning.getDevelopers());
-
-				if(!success) { System.out.println("Failed to plan task, try again"); continue; }
-//				else {
-//					for(ResourceView resourceToReserve : newPlanning.getResourcesToReserve()) {
-//						facade.reserveResource(resourceToReserve, project, conflictingTask, newPlanning.getPlanningStartTime(), resourceToReserve.);
-//					}
-//				}
+				boolean shouldMove = false;
+				do {
+					System.out.println("Now re-planning task: " + conflictingTask.getDescription() + ", from project: " + project.getName());
+					// Plan specific conflicting task
+					PlanningScheme newPlanning = planTaskRequest.planTask(project, conflictingTask);
+					
+					// Register newly planned reservations and assign newly planned planning to the conflicting task
+					boolean success = facade.planRawTask(project, conflictingTask, newPlanning.getPlanningStartTime(),newPlanning.getResourcesToReserve(),newPlanning.getDevelopers());
+					
+					if(!success) { System.out.println("Failed to plan task, try again"); continue; }
+					
+					// If selected planning conflicts with another task planning init resolve conflict request
+					Map<ProjectView, List<TaskView>> newConflictingTasks = facade.findConflictingPlannings(conflictingTask);
+	
+					if(!newConflictingTasks.isEmpty()) {
+						ResolvePlanningConflictRequest resolveConflictRequest = new ResolvePlanningConflictRequest(facade, inputReader, newConflictingTasks);
+						System.out.println(resolveConflictRequest.execute());
+						// Conflict dictates that this planning should start over
+						if(resolveConflictRequest.shouldMovePlanningTask()) {
+							shouldMove = true;
+						}
+					} else {
+						shouldMove = false;
+					}
+				} while(shouldMove);
 			}
 		}
 		return "Conflict resolved";

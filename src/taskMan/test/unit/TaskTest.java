@@ -391,19 +391,4 @@ public class TaskTest {
 		assertEquals(defaultTest, alt.getAlternativeFor());
 		assertEquals(new TimeSpan(120),alt.getTimeSpent(currentTime));
 	}
-	
-	@Test
-	public void possibleStartTimesTest(){
-		//TODO
-//		defaultTest.getPossibleTaskStartingTimes(null,3);
-	}
-	
-	@Test
-	public void requiredResourcesTest(){
-		//TODO
-//		defaultTest.getRequiredResources();
-	}
-	
-	
-	
 }
