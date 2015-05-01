@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -99,14 +98,14 @@ public class UseCase5ResolveConflictTest {
 		task02Res.put(taskManager.getResourcePrototypes().get(1), 1);
 		task03Res.put(taskManager.getResourcePrototypes().get(2), 1);
 
-		assertTrue(taskManager.createTask(project0, "Design system", task00EstDur, task00Dev, task00Dependencies,task00Res, null));		// TASK 0
+		assertTrue(taskManager.createTask(project0, "task00", task00EstDur, task00Dev, task00Dependencies,task00Res, null));		// TASK 0
 		TaskView task00 = project0.getTasks().get(0);
 		task01Dependencies.add(task00);
-		assertTrue(taskManager.createTask(project0, "Implement Native", task01EstDur, task01Dev, task01Dependencies,task01Res, null));	// TASK 1
+		assertTrue(taskManager.createTask(project0, "task01", task01EstDur, task01Dev, task01Dependencies,task01Res, null));	// TASK 1
 
-		assertTrue(taskManager.createTask(project0, "Test code", task02EstDur, task02Dev, task02Dependencies,task02Res, null));			// TASK 2
+		assertTrue(taskManager.createTask(project0, "task02", task02EstDur, task02Dev, task02Dependencies,task02Res, null));			// TASK 2
 		
-		assertTrue(taskManager.createTask(project0, "beamerTask", task03EstDur, task03Dev, task03Dependencies, task03Res, null));
+		assertTrue(taskManager.createTask(project0, "task03", task03EstDur, task03Dev, task03Dependencies, task03Res, null));
 
 		//assertTrue(taskManager.advanceTimeTo(workDate)); // Omdat task updates enkel in het verleden kunnen gezet worden
 	}
@@ -130,8 +129,13 @@ public class UseCase5ResolveConflictTest {
 		Map<ProjectView, List<TaskView>> conflicts = taskManager.findConflictingPlannings(task02);
 		assertEquals(1,conflicts.keySet().size());
 		project00 = conflicts.keySet().iterator().next();
+		assertEquals(1,conflicts.get(project00).size());
 		assertEquals(task00, conflicts.get(project00).get(0));
+		//TODO Error: planning slaagt niet
 		assertTrue(taskManager.planTask(project00, task00, task02StartDateGood, task00ConcreteResources, devList1));
+		
+		conflicts = taskManager.findConflictingPlannings(task02);
+		assertTrue(conflicts.isEmpty());
 	}
 	
 	@Test
@@ -144,6 +148,72 @@ public class UseCase5ResolveConflictTest {
 		assertTrue(taskManager.planTask(project00, task03, task00StartDateGood, task03ConcreteResources, devList1));
 		
 		HashMap<ResourceView, Integer >reqRes = new HashMap<ResourceView,Integer>();
+		reqRes.put(taskManager.getResourcePrototypes().get(2), 1);
 		assertTrue(taskManager.createTask(project00, "test", 60, 5, new ArrayList<TaskView>(), reqRes, null));
+		TaskView test = project00.getTasks().get(4);
+		ArrayList<ResourceView> concRes = new ArrayList<ResourceView>();
+		concRes.add(taskManager.getResourcePrototypes().get(2));
+		assertTrue(taskManager.planRawTask(project00, test, task00StartDateGood, concRes, devList2));
+		Map<ProjectView, List<TaskView>> conflicts = taskManager.findConflictingPlannings(test);
+		assertEquals(1,conflicts.keySet().size());
+		project00 = conflicts.keySet().iterator().next();
+		assertEquals(1,conflicts.get(project00).size());
+		assertEquals(task03, conflicts.get(project00).get(0));
+		assertTrue(taskManager.planTask(project00, task03, task02StartDateGood, task03ConcreteResources, devList1));
+		
+		conflicts = taskManager.findConflictingPlannings(test);
+		assertTrue(conflicts.isEmpty());
+	}
+	
+	@Test
+	public void successCaseTestMultipleTasksConflict(){
+		//A test with multiple conflicting tasks
+		ProjectView project00 = taskManager.getProjects().get(0);
+		TaskView task00 = project00.getTasks().get(0);
+		TaskView task03 = project00.getTasks().get(3);
+		
+		task00ConcreteResources.add(taskManager.getResourcePrototypes().get(0));
+		task00ConcreteResources.add(taskManager.getResourcePrototypes().get(1));
+		
+		task03ConcreteResources.add(taskManager.getResourcePrototypes().get(2));
+
+		assertTrue(taskManager.planTask(project00, task00, task00StartDateGood, task00ConcreteResources, devList1));
+		assertTrue(taskManager.planTask(project00, task03, task00StartDateGood, task03ConcreteResources, devList2));
+
+		HashMap<ResourceView, Integer >reqRes = new HashMap<ResourceView,Integer>();
+		reqRes.put(taskManager.getResourcePrototypes().get(2), 1);
+		assertTrue(taskManager.createTask(project00, "test", 60, 5, new ArrayList<TaskView>(), reqRes, null));
+		TaskView test = project00.getTasks().get(4);
+		ArrayList<ResourceView> concRes = new ArrayList<ResourceView>();
+		concRes.add(taskManager.getResourcePrototypes().get(2));
+		assertTrue(taskManager.planRawTask(project00, test, task00StartDateGood, concRes, devList1));
+		
+		Map<ProjectView, List<TaskView>> conflicts = taskManager.findConflictingPlannings(test);
+		assertEquals(1,conflicts.keySet().size());
+		project00 = conflicts.keySet().iterator().next();
+		assertEquals(2,conflicts.get(project00).size());
+		assertTrue(conflicts.get(project00).contains(task00));
+		assertTrue(conflicts.get(project00).contains(task03));
+		assertTrue(taskManager.planTask(project00, task03, task02StartDateGood, task03ConcreteResources, devList2));
+		assertTrue(taskManager.planTask(project00, task00, task02StartDateGood, task00ConcreteResources, devList1));
+		
+		conflicts = taskManager.findConflictingPlannings(test);
+		assertTrue(conflicts.isEmpty());
+	}
+	
+	@Test
+	public void successCaseTestMultipleProjectsConflict(){
+		//A test with conflicts across multiple projects
+		ProjectView project00 = taskManager.getProjects().get(0);
+		TaskView task00 = project00.getTasks().get(0);
+		
+		task00ConcreteResources.add(taskManager.getResourcePrototypes().get(0));
+		task00ConcreteResources.add(taskManager.getResourcePrototypes().get(1));
+		
+		assertTrue(taskManager.planTask(project00, task00, task00StartDateGood, task00ConcreteResources, devList1));
+		
+		assertTrue(taskManager.createProject("project2", "test", startDate));
+		ProjectView project01 = taskManager.getProjects().get(1);
+
 	}
 }
