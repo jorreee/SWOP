@@ -271,7 +271,6 @@ public class UseCase1ShowProjectsTest {
 		assertEquals(project1.getAvailableTasks().size(),1);
 		assertEquals(project1.getCreationTime(),workdate1);
 		assertTrue(project1.isEstimatedOnTime(taskManager.getCurrentTime()));
-		//TODO Error: hangt af van de latere error
 		assertEquals(LocalDateTime.of(2015, 2, 18, 9, 50),project1.getEstimatedEndTime(taskManager.getCurrentTime()));
 
 		//Check project2 details
