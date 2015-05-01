@@ -15,7 +15,6 @@ import org.junit.Test;
 
 import taskMan.Facade;
 import taskMan.resource.AvailabilityPeriod;
-import taskMan.resource.Resource;
 import taskMan.resource.ResourcePrototype;
 import taskMan.resource.user.UserPrototype;
 import taskMan.view.ProjectView;
@@ -30,41 +29,26 @@ public class UseCase4PlanTaskTest {
 			workDate = LocalDateTime.of(2015, 2, 9, 16, 0),
 			task00StartDateGood = startDate,
 			task00EndDateGood = LocalDateTime.of(2015,2,9,10,0),
-			task01StartDateGood = LocalDateTime.of(2015, 2, 9, 10, 10),
-			task01EndDateGood = LocalDateTime.of(2015, 2, 9, 12, 0),
-			task02StartDateGood = LocalDateTime.of(2015, 2, 9, 12, 10),
-			task02EndDateGood = LocalDateTime.of(2015, 2, 9, 14, 0),
-			task00StartDateVeryBad1 = LocalDateTime.of(2015,2,1,8,0),
-			task00EndDateVeryBad1 = task00EndDateGood,
-			task00StartDateVeryBad2 = task00StartDateGood,
-			task00EndDateVeryBad2 = LocalDateTime.of(2015,2,9,17,0),
-			newTaskEndDateGood = LocalDateTime.of(2015, 2, 9, 11, 0);
+			task01StartDateGood = LocalDateTime.of(2015, 2, 9, 10, 10);
 	private final int task00EstDur = 120,
 			task01EstDur = 60,
-			task02EstDur = 60,
-			newTaskDur = 60;
+			task02EstDur = 60;
 	private final int task00Dev = 0,
 			task01Dev = 50,
-			task02Dev = 0,
-			newTaskDev = 10;
+			task02Dev = 0;
 	private final ArrayList<TaskView> task00Dependencies = new ArrayList<TaskView>(),
 			task01Dependencies = new ArrayList<TaskView>(),
-			task02Dependencies = new ArrayList<TaskView>(),
-			newTaskDependencies = new ArrayList<TaskView>(),
-			newTask2Dependencies = new ArrayList<TaskView>();
+			task02Dependencies = new ArrayList<TaskView>();
 	private final Map<ResourceView,Integer> task00Res = new HashMap<ResourceView,Integer>(),
 			task01Res = new HashMap<ResourceView,Integer>(),
 			task02Res = new HashMap<ResourceView,Integer>(),
 			newTaskRes = new HashMap<ResourceView,Integer>(),
 			noReq = new HashMap<ResourceView, Integer>();
 	private final ArrayList<ResourceView> task00ConcreteResources = new ArrayList<ResourceView>(),
-			task01ConcreteResources = new ArrayList<ResourceView>(),
-			task02ConcreteResources = new ArrayList<ResourceView>(),
-			task03ConcreteResources = new ArrayList<ResourceView>();
+			task01ConcreteResources = new ArrayList<ResourceView>();
 	private final List<ResourceView> devList1 = new ArrayList<ResourceView>(),
 			devList2 = new ArrayList<ResourceView>();
 	private ResourceView weer, blunderbus;
-//	private ResourceView dev1;
 	private final Optional<LocalTime> emptyAvailabilityPeriodStart = Optional.empty(),
 			emptyAvailabilityPeriodEnd = Optional.empty();
 	/**

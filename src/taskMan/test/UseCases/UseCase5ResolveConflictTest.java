@@ -25,13 +25,8 @@ public class UseCase5ResolveConflictTest {
 	private IFacade taskManager;
 	private final LocalDateTime startDate = LocalDateTime.of(2015, 2, 9, 8, 0),
 			project0DueDate = LocalDateTime.of(2015, 2, 13, 23, 59),
-			workDate = LocalDateTime.of(2015, 2, 9, 16, 0),
 			task00StartDateGood = startDate,
-			task00EndDateGood = LocalDateTime.of(2015,2,9,10,0),
-			task01StartDateGood = LocalDateTime.of(2015, 2, 9, 10, 10),
-			task01EndDateGood = LocalDateTime.of(2015, 2, 9, 12, 0),
-			task02StartDateGood = LocalDateTime.of(2015, 2, 9, 12, 10),
-			task02EndDateGood = LocalDateTime.of(2015, 2, 9, 14, 0);
+			task02StartDateGood = LocalDateTime.of(2015, 2, 9, 12, 10);
 	private final int task00EstDur = 60,
 			task01EstDur = 60,
 			task02EstDur = 60,
@@ -49,7 +44,6 @@ public class UseCase5ResolveConflictTest {
 			task02Res = new HashMap<ResourceView,Integer>(),
 			task03Res = new HashMap<ResourceView,Integer>();
 	private final ArrayList<ResourceView> task00ConcreteResources = new ArrayList<ResourceView>(),
-			task01ConcreteResources = new ArrayList<ResourceView>(),
 			task02ConcreteResources = new ArrayList<ResourceView>(),
 			task03ConcreteResources = new ArrayList<ResourceView>();
 	private final List<ResourceView> devList1 = new ArrayList<ResourceView>(),

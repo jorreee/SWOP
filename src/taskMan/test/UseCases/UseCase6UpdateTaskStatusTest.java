@@ -34,7 +34,6 @@ public class UseCase6UpdateTaskStatusTest {
 			task02EndDateGood = LocalDateTime.of(2015, 2, 9, 14, 0),
 			task00StartDateVeryBad1 = LocalDateTime.of(2015,2,1,8,0),
 			task00EndDateVeryBad1 = task00EndDateGood,
-			task00StartDateVeryBad2 = task00StartDateGood,
 			task00EndDateVeryBad2 = LocalDateTime.of(2015,2,9,17,0),
 			newTaskEndDateGood = LocalDateTime.of(2015, 2, 9, 11, 0);
 	private final int task00EstDur = 60,
