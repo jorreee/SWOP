@@ -3,8 +3,11 @@ package userInterface.requests;
 import java.io.BufferedReader;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import taskMan.view.ProjectView;
 import taskMan.view.ResourceView;
@@ -172,8 +175,9 @@ public class PlanTaskRequest extends Request {
 				if(input.toLowerCase().equals("quit")) { return null; }
 				// User selects developers
 				String[] devIDs = input.split(" ");
+				Set<String> devSet = new HashSet<>(Arrays.asList(devIDs));
 				List<ResourceView> devNames = new ArrayList<>();
-				for(String devID : devIDs) {
+				for(String devID : devSet) {
 					devNames.add(devs.get(Integer.parseInt(devID)));
 				}
 				for(ResourceView dev : devNames) {

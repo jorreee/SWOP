@@ -855,7 +855,7 @@ public class Task implements Dependant {
 		}
 		if(!plan.setPlannedBeginTime(startTime)) {
 			return false;
-		}
+		} // TODO refactor this (below) to resMan (iteration 3?)
 		if(resMan.hasActiveReservations(this)) {
 			if(!resMan.releaseResources(this, startTime)) {
 				return false;
