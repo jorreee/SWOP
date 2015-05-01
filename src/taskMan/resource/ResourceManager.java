@@ -224,11 +224,11 @@ public class ResourceManager {
 	}
 	
 	/**
-	 * Reserve a resource from a specific start to a specific end time. A
-	 * reservation will always be made by a task.
+	 * Reserve a list of resources from a specific start to a specific end time.
+	 * A reservation will always be made by a task.
 	 * 
-	 * @param resource
-	 *            | The resource to reserver
+	 * @param resources
+	 *            | The resources to reserve
 	 * @param reservingTask
 	 *            | The task making the reservation
 	 * @param startTime
@@ -326,7 +326,12 @@ public class ResourceManager {
 	 *            | The start time of the new reservations
 	 * @param end
 	 *            | The end time of the new reservations
-	 * @return The list of users for whom the reservation was made, null if there was an error
+	 * @param checkCanReserve
+	 *            | This parameter will define if the method should check if the
+	 *            resource is actually available to reserve from the given start
+	 *            to end time
+	 * @return The list of users for whom the reservation was made, null if
+	 *         there was an error
 	 */
 	public List<User> pickDevs(List<ResourceView> devs, Task reservingTask, LocalDateTime start, LocalDateTime end, boolean checkCanReserve) {
 		List<User> users = new ArrayList<>();
@@ -344,17 +349,22 @@ public class ResourceManager {
 			return users;
 		}
 	}
-	
+
 	/**
-	 * Checks whether the given resource can be reserved from the given start time to the given end time.
+	 * Checks whether the given resource can be reserved from the given start
+	 * time to the given end time.
 	 * 
-	 * @param 	resource
-	 * 			The resource to check.
-	 * @param 	start
-	 * 			The start time of the reservation.
-	 * @param 	end
-	 * 			The end time of the reservation.
-	 * @return 	true if the resource can be reserved in the given time slot, else false.
+	 * @param resource
+	 *            | The resource to check.
+	 * @param start
+	 *            | The start time of the reservation.
+	 * @param end
+	 *            | The end time of the reservation.
+	 * @param alreadyReserved
+	 *            | A list of new reservations (not yet present in the system)
+	 *            to also take into account
+	 * @return true if the resource can be reserved in the given time slot, else
+	 *         false.
 	 */
 	private boolean canReserve(ConcreteResource resource, 
 			LocalDateTime start, 
@@ -700,6 +710,9 @@ public class ResourceManager {
 	 *            | The task wants to be planned
 	 * @param allResources
 	 *            | The resources that should be available
+	 * @param currentTime
+	 *            | The current time, the method will find timestamps after this
+	 *            time
 	 * @param amount
 	 *            | The amount of suggestions that should be calculated
 	 * @return a list of timestamps when a planning could be made without
@@ -815,11 +828,15 @@ public class ResourceManager {
 	}
 	
 	/**
-	 * Any task can call this method to release all active reservations made
-	 * by this task. 
+	 * Any task can call this method to release all active reservations made by
+	 * this task.
 	 * 
 	 * @param task
-	 * @return
+	 *            | The task which wants to release its resources
+	 * @param currentTime
+	 *            | The current time, for bookkeeping purposes, reservations
+	 *            will be kept until this time
+	 * @return True if the resources were successfully released, False otherwise
 	 */
 	public boolean releaseResources(Task task, LocalDateTime currentTime) {
 		List<Reservation> toRemoveActive = new ArrayList<Reservation>();
@@ -896,9 +913,10 @@ public class ResourceManager {
 	
 	/**
 	 * Returns the reserved resources for a given task.
-	 * @param 	task
-	 * 			The task to get the reserved resources for.
-	 * @return	
+	 * 
+	 * @param task
+	 *            The task to get the reserved resources for.
+	 * @return A list of resources reserved by a task
 	 */
 	public List<Resource> getReservedResourcesForTask(Task task){
 		Builder<Resource> resources = ImmutableList.builder();

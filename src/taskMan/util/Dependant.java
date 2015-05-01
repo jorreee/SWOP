@@ -19,6 +19,8 @@ public interface Dependant {
 	 * 
 	 * @param preTask
 	 *            | The prerequisite that has changed
+	 * @return True if the dependencies were successfully updated, False
+	 *         otherwise
 	 */
 	public boolean updateDependency(Task preTask);
 

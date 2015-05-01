@@ -68,7 +68,7 @@ public class Task implements Dependant {
 	 * @param alternativeFor
 	 *            | The task this task will replace
 	 * @throws IllegalArgumentException
-	 *             if any of the parameters are invalid ( < 0 or null)
+	 *             if any of the parameters are invalid ( smaller than 0 or null)
 	 */
 	public Task(String taskDescription, 
 			int estimatedDuration,
@@ -248,7 +248,7 @@ public class Task implements Dependant {
 	 * task is an alternative for another task then this will let the
 	 * alternative know to do the same
 	 * 
-	 * @return
+	 * @return True if the dependants were successfully notified
 	 */
 	public boolean notifyDependants() {
 		for(Dependant t : dependants) {
@@ -484,8 +484,9 @@ public class Task implements Dependant {
 	/**
 	 * Sets the begin time of Task.
 	 * 
-	 * @param 	beginTime
-	 * 			The new begin time of the Task. 
+	 * @param beginTime
+	 *            The new begin time of the Task.
+	 * @return True if the new begin time was set
 	 */
 	public boolean setBeginTime(LocalDateTime beginTime) {
 		return plan.setBeginTime(beginTime);
@@ -494,10 +495,12 @@ public class Task implements Dependant {
 	/**
 	 * Sets the end time of Task.
 	 * 
-	 * @param 	endTime
-	 * 			The new end time of the Task.
-	 * @throws	IllegalArgumentException
-	 * 			If the new end time is null or the old end time is already set. 
+	 * @param endTime
+	 *            The new end time of the Task.
+	 * @return True if the end time was set
+	 * @throws IllegalArgumentException
+	 *             If the new end time is null or the old end time is already
+	 *             set.
 	 */
 	public boolean setEndTime(LocalDateTime endTime) {
 		return plan.setEndTime(endTime);
@@ -640,24 +643,24 @@ public class Task implements Dependant {
 		return state.execute(this, startTime);
 	}
 	
-	/**
-	 * Tries to renew all reservations made for this task. Fails if the new
-	 * reservation date doesn't fall before the planned start time or after
-	 * the planned end time.
-	 * 
-	 * @param newReservationDate
-	 * @return
-	 */
-	public boolean refreshReservations(LocalDateTime newReservationDate) {
-		if(getPlannedBeginTime() == null) {
-			return false;
-		}
-		if(    !newReservationDate.isBefore(getPlannedBeginTime()) 
-			&& !newReservationDate.isAfter(getPlannedEndTime())) {
-			return true;
-		}
-		return resMan.refreshReservations(this, newReservationDate, getPlannedEndTime());
-	}
+//	/**
+//	 * Tries to renew all reservations made for this task. Fails if the new
+//	 * reservation date doesn't fall before the planned start time or after
+//	 * the planned end time.
+//	 * 
+//	 * @param newReservationDate
+//	 * @return
+//	 */
+//	public boolean refreshReservations(LocalDateTime newReservationDate) {
+//		if(getPlannedBeginTime() == null) {
+//			return false;
+//		}
+//		if(    !newReservationDate.isBefore(getPlannedBeginTime()) 
+//			&& !newReservationDate.isAfter(getPlannedEndTime())) {
+//			return true;
+//		}
+//		return resMan.refreshReservations(this, newReservationDate, getPlannedEndTime());
+//	}
 	
 	/**
 	 * Replace this task with another one
@@ -689,7 +692,7 @@ public class Task implements Dependant {
 	 * 
 	 * @param 	deviation
 	 * 			The deviation to check.
-	 * @return	True if deviation >= 0
+	 * @return	True if deviation larger than or equal to 0
 	 */
 	private boolean isValidDeviation(int deviation) {
 		return deviation >= 0;
@@ -711,7 +714,7 @@ public class Task implements Dependant {
 	 * 
 	 * @param 	duration
 	 * 			The duration to check.
-	 * @return	True if duration > 0
+	 * @return	True if duration is larger than 0
 	 */
 	private boolean isValidDuration(int duration){
 		return duration > 0;
@@ -934,13 +937,17 @@ public class Task implements Dependant {
 		return true;
 		
 	}
-	
+
 	/**
 	 * Returns an amount of possible Task starting times.
 	 * 
-	 * @param 	amount
-	 * 			The amount of possible starting times wanted.
-	 * @return	The possible starting times of the Task
+	 * @param concRes
+	 *            | The concrete resources to reserve
+	 * @param currentTime
+	 *            | The time to start counting from
+	 * @param amount
+	 *            | The amount of possible starting times wanted.
+	 * @return The possible starting times of the Task
 	 */
 	public List<LocalDateTime> getPossibleTaskStartingTimes(List<ResourceView> concRes, LocalDateTime currentTime, int amount) {
 		return resMan.getPossibleStartingTimes(this,concRes,currentTime,amount);
@@ -1038,7 +1045,7 @@ public class Task implements Dependant {
 	/**
 	 * Unassigns the developers assigned to this task
 	 * 
-	 * @return
+	 * @return True if the developers were cleared
 	 */
 	public boolean releaseDevelopers() {
 		return plan.setDevelopers(new ArrayList<User>());

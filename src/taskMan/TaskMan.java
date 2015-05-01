@@ -150,16 +150,22 @@ public class TaskMan {
 	/**
 	 * Creates a new Task without a set status.
 	 * 
+	 * @param project
+	 *            | The project this task belongs to, this project must be
+	 *            notified whenever the state of this task changes
 	 * @param description
-	 *            The description of the given Task.
+	 *            | The description of the given Task.
 	 * @param estimatedDuration
-	 *            The estimated duration of the Task.
+	 *            | The estimated duration of the Task.
 	 * @param acceptableDeviation
-	 *            The acceptable deviation of the Task.
+	 *            | The acceptable deviation of the Task.
 	 * @param alternativeFor
-	 *            The alternative Task.
+	 *            | The alternative Task.
 	 * @param prerequisiteTasks
-	 *            The prerequisites Tasks for this Task.
+	 *            | The prerequisites Tasks for this Task.
+	 * @param requiredResources
+	 *            | The resource prototypes and their respective quantities that
+	 *            are required by for this task
 	 * @return True if the creation of a new Task was successful. False if the
 	 *         projectID is a valid one. False if the creation was unsuccessful
 	 */
@@ -181,30 +187,33 @@ public class TaskMan {
 	/**
 	 * Creates a Planned Task as issued by the input file.
 	 * 
+	 * @param projectView
+	 *            | The project where this task belongs to
 	 * @param description
-	 *            The description of the Task.
+	 *            | The description of the Task.
 	 * @param estimatedDuration
-	 *            The estimated duration of the Task.
+	 *            | The estimated duration of the Task.
 	 * @param acceptableDeviation
-	 *            The acceptable deviation of the Task.
+	 *            | The acceptable deviation of the Task.
 	 * @param prerequisiteTasks
-	 *            The prerequisites of the Task.
+	 *            | The prerequisites of the Task.
 	 * @param alternativeFor
-	 *            The alternative for the Task.
-	 * @param statusString
-	 *            The status of the Task.
+	 *            | The alternative for the Task.
+	 * @param requiredResources
+	 *            | The resources (types) and their respective quantity required
+	 *            for this task
+	 * @param taskStatus
+	 *            | The status of the Task.
 	 * @param startTime
-	 *            The startTime of the Task.
+	 *            | The startTime of the Task.
 	 * @param endTime
-	 *            The endTime of the Task.
-	 * @param planningDueTime
-	 *            The due time of the planning of the Task.
+	 *            | The endTime of the Task.
+	 * @param plannedStartTime
+	 *            | The due time of the planning of the Task.
 	 * @param plannedDevelopers
-	 *            The planned developers of the Task.
-	 * @param plannedResources
-	 *            The planned resources of the Task.
+	 *            | The planned developers of the Task.
 	 * @return True if and only if the creation of the Raw Planned Task was
-	 *         succesful.
+	 *         successful.
 	 */
 	public boolean createTask(ProjectView projectView, String description,
 			int estimatedDuration, int acceptableDeviation,
@@ -233,8 +242,6 @@ public class TaskMan {
 	 *            the id of the given project
 	 * @param taskID
 	 *            the id of the given task
-	 * @param startTime
-	 *            the start time of the given task
 	 * @param endTime
 	 *            the end time of the given task
 	 * @return True if setting the task to finished was successful, False if it
@@ -266,8 +273,6 @@ public class TaskMan {
 	 *            the id of the given project
 	 * @param taskID
 	 *            the id of the given task
-	 * @param startTime
-	 *            the start time of the given task
 	 * @param endTime
 	 *            the end time of the given task
 	 * @return True if setting the task to failed was successful. False if it
@@ -337,7 +342,7 @@ public class TaskMan {
 
 	/**
 	 * Return a view on the current user in the system
-	 * @return
+	 * @return The current (logged in) user
 	 */
 	public ResourceView getCurrentUserName() {
 		return new ResourceView(currentUser);
@@ -534,7 +539,7 @@ public class TaskMan {
 	 * prototype associated with the given resource, this method will return
 	 * null.
 	 * 
-	 * @param respirce
+	 * @param resource
 	 *            | The resource to find the prototype of
 	 * @return a resourceView of the prototype associated with the given
 	 *         resource or null if no corresponding prototype was found
@@ -588,8 +593,8 @@ public class TaskMan {
 	/**
 	 * Check whether or not this user has a specific credential
 	 * 
-	 * @param credential
-	 *            | The credential to check
+	 * @param permission
+	 *            | The permission to check
 	 * @return True if the user has the credential, false otherwise
 	 */
 	public boolean currentUserHasPermission(UserPermission permission) {

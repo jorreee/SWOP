@@ -135,7 +135,7 @@ public class Project implements Dependant {
 	 *            The estimated duration of the Task.
 	 * @param acceptableDeviation
 	 *            The acceptable deviation of the Task.
-	 * @param resman
+	 * @param resMan
 	 *            | The resource manager
 	 * @param prerequisiteTasks
 	 *            The prerequisites Tasks for this Task.
@@ -423,7 +423,7 @@ public class Project implements Dependant {
 	/**
 	 * Sets the task with the given task id to failed
 	 * 
-	 * @param 	task
+	 * @param 	t
 	 * 			the id of the given task
 	 * @param 	endTime
 	 * 			the end time of the given task
@@ -523,11 +523,13 @@ public class Project implements Dependant {
 	}
 	
 	/**
-	 * Calculate the estimated end time of the project, depending on
-	 * the task that has the longest delay chain. If no tasks are
-	 * currently available it will return the current Time. 
+	 * Calculate the estimated end time of the project, depending on the task
+	 * that has the longest delay chain. If no tasks are currently available it
+	 * will return the current Time.
 	 * 
-	 * @return The estimated end date of the project. Will always be 
+	 * @param currentTime
+	 *            | The current time to use as an offset
+	 * @return The estimated end date of the project. Will always be
 	 */
 	public LocalDateTime getEstimatedEndTime(LocalDateTime currentTime) {
 		if(isFinished()) {

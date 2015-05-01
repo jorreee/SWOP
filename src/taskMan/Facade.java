@@ -126,7 +126,8 @@ public class Facade implements IFacade {
 		if(!taskMan.currentUserHasPermission(UserPermission.SIMULATE)) {
 			return false;
 		}
-		return caretaker.storeInMemento();
+		caretaker.storeInMemento();
+		return true;
 	}
 
 	@Override

@@ -161,20 +161,26 @@ public class Planning {
 	}
 	
 	/**
-	 * Returns the time spent on the task. 
-	 * If the task is still being worked on, this method will return the 
-	 * time in working time elapsed between the start time and current time.
-	 * If the task has concluded (hasEnded() = true), this method will return
-	 * the time in working time elapsed between the start- and end time of
-	 * the task.
+	 * Returns the time spent on the task. If the task is still being worked on,
+	 * this method will return the time in working time elapsed between the
+	 * start time and current time. If the task has concluded (hasEnded() =
+	 * true), this method will return the time in working time elapsed between
+	 * the start- and end time of the task.
 	 * 
-	 * @param 	currentTime 
-	 * 			The current time
-	 * @return	time spent on this task in working time
-	 * @throws 	IllegalArgumentException 
-	 * 			When the start time of the task is after the time given.
+	 * @param currentTime
+	 *            | The current time
+	 * @param availabilityStart
+	 *            | A timestamp to indicate the presence of an availability
+	 *            period. Time calculations will be limited by this timestamp
+	 * @param availabilityEnd
+	 *            | A timestamp to indicate the presence of an availability
+	 *            period. Time calculations will be limited by this timestamp
+	 * @return time spent on this task in working time
+	 * @throws IllegalArgumentException
+	 *             When the start time of the task is after the time given.
 	 */
-	public TimeSpan getTimeSpent(LocalDateTime currentTime, LocalTime availabilityStart, LocalTime availabilityEnd) {
+	public TimeSpan getTimeSpent(LocalDateTime currentTime,
+			LocalTime availabilityStart, LocalTime availabilityEnd) {
 		if(currentTime == null) {
 			return new TimeSpan(0);
 		}
@@ -200,6 +206,12 @@ public class Planning {
 	 * Based on the planned begin time and the estimated duration, this method
 	 * will calculate the timestamp when this task is planned to end
 	 * 
+	 * @param availabilityStart
+	 *            | A timestamp to indicate the presence of an availability
+	 *            period. Time calculations will be limited by this timestamp
+	 * @param availabilityEnd
+	 *            | A timestamp to indicate the presence of an availability
+	 *            period. Time calculations will be limited by this timestamp
 	 * @return the planned end time
 	 */
 	public LocalDateTime getPlannedEndTime(LocalTime availabilityStart, LocalTime availabilityEnd) {
@@ -216,6 +228,12 @@ public class Planning {
 	 * A method to calculate the last possible timestamp when the task should
 	 * still be considered "on time"
 	 * 
+	 * @param availabilityStart
+	 *            | A timestamp to indicate the presence of an availability
+	 *            period. Time calculations will be limited by this timestamp
+	 * @param availabilityEnd
+	 *            | A timestamp to indicate the presence of an availability
+	 *            period. Time calculations will be limited by this timestamp
 	 * @return the last possible acceptable end time
 	 */
 	public LocalDateTime getAcceptableEndTime(LocalTime availabilityStart, LocalTime availabilityEnd) {

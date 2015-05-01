@@ -30,6 +30,8 @@ public class User extends ConcreteResource {
 	 * 
 	 * @param name
 	 *            | The name of the new user
+	 * @param prototype
+	 *            | The prototype to inherit data from
 	 */
 	public User(String name, UserPrototype prototype) {
 		super(name, prototype);

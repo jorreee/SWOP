@@ -189,6 +189,8 @@ public class TaskView {
 	 * Returns whether the current Task is on time, depending on the estimated
 	 * duration
 	 * 
+	 * @param currentTime
+	 *            | The current Time to compare to
 	 * @return True if the Task is on time. False if the current date false
 	 *         after beginTime + EstimatedDur (in working minutes)
 	 */
@@ -206,6 +208,13 @@ public class TaskView {
 		return !currentTime.isAfter(acceptableEndDate);
 	}
 	
+	/**
+	 * Find the acceptable end date of this task
+	 * 
+	 * @param acceptableSpan
+	 *            | The acceptable span for the task to last
+	 * @return The timestamp when the task is still acceptable to end
+	 */
 	private LocalDateTime getAcceptableEndDate(TimeSpan acceptableSpan) {
 
 		LocalDateTime startTime = getStartTime();
@@ -222,6 +231,8 @@ public class TaskView {
 	 * Returns whether the current is unacceptably overdue, depending on the
 	 * estimated duration and acceptable deviation of the task.
 	 * 
+	 * @param currentTime
+	 *            | The time to compare to
 	 * @return True if the project is overtime beyond the deviation. False
 	 *         otherwise.
 	 */
@@ -244,6 +255,8 @@ public class TaskView {
 	 * Returns the percentage of overdueness of the task, depending on the
 	 * estimated duration of the task. Returns 0 if the task is well on time.
 	 * 
+	 * @param currentTime
+	 *            | The time to compare to
 	 * @return The percentage of overdue.
 	 */
 	public int getOverTimePercentage(LocalDateTime currentTime) {
@@ -304,6 +317,8 @@ public class TaskView {
 	 *            | A list of all the resources (possible abstract resource
 	 *            types or concrete resources) that all should be available for
 	 *            the estimated duration of the task
+	 * @param currentTime
+	 *            | The time to start counting from
 	 * @param amount
 	 *            | The amount of suggestions that should be returned
 	 * @return a given amount of suggested starting times for the task to be
@@ -386,7 +401,7 @@ public class TaskView {
 
 	/**
 	 * Checks whether there exists a planning conflict with the given task
-	 * @param 	task
+	 * @param 	taskview
 	 * 			The task to check for a conflict.
 	 * @return	True if there exists a planning conflict, else false
 	 */

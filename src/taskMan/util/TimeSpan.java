@@ -309,9 +309,15 @@ public class TimeSpan {
 	 * day is from 8 to 17 on weekdays.
 	 * 
 	 * @param startTime
-	 *            The given start time
+	 *            | The given start time
 	 * @param endTime
-	 *            The given end time
+	 *            | The given end time
+	 * @param workDayStart
+	 *            | A timestamp to override the default workday start timestamp,
+	 *            null to use the default
+	 * @param workDayEnd
+	 *            | A timestamp to override the default workday end timestamp,
+	 *            null to use the default
 	 * @return Returns the amount of working minutes between two timestamps
 	 * @throws IllegalArgumentException
 	 *             Throws an exception when a null pointer is found in the
@@ -399,6 +405,12 @@ public class TimeSpan {
 	 *            | The original timestamp
 	 * @param span
 	 *            | The duration that should be added
+	 * @param workDayStart
+	 *            | A timestamp to override the default workday start timestamp,
+	 *            null to use the default
+	 * @param workDayEnd
+	 *            | A timestamp to override the default workday end timestamp,
+	 *            null to use the default
 	 * @return the new timestamp
 	 */
 	public static LocalDateTime addSpanToLDT(LocalDateTime offset, TimeSpan span, LocalTime workDayStart, LocalTime workDayEnd) {

@@ -52,10 +52,9 @@ public class TaskManCaretaker {
 	 * Store in memento will push a memento of the current system on a stack for
 	 * safekeeping. Every system state should be storeable.
 	 */
-	public boolean storeInMemento() {
+	public void storeInMemento() {
 		String taskman = buildMemento();
 		mementos.push(new TaskManMemento(taskman));
-		return true;
 	}
 	
 	/**

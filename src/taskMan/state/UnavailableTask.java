@@ -15,9 +15,6 @@ public class UnavailableTask implements TaskStatus {
 
 	/**
 	 * Construct a new unavailable status
-	 * 
-	 * @param t
-	 *            | The task that this status belongs to
 	 */
 	public UnavailableTask() {
 	}

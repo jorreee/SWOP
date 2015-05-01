@@ -31,6 +31,7 @@ public interface TaskStatus {
 	 * @param task
 	 *            | The task to execute
 	 * @param beginTime
+	 *            | The actual begin tim
 	 * @return True if the new status is executing, False if it remained
 	 *         unchanged
 	 */
@@ -42,6 +43,7 @@ public interface TaskStatus {
 	 * @param task
 	 *            | The task to finish
 	 * @param endTime
+	 *            | The actual end time
 	 * @return True if the new status is finished, False if it remained
 	 *         unchanged
 	 */
@@ -53,6 +55,7 @@ public interface TaskStatus {
 	 * @param task
 	 *            | The task to fail
 	 * @param endTime
+	 *            | the actual end time
 	 * @return True if the new status is failed, False if it remained unchanged
 	 */
 	public boolean fail(Task task, LocalDateTime endTime);
