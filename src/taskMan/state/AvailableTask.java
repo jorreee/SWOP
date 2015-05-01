@@ -78,7 +78,6 @@ public class AvailableTask implements TaskStatus {
 
 	@Override
 	public boolean register(Task task, Dependant d) {
-		task.addDependant(d);
 		return true;
 	}
 

@@ -37,16 +37,16 @@ public class Task implements Dependant {
 	private final String description;
 
 	private Planning plan;
-	
+
 	private final Task alternativeFor;
 	private Task replacement;
 	private ArrayList<Dependant> dependants;
 	private ArrayList<Task> prerequisites;
-	
+
 	private TaskStatus state;
-	
+
 	private final ResourceManager resMan;
-	private Map<ResourcePrototype,Integer> requiredResources;
+	private Map<ResourcePrototype, Integer> requiredResources;
 
 	/**
 	 * Create a new Task.
@@ -67,65 +67,65 @@ public class Task implements Dependant {
 	 * @param alternativeFor
 	 *            | The task this task will replace
 	 * @throws IllegalArgumentException
-	 *             if any of the parameters are invalid ( smaller than 0 or null)
+	 *             if any of the parameters are invalid ( smaller than 0 or
+	 *             null)
 	 */
-	public Task(String taskDescription, 
-			int estimatedDuration,
-			int acceptableDeviation, 
-			ResourceManager resMan, 
+	public Task(String taskDescription, int estimatedDuration,
+			int acceptableDeviation, ResourceManager resMan,
 			List<Task> prerequisiteTasks,
-			Map<ResourceView, Integer> requiredResources, 
-			Task alternativeFor) throws IllegalArgumentException {
-		
-		if(!isValidDescription(taskDescription)) {
+			Map<ResourceView, Integer> requiredResources, Task alternativeFor)
+			throws IllegalArgumentException {
+
+		if (!isValidDescription(taskDescription)) {
 			throw new IllegalArgumentException("Invalid description");
 		}
-		if(!isValidDuration(estimatedDuration)) {
+		if (!isValidDuration(estimatedDuration)) {
 			throw new IllegalArgumentException("Invalid duration");
 		}
-		if(!isValidDeviation(acceptableDeviation)) {
+		if (!isValidDeviation(acceptableDeviation)) {
 			throw new IllegalArgumentException("Invalid deviation");
 		}
-		if(!isValidAlternative(alternativeFor)) {
+		if (!isValidAlternative(alternativeFor)) {
 			throw new IllegalArgumentException("Invalid replacement");
 		}
-		if(!isValidPrerequisites(prerequisiteTasks)) {
+		if (!isValidPrerequisites(prerequisiteTasks)) {
 			throw new IllegalArgumentException("Invalid prerequisites");
 		}
-		if(prerequisiteTasks.contains(alternativeFor)) {
+		if (prerequisiteTasks.contains(alternativeFor)) {
 			throw new IllegalArgumentException("Alt can't be a prerequisite");
 		}
-		if(!isValidResourceManager(resMan)) {
+		if (!isValidResourceManager(resMan)) {
 			throw new IllegalArgumentException("Invalid resource manager");
 		}
 		this.description = taskDescription;
 		this.plan = new Planning(estimatedDuration, acceptableDeviation);
 		this.resMan = resMan;
-		Map<ResourcePrototype, Integer> reqRes = resMan.isValidRequiredResources(requiredResources);
-		if(reqRes == null) {
+		Map<ResourcePrototype, Integer> reqRes = resMan
+				.isValidRequiredResources(requiredResources);
+		if (reqRes == null) {
 			throw new IllegalArgumentException("Very bad required resources");
 		}
 		this.requiredResources = reqRes;
-		
+
 		this.state = new UnavailableTask();
 
 		this.dependants = new ArrayList<Dependant>();
 		this.prerequisites = new ArrayList<Task>();
-		
+
 		this.alternativeFor = alternativeFor;
-		if(alternativeFor != null) {
+		if (alternativeFor != null) {
 			alternativeFor.replaceWith(this);
 		}
 		replacement = null;
 
-		for(Task t : prerequisiteTasks) {
+		for (Task t : prerequisiteTasks) {
 			t.register(this);
 			this.prerequisites.add(t);
 		}
-		
+
 		removeAlternativesDependencies();
 	}
-	
+
 	/**
 	 * Create a new Task
 	 * 
@@ -158,26 +158,22 @@ public class Task implements Dependant {
 	 * @throws IllegalArgumentException
 	 *             | When invalid data was supplied
 	 */
-	public Task(String taskDescription, 
-			int estimatedDuration,
-			int acceptableDeviation, 
-			ResourceManager resMan, 
+	public Task(String taskDescription, int estimatedDuration,
+			int acceptableDeviation, ResourceManager resMan,
 			List<Task> prerequisiteTasks,
-			Map<ResourceView, Integer> requiredResources, 
-			Task alternativeFor, 
-			String taskStatus,
-			LocalDateTime startTime, 
-			LocalDateTime endTime,
-			LocalDateTime plannedStartTime,
-			List<ResourceView> plannedDevelopers) throws IllegalArgumentException {
-		
+			Map<ResourceView, Integer> requiredResources, Task alternativeFor,
+			String taskStatus, LocalDateTime startTime, LocalDateTime endTime,
+			LocalDateTime plannedStartTime, List<ResourceView> plannedDevelopers)
+			throws IllegalArgumentException {
+
 		this(taskDescription, estimatedDuration, acceptableDeviation, resMan,
 				prerequisiteTasks, requiredResources, alternativeFor);
 		if (taskStatus != null && !isValidTaskStatus(taskStatus)) {
 			throw new IllegalArgumentException("Very bad taskStatus");
 		}
 		if (plannedStartTime == null) {
-			throw new IllegalArgumentException("A planned start time is required for this kind of creation");
+			throw new IllegalArgumentException(
+					"A planned start time is required for this kind of creation");
 		}
 		plan.setPlannedBeginTime(plannedStartTime);
 		if (!plan.setDevelopers(resMan.pickDevs(plannedDevelopers, this,
@@ -201,28 +197,22 @@ public class Task implements Dependant {
 	}
 
 	/**
-	 * Register a new dependant to the current task through the state of the
-	 * task
+	 * Register a new dependant to the current task. If a task registers to this
+	 * task and it this task is Finished, it immediately calls notify(this) on
+	 * the registering task. If this task is failed and has a finished
+	 * alternative, it also immediately calls notify(this) on the registering
+	 * task.
 	 * 
 	 * @param t
 	 *            | The new dependant
 	 * @return true if the dependant was added
 	 */
 	public boolean register(Dependant t) {
-		if(!isValidDependant(t)) {
+		if (!isValidDependant(t)) {
 			return false;
 		}
+		dependants.add(t);
 		return state.register(this, t);
-	}
-	
-	/**
-	 * Add a dependant to the current task
-	 * 
-	 * @param d
-	 *            | The new dependant
-	 */
-	public void addDependant(Dependant d) {
-		dependants.add(d);
 	}
 
 	/**
@@ -233,10 +223,10 @@ public class Task implements Dependant {
 	 * @return True when it is valid, false otherwise
 	 */
 	private boolean isValidDependant(Dependant t) {
-		if(t == this) {
+		if (t == this) {
 			return false;
 		}
-		if(t == null) {
+		if (t == null) {
 			return false;
 		}
 		return true;
@@ -250,10 +240,10 @@ public class Task implements Dependant {
 	 * @return True if the dependants were successfully notified
 	 */
 	public boolean notifyDependants() {
-		for(Dependant t : dependants) {
+		for (Dependant t : dependants) {
 			t.updateDependency(this);
 		}
-		if(alternativeFor != null) {
+		if (alternativeFor != null) {
 			alternativeFor.notifyDependants();
 		}
 		return true;
@@ -263,12 +253,12 @@ public class Task implements Dependant {
 	public boolean updateDependency(Task preTask) {
 		int preIndex = prerequisites.indexOf(preTask);
 
-		if(preIndex < 0) {
+		if (preIndex < 0) {
 			return false;
 		}
 
 		state.makeAvailable(this);
-		
+
 		return true;
 	}
 
@@ -276,11 +266,11 @@ public class Task implements Dependant {
 	 * Prevent double storing of dependencies
 	 */
 	private void removeAlternativesDependencies() {
-		if(alternativeFor != null) {
+		if (alternativeFor != null) {
 			int depIndex;
-			for(Dependant d : alternativeFor.getDependants()) {
+			for (Dependant d : alternativeFor.getDependants()) {
 				depIndex = dependants.indexOf(d);
-				if(depIndex >= 0) {
+				if (depIndex >= 0) {
 					dependants.remove(depIndex);
 				}
 			}
@@ -290,12 +280,12 @@ public class Task implements Dependant {
 	/**
 	 * Checks whether the Task is finished.
 	 * 
-	 * @return	True if and only if the Task has a finished status.
+	 * @return True if and only if the Task has a finished status.
 	 */
 	public boolean isFinished() {
 		return state.isFinished();
 	}
-	
+
 	/**
 	 * Check if this task has a finished endpoint (this task has finished or if
 	 * it has failed, a replacement has finished). This check will happen
@@ -306,11 +296,11 @@ public class Task implements Dependant {
 	 *         finished
 	 */
 	public boolean hasFinishedEndpoint() {
-		if(isFinished()) {
+		if (isFinished()) {
 			return true;
 		}
-		if(isFailed()) {
-			if(replacement != null) {
+		if (isFailed()) {
+			if (replacement != null) {
 				return replacement.hasFinishedEndpoint();
 			}
 		}
@@ -320,22 +310,22 @@ public class Task implements Dependant {
 	/**
 	 * Checks whether the the Task has failed.
 	 * 
-	 * @return	True if and only the Task has failed.
+	 * @return True if and only the Task has failed.
 	 */
-	public boolean isFailed(){
+	public boolean isFailed() {
 		return state.isFailed();
 	}
-	
+
 	/**
 	 * Check whether or not this task is eligible to be replaced by another
 	 * 
 	 * @return True when this task can be replaced by another
 	 */
 	private boolean canBeReplaced() {
-		if(!isFailed()) {
+		if (!isFailed()) {
 			return false;
 		}
-		if(getReplacement() != null) {
+		if (getReplacement() != null) {
 			return false;
 		}
 		return true;
@@ -344,72 +334,72 @@ public class Task implements Dependant {
 	/**
 	 * Checks whether the Task is available.
 	 * 
-	 * @return	True if and only the Task is available.
+	 * @return True if and only the Task is available.
 	 */
-	public boolean isAvailable(){
+	public boolean isAvailable() {
 		return state.isAvailable();
 	}
-	
+
 	/**
 	 * Checks whether the task is executing.
+	 * 
 	 * @return True if the task is executing, else false
 	 */
-	public boolean isExecuting(){
+	public boolean isExecuting() {
 		return state.isExecuting();
 	}
 
 	/**
 	 * Checks whether the Task is unavailable.
 	 * 
-	 * @return	True if and only the Task is unavailable.
+	 * @return True if and only the Task is unavailable.
 	 */
-	public boolean isUnavailable(){
+	public boolean isUnavailable() {
 		return state.isUnavailable();
 	}
 
 	/**
 	 * checks whether the Task has ended.
 	 * 
-	 * @return	True if and only if the Task has ended.
+	 * @return True if and only if the Task has ended.
 	 */
-	public boolean hasEnded(){
+	public boolean hasEnded() {
 		return (isFinished() || isFailed());
 	}
 
 	/**
-	 * Returns the time spent on the task. 
-	 * If the task is still being worked on, this method will return the 
-	 * time in working time elapsed between the start time and current time.
-	 * If the task has concluded (hasEnded() = true), this method will return
-	 * the time in working time elapsed between the start- and end time of
-	 * the task.
+	 * Returns the time spent on the task. If the task is still being worked on,
+	 * this method will return the time in working time elapsed between the
+	 * start time and current time. If the task has concluded (hasEnded() =
+	 * true), this method will return the time in working time elapsed between
+	 * the start- and end time of the task.
 	 * 
-	 * @param 	currentTime 
-	 * 			The current time
-	 * @return	time spent on this task in working time
-	 * @throws 	IllegalArgumentException 
-	 * 			When the start time of the task is after the time given.
+	 * @param currentTime
+	 *            The current time
+	 * @return time spent on this task in working time
+	 * @throws IllegalArgumentException
+	 *             When the start time of the task is after the time given.
 	 */
 	public TimeSpan getTimeSpent(LocalDateTime currentTime) {
-		if(!hasEnded() && !isExecuting()){
+		if (!hasEnded() && !isExecuting()) {
 			return new TimeSpan(0);
-		}
-		else if (hasEnded()) {
-			int timeSpent = TimeSpan.getDifferenceWorkingMinutes(getBeginTime(), getEndTime(), null, null);
-			if(alternativeFor != null) {
-				timeSpent += alternativeFor.getTimeSpent(currentTime).getSpanMinutes();
+		} else if (hasEnded()) {
+			int timeSpent = TimeSpan.getDifferenceWorkingMinutes(
+					getBeginTime(), getEndTime(), null, null);
+			if (alternativeFor != null) {
+				timeSpent += alternativeFor.getTimeSpent(currentTime)
+						.getSpanMinutes();
 			}
 			return new TimeSpan(timeSpent);
-		}
-		else {
+		} else {
 			int currentTimeSpent = TimeSpan.getDifferenceWorkingMinutes(
-					getBeginTime(), 
-					currentTime, null, null);
-			
-			if(alternativeFor != null) {
+					getBeginTime(), currentTime, null, null);
+
+			if (alternativeFor != null) {
 				currentTimeSpent = currentTimeSpent
-								 + alternativeFor.getTimeSpent(currentTime).getSpanMinutes();
-		}
+						+ alternativeFor.getTimeSpent(currentTime)
+								.getSpanMinutes();
+			}
 			return new TimeSpan(currentTimeSpent);
 		}
 
@@ -418,22 +408,23 @@ public class Task implements Dependant {
 	/**
 	 * Returns the planned start time of the Task.
 	 * 
-	 * @return	The planned start time of the Task.
+	 * @return The planned start time of the Task.
 	 */
 	public LocalDateTime getPlannedBeginTime() {
 		return plan.getPlannedBeginTime();
 	}
-	
+
 	/**
 	 * Returns the planned end time of the Task.
 	 * 
-	 * @return	The planned end time of the Task.
+	 * @return The planned end time of the Task.
 	 */
 	public LocalDateTime getPlannedEndTime() {
 		LocalTime[] availabilityPeriod = getAvailabilityPeriodBoundWorkingTimes();
-		return plan.getPlannedEndTime(availabilityPeriod[0], availabilityPeriod[1]);
+		return plan.getPlannedEndTime(availabilityPeriod[0],
+				availabilityPeriod[1]);
 	}
-	
+
 	/**
 	 * Find the starting and ending working day timestamps bound by availability
 	 * periods of the required resources
@@ -444,28 +435,33 @@ public class Task implements Dependant {
 	 */
 	public LocalTime[] getAvailabilityPeriodBoundWorkingTimes() {
 		LocalTime availabilityStart = null, availabilityEnd = null;
-		for(ResourcePrototype resource : requiredResources.keySet()) {
-			if(resource.isDailyAvailable()) {
-				if(availabilityStart != null) {
-					if(resource.getDailyAvailabilityStartTime().isAfter(availabilityStart)) {
-						availabilityStart = resource.getDailyAvailabilityStartTime();
+		for (ResourcePrototype resource : requiredResources.keySet()) {
+			if (resource.isDailyAvailable()) {
+				if (availabilityStart != null) {
+					if (resource.getDailyAvailabilityStartTime().isAfter(
+							availabilityStart)) {
+						availabilityStart = resource
+								.getDailyAvailabilityStartTime();
 					}
-					if(resource.getDailyAvailabilityEndTime().isBefore(availabilityEnd)) {
-						availabilityEnd = resource.getDailyAvailabilityEndTime();
+					if (resource.getDailyAvailabilityEndTime().isBefore(
+							availabilityEnd)) {
+						availabilityEnd = resource
+								.getDailyAvailabilityEndTime();
 					}
 				} else {
-					availabilityStart = resource.getDailyAvailabilityStartTime();
+					availabilityStart = resource
+							.getDailyAvailabilityStartTime();
 					availabilityEnd = resource.getDailyAvailabilityEndTime();
 				}
 			}
 		}
-		return new LocalTime[]{availabilityStart, availabilityEnd};
+		return new LocalTime[] { availabilityStart, availabilityEnd };
 	}
 
 	/**
 	 * Returns the start time of the Task.
 	 * 
-	 * @return	The start time of the Task.
+	 * @return The start time of the Task.
 	 */
 	public LocalDateTime getBeginTime() {
 		return plan.getBeginTime();
@@ -474,7 +470,7 @@ public class Task implements Dependant {
 	/**
 	 * Returns the end time of the Task.
 	 * 
-	 * @return	The end time of the Task.
+	 * @return The end time of the Task.
 	 */
 	public LocalDateTime getEndTime() {
 		return plan.getEndTime();
@@ -508,7 +504,7 @@ public class Task implements Dependant {
 	/**
 	 * Returns the description of the Task.
 	 * 
-	 * @return	The description of the task.
+	 * @return The description of the task.
 	 */
 	public String getDescription() {
 		return description;
@@ -517,7 +513,7 @@ public class Task implements Dependant {
 	/**
 	 * Returns the estimated duration of the Task.
 	 * 
-	 * @return	The estimated duration of the Task.
+	 * @return The estimated duration of the Task.
 	 */
 	public TimeSpan getEstimatedDuration() {
 		return plan.getEstimatedDuration();
@@ -526,20 +522,21 @@ public class Task implements Dependant {
 	/**
 	 * Returns the acceptable deviation of the Task.
 	 * 
-	 * @return	The acceptable deviation of the Task.
+	 * @return The acceptable deviation of the Task.
 	 */
 	public int getAcceptableDeviation() {
 		return plan.getAcceptableDeviation();
 	}
-	
+
 	/**
 	 * Return the alternative this task replaces
+	 * 
 	 * @return the task this task is an alternative for
 	 */
 	public Task getAlternativeFor() {
 		return alternativeFor;
 	}
-	
+
 	/**
 	 * Return the task which replaces this one
 	 * 
@@ -559,25 +556,27 @@ public class Task implements Dependant {
 	public TimeSpan getMaxDelayChain() {
 		TimeSpan longest = getEstimatedDuration();
 		TimeSpan candidate;
-		for(Dependant d : dependants) {
+		for (Dependant d : dependants) {
 			candidate = getEstimatedDuration().add(d.getMaxDelayChain());
-			if(candidate.isLonger(longest)) {
+			if (candidate.isLonger(longest)) {
 				longest = candidate;
 			}
 		}
-		if(alternativeFor != null) {
-			candidate = getEstimatedDuration().add(alternativeFor.getMaxDelayChain().minus(alternativeFor.getEstimatedDuration()));
-			if(candidate.isLonger(longest)) {
+		if (alternativeFor != null) {
+			candidate = getEstimatedDuration().add(
+					alternativeFor.getMaxDelayChain().minus(
+							alternativeFor.getEstimatedDuration()));
+			if (candidate.isLonger(longest)) {
 				longest = candidate;
 			}
 		}
 		return longest;
 	}
-	
+
 	public List<Task> getPrerequisites() {
 		return prerequisites;
 	}
-	
+
 	/**
 	 * Return a list of all the dependants of this task
 	 * 
@@ -590,9 +589,9 @@ public class Task implements Dependant {
 	/**
 	 * Returns the status of the Task as a String.
 	 * 
-	 * @return	The status of the Task as a String.
+	 * @return The status of the Task as a String.
 	 */
-	public String getStatus(){
+	public String getStatus() {
 		return state.toString();
 
 	}
@@ -600,15 +599,15 @@ public class Task implements Dependant {
 	/**
 	 * End the task in a Finished state
 	 * 
-	 * @param 	endTime
-	 * 			The new end time of the Task.
-	 * @return	True if and only if the updates succeeds.
+	 * @param endTime
+	 *            The new end time of the Task.
+	 * @return True if and only if the updates succeeds.
 	 */
 	public boolean finish(LocalDateTime endTime) {
-		if(!state.finish(this, endTime)) {
+		if (!state.finish(this, endTime)) {
 			return false;
 		}
-		if(!resMan.releaseResources(this, endTime)) {
+		if (!resMan.releaseResources(this, endTime)) {
 			return false;
 		}
 		return true;
@@ -617,20 +616,20 @@ public class Task implements Dependant {
 	/**
 	 * End the task in a Failed state
 	 * 
-	 * @param 	endTime
-	 * 			The new end time of the Task.
-	 * @return	True if and only if the updates succeeds.
+	 * @param endTime
+	 *            The new end time of the Task.
+	 * @return True if and only if the updates succeeds.
 	 */
 	public boolean fail(LocalDateTime endTime) {
-		if(!state.fail(this, endTime)) {
+		if (!state.fail(this, endTime)) {
 			return false;
 		}
-		if(!resMan.releaseResources(this, endTime)) {
+		if (!resMan.releaseResources(this, endTime)) {
 			return false;
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Ask the state to put this task in an executing state
 	 * 
@@ -641,26 +640,27 @@ public class Task implements Dependant {
 	public boolean execute(LocalDateTime startTime) {
 		return state.execute(this, startTime);
 	}
-	
-//	/**
-//	 * Tries to renew all reservations made for this task. Fails if the new
-//	 * reservation date doesn't fall before the planned start time or after
-//	 * the planned end time.
-//	 * 
-//	 * @param newReservationDate
-//	 * @return
-//	 */
-//	public boolean refreshReservations(LocalDateTime newReservationDate) {
-//		if(getPlannedBeginTime() == null) {
-//			return false;
-//		}
-//		if(    !newReservationDate.isBefore(getPlannedBeginTime()) 
-//			&& !newReservationDate.isAfter(getPlannedEndTime())) {
-//			return true;
-//		}
-//		return resMan.refreshReservations(this, newReservationDate, getPlannedEndTime());
-//	}
-	
+
+	// /**
+	// * Tries to renew all reservations made for this task. Fails if the new
+	// * reservation date doesn't fall before the planned start time or after
+	// * the planned end time.
+	// *
+	// * @param newReservationDate
+	// * @return
+	// */
+	// public boolean refreshReservations(LocalDateTime newReservationDate) {
+	// if(getPlannedBeginTime() == null) {
+	// return false;
+	// }
+	// if( !newReservationDate.isBefore(getPlannedBeginTime())
+	// && !newReservationDate.isAfter(getPlannedEndTime())) {
+	// return true;
+	// }
+	// return resMan.refreshReservations(this, newReservationDate,
+	// getPlannedEndTime());
+	// }
+
 	/**
 	 * Replace this task with another one
 	 * 
@@ -669,7 +669,7 @@ public class Task implements Dependant {
 	 * @return True if the replacement is set
 	 */
 	public boolean replaceWith(Task t) {
-		if(!canBeReplaced()) {
+		if (!canBeReplaced()) {
 			return false;
 		}
 		this.replacement = t;
@@ -685,37 +685,37 @@ public class Task implements Dependant {
 	public void setTaskStatus(TaskStatus newStatus) {
 		this.state = newStatus;
 	}
-	
+
 	/**
 	 * Checks whether the deviation is a valid one.
 	 * 
-	 * @param 	deviation
-	 * 			The deviation to check.
-	 * @return	True if deviation larger than or equal to 0
+	 * @param deviation
+	 *            The deviation to check.
+	 * @return True if deviation larger than or equal to 0
 	 */
 	private boolean isValidDeviation(int deviation) {
 		return deviation >= 0;
 	}
-	
+
 	/**
 	 * Checks whether the description is a valid one.
 	 * 
-	 * @param 	description
-	 * 			The description to check.
-	 * @return	True if description != null
+	 * @param description
+	 *            The description to check.
+	 * @return True if description != null
 	 */
-	private boolean isValidDescription(String description){
+	private boolean isValidDescription(String description) {
 		return description != null;
 	}
-	
+
 	/**
 	 * Checks whether the duration is a valid one.
 	 * 
-	 * @param 	duration
-	 * 			The duration to check.
-	 * @return	True if duration is larger than 0
+	 * @param duration
+	 *            The duration to check.
+	 * @return True if duration is larger than 0
 	 */
-	private boolean isValidDuration(int duration){
+	private boolean isValidDuration(int duration) {
 		return duration > 0;
 	}
 
@@ -727,9 +727,9 @@ public class Task implements Dependant {
 	 * @return True when the status is recognized
 	 */
 	private boolean isValidTaskStatus(String status) {
-		if(    !status.equalsIgnoreCase("finished")
-			&& !status.equalsIgnoreCase("failed")
-			&& !status.equalsIgnoreCase("executing")) {
+		if (!status.equalsIgnoreCase("finished")
+				&& !status.equalsIgnoreCase("failed")
+				&& !status.equalsIgnoreCase("executing")) {
 			return false;
 		}
 		return true;
@@ -738,21 +738,20 @@ public class Task implements Dependant {
 	/**
 	 * Checks whether the given prerequisites are valid for the given Task.
 	 * 
-	 * @param 	prerequisites
-	 * 			The prerequisites to check.
-	 * @return	True if and only the prerequisites are a valid.
-	 * 			True if the prerequisites are empty
-	 * 			False if the prerequisites are null
-	 * 			False if the task ID isn't a valid one
+	 * @param prerequisites
+	 *            The prerequisites to check.
+	 * @return True if and only the prerequisites are a valid. True if the
+	 *         prerequisites are empty False if the prerequisites are null False
+	 *         if the task ID isn't a valid one
 	 */
-	private boolean isValidPrerequisites(List<Task> prerequisites){
+	private boolean isValidPrerequisites(List<Task> prerequisites) {
 		if (prerequisites == null) {
 			return false;
 		}
-		if(prerequisites.contains(null)) {
+		if (prerequisites.contains(null)) {
 			return false;
 		}
-		if(prerequisites.contains(this)) {
+		if (prerequisites.contains(this)) {
 			return false;
 		}
 		return true;
@@ -766,21 +765,21 @@ public class Task implements Dependant {
 	 * @return True if and only the alternative are a valid.
 	 */
 	private boolean isValidAlternative(Task altTask) {
-		if(altTask == null) {
+		if (altTask == null) {
 			return true;
 		}
-		if(altTask.equals(this)) {
+		if (altTask.equals(this)) {
 			return false;
 		}
-		if(!altTask.isFailed()) {
+		if (!altTask.isFailed()) {
 			return false;
 		}
-		if(!altTask.canBeReplaced()) {
+		if (!altTask.canBeReplaced()) {
 			return false;
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Checks whether the given resource manager is valid for the given Task.
 	 * 
@@ -789,25 +788,25 @@ public class Task implements Dependant {
 	 * @return True when the resource manager is valid
 	 */
 	private boolean isValidResourceManager(ResourceManager resMan) {
-		if(resMan == null) {
+		if (resMan == null) {
 			return false;
 		}
 		return true;
 	}
-	
+
 	private boolean isValidPlannedStartTime(LocalDateTime start) {
-		if(prerequisites.isEmpty()) {
+		if (prerequisites.isEmpty()) {
 			return true;
 		}
-		for(Task t : prerequisites) {
-			if(!checkTask(t,start)) {
+		for (Task t : prerequisites) {
+			if (!checkTask(t, start)) {
 				return false;
 			}
 		}
-		
+
 		return true;
 	}
-	
+
 	/**
 	 * Check if a prerequisite task doesn't interfere with a given planned start
 	 * time
@@ -819,18 +818,20 @@ public class Task implements Dependant {
 	 * @return True if the task doesn't interfere
 	 */
 	private boolean checkTask(Task t, LocalDateTime start) {
-		if(t.isUnavailable() || (t.isFailed() && (t.getReplacement() == null))) {
+		if (t.isUnavailable() || (t.isFailed() && (t.getReplacement() == null))) {
 			return false; // Heeft een prereq die nog niet KAN worden afgewerkt
 		}
-		if((t.isAvailable() || t.isExecuting()) && t.getPlannedEndTime().isAfter(start)) {
-			return false; // Heeft een prereq die eindigt NA de gekozen planned start time
+		if ((t.isAvailable() || t.isExecuting())
+				&& t.getPlannedEndTime().isAfter(start)) {
+			return false; // Heeft een prereq die eindigt NA de gekozen planned
+							// start time
 		}
-		if(t.isFailed() && (t.getReplacement() != null)) {
+		if (t.isFailed() && (t.getReplacement() != null)) {
 			return checkTask(t.getReplacement(), start);
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Plan a task in the system from a given start time. Reservations will be
 	 * made for all the required resources and the developers will be assigned.
@@ -843,42 +844,45 @@ public class Task implements Dependant {
 	 *            | The developers to assign
 	 * @return True if the task was planned and all reservations made
 	 */
-	public boolean plan(LocalDateTime startTime, List<ResourceView> concRes, List<ResourceView> devs) {
-		for(Task t : prerequisites) {
-			if(t.isFailed() && (t.getReplacement() == null)) {
+	public boolean plan(LocalDateTime startTime, List<ResourceView> concRes,
+			List<ResourceView> devs) {
+		for (Task t : prerequisites) {
+			if (t.isFailed() && (t.getReplacement() == null)) {
 				return false;
 			}
 		}
-		if(!isValidPlannedStartTime(startTime)) {
+		if (!isValidPlannedStartTime(startTime)) {
 			return false;
 		}
-		if(!plan.setPlannedBeginTime(startTime)) {
+		if (!plan.setPlannedBeginTime(startTime)) {
 			return false;
 		} // TODO refactor this (below) to resMan (iteration 3?)
-		if(resMan.hasActiveReservations(this)) {
-			if(!resMan.releaseResources(this, startTime)) {
+		if (resMan.hasActiveReservations(this)) {
+			if (!resMan.releaseResources(this, startTime)) {
 				return false;
 			}
 		}
-		if(!resMan.reserve(concRes, this, startTime, getPlannedEndTime(), true)) {
+		if (!resMan
+				.reserve(concRes, this, startTime, getPlannedEndTime(), true)) {
 			return false;
 		}
-		List<User> developers = resMan.pickDevs(devs, this, startTime, getPlannedEndTime(), true);
-		if(developers == null) {
+		List<User> developers = resMan.pickDevs(devs, this, startTime,
+				getPlannedEndTime(), true);
+		if (developers == null) {
 			resMan.releaseResources(this, startTime);
 			return false;
 		}
-		if(!plan.setDevelopers(developers)) {
+		if (!plan.setDevelopers(developers)) {
 			resMan.releaseResources(this, startTime);
 			return false;
 		}
-		if(!resMan.hasActiveReservations(this)) {
+		if (!resMan.hasActiveReservations(this)) {
 			resMan.releaseResources(this, startTime);
 			return false; // verkeerde hoeveelheid reservaties enzo
 		}
 		state.makeAvailable(this);
 		return true;
-		
+
 	}
 
 	/**
@@ -899,42 +903,45 @@ public class Task implements Dependant {
 	 *            | The developers to assign
 	 * @return True if the task was planned and all reservations made
 	 */
-	public boolean rawPlan(LocalDateTime startTime, List<ResourceView> concRes, List<ResourceView> devs) {
-		for(Task t : prerequisites) {
-			if(t.isFailed() && (t.getReplacement() == null)) {
+	public boolean rawPlan(LocalDateTime startTime, List<ResourceView> concRes,
+			List<ResourceView> devs) {
+		for (Task t : prerequisites) {
+			if (t.isFailed() && (t.getReplacement() == null)) {
 				return false;
 			}
 		}
-		if(!isValidPlannedStartTime(startTime)) {
+		if (!isValidPlannedStartTime(startTime)) {
 			return false;
 		}
-		if(!plan.setPlannedBeginTime(startTime)) {
+		if (!plan.setPlannedBeginTime(startTime)) {
 			return false;
 		}
-		if(resMan.hasActiveReservations(this)) {
-			if(!resMan.releaseResources(this, startTime)) {
+		if (resMan.hasActiveReservations(this)) {
+			if (!resMan.releaseResources(this, startTime)) {
 				return false;
 			}
 		}
-		if(!resMan.reserve(concRes, this, startTime, getPlannedEndTime(), false)) {
+		if (!resMan.reserve(concRes, this, startTime, getPlannedEndTime(),
+				false)) {
 			return false;
 		}
-		if(!resMan.hasActiveReservations(this)) {
+		if (!resMan.hasActiveReservations(this)) {
 			resMan.releaseResources(this, startTime);
 			return false; // verkeerde hoeveelheid reservaties enzo
 		}
-		List<User> developers = resMan.pickDevs(devs, this, startTime, getPlannedEndTime(), false);
-		if(developers == null) {
+		List<User> developers = resMan.pickDevs(devs, this, startTime,
+				getPlannedEndTime(), false);
+		if (developers == null) {
 			resMan.releaseResources(this, startTime);
 			return false;
 		}
-		if(!plan.setDevelopers(developers)) {
+		if (!plan.setDevelopers(developers)) {
 			resMan.releaseResources(this, startTime);
 			return false;
 		}
 		state.makeAvailable(this);
 		return true;
-		
+
 	}
 
 	/**
@@ -948,10 +955,12 @@ public class Task implements Dependant {
 	 *            | The amount of possible starting times wanted.
 	 * @return The possible starting times of the Task
 	 */
-	public List<LocalDateTime> getPossibleTaskStartingTimes(List<ResourceView> concRes, LocalDateTime currentTime, int amount) {
-		return resMan.getPossibleStartingTimes(this,concRes,currentTime,amount);
+	public List<LocalDateTime> getPossibleTaskStartingTimes(
+			List<ResourceView> concRes, LocalDateTime currentTime, int amount) {
+		return resMan.getPossibleStartingTimes(this, concRes, currentTime,
+				amount);
 	}
-	
+
 	/**
 	 * Retrieve a map of the task's required resources. This map will map an
 	 * abstract resource type on the quantity required of that resource.
@@ -959,12 +968,12 @@ public class Task implements Dependant {
 	 * @return a map containing the required resources and their respective
 	 *         required quantities
 	 */
-	public Map<ResourcePrototype,Integer> getRequiredResources(){
-		Map<ResourcePrototype,Integer> reqRes = new HashMap<ResourcePrototype,Integer>();
+	public Map<ResourcePrototype, Integer> getRequiredResources() {
+		Map<ResourcePrototype, Integer> reqRes = new HashMap<ResourcePrototype, Integer>();
 		reqRes.putAll(requiredResources);
 		return reqRes;
 	}
-	
+
 	/**
 	 * Reserve a resource at init
 	 * 
@@ -978,9 +987,10 @@ public class Task implements Dependant {
 	 */
 	public boolean reserve(ResourceView resource, LocalDateTime startTime,
 			LocalDateTime endTime) {
-		return resMan.reserve(Lists.newArrayList(resource), this, startTime, endTime, true);
+		return resMan.reserve(Lists.newArrayList(resource), this, startTime,
+				endTime, true);
 	}
-	
+
 	/**
 	 * Check whether or not this task has a specific developer assigned to this
 	 * task
@@ -989,55 +999,58 @@ public class Task implements Dependant {
 	 *            | The developer to check
 	 * @return True if the given developer is assigned to this task
 	 */
-	public boolean hasDeveloper(ResourceView user){
-		for(User dev : plan.getPlannedDevelopers()){
-			if (user.hasAsResource(dev)){
+	public boolean hasDeveloper(ResourceView user) {
+		for (User dev : plan.getPlannedDevelopers()) {
+			if (user.hasAsResource(dev)) {
 				return true;
 			}
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Return a list of the developers planned to work on this task
 	 * 
 	 * @return an immutable list of developers (wrapped in views) planned to
 	 *         work on this task
 	 */
-	public List<User> getPlannedDevelopers(){
+	public List<User> getPlannedDevelopers() {
 		return plan.getPlannedDevelopers();
 	}
-	
+
 	/**
 	 * Gets the reserved resources for a given Task
+	 * 
 	 * @return the reserved resources of the Task
 	 */
-	public List<Resource> getReservedResources(){
+	public List<Resource> getReservedResources() {
 		return resMan.getReservedResourcesForTask(this);
 	}
 
 	/**
 	 * Checks whether there exists a planning conflict with the given task
 	 * 
-	 * @param 	task
-	 * 			The task to check for a conflict.
-	 * @return	True if there exists a planning conflict, else false
+	 * @param otherStart
+	 *            | The start time of the task to check conflicts with
+	 * @param otherEnd
+	 *            | The end time of the task to check conflicts with
+	 * @param otherResources
+	 *            | The reserved resources of the task to check conflicts with
+	 * @return True if this task conflicts with the task based on the supplied information
 	 */
-//	public boolean hasPlanningConflict(TaskView task) {
-	public boolean hasPlanningConflict(
-			LocalDateTime otherStart, 
-			LocalDateTime otherEnd, 
-			List<ResourceView> otherResources) {
+	// public boolean hasPlanningConflict(TaskView task) {
+	public boolean hasPlanningConflict(LocalDateTime otherStart,
+			LocalDateTime otherEnd, List<ResourceView> otherResources) {
 		boolean conflictFound = false;
-		if ( plan.getPlannedBeginTime() == null){
+		if (plan.getPlannedBeginTime() == null) {
 			return false;
 		}
-		if (!otherEnd.isAfter(this.getPlannedBeginTime()) || !otherStart.isBefore(this.getPlannedEndTime())){
+		if (!otherEnd.isAfter(this.getPlannedBeginTime())
+				|| !otherStart.isBefore(this.getPlannedEndTime())) {
 			return false;
-		}
-		else {
-			for(ResourceView res : otherResources) {
-				for(Resource r : getReservedResources()) {
+		} else {
+			for (ResourceView res : otherResources) {
+				for (Resource r : getReservedResources()) {
 					if (res.hasAsResource(r)) {
 						conflictFound = true;
 						break;

@@ -76,7 +76,6 @@ public class UnavailableTask implements TaskStatus {
 
 	@Override
 	public boolean register(Task task, Dependant d) {
-		task.addDependant(d);
 		return true;
 	}
 	

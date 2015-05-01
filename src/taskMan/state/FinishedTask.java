@@ -67,7 +67,6 @@ public class FinishedTask implements TaskStatus {
 
 	@Override
 	public boolean register(Task task, Dependant d) {
-		task.addDependant(d);
 		task.notifyDependants();
 		return true;
 	}

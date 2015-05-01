@@ -326,7 +326,9 @@ public class TaskView {
 	 */
 	public List<LocalDateTime> getPossibleStartingTimes(
 			List<ResourceView> concRes, LocalDateTime currentTime, int amount) {
-		return task.getPossibleTaskStartingTimes(concRes, currentTime, amount);
+		ImmutableList.Builder<LocalDateTime> times = ImmutableList.builder();
+		times.addAll(task.getPossibleTaskStartingTimes(concRes, currentTime, amount));
+		return times.build();
 	}
 
 	/**
@@ -398,16 +400,6 @@ public class TaskView {
 	public LocalDateTime getPlannedEndTime() {
 		return task.getPlannedEndTime();
 	}
-	
-//	/**
-//	 * Checks whether there exists a planning conflict with the given task
-//	 * @param 	taskview
-//	 * 			The task to check for a conflict.
-//	 * @return	True if there exists a planning conflict, else false
-//	 */
-//	public boolean hasPlanningConflict(TaskView taskview) {
-//		return task.hasPlanningConflict(taskview);
-//	}
 	
 	/**
 	 * Gets the reserved resources for a given Task
