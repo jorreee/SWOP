@@ -68,7 +68,7 @@ public class UseCase5ResolveConflictTest {
 	public final void initialize() {
 		taskManager = new Facade(startDate);
 
-		assertTrue(taskManager.createProject("Test1", "testing 1", project0DueDate));
+		assertTrue(taskManager.createProject("project1", "testing 1", project0DueDate));
 		ProjectView project0 = taskManager.getProjects().get(0);
 
 		//create resources
@@ -233,8 +233,13 @@ public class UseCase5ResolveConflictTest {
 		
 		ProjectView[] con = new ProjectView[2];
 		con = conflicts.keySet().toArray(con);
-		project00 = con[0];
-		project01 = con[1];
+		if(con[0].getName().equals("project1")){
+			project00 = con[0];
+			project01 = con[1];
+		}else{
+			project00 = con[1];
+			project01 = con[0];
+		}
 		assertEquals(1,conflicts.get(project00).size());
 		assertEquals(1,conflicts.get(project01).size());
 		assertTrue(conflicts.get(project00).contains(task00));
