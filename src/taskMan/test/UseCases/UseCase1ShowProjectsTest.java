@@ -272,7 +272,7 @@ public class UseCase1ShowProjectsTest {
 		assertEquals(project1.getCreationTime(),workdate1);
 		assertTrue(project1.isEstimatedOnTime(taskManager.getCurrentTime()));
 		//TODO Error: hangt af van de latere error
-		//ssertEquals(LocalDateTime.of(2015, 2, 16, 10, 0),project1.getEstimatedEndTime(taskManager.getCurrentTime()));
+		assertEquals(LocalDateTime.of(2015, 2, 18, 9, 50),project1.getEstimatedEndTime(taskManager.getCurrentTime()));
 
 		//Check project2 details
 		ProjectView project2 = taskManager.getProjects().get(2);
@@ -406,7 +406,7 @@ public class UseCase1ShowProjectsTest {
 //		assertTrue(projects.size() == 4);
 //		// Stap 3
 //		assertEquals(null,projects.get(4));
-//		assertEquals(taskManager.getProjectDescription(4),null); //TODO is eigenlijk null testen
+//		assertEquals(taskManager.getProjectDescription(4),null); // is eigenlijk null testen
 //		assertEquals(taskManager.getProjectDueTime(4),null);
 //		assertEquals(taskManager.getProjectName(4),null);
 //		assertEquals(taskManager.getProjectStatus(4),null);
