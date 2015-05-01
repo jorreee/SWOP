@@ -207,7 +207,23 @@ public class UseCase4PlanTaskTest {
 		concRes = new ArrayList<>();
 		concRes.add(null);
 		assertFalse(taskManager.planTask(project0, task00, task00StartDateGood, concRes, devList1));
-		//TODO conflict case?
+		//all resources reserved
+		newTaskRes.put(taskManager.getResourcePrototypes().get(1), 6);
+		assertTrue(taskManager.createTask(project0, "test", 60, 5, new ArrayList<TaskView>(), newTaskRes, null));
+		TaskView test = project0.getTasks().get(3);
+		concRes = new ArrayList<>();
+		concRes.add(taskManager.getResourcePrototypes().get(1));
+		concRes.add(taskManager.getResourcePrototypes().get(1));
+		concRes.add(taskManager.getResourcePrototypes().get(1));
+		concRes.add(taskManager.getResourcePrototypes().get(1));
+		concRes.add(taskManager.getResourcePrototypes().get(1));
+		concRes.add(taskManager.getResourcePrototypes().get(1));
+		assertTrue(taskManager.planTask(project0, test, task00StartDateGood, concRes, devList1));
+		
+		ArrayList<ResourceView> concRes1 = new ArrayList<>();
+		concRes1.add(taskManager.getConcreteResourcesForPrototype(taskManager.getResourcePrototypes().get(0)).get(0));
+		concRes1.add(taskManager.getConcreteResourcesForPrototype(taskManager.getResourcePrototypes().get(1)).get(0));
+		assertFalse(taskManager.planTask(project0, task00, task00StartDateGood, concRes1, devList2));
 	}
 	
 	@Test
@@ -227,7 +243,18 @@ public class UseCase4PlanTaskTest {
 		UserPrototype watProt = new UserPrototype();
 		devs.add(new ResourceView(watProt.instantiateDeveloper("Spartacus")));
 		assertFalse(taskManager.planTask(project0, task00, task00StartDateGood, concRes, devs));
-		//TODO conflict case?
+		//Dev already reserved
+		assertTrue(taskManager.createTask(project0, "test", 60, 10, new ArrayList<TaskView>(), newTaskRes, null));
+		TaskView test = project0.getTasks().get(3);
+		devs = new ArrayList<>();
+		devs.add(blunderbus);
+		task00ConcreteResources.add(taskManager.getConcreteResourcesForPrototype(taskManager.getResourcePrototypes().get(0)).get(0));
+		task00ConcreteResources.add(taskManager.getConcreteResourcesForPrototype(taskManager.getResourcePrototypes().get(1)).get(0));
+		assertTrue(taskManager.planTask(project0, task00, task00StartDateGood, task00ConcreteResources, devs));
+		
+		concRes = new ArrayList<ResourceView>();
+		concRes.add(taskManager.getResourcePrototypes().get(1));
+		assertFalse(taskManager.planTask(project0, test, task00StartDateGood, concRes, devs));
 	}
 	
 	@Test
@@ -325,7 +352,7 @@ public class UseCase4PlanTaskTest {
 		assertTrue(taskManager.planTask(project0, newTask, task00StartDateGood, concRes, devList1));
 	}
 	
-//	@Test // TODO deze test heeft nog weinig zin zolang reservations in 1 grote blok worden gedaan
+//	@Test // todo deze test heeft nog weinig zin zolang reservations in 1 grote blok worden gedaan
 //	public void planTaskWithResourceAvailabilityFailTestStartTimeAfterResourceEndTime(){
 //		//Set up
 //		assertTrue(taskManager.createResourcePrototype("Beamer", Optional.of(LocalTime.of(8, 0)), Optional.of(LocalTime.of(12, 0))));
@@ -339,7 +366,7 @@ public class UseCase4PlanTaskTest {
 //		TaskView newTask = taskManager.getProjects().get(0).getTasks().get(3);
 //		ArrayList<ResourceView> concRes = new ArrayList<>();
 //		concRes.add(taskManager.getResourcePrototypes().get(3));
-//		//TODO Error:  Het is nog mogelijk om taak te plannen als de beschikbaarheid van de resource al verlopen is
+//		//todo Error:  Het is nog mogelijk om taak te plannen als de beschikbaarheid van de resource al verlopen is
 //		assertFalse(taskManager.planTask(project0, newTask, LocalDateTime.of(2015, 2, 9, 13, 0), concRes, devList1));
 //	}
 }
