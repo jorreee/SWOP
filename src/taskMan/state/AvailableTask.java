@@ -30,9 +30,6 @@ public class AvailableTask implements TaskStatus {
 		if(!task.setBeginTime(beginTime)) {
 			return false;
 		}
-		if(!task.refreshReservations(beginTime)) {
-			return false;
-		}
 		
 		task.setTaskStatus(new ExecutingTask());
 		return true;

@@ -114,4 +114,25 @@ public class Reservation {
 		}
 	}
 	
+	public boolean equals(Object other) {
+		if(other == null) {
+			return false;
+		}
+		try{
+			Reservation otherReservation = (Reservation) other;
+			if(!this.hasAsResource(otherReservation.getReservedResource())) {
+				return false;
+			}
+			if(!this.reservingTask.equals(otherReservation.getReservingTask())) {
+				return false;
+			}
+			if(!this.startTime.equals(otherReservation.getStartTime()) &&!this.endTime.equals(otherReservation.getEndTime())) {
+				return false;
+			}
+		} catch(ClassCastException e) {
+			return false;
+		}
+		return true;
+	}
+	
 }

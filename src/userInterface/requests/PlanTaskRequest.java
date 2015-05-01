@@ -35,7 +35,7 @@ public class PlanTaskRequest extends Request {
 						System.out.println("  {" + j + "} " + unplannedTasks.get(j).getDescription());
 					}
 				}				
-				
+
 				// Ask for user input
 				System.out.println("Select a project and the task you wish to plan (Format: (Project location in list) (Task location in list), type quit to exit)");
 				String input = inputReader.readLine();
@@ -59,7 +59,7 @@ public class PlanTaskRequest extends Request {
 					if(planning == null) { 
 						return quit();
 					}
-	
+
 					// Assign developers to task, assign planning to task, reserve selected resource(types)
 					// This can be done safely or not (raw), be sure to check for conflicts when raw
 					if(planning.isSafePlanning()) {
@@ -75,8 +75,8 @@ public class PlanTaskRequest extends Request {
 					}
 					// If selected planning conflicts with another task planning init resolve conflict request
 					Map<ProjectView, List<TaskView>> conflictingTasks = facade.findConflictingPlannings(task);
-					
-	
+
+
 					if(!conflictingTasks.isEmpty()) {
 						ResolvePlanningConflictRequest resolveConflictRequest = new ResolvePlanningConflictRequest(facade, inputReader, conflictingTasks);
 						System.out.println(resolveConflictRequest.execute());
@@ -84,11 +84,13 @@ public class PlanTaskRequest extends Request {
 						if(resolveConflictRequest.shouldMovePlanningTask()) {
 							shouldMove = true;
 						}
+					} else {
+						shouldMove = false;
 					}
-					}
-					// If task planning needs to be moved, restart process.
+				}
+				// If task planning needs to be moved, restart process.
 				while (shouldMove == true);
-				
+
 				if(!success) { System.out.println("Failed to plan task, try again"); continue; }
 
 			} catch(Exception e) {
@@ -106,14 +108,14 @@ public class PlanTaskRequest extends Request {
 
 		PlanningScheme planning = new PlanningScheme();
 		String input;
-		
+
 		// Ask user for time slot
 		while(true) {
 			try {
 
 				// Show each required resource
 				Map<ResourceView, Integer> requiredResources = task.getRequiredResources();
-				
+
 				if(!requiredResources.isEmpty()) {
 					System.out.println("The following resources are required: ");
 					for(ResourceView requiredResource : requiredResources.keySet()) {
@@ -136,16 +138,16 @@ public class PlanTaskRequest extends Request {
 								planning.addSeveralToReservationList(requiredResource, amountLeft);
 								amountLeft = 0;
 							} else {
-//								// if resource is already reserved initiate resolve conflict request
-//								Map<ProjectView, List<TaskView>> conflictingTasks = facade.reservationConflict(concreteResources.get(Integer.parseInt(input)), project, task, planning.getPlanningStartTime());
-//								if(!conflictingTasks.isEmpty()) {
-//									ResolvePlanningConflictRequest resolveConflictRequest = new ResolvePlanningConflictRequest(facade, inputReader, conflictingTasks);
-//									System.out.println(resolveConflictRequest.execute());
-//									// Conflict dictates that this planning should start over
-//									if(resolveConflictRequest.shouldMovePlanningTask()) {
-//										return planTask(project, task);
-//									}
-//								}
+								//								// if resource is already reserved initiate resolve conflict request
+								//								Map<ProjectView, List<TaskView>> conflictingTasks = facade.reservationConflict(concreteResources.get(Integer.parseInt(input)), project, task, planning.getPlanningStartTime());
+								//								if(!conflictingTasks.isEmpty()) {
+								//									ResolvePlanningConflictRequest resolveConflictRequest = new ResolvePlanningConflictRequest(facade, inputReader, conflictingTasks);
+								//									System.out.println(resolveConflictRequest.execute());
+								//									// Conflict dictates that this planning should start over
+								//									if(resolveConflictRequest.shouldMovePlanningTask()) {
+								//										return planTask(project, task);
+								//									}
+								//								}
 								ResourceView resourceReserved = concreteResources.get(Integer.parseInt(input));
 								planning.addToReservationList(resourceReserved);
 								amountLeft--;
@@ -173,10 +175,10 @@ public class PlanTaskRequest extends Request {
 				for(ResourceView dev : devNames) {
 					planning.addDeveloper(dev);
 				}
-				
-				
+
+
 				// show list of possible starting times
-				List<ResourceView> toReserve = planning.getResourcesToReserve();
+				List<ResourceView> toReserve = new ArrayList<ResourceView>(planning.getResourcesToReserve());
 				toReserve.addAll(planning.getDevelopers());
 				List<LocalDateTime> possibleStartingTimes = task.getPossibleStartingTimes(toReserve,facade.getCurrentTime(),3);
 				// (3 first possible (enough res and devs available))
@@ -190,9 +192,9 @@ public class PlanTaskRequest extends Request {
 				switch(input.toUpperCase()){
 				case "Y" : 
 					System.out.println("Enter a starting time. Format: Y M D H M");
-					
+
 					if(input.toLowerCase().equals("quit"))	{ return null; }
-					
+
 					String startTime = inputReader.readLine();
 					String[] startBits = startTime.split(" ");
 					timeSlotStart = LocalDateTime.of(Integer.parseInt(startBits[0]), Integer.parseInt(startBits[1]), Integer.parseInt(startBits[2]), Integer.parseInt(startBits[3]), Integer.parseInt(startBits[4]));
@@ -208,13 +210,13 @@ public class PlanTaskRequest extends Request {
 					// Confirm time slot
 					timeSlotStart = possibleStartingTimes.get(Integer.parseInt(input));
 					break;
-					
+
 				}
-				
-				
-				System.out.println("Time slot selected from " + timeSlotStart.toString() + " until " + timeSlotStart.plusMinutes(task.getEstimatedDuration()).toString());
+
+
+				System.out.println("Time slot selected from " + timeSlotStart.format(dateTimeFormatter) + " until " + timeSlotStart.plusMinutes(task.getEstimatedDuration()).format(dateTimeFormatter));
 				planning.setPlanBeginTime(timeSlotStart);
-				
+
 
 				return planning;
 			} catch(Exception e) {
@@ -231,7 +233,7 @@ class PlanningScheme {
 	private List<ResourceView> resourcesToReserve;
 	private List<ResourceView> developers;
 	private boolean safe;
-	
+
 	public PlanningScheme() {
 		resourcesToReserve = new ArrayList<>();
 		developers = new ArrayList<>();
@@ -259,19 +261,19 @@ class PlanningScheme {
 	public List<ResourceView> getResourcesToReserve() {
 		return resourcesToReserve;
 	}
-	
+
 	public void addDeveloper(ResourceView d) {
 		developers.add(d);
 	}
-	
+
 	public List<ResourceView> getDevelopers() {
 		return developers;
 	}
-	
+
 	public void setSafePlanning(boolean safe) {
 		this.safe = safe;
 	}
-	
+
 	public boolean isSafePlanning() {
 		return safe;
 	}

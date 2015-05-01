@@ -606,7 +606,7 @@ public class Task implements Dependant {
 		if(!state.finish(this, endTime)) {
 			return false;
 		}
-		if(!resMan.releaseResources(this)) {
+		if(!resMan.releaseResources(this, endTime)) {
 			return false;
 		}
 		return true;
@@ -623,7 +623,7 @@ public class Task implements Dependant {
 		if(!state.fail(this, endTime)) {
 			return false;
 		}
-		if(!resMan.releaseResources(this)) {
+		if(!resMan.releaseResources(this, endTime)) {
 			return false;
 		}
 		return true;
@@ -854,25 +854,25 @@ public class Task implements Dependant {
 			return false;
 		}
 		if(resMan.hasActiveReservations(this)) {
-			if(!refreshReservations(startTime)) { // TODO bij herplannen moet task toekomstige reservaties eerst droppen, dan hermaken, refreshReservations heeft niet de juiste betekenis
+			if(!resMan.releaseResources(this, startTime)) {
 				return false;
 			}
 		}
 		if(!resMan.reserve(concRes, this, startTime, getPlannedEndTime(), true)) {
 			return false;
 		}
-		if(!resMan.hasActiveReservations(this)) {
-			resMan.releaseResources(this);
-			return false; // verkeerde hoeveelheid reservaties enzo
-		}
 		List<User> developers = resMan.pickDevs(devs, this, startTime, getPlannedEndTime(), true);
 		if(developers == null) {
-			resMan.releaseResources(this);
+			resMan.releaseResources(this, startTime);
 			return false;
 		}
 		if(!plan.setDevelopers(developers)) {
-			resMan.releaseResources(this);
+			resMan.releaseResources(this, startTime);
 			return false;
+		}
+		if(!resMan.hasActiveReservations(this)) {
+			resMan.releaseResources(this, startTime);
+			return false; // verkeerde hoeveelheid reservaties enzo
 		}
 		state.makeAvailable(this);
 		return true;
@@ -910,25 +910,24 @@ public class Task implements Dependant {
 			return false;
 		}
 		if(resMan.hasActiveReservations(this)) {
-			if(!refreshReservations(startTime)) {
-				return false;
-			}
-		} else {
-			if(!resMan.reserve(concRes, this, startTime, getPlannedEndTime(), false)) {
+			if(!resMan.releaseResources(this, startTime)) {
 				return false;
 			}
 		}
+		if(!resMan.reserve(concRes, this, startTime, getPlannedEndTime(), false)) {
+			return false;
+		}
 		if(!resMan.hasActiveReservations(this)) {
-			resMan.releaseResources(this);
+			resMan.releaseResources(this, startTime);
 			return false; // verkeerde hoeveelheid reservaties enzo
 		}
 		List<User> developers = resMan.pickDevs(devs, this, startTime, getPlannedEndTime(), false);
 		if(developers == null) {
-			resMan.releaseResources(this);
+			resMan.releaseResources(this, startTime);
 			return false;
 		}
 		if(!plan.setDevelopers(developers)) {
-			resMan.releaseResources(this);
+			resMan.releaseResources(this, startTime);
 			return false;
 		}
 		state.makeAvailable(this);
@@ -1034,5 +1033,14 @@ public class Task implements Dependant {
 			}
 		}
 		return conflictFound;
+	}
+
+	/**
+	 * Unassigns the developers assigned to this task
+	 * 
+	 * @return
+	 */
+	public boolean releaseDevelopers() {
+		return plan.setDevelopers(new ArrayList<User>());
 	}
 }

@@ -3,7 +3,6 @@ package taskMan.resource;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -620,6 +619,7 @@ public class ResourceManager {
 	public boolean hasActiveReservations(Task reservedTask){
 		Map<ResourcePrototype,Integer> checkList = new HashMap<ResourcePrototype, Integer>();
 		checkList.putAll(reservedTask.getRequiredResources());
+		checkList.put(userProt, reservedTask.getPlannedDevelopers().size());
 		for (Reservation res: activeReservations){
 			if (res.getReservingTask().equals(reservedTask)){
 				for (ResourcePrototype resource : checkList.keySet()){
@@ -815,23 +815,47 @@ public class ResourceManager {
 	}
 	
 	/**
-	 * An ended task can call this method to release all active reservations made
+	 * Any task can call this method to release all active reservations made
 	 * by this task. 
 	 * 
 	 * @param task
 	 * @return
 	 */
-	public boolean releaseResources(Task task) {
-		if(!task.hasEnded()) {
-			return false;
-		}
-		List<Reservation> toRemove = new ArrayList<Reservation>();
+	public boolean releaseResources(Task task, LocalDateTime currentTime) {
+		List<Reservation> toRemoveActive = new ArrayList<Reservation>();
+		List<Reservation> toRemoveAll = new ArrayList<Reservation>();
+		List<Reservation> toChange = new ArrayList<Reservation>();
 		for(Reservation r : activeReservations) {
 			if(r.getReservingTask().equals(task)) {
-				toRemove.add(r);
+				toRemoveActive.add(r);
+				if(!r.getStartTime().equals(currentTime)) {
+					toChange.add(new Reservation(r.getReservedResource(),r.getReservingTask(),r.getStartTime(),currentTime));
+				}
+				toRemoveAll.add(r);
 			}
 		}
-		return activeReservations.removeAll(toRemove);
+		if(!toRemoveActive.isEmpty() && !activeReservations.removeAll(toRemoveActive)) {
+			activeReservations.addAll(toRemoveActive);
+			return false;
+		}
+		if(!toRemoveAll.isEmpty() && !allReservations.removeAll(toRemoveAll)) {
+			activeReservations.addAll(toRemoveActive);
+			allReservations.addAll(toRemoveAll);
+			return false;
+		}
+		if(!toChange.isEmpty() && !allReservations.addAll(toChange)) {
+			activeReservations.addAll(toRemoveActive);
+			allReservations.addAll(toRemoveAll);
+			allReservations.removeAll(toChange);
+			return false;
+		}
+		if(!task.releaseDevelopers()) {
+			activeReservations.addAll(toRemoveActive);
+			allReservations.addAll(toRemoveAll);
+			allReservations.removeAll(toChange);
+			return false;
+		}
+		return true;
 	}
 
 	public boolean refreshReservations(Task reservingTask, LocalDateTime newStartDate, LocalDateTime newEndDate) {

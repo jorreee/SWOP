@@ -355,7 +355,7 @@ public class TaskTest {
 		LocalDateTime beginTimeDef = LocalDateTime.of(2015, 2, 11, 14, 0);
 		LocalDateTime endTimeDef = LocalDateTime.of(2015, 2, 11, 15, 30);
 		LocalDateTime currentTime = LocalDateTime.of(2015, 2, 12, 16, 0);
-		defaultTest.plan(beginTimeDef,concreteResDef,devList);
+		assertTrue(defaultTest.plan(beginTimeDef,concreteResDef,devList));
 		defaultTest.execute(beginTimeDef);
 		defaultTest.fail(endTimeDef);
 		assertEquals(new TimeSpan(90),defaultTest.getTimeSpent(currentTime));
@@ -365,9 +365,9 @@ public class TaskTest {
 		assertEquals(defaultTest, alt.getAlternativeFor());
 		LocalDateTime beginTimeAlt = LocalDateTime.of(2015, 2, 12, 14, 0);
 		LocalDateTime endTimeAlt = LocalDateTime.of(2015, 2, 12, 15, 0);
-		alt.plan(beginTimeAlt,concreteResDef,devList);
-		alt.execute(beginTimeAlt);
-		alt.finish(endTimeAlt);
+		assertTrue(alt.plan(beginTimeAlt,concreteResDef,devList));
+		assertTrue(alt.execute(beginTimeAlt));
+		assertTrue(alt.finish(endTimeAlt));
 		assertEquals(defaultTest, alt.getAlternativeFor());
 		assertEquals(new TimeSpan(150),alt.getTimeSpent(currentTime));
 	}

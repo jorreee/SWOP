@@ -263,9 +263,6 @@ public class UseCase4PlanTaskTest {
 		concRes.add(taskManager.getConcreteResourcesForPrototype(taskManager.getResourcePrototypes().get(1)).get(0));
 		assertTrue(taskManager.planTask(project0, task00, task00StartDateGood, concRes, devList1));
 		
-		//Already planned
-		assertFalse(taskManager.planTask(project0, task00, task00StartDateGood, concRes, devList1));
-		
 		//Already executing
 		assertTrue(taskManager.setTaskExecuting(project0, task00, task00StartDateGood));
 		assertFalse(taskManager.planTask(project0, task00, task00StartDateGood, concRes, devList1));
@@ -284,9 +281,7 @@ public class UseCase4PlanTaskTest {
 		concRes.add(taskManager.getConcreteResourcesForPrototype(taskManager.getResourcePrototypes().get(0)).get(0));
 		concRes.add(taskManager.getConcreteResourcesForPrototype(taskManager.getResourcePrototypes().get(1)).get(0));
 		assertTrue(taskManager.planTask(project0, task00, task00StartDateGood, concRes, devList1));
-
 		
-		assertFalse(taskManager.planTask(project0, task00, task00StartDateGood, concRes, devList1));
 		assertTrue(taskManager.setTaskExecuting(project0, task00, task00StartDateGood));
 		assertFalse(taskManager.planTask(project0, task00, task00StartDateGood, concRes, devList1));
 		assertTrue(taskManager.setTaskFinished(project0, task00, task00EndDateGood));
