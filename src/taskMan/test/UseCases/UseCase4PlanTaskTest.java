@@ -208,8 +208,9 @@ public class UseCase4PlanTaskTest {
 		concRes.add(null);
 		assertFalse(taskManager.planTask(project0, task00, task00StartDateGood, concRes, devList1));
 		//all resources reserved
-		newTaskRes.put(taskManager.getResourcePrototypes().get(1), 6);
-		assertTrue(taskManager.createTask(project0, "test", 60, 5, new ArrayList<TaskView>(), newTaskRes, null));
+		HashMap<ResourceView,Integer >newTaskRes1 = new HashMap<>();
+		newTaskRes1.put(taskManager.getResourcePrototypes().get(1), 6);
+		assertTrue(taskManager.createTask(project0, "test", 60, 5, new ArrayList<TaskView>(), newTaskRes1, null));
 		TaskView test = project0.getTasks().get(3);
 		concRes = new ArrayList<>();
 		concRes.add(taskManager.getResourcePrototypes().get(1));
