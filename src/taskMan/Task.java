@@ -16,7 +16,6 @@ import taskMan.state.UnavailableTask;
 import taskMan.util.Dependant;
 import taskMan.util.TimeSpan;
 import taskMan.view.ResourceView;
-import taskMan.view.TaskView;
 
 import com.google.common.collect.Lists;
 
@@ -1019,23 +1018,30 @@ public class Task implements Dependant {
 
 	/**
 	 * Checks whether there exists a planning conflict with the given task
+	 * 
 	 * @param 	task
 	 * 			The task to check for a conflict.
 	 * @return	True if there exists a planning conflict, else false
 	 */
-	public boolean hasPlanningConflict(TaskView task) {
+//	public boolean hasPlanningConflict(TaskView task) {
+	public boolean hasPlanningConflict(
+			LocalDateTime otherStart, 
+			LocalDateTime otherEnd, 
+			List<ResourceView> otherResources) {
 		boolean conflictFound = false;
 		if ( plan.getPlannedBeginTime() == null){
 			return false;
 		}
-		if (!task.getPlannedEndTime().isAfter(this.getPlannedBeginTime()) || !task.getPlannedBeginTime().isBefore(this.getPlannedEndTime())){
+		if (!otherEnd.isAfter(this.getPlannedBeginTime()) || !otherStart.isBefore(this.getPlannedEndTime())){
 			return false;
 		}
 		else {
-			for(Resource res : task.getReservedResources()){
-				if (this.getReservedResources().contains(res)){
-					conflictFound = true;
-					break;
+			for(ResourceView res : otherResources) {
+				for(Resource r : getReservedResources()) {
+					if (res.hasAsResource(r)) {
+						conflictFound = true;
+						break;
+					}
 				}
 			}
 		}

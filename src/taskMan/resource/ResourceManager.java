@@ -875,29 +875,6 @@ public class ResourceManager {
 		return true;
 	}
 
-	public boolean refreshReservations(Task reservingTask, LocalDateTime newStartDate, LocalDateTime newEndDate) {
-		if(!hasActiveReservations(reservingTask)) {
-			return false;
-		}
-		//get active reservations
-		List<Reservation> reservationsForTask = new ArrayList<Reservation>();
-		List<ResourceView> reservedResourcesForTask = new ArrayList<ResourceView>();
-		for(Reservation r : activeReservations) {
-			if(r.getReservingTask().equals(reservingTask)) {
-				reservationsForTask.add(r);
-				reservedResourcesForTask.add(new ResourceView(r.getReservedResource()));
-			}
-		}
-		
-		activeReservations.removeAll(reservationsForTask);
-		if(!reserve(reservedResourcesForTask, reservingTask, newStartDate, newEndDate, true)) {
-			activeReservations.addAll(reservationsForTask);
-			return false;
-		}
-		return true;
-	}
-
-
 	/**
 	 * Return an immutable list of all the reservations present in the resource
 	 * manager

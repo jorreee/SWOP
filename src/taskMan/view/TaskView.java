@@ -345,7 +345,8 @@ public class TaskView {
 			return ((TaskView) otherView).hasAsTask(task);	
 		} catch(ClassCastException e) {
 			return false;
-		}	}
+		}	
+	}
 
 	/**
 	 * Return a list of the developers planned to work on this task
@@ -398,22 +399,25 @@ public class TaskView {
 		return task.getPlannedEndTime();
 	}
 	
-
-	/**
-	 * Checks whether there exists a planning conflict with the given task
-	 * @param 	taskview
-	 * 			The task to check for a conflict.
-	 * @return	True if there exists a planning conflict, else false
-	 */
-	public boolean hasPlanningConflict(TaskView taskview) {
-		return task.hasPlanningConflict(taskview);
-	}
+//	/**
+//	 * Checks whether there exists a planning conflict with the given task
+//	 * @param 	taskview
+//	 * 			The task to check for a conflict.
+//	 * @return	True if there exists a planning conflict, else false
+//	 */
+//	public boolean hasPlanningConflict(TaskView taskview) {
+//		return task.hasPlanningConflict(taskview);
+//	}
 	
 	/**
 	 * Gets the reserved resources for a given Task
 	 * @return the reserved resources of the Task
 	 */
-	public List<Resource> getReservedResources(){
-		return task.getReservedResources();
+	public List<ResourceView> getReservedResources(){
+		ImmutableList.Builder<ResourceView> resRes = ImmutableList.builder();
+		for(Resource r : task.getReservedResources()) {
+			resRes.add(new ResourceView(r));
+		}
+		return resRes.build();
 	}
 }

@@ -621,12 +621,14 @@ public class Project implements Dependant {
 	 */
 	public List<TaskView> findConflictingPlannings(TaskView task) {
 		ArrayList<TaskView> conflictTasks = new ArrayList<TaskView>();
-		for (Task t : taskList){
-		if(!task.hasAsTask(t)){
-			if (t.hasPlanningConflict(task)){
-				conflictTasks.add(new TaskView(t));
+		for (Task t : taskList) {
+			if(!task.hasAsTask(t)) {
+				if (t.hasPlanningConflict(task.getPlannedBeginTime(),
+						task.getPlannedEndTime(),
+						task.getReservedResources())) {
+					conflictTasks.add(new TaskView(t));
+				}
 			}
-		}
 		}
 		return conflictTasks;
 	}
