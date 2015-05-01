@@ -149,8 +149,12 @@ public class PlanTaskRequest extends Request {
 								//									}
 								//								}
 								ResourceView resourceReserved = concreteResources.get(Integer.parseInt(input));
-								planning.addToReservationList(resourceReserved);
-								amountLeft--;
+								if(planning.getResourcesToReserve().contains(resourceReserved)) {
+									System.out.println("Resource already chosen!");
+								} else {
+									planning.addToReservationList(resourceReserved);
+									amountLeft--;
+								}
 							}
 						}
 					}
