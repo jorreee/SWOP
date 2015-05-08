@@ -170,7 +170,12 @@ public class Project implements Dependant {
 		if(!isValidAlternative(alternativeFor)) {
 			return false;
 		}
-		Task altFor = unwrapTaskView(alternativeFor);
+		Task altFor;
+		try {
+			altFor = unwrapTaskView(alternativeFor);
+		} catch(NullPointerException e) {
+			altFor = null;
+		}
 		
 		ArrayList<Task> prereqTasks = new ArrayList<Task>();
 		for(TaskView t : prerequisiteTasks) {

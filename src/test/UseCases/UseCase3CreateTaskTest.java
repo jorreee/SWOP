@@ -273,7 +273,7 @@ public class UseCase3CreateTaskTest {
 		assertEquals(p0tasks.size(),0);
 	}
 
-	@Test
+	@Test(expected = IllegalArgumentException.class)
 	public void flow4aUnknownAltTest() {
 		List<ProjectView> projects = taskManager.getProjects();
 		assertTrue(projects.size() == 1);
@@ -375,7 +375,7 @@ public class UseCase3CreateTaskTest {
 		assertTrue(p0tasks.size() == 2);
 	}
 
-	@Test
+	@Test(expected = IllegalArgumentException.class)
 	public void flow4aUnknownDepTest() {
 		List<ProjectView> projects = taskManager.getProjects();
 		assertTrue(projects.size() == 1);
@@ -424,7 +424,7 @@ public class UseCase3CreateTaskTest {
 		assertTrue(p0tasks.size() == 1);
 	}
 	
-	@Test
+	@Test(expected = IllegalArgumentException.class)
 	public void flow4aUnknownProjectTest() {
 		Project unexistent = new Project("Very bad", "Very bad project", startDate, project0DueDate);
 		List<ProjectView> projects = taskManager.getProjects();
@@ -447,7 +447,7 @@ public class UseCase3CreateTaskTest {
 		assertEquals(p0tasks.size(),1);
 		
 		//-------------------------------------------------------------------------------------------------
-
+		// TODO eigen testcase
 		// Step 1 and 2 are implicit
 		// Step 3
 		assertFalse(taskManager.createTask(new ProjectView(unexistent), "A new TASK", newTaskDur, newTaskDev, newTaskDependencies, reqResTask00, t00));
@@ -457,7 +457,7 @@ public class UseCase3CreateTaskTest {
 		assertEquals(p0tasks.size(),1);
 		
 		//-------------------------------------------------------------------------------------------------
-
+		// TODO eigen testcase
 		// Step 1 and 2 are implicit
 		// Step 3
 		newTaskDependencies.add(t00);
