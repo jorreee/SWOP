@@ -261,17 +261,16 @@ public class Project implements Dependant {
 	 * 			the TaskView to unwrap
 	 * @return 	the unwrapped Task if it belonged to this project
 	 * 			NULL otherwise
-	 */
+	 */// TODO docu
 	private Task unwrapTaskView(TaskView view) {
 		if(view == null) {
-			return null;
+			throw new NullPointerException("There was no task to unwrap!");
 		}
-		for(Task task : taskList) {
-			if (view.hasAsTask(task)) {
-				return task;
-			}
+		Task task = view.unwrap();
+		if(!taskList.contains(task)) {
+			throw new IllegalArgumentException("The task does not belong to this project!");
 		}
-		return null;
+		return task;
 	}
 	
 	/**

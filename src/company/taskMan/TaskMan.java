@@ -60,14 +60,16 @@ public class TaskMan {
 	 *            | the ProjectView to unwrap
 	 * @return | the unwrapped Project if it belonged to this TaskMan | NULL
 	 *         otherwise
-	 */
+	 */// TODO docu
 	private Project unwrapProjectView(ProjectView p) {
-		for (Project project : projectList) {
-			if (p.hasAsProject(project)) {
-				return project;
-			}
+		if(p == null) {
+			throw new NullPointerException("There was no project to unwrap!");
 		}
-		return null;
+		Project project = p.unwrap();
+		if(!projectList.contains(project)) {
+			throw new IllegalArgumentException("Project does not belong to this TaskManager!");
+		}
+		return project;
 	}
 
 	/**

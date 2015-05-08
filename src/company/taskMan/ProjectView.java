@@ -31,6 +31,10 @@ public class ProjectView {
 	public ProjectView(Project p) {
 		this.project = p;
 	}
+	
+	protected Project unwrap() {
+		return project;
+	}
 
 	/**
 	 * Retrieve the name of the project

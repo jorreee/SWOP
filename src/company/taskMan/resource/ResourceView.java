@@ -27,6 +27,8 @@ public class ResourceView {
 	public ResourceView(Resource resource) {
 		this.resource = resource;
 	}
+	
+	// TODO unwrap mooier, mooie ;) xxx
 
 	/**
 	 * Retrieve the name of the resource

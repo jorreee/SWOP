@@ -37,6 +37,10 @@ public class TaskView {
 	public TaskView(Task t) {
 		this.task = t;
 	}
+	
+	protected Task unwrap() {
+		return task;
+	}
 
 	/**
 	 * Retrieve the description of the task
