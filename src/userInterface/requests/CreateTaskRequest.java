@@ -7,9 +7,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import taskMan.view.ProjectView;
-import taskMan.view.ResourceView;
-import taskMan.view.TaskView;
+import company.taskMan.ProjectView;
+import company.taskMan.project.TaskView;
+import company.taskMan.resource.ResourceView;
 import userInterface.IFacade;
 
 public class CreateTaskRequest extends Request {

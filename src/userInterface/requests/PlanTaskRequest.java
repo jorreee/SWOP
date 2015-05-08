@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import taskMan.view.ProjectView;
-import taskMan.view.ResourceView;
-import taskMan.view.TaskView;
+import company.taskMan.ProjectView;
+import company.taskMan.project.TaskView;
+import company.taskMan.resource.ResourceView;
 import userInterface.IFacade;
 
 public class PlanTaskRequest extends Request {

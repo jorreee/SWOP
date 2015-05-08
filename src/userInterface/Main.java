@@ -1,15 +1,15 @@
 package userInterface;
 
-import initSaveRestore.initialization.ConcreteResourceCreationData;
-import initSaveRestore.initialization.DeveloperCreationData;
-import initSaveRestore.initialization.IntPair;
-import initSaveRestore.initialization.PlanningCreationData;
-import initSaveRestore.initialization.ProjectCreationData;
-import initSaveRestore.initialization.ReservationCreationData;
-import initSaveRestore.initialization.ResourcePrototypeCreationData;
-import initSaveRestore.initialization.TaskCreationData;
-import initSaveRestore.initialization.TaskManInitFileChecker;
-import initSaveRestore.initialization.TaskStatus;
+import initialization.ConcreteResourceCreationData;
+import initialization.DeveloperCreationData;
+import initialization.IntPair;
+import initialization.PlanningCreationData;
+import initialization.ProjectCreationData;
+import initialization.ReservationCreationData;
+import initialization.ResourcePrototypeCreationData;
+import initialization.TaskCreationData;
+import initialization.TaskManInitFileChecker;
+import initialization.TaskStatus;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -23,10 +23,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import taskMan.Facade;
-import taskMan.view.ProjectView;
-import taskMan.view.ResourceView;
-import taskMan.view.TaskView;
+import company.BranchManager;
+import company.taskMan.ProjectView;
+import company.taskMan.project.TaskView;
+import company.taskMan.resource.ResourceView;
 import userInterface.requests.Request;
 /**
  * Main class of the User Interface of the project TaskMan.
@@ -41,7 +41,7 @@ public class Main {
 
 		IFacade facade;
 		if(args.length < 1) {
-			facade = new Facade(LocalDateTime.now());
+			facade = new BranchManager(LocalDateTime.now());
 		} else {
 			facade = initializeFromStream(new FileReader(args[0]));
 		}
@@ -80,13 +80,13 @@ public class Main {
 		LocalDateTime systemTime = fileChecker.getSystemTime();
 
 		// Get facade
-		IFacade facade = new Facade(systemTime);
+		IFacade facade = new BranchManager(systemTime);
 		boolean success = initialize(facade, fileChecker);
 		if(success) {
 			return facade;
 		} else {
 			System.out.println("Initialization from tman failed, check your file!");
-			return new Facade(LocalDateTime.now());
+			return new BranchManager(LocalDateTime.now());
 		}
 	}
 

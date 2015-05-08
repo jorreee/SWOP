@@ -4,8 +4,8 @@ import java.io.BufferedReader;
 import java.util.Arrays;
 import java.util.List;
 
-import taskMan.view.ProjectView;
-import taskMan.view.TaskView;
+import company.taskMan.ProjectView;
+import company.taskMan.project.TaskView;
 import userInterface.IFacade;
 
 public class ShowProjectsRequest extends Request {

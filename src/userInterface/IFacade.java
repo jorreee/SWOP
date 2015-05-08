@@ -6,10 +6,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import taskMan.resource.user.UserPermission;
-import taskMan.view.ProjectView;
-import taskMan.view.ResourceView;
-import taskMan.view.TaskView;
+import company.taskMan.ProjectView;
+import company.taskMan.project.TaskView;
+import company.taskMan.resource.ResourceView;
+import company.taskMan.resource.user.UserPermission;
 
 public interface IFacade {
 

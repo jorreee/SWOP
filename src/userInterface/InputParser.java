@@ -2,7 +2,8 @@ package userInterface;
 
 import java.io.BufferedReader;
 
-import taskMan.resource.user.UserPermission;
+import company.taskMan.resource.user.UserPermission;
+
 import userInterface.requests.AdvanceTimeRequest;
 import userInterface.requests.ChangeUserRequest;
 import userInterface.requests.CreateProjectRequest;

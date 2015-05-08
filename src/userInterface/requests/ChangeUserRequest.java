@@ -3,7 +3,8 @@ package userInterface.requests;
 import java.io.BufferedReader;
 import java.util.List;
 
-import taskMan.view.ResourceView;
+import company.taskMan.resource.ResourceView;
+
 import userInterface.IFacade;
 
 public class ChangeUserRequest extends Request{
