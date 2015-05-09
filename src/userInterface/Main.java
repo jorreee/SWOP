@@ -27,6 +27,7 @@ import company.BranchManager;
 import company.taskMan.ProjectView;
 import company.taskMan.project.TaskView;
 import company.taskMan.resource.ResourceView;
+import userInterface.requests.ChangeUserRequest;
 import userInterface.requests.Request;
 /**
  * Main class of the User Interface of the project TaskMan.
@@ -51,15 +52,19 @@ public class Main {
 		// Start accepting user input
 		BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
 		InputParser inParser = new InputParser(facade, input);
+		Request request;
 		while(true) {
 			// Display System status
-			System.out.println("Current System time: " + facade.getCurrentTime().format(dateTimeFormatter) +
-					", logged in as: " + facade.getCurrentUser().getName());
-			// Ask user for input
-			System.out.println("TaskMan instruction? (h for help)");
-			// Parse user input
-			Request request = inParser.parse(input.readLine());
-
+			if(facade.isLoggedIn()) {
+				System.out.println("Current System time: " + facade.getCurrentTime().format(dateTimeFormatter) +
+						", logged in as: " + facade.getCurrentUser().getName());
+				// Ask user for input
+				System.out.println("TaskMan instruction? (h for help)");
+				// Parse user input
+				request = inParser.parse(input.readLine());
+			} else {
+				request = new ChangeUserRequest(facade,input);
+			}
 			// Execute request
 			String response = request.execute();
 

@@ -16,6 +16,7 @@ public interface IFacade {
 	public boolean advanceTimeTo(LocalDateTime time);
 
 	public LocalDateTime getCurrentTime();
+	public boolean isLoggedIn();
 	
 	public ResourceView getCurrentUser();
 	public List<ResourceView> getPossibleUsers();
