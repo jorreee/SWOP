@@ -81,7 +81,7 @@ public class Main {
 
 		// Get facade
 		IFacade facade = new BranchManager(systemTime);
-		boolean success = initialize(facade, fileChecker);
+		boolean success = initializeBranch(facade, fileChecker);
 		if(success) {
 			return facade;
 		} else {
@@ -90,7 +90,7 @@ public class Main {
 		}
 	}
 
-	public static boolean initialize(IFacade facade, TaskManInitFileChecker fileChecker) {
+	public static boolean initializeBranch(IFacade facade, TaskManInitFileChecker fileChecker) {
 		boolean success = false;
 		try {
 			List<ProjectCreationData> projectData = fileChecker.getProjectDataList();

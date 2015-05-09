@@ -16,13 +16,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
-import company.BranchManager;
+import userInterface.Main;
+
+import company.Branch;
 import company.taskMan.ProjectView;
 import company.taskMan.project.TaskView;
 import company.taskMan.resource.AvailabilityPeriod;
 import company.taskMan.resource.Reservation;
 import company.taskMan.resource.ResourceView;
-import userInterface.Main;
 
 /**
  * This class represents the system caretaker. It is responsible for creating
@@ -34,18 +35,18 @@ import userInterface.Main;
 public class TaskManCaretaker {
 
 	private final Stack<TaskManMemento> mementos;
-	private final BranchManager facade;
+	private final Branch branch;
 
 	/**
 	 * Constructs a caretaker linked to a specific facade
 	 * 
-	 * @param facade
+	 * @param branch
 	 *            | the facade with which the caretaker will talk (its taskman
 	 *            can be saved and restored)
 	 */
-	public TaskManCaretaker(BranchManager facade) {
+	public TaskManCaretaker(Branch branch) {
 		this.mementos = new Stack<>();
-		this.facade = facade;
+		this.branch = branch;
 	}
 
 	/**
@@ -71,9 +72,9 @@ public class TaskManCaretaker {
 		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 		DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
 		
-		List<ProjectView> existingProjects = facade.getProjects();
-		List<ResourceView> existingPrototypes = facade.getResourcePrototypes();
-		List<ResourceView> existingDevelopers = facade.getDeveloperList();
+		List<ProjectView> existingProjects = branch.getProjects();
+		List<ResourceView> existingPrototypes = branch.getResourcePrototypes();
+		List<ResourceView> existingDevelopers = branch.getDeveloperList();
 		
 		List<TaskView> existingTasks = new ArrayList<>();
 		for(ProjectView project : existingProjects) {
@@ -91,10 +92,10 @@ public class TaskManCaretaker {
 			}
 		}
 		
-		List<Reservation> existingReservations = facade.getAllReservations();
+		List<Reservation> existingReservations = branch.getAllReservations();
 		
 		// SystemTime
-		tman.append("systemTime: \"" + facade.getCurrentTime().format(dateTimeFormatter) +"\"");
+		tman.append("systemTime: \"" + branch.getCurrentTime().format(dateTimeFormatter) +"\"");
 		
 		// DailyAvailability
 		// Construct AvailabilityPeriod List
@@ -144,7 +145,7 @@ public class TaskManCaretaker {
 		for(int i = 0 ; i < existingPrototypes.size() ; i++) {
 			ResourceView prototype = existingPrototypes.get(i);
 			
-			List<ResourceView> concreteResources = facade.getConcreteResourcesForPrototype(prototype);
+			List<ResourceView> concreteResources = branch.getConcreteResourcesForPrototype(prototype);
 			for(ResourceView concreteResource : concreteResources) {
 				existingConcreteResources.put(concreteResource, i);
 			}
@@ -165,7 +166,7 @@ public class TaskManCaretaker {
 		
 		// currentUser
 		tman.append("\ncurrentUser:");
-		tman.append("\n  - name: \"" + facade.getCurrentUser().getName() + "\""); // Current logged in person (admin or dev)
+		tman.append("\n  - name: \"" + branch.getCurrentUser().getName() + "\""); // Current logged in person (admin or dev)
 		
 		// projects
 		tman.append("\nprojects:");
@@ -281,9 +282,9 @@ public class TaskManCaretaker {
 		
 		// Initialize system through a facade
 		// Set system time
-		facade.initializeFromMemento(systemTime);
+		branch.initializeFromMemento(systemTime);
 		
-		boolean success = Main.initialize(facade, fileChecker);
+		boolean success = Main.initializeBranch(branch, fileChecker);
 		// End initialization
 		return success;		
 	}
