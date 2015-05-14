@@ -74,7 +74,7 @@ public class UseCase6UpdateTaskStatusTest {
 	public final void initialize() {
 		taskManager = new BranchManager(startDate);
 
-		assertTrue(taskManager.createProject("Test1", "testing 1", project0DueDate));
+		taskManager.createProject("Test1", "testing 1", project0DueDate);
 		ProjectView project0 = taskManager.getProjects().get(0);
 
 		//create resources
@@ -102,16 +102,16 @@ public class UseCase6UpdateTaskStatusTest {
 		task02Res.put(taskManager.getResourcePrototypes().get(1), 1);
 		newTaskRes.put(taskManager.getResourcePrototypes().get(1), 1);
 
-		assertTrue(taskManager.createTask(project0, "Design system", task00EstDur, task00Dev, task00Dependencies,task00Res, null));		// TASK 1
+		taskManager.createTask(project0, "Design system", task00EstDur, task00Dev, task00Dependencies,task00Res, null);		// TASK 1
 		TaskView task00 = project0.getTasks().get(0);
 		task01Dependencies.add(task00);
-		assertTrue(taskManager.createTask(project0, "Implement Native", task01EstDur, task01Dev, task01Dependencies,task01Res, null));	// TASK 2
+		taskManager.createTask(project0, "Implement Native", task01EstDur, task01Dev, task01Dependencies,task01Res, null);	// TASK 2
 		TaskView task01 = project0.getTasks().get(1);
 		task02Dependencies.add(task01);
 
-		assertTrue(taskManager.createTask(project0, "Test code", task02EstDur, task02Dev, task02Dependencies,task02Res, null));			// TASK 3
+		taskManager.createTask(project0, "Test code", task02EstDur, task02Dev, task02Dependencies,task02Res, null);			// TASK 3
 
-		assertTrue(taskManager.advanceTimeTo(workDate)); // Omdat task updates enkel in het verleden kunnen gezet worden
+		taskManager.advanceTimeTo(workDate); // Omdat task updates enkel in het verleden kunnen gezet worden
 	}
 
 	@Test
@@ -121,10 +121,10 @@ public class UseCase6UpdateTaskStatusTest {
 
 		task00ConcreteResources.add(taskManager.getResourcePrototypes().get(0));
 		task00ConcreteResources.add(taskManager.getResourcePrototypes().get(1));		
-		assertTrue(taskManager.planTask(project0, task00, task00StartDateGood, task00ConcreteResources, devList1));
-		assertTrue(taskManager.setTaskExecuting(project0, task00, task00StartDateGood));
-		assertTrue(taskManager.setTaskFailed(project0, task00, task00EndDateGood));
-		assertTrue(taskManager.createTask(project0, "A new TASK", newTaskDur, newTaskDev, newTaskDependencies,task00Res, task00));
+		taskManager.planTask(project0, task00, task00StartDateGood, task00ConcreteResources, devList1);
+		taskManager.setTaskExecuting(project0, task00, task00StartDateGood);
+		taskManager.setTaskFailed(project0, task00, task00EndDateGood);
+		taskManager.createTask(project0, "A new TASK", newTaskDur, newTaskDev, newTaskDependencies,task00Res, task00);
 
 		// Step 1 is implicit
 		// Step 2 and 3 are handled in UI
@@ -132,9 +132,9 @@ public class UseCase6UpdateTaskStatusTest {
 		TaskView task01 = project0.getTasks().get(1);
 		TaskView task02 = project0.getTasks().get(2);
 		TaskView task03 = project0.getTasks().get(3);
-		assertTrue(taskManager.planTask(project0, task03, startDate, task00ConcreteResources, devList1));
-		assertTrue(taskManager.setTaskExecuting(project0, task03, startDate));
-		assertTrue(taskManager.setTaskFinished(project0, task03, newTaskEndDateGood));
+		taskManager.planTask(project0, task03, startDate, task00ConcreteResources, devList1);
+		taskManager.setTaskExecuting(project0, task03, startDate);
+		taskManager.setTaskFinished(project0, task03, newTaskEndDateGood);
 		// Step 6
 		assertTrue(task00.getStatusAsString().equalsIgnoreCase("failed"));
 		assertTrue(task02.getStatusAsString().equalsIgnoreCase("unavailable"));
@@ -143,7 +143,7 @@ public class UseCase6UpdateTaskStatusTest {
 		task01ConcreteResources.add(taskManager.getResourcePrototypes().get(0));
 		task01ConcreteResources.add(taskManager.getResourcePrototypes().get(0));
 		task01ConcreteResources.add(taskManager.getResourcePrototypes().get(1));
-		assertTrue(taskManager.planTask(project0, task01, task01StartDateGood, task01ConcreteResources, devList1));
+		taskManager.planTask(project0, task01, task01StartDateGood, task01ConcreteResources, devList1);
 		assertTrue(task01.getStatusAsString().equalsIgnoreCase("available"));			// 
 
 	}
@@ -159,14 +159,14 @@ public class UseCase6UpdateTaskStatusTest {
 		// Step 4 and 5
 		task00ConcreteResources.add(taskManager.getResourcePrototypes().get(0));
 		task00ConcreteResources.add(taskManager.getResourcePrototypes().get(1));
-		assertTrue(taskManager.planTask(project0, task00, task00StartDateGood,task00ConcreteResources, devList1));
-		assertTrue(taskManager.setTaskExecuting(project0, task00, task00StartDateGood));
-		assertTrue(taskManager.setTaskFinished(project0, task00, task00EndDateGood));
+		taskManager.planTask(project0, task00, task00StartDateGood,task00ConcreteResources, devList1);
+		taskManager.setTaskExecuting(project0, task00, task00StartDateGood);
+		taskManager.setTaskFinished(project0, task00, task00EndDateGood);
 		// Step 6
 		task01ConcreteResources.add(taskManager.getResourcePrototypes().get(0));
 		task01ConcreteResources.add(taskManager.getResourcePrototypes().get(0));
 		task01ConcreteResources.add(taskManager.getResourcePrototypes().get(1));
-		assertTrue(taskManager.planTask(project0, task01, task01StartDateGood, task01ConcreteResources, devList1));
+		taskManager.planTask(project0, task01, task01StartDateGood, task01ConcreteResources, devList1);
 		assertTrue(task00.getStatusAsString().equalsIgnoreCase("finished"));
 		assertTrue(task01.getStatusAsString().equalsIgnoreCase("available"));
 		assertTrue(task02.getStatusAsString().equalsIgnoreCase("unavailable"));
@@ -185,9 +185,9 @@ public class UseCase6UpdateTaskStatusTest {
 		// Step 4 and 5
 		task00ConcreteResources.add(taskManager.getResourcePrototypes().get(0));
 		task00ConcreteResources.add(taskManager.getResourcePrototypes().get(1));
-		assertTrue(taskManager.planTask(project0, task00, task00StartDateGood,task00ConcreteResources, devList1));
-		assertTrue(taskManager.setTaskExecuting(project0, task00, task00StartDateGood));
-		assertTrue(taskManager.setTaskFailed(project0, task00, task00EndDateGood));
+		taskManager.planTask(project0, task00, task00StartDateGood,task00ConcreteResources, devList1);
+		taskManager.setTaskExecuting(project0, task00, task00StartDateGood);
+		taskManager.setTaskFailed(project0, task00, task00EndDateGood);
 		// Step 6
 		assertTrue(task00.getStatusAsString().equalsIgnoreCase("failed"));
 		assertTrue(task01.getStatusAsString().equalsIgnoreCase("unavailable"));
@@ -205,7 +205,7 @@ public class UseCase6UpdateTaskStatusTest {
 
 		newTaskDependencies.add(task00);
 		newTaskDependencies.add(task01);
-		assertTrue(taskManager.createTask(project0, "Test1", newTaskDur, newTaskDev, newTaskDependencies, newTaskRes, null));
+		taskManager.createTask(project0, "Test1", newTaskDur, newTaskDev, newTaskDependencies, newTaskRes, null);
 		TaskView task03 = project0.getTasks().get(3);
 		assertTrue(task03.getPrerequisites().contains(task00));
 		assertTrue(task03.getPrerequisites().contains(task01));
@@ -215,30 +215,30 @@ public class UseCase6UpdateTaskStatusTest {
 		// Step 4 and 5
 		task00ConcreteResources.add(taskManager.getResourcePrototypes().get(0));
 		task00ConcreteResources.add(taskManager.getResourcePrototypes().get(1));
-		assertTrue(taskManager.planTask(project0, task00, task00StartDateGood,task00ConcreteResources, devList1));
-		assertTrue(taskManager.setTaskExecuting(project0, task00, task00StartDateGood));
-		assertTrue(taskManager.setTaskFinished(project0, task00, task00EndDateGood));
+		taskManager.planTask(project0, task00, task00StartDateGood,task00ConcreteResources, devList1);
+		taskManager.setTaskExecuting(project0, task00, task00StartDateGood);
+		taskManager.setTaskFinished(project0, task00, task00EndDateGood);
 		// Step 6
 		assertTrue(task00.getStatusAsString().equalsIgnoreCase("finished"));
 		task01ConcreteResources.add(taskManager.getResourcePrototypes().get(0));
 		task01ConcreteResources.add(taskManager.getResourcePrototypes().get(0));
 		task01ConcreteResources.add(taskManager.getResourcePrototypes().get(1));
-		assertTrue(taskManager.planTask(project0, task01, task01StartDateGood, task01ConcreteResources, devList1));
+		taskManager.planTask(project0, task01, task01StartDateGood, task01ConcreteResources, devList1);
 		assertTrue(task01.getStatusAsString().equalsIgnoreCase("available"));
 		assertTrue(task02.getStatusAsString().equalsIgnoreCase("unavailable"));
 		assertFalse(project0.isFinished());
 		assertTrue(task03.getStatusAsString().equalsIgnoreCase("unavailable"));
-		assertTrue(taskManager.setTaskExecuting(project0, task01, task01StartDateGood));
-		assertTrue(taskManager.setTaskFinished(project0, task01, task01EndDateGood));
+		taskManager.setTaskExecuting(project0, task01, task01StartDateGood);
+		taskManager.setTaskFinished(project0, task01, task01EndDateGood);
 		assertTrue(task00.getStatusAsString().equalsIgnoreCase("finished"));
 		assertTrue(task01.getStatusAsString().equalsIgnoreCase("finished"));
 		task02ConcreteResources.add(taskManager.getResourcePrototypes().get(0));
 		task02ConcreteResources.add(taskManager.getResourcePrototypes().get(1));
-		assertTrue(taskManager.planTask(project0, task02, task02StartDateGood, task02ConcreteResources, devList1));
+		taskManager.planTask(project0, task02, task02StartDateGood, task02ConcreteResources, devList1);
 		assertTrue(task02.getStatusAsString().equalsIgnoreCase("available"));
 		assertFalse(project0.isFinished());
 		task03ConcreteResources.add(taskManager.getResourcePrototypes().get(1));
-		assertTrue(taskManager.planTask(project0, task03, task02StartDateGood, task03ConcreteResources, devList2));
+		taskManager.planTask(project0, task03, task02StartDateGood, task03ConcreteResources, devList2);
 		assertTrue(task03.getStatusAsString().equalsIgnoreCase("available"));
 
 	}
@@ -252,7 +252,7 @@ public class UseCase6UpdateTaskStatusTest {
 
 		newTaskDependencies.add(task00);
 		newTaskDependencies.add(task01);
-		assertTrue(taskManager.createTask(project0, "Test1", newTaskDur, newTaskDev, newTaskDependencies, newTaskRes, null));
+		taskManager.createTask(project0, "Test1", newTaskDur, newTaskDev, newTaskDependencies, newTaskRes, null);
 		TaskView task03 = project0.getTasks().get(3);
 		assertTrue(task03.getPrerequisites().contains(task00));
 		assertTrue(task03.getPrerequisites().contains(task01));
@@ -262,22 +262,22 @@ public class UseCase6UpdateTaskStatusTest {
 		// Step 4 and 5
 		task00ConcreteResources.add(taskManager.getResourcePrototypes().get(0));
 		task00ConcreteResources.add(taskManager.getResourcePrototypes().get(1));
-		assertTrue(taskManager.planTask(project0, task00, task00StartDateGood, task00ConcreteResources, devList1));
-		assertTrue(taskManager.setTaskExecuting(project0, task00, task00StartDateGood));
-		assertTrue(taskManager.setTaskFinished(project0, task00, task00EndDateGood));
+		taskManager.planTask(project0, task00, task00StartDateGood, task00ConcreteResources, devList1);
+		taskManager.setTaskExecuting(project0, task00, task00StartDateGood);
+		taskManager.setTaskFinished(project0, task00, task00EndDateGood);
 		// Step 6
 		assertTrue(task00.getStatusAsString().equalsIgnoreCase("finished"));
 		task01ConcreteResources.add(taskManager.getResourcePrototypes().get(0));
 		task01ConcreteResources.add(taskManager.getResourcePrototypes().get(0));
 		task01ConcreteResources.add(taskManager.getResourcePrototypes().get(1));
-		assertTrue(taskManager.planTask(project0, task01, task01StartDateGood, task01ConcreteResources, devList1));
+		taskManager.planTask(project0, task01, task01StartDateGood, task01ConcreteResources, devList1);
 		assertTrue(task01.getStatusAsString().equalsIgnoreCase("available"));
 		assertTrue(task02.getStatusAsString().equalsIgnoreCase("unavailable"));
 		assertFalse(project0.isFinished());
 		assertTrue(task03.getStatusAsString().equalsIgnoreCase("unavailable"));
 
-		assertTrue(taskManager.setTaskExecuting(project0, task01, task01StartDateGood));
-		assertTrue(taskManager.setTaskFailed(project0, task01, task01EndDateGood));
+		taskManager.setTaskExecuting(project0, task01, task01StartDateGood);
+		taskManager.setTaskFailed(project0, task01, task01EndDateGood);
 		assertTrue(task00.getStatusAsString().equalsIgnoreCase("finished"));
 		assertTrue(task01.getStatusAsString().equalsIgnoreCase("failed"));
 		assertTrue(task02.getStatusAsString().equalsIgnoreCase("unavailable"));
@@ -295,7 +295,7 @@ public class UseCase6UpdateTaskStatusTest {
 
 		newTaskDependencies.add(task00);
 		newTaskDependencies.add(task01);
-		assertTrue(taskManager.createTask(project0, "Test1", newTaskDur, newTaskDev, newTaskDependencies, newTaskRes, null));
+		taskManager.createTask(project0, "Test1", newTaskDur, newTaskDev, newTaskDependencies, newTaskRes, null);
 		TaskView task03 = project0.getTasks().get(3);
 		assertTrue(task03.getPrerequisites().contains(task00));
 		assertTrue(task03.getPrerequisites().contains(task01));
@@ -305,46 +305,46 @@ public class UseCase6UpdateTaskStatusTest {
 		// Step 4 and 5
 		task00ConcreteResources.add(taskManager.getResourcePrototypes().get(0));
 		task00ConcreteResources.add(taskManager.getResourcePrototypes().get(1));
-		assertTrue(taskManager.planTask(project0, task00, task00StartDateGood, task00ConcreteResources, devList1));
-		assertTrue(taskManager.setTaskExecuting(project0, task00, task00StartDateGood));
-		assertTrue(taskManager.setTaskFinished(project0, task00, task00EndDateGood));
+		taskManager.planTask(project0, task00, task00StartDateGood, task00ConcreteResources, devList1);
+		taskManager.setTaskExecuting(project0, task00, task00StartDateGood);
+		taskManager.setTaskFinished(project0, task00, task00EndDateGood);
 		// Step 6
 		assertTrue(task00.getStatusAsString().equalsIgnoreCase("finished"));
 		task01ConcreteResources.add(taskManager.getResourcePrototypes().get(0));
 		task01ConcreteResources.add(taskManager.getResourcePrototypes().get(0));
 		task01ConcreteResources.add(taskManager.getResourcePrototypes().get(1));
-		assertTrue(taskManager.planTask(project0, task01, task01StartDateGood, task01ConcreteResources, devList1));
+		taskManager.planTask(project0, task01, task01StartDateGood, task01ConcreteResources, devList1);
 		assertTrue(task01.getStatusAsString().equalsIgnoreCase("available"));
 		assertTrue(task02.getStatusAsString().equalsIgnoreCase("unavailable"));
 		assertFalse(project0.isFinished());
 		assertTrue(task03.getStatusAsString().equalsIgnoreCase("unavailable"));
 
-		assertTrue(taskManager.setTaskExecuting(project0, task01, task01StartDateGood));
-		assertTrue(taskManager.setTaskFailed(project0, task01, task01EndDateGood));
+		taskManager.setTaskExecuting(project0, task01, task01StartDateGood);
+		taskManager.setTaskFailed(project0, task01, task01EndDateGood);
 		assertTrue(task00.getStatusAsString().equalsIgnoreCase("finished"));
 		assertTrue(task01.getStatusAsString().equalsIgnoreCase("failed"));
 		assertTrue(task02.getStatusAsString().equalsIgnoreCase("unavailable"));
 		assertFalse(project0.isFinished());
 		assertTrue(task03.getStatusAsString().equalsIgnoreCase("unavailable"));
 
-		assertTrue(taskManager.createTask(project0, "Test2", newTaskDur, newTaskDev, newTask2Dependencies, task01Res, task01));
+		taskManager.createTask(project0, "Test2", newTaskDur, newTaskDev, newTask2Dependencies, task01Res, task01);
 		TaskView task04 = project0.getTasks().get(4); 
 		task02ConcreteResources.add(taskManager.getResourcePrototypes().get(0));
 		task02ConcreteResources.add(taskManager.getResourcePrototypes().get(0));
 		task02ConcreteResources.add(taskManager.getResourcePrototypes().get(1));
-		assertTrue(taskManager.planTask(project0, task04, task02StartDateGood, task02ConcreteResources, devList1));
-		assertTrue(taskManager.setTaskExecuting(project0, task04, task02StartDateGood));
-		assertTrue(taskManager.setTaskFinished(project0, task04, task02EndDateGood));
+		taskManager.planTask(project0, task04, task02StartDateGood, task02ConcreteResources, devList1);
+		taskManager.setTaskExecuting(project0, task04, task02StartDateGood);
+		taskManager.setTaskFinished(project0, task04, task02EndDateGood);
 		assertTrue(task00.getStatusAsString().equalsIgnoreCase("finished"));
 		assertTrue(task01.getStatusAsString().equalsIgnoreCase("failed"));
 		task02ConcreteResources.remove(0);
-		assertTrue(taskManager.planTask(project0, task02, task02StartDateGood, task02ConcreteResources, devList1));
+		taskManager.planTask(project0, task02, task02StartDateGood, task02ConcreteResources, devList1);
 		assertTrue(task02.getStatusAsString().equalsIgnoreCase("available"));
 		assertTrue(task04.getStatusAsString().equalsIgnoreCase("finished"));
 		assertFalse(project0.isFinished());
 
 		task02ConcreteResources.remove(0);
-		assertTrue(taskManager.planTask(project0, task03, task02StartDateGood, task02ConcreteResources, devList2));
+		taskManager.planTask(project0, task03, task02StartDateGood, task02ConcreteResources, devList2);
 		assertTrue(task03.getStatusAsString().equalsIgnoreCase("available"));
 
 	}
@@ -361,9 +361,9 @@ public class UseCase6UpdateTaskStatusTest {
 		// Step 4 and 5
 		task00ConcreteResources.add(taskManager.getResourcePrototypes().get(0));
 		task00ConcreteResources.add(taskManager.getResourcePrototypes().get(1));
-		assertTrue(taskManager.planTask(project0, task00, task00StartDateGood, task00ConcreteResources, devList1));
-		assertFalse(taskManager.setTaskExecuting(project0, task00, null));
-		assertFalse(taskManager.setTaskFailed(project0, task00, null));
+		taskManager.planTask(project0, task00, task00StartDateGood, task00ConcreteResources, devList1);
+		taskManager.setTaskExecuting(project0, task00, null);
+		taskManager.setTaskFailed(project0, task00, null);
 		// Step 6
 		assertTrue(task00.getStatusAsString().equalsIgnoreCase("available"));
 		assertTrue(task01.getStatusAsString().equalsIgnoreCase("unavailable"));
@@ -383,9 +383,9 @@ public class UseCase6UpdateTaskStatusTest {
 		// Step 4 and 5
 		task00ConcreteResources.add(taskManager.getResourcePrototypes().get(0));
 		task00ConcreteResources.add(taskManager.getResourcePrototypes().get(1));
-		assertTrue(taskManager.planTask(project0, task00, task00StartDateGood, task00ConcreteResources, devList1));
-		assertFalse(taskManager.setTaskExecuting(project0, task00, task00StartDateVeryBad1));
-		assertFalse(taskManager.setTaskFinished(project0, task00, task00EndDateVeryBad1));		//Start date van task is VOOR project start date
+		taskManager.planTask(project0, task00, task00StartDateGood, task00ConcreteResources, devList1);
+		taskManager.setTaskExecuting(project0, task00, task00StartDateVeryBad1);
+		taskManager.setTaskFinished(project0, task00, task00EndDateVeryBad1);		//Start date van task is VOOR project start date
 		// Step 6
 		assertTrue(task00.getStatusAsString().equalsIgnoreCase("available"));
 		assertTrue(task01.getStatusAsString().equalsIgnoreCase("unavailable"));
@@ -405,9 +405,9 @@ public class UseCase6UpdateTaskStatusTest {
 		// Step 4 and 5
 		task00ConcreteResources.add(taskManager.getResourcePrototypes().get(0));
 		task00ConcreteResources.add(taskManager.getResourcePrototypes().get(1));
-		assertTrue(taskManager.planTask(project0, task00, task00StartDateGood, task00ConcreteResources, devList1));
-		assertTrue(taskManager.setTaskExecuting(project0, task00, task00StartDateGood));
-		assertFalse(taskManager.setTaskFinished(project0, task00, task00EndDateVeryBad2));		//End date van task is NA current time
+		taskManager.planTask(project0, task00, task00StartDateGood, task00ConcreteResources, devList1);
+		taskManager.setTaskExecuting(project0, task00, task00StartDateGood);
+		taskManager.setTaskFinished(project0, task00, task00EndDateVeryBad2);		//End date van task is NA current time
 		// Step 6
 		assertTrue(task00.getStatusAsString().equalsIgnoreCase("executing"));
 		assertTrue(task01.getStatusAsString().equalsIgnoreCase("unavailable"));
@@ -425,9 +425,9 @@ public class UseCase6UpdateTaskStatusTest {
 		// Step 1 is implicit
 		// Step 2 and 3 are handled in UI
 		// Step 4 and 5
-		assertFalse(taskManager.planTask(project0, task01, task01StartDateGood, task01ConcreteResources, devList1));
-		assertFalse(taskManager.setTaskExecuting(project0, task01, task01StartDateGood));
-		assertFalse(taskManager.setTaskFinished(project0, task01, task01EndDateGood));
+		taskManager.planTask(project0, task01, task01StartDateGood, task01ConcreteResources, devList1);
+		taskManager.setTaskExecuting(project0, task01, task01StartDateGood);
+		taskManager.setTaskFinished(project0, task01, task01EndDateGood);
 		// Step 6
 		assertTrue(task00.getStatusAsString().equalsIgnoreCase("unavailable"));
 		assertTrue(task01.getStatusAsString().equalsIgnoreCase("unavailable"));
@@ -436,9 +436,9 @@ public class UseCase6UpdateTaskStatusTest {
 
 		//----------------------------------------------------------------------------------
 
-		assertFalse(taskManager.planTask(project0, task01, task01StartDateGood, task01ConcreteResources, devList1));
-		assertFalse(taskManager.setTaskExecuting(project0, task01, task01StartDateGood));
-		assertFalse(taskManager.setTaskFailed(project0, task01, task01EndDateGood));
+		taskManager.planTask(project0, task01, task01StartDateGood, task01ConcreteResources, devList1);
+		taskManager.setTaskExecuting(project0, task01, task01StartDateGood);
+		taskManager.setTaskFailed(project0, task01, task01EndDateGood);
 		// Step 6
 		assertTrue(task00.getStatusAsString().equalsIgnoreCase("unavailable"));
 		assertTrue(task01.getStatusAsString().equalsIgnoreCase("unavailable"));
@@ -456,14 +456,14 @@ public class UseCase6UpdateTaskStatusTest {
 
 		task00ConcreteResources.add(taskManager.getResourcePrototypes().get(0));
 		task00ConcreteResources.add(taskManager.getResourcePrototypes().get(1));
-		assertTrue(taskManager.planTask(project0, task00, task00StartDateGood, task00ConcreteResources, devList1));
-		assertTrue(taskManager.setTaskExecuting(project0, task00, task00StartDateGood));
-		assertTrue(taskManager.setTaskFailed(project0, task00, task00EndDateGood));
+		taskManager.planTask(project0, task00, task00StartDateGood, task00ConcreteResources, devList1);
+		taskManager.setTaskExecuting(project0, task00, task00StartDateGood);
+		taskManager.setTaskFailed(project0, task00, task00EndDateGood);
 
 		// Step 1 is implicit
 		// Step 2 and 3 are handled in UI
 		// Step 4 and 5
-		assertFalse(taskManager.setTaskFinished(project0, task00, task00EndDateGood));
+		taskManager.setTaskFinished(project0, task00, task00EndDateGood);
 		// Step 6
 		assertTrue(task00.getStatusAsString().equalsIgnoreCase("failed"));
 		assertTrue(task01.getStatusAsString().equalsIgnoreCase("unavailable"));
@@ -475,7 +475,7 @@ public class UseCase6UpdateTaskStatusTest {
 		// Step 1 is implicit
 		// Step 2 and 3 are handled in UI
 		// Step 4 and 5
-		assertFalse(taskManager.setTaskFailed(project0, task00, task00EndDateGood));
+		taskManager.setTaskFailed(project0, task00, task00EndDateGood);
 		// Step 6
 		assertTrue(task00.getStatusAsString().equalsIgnoreCase("failed"));
 		assertTrue(task01.getStatusAsString().equalsIgnoreCase("unavailable"));
@@ -492,20 +492,20 @@ public class UseCase6UpdateTaskStatusTest {
 
 		task00ConcreteResources.add(taskManager.getResourcePrototypes().get(0));
 		task00ConcreteResources.add(taskManager.getResourcePrototypes().get(1));
-		assertTrue(taskManager.planTask(project0, task00, task00StartDateGood, task00ConcreteResources, devList1));
-		assertTrue(taskManager.setTaskExecuting(project0, task00, task00StartDateGood));
-		assertTrue(taskManager.setTaskFinished(project0, task00, task00EndDateGood));
+		taskManager.planTask(project0, task00, task00StartDateGood, task00ConcreteResources, devList1);
+		taskManager.setTaskExecuting(project0, task00, task00StartDateGood);
+		taskManager.setTaskFinished(project0, task00, task00EndDateGood);
 
 		// Step 1 is implicit
 		// Step 2 and 3 are handled in UI
 		// Step 4 and 5
-		assertFalse(taskManager.setTaskFinished(project0, task00, task00EndDateGood));
+		taskManager.setTaskFinished(project0, task00, task00EndDateGood);
 		// Step 6
 
 		task01ConcreteResources.add(taskManager.getResourcePrototypes().get(0));
 		task01ConcreteResources.add(taskManager.getResourcePrototypes().get(0));
 		task01ConcreteResources.add(taskManager.getResourcePrototypes().get(1));
-		assertTrue(taskManager.planTask(project0, task01, task01StartDateGood, task01ConcreteResources, devList1));
+		taskManager.planTask(project0, task01, task01StartDateGood, task01ConcreteResources, devList1);
 		
 		assertTrue(task00.getStatusAsString().equalsIgnoreCase("finished"));
 		assertTrue(task01.getStatusAsString().equalsIgnoreCase("available"));
@@ -514,7 +514,7 @@ public class UseCase6UpdateTaskStatusTest {
 
 		//----------------------------------------------------------------------------------
 
-		assertFalse(taskManager.setTaskFailed(project0, task00, task00EndDateGood));
+		taskManager.setTaskFailed(project0, task00, task00EndDateGood);
 		// Step 6
 		assertTrue(task00.getStatusAsString().equalsIgnoreCase("finished"));
 		assertTrue(task01.getStatusAsString().equalsIgnoreCase("available"));
@@ -533,23 +533,24 @@ public class UseCase6UpdateTaskStatusTest {
 
 		task00ConcreteResources.add(taskManager.getResourcePrototypes().get(0));
 		task00ConcreteResources.add(taskManager.getResourcePrototypes().get(1));
-		assertTrue(taskManager.planTask(project0, task00, task00StartDateGood, task00ConcreteResources, devList1));
-		assertTrue(taskManager.setTaskExecuting(project0, task00, task00StartDateGood));
-		assertTrue(taskManager.setTaskFinished(project0, task00, task00EndDateGood));
+		taskManager.planTask(project0, task00, task00StartDateGood, task00ConcreteResources, devList1);
+		taskManager.setTaskExecuting(project0, task00, task00StartDateGood);
+		taskManager.setTaskFinished(project0, task00, task00EndDateGood);
 		task01ConcreteResources.add(taskManager.getResourcePrototypes().get(0));
 		task01ConcreteResources.add(taskManager.getResourcePrototypes().get(0));
-		task01ConcreteResources.add(taskManager.getResourcePrototypes().get(1));		assertTrue(taskManager.planTask(project0, task01, task01StartDateGood, task01ConcreteResources, devList1));
-		assertTrue(taskManager.setTaskExecuting(project0, task01, task01StartDateGood));
-		assertTrue(taskManager.setTaskFinished(project0, task01, task01EndDateGood));
+		task01ConcreteResources.add(taskManager.getResourcePrototypes().get(1));		
+		taskManager.planTask(project0, task01, task01StartDateGood, task01ConcreteResources, devList1);
+		taskManager.setTaskExecuting(project0, task01, task01StartDateGood);
+		taskManager.setTaskFinished(project0, task01, task01EndDateGood);
 
 		// Step 1 is implicit
 		// Step 2 and 3 are handled in UI
 		// Step 4 and 5
 		task02ConcreteResources.add(taskManager.getResourcePrototypes().get(0));
 		task02ConcreteResources.add(taskManager.getResourcePrototypes().get(1));
-		assertTrue(taskManager.planTask(project0, task02, task02StartDateGood, task02ConcreteResources, devList1));
-		assertTrue(taskManager.setTaskExecuting(project0, task02, task02StartDateGood));
-		assertTrue(taskManager.setTaskFinished(project0, task02, task02EndDateGood));
+		taskManager.planTask(project0, task02, task02StartDateGood, task02ConcreteResources, devList1);
+		taskManager.setTaskExecuting(project0, task02, task02StartDateGood);
+		taskManager.setTaskFinished(project0, task02, task02EndDateGood);
 		// Step 6
 
 		assertTrue(task00.getStatusAsString().equalsIgnoreCase("finished"));
