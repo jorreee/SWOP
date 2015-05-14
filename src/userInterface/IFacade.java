@@ -29,30 +29,30 @@ public interface IFacade {
 	public boolean changeToUser(ResourceView user);
 
 	
-	public boolean createProject(String name, String description,
+	public void createProject(String name, String description,
 			LocalDateTime creationTime, LocalDateTime dueTime);
 
-	public boolean createProject(String name, String description,
+	public void createProject(String name, String description,
 			LocalDateTime dueTime);
 
-	public boolean createTask(ProjectView project, String description,
+	public void createTask(ProjectView project, String description,
 			int estimatedDuration, int acceptableDeviation,
 			List<TaskView> prerequisiteTasks, Map<ResourceView, Integer> requiredResources, TaskView alternativeFor);
 	
-	public boolean createTask(ProjectView project, String description,
+	public void createTask(ProjectView project, String description,
 			int estimatedDuration, int acceptableDeviation,
 			List<TaskView> prerequisiteTasks, TaskView alternativeFor, Map<ResourceView, Integer> requiredResources, 
 			String taskStatus, LocalDateTime startTime, LocalDateTime endTime,
 			LocalDateTime plannedStartTime, List<ResourceView> plannedDevelopers);
 
 	
-	public boolean setTaskFinished(ProjectView project, TaskView task,
+	public void setTaskFinished(ProjectView project, TaskView task,
 			LocalDateTime endTime);
 
-	public boolean setTaskFailed(ProjectView project, TaskView task,
+	public void setTaskFailed(ProjectView project, TaskView task,
 			 LocalDateTime endTime);
 	
-	public boolean setTaskExecuting(ProjectView project, TaskView task, LocalDateTime startTime);
+	public void setTaskExecuting(ProjectView project, TaskView task, LocalDateTime startTime);
 
 	public List<ProjectView> getProjects();
 
@@ -62,16 +62,16 @@ public interface IFacade {
 
 	public boolean discardMemento();
 
-	public boolean createResourcePrototype(String name,
+	public void createResourcePrototype(String name,
 			Optional<LocalTime> availabilityStart,
 			Optional<LocalTime> availabilityEnd);
 
-	public boolean declareConcreteResource(String name, ResourceView resourceView);
+	public void declareConcreteResource(String name, ResourceView resourceView);
 
-	public boolean createDeveloper(String name);
+	public void createDeveloper(String name);
 
 //	public boolean reserveResource(ResourceView resource, ProjectView project, TaskView task);
-	public boolean reserveResource(ResourceView resource, ProjectView project, TaskView task, LocalDateTime startTime, LocalDateTime endTime);
+	public void reserveResource(ResourceView resource, ProjectView project, TaskView task, LocalDateTime startTime, LocalDateTime endTime);
 
 //	public List<LocalDateTime> getPossibleTaskStartingTimes(ProjectView project, TaskView task, int amount);
 
@@ -82,15 +82,15 @@ public interface IFacade {
 
 	public List<ResourceView> getResourcePrototypes();
 	
-	public boolean addRequirementsToResource(List<ResourceView> resourcesToAdd, ResourceView prototype);
-	public boolean addConflictsToResource(List<ResourceView> resourcesToAdd, ResourceView prototype);
+	public void addRequirementsToResource(List<ResourceView> resourcesToAdd, ResourceView prototype);
+	public void addConflictsToResource(List<ResourceView> resourcesToAdd, ResourceView prototype);
 
 	public List<ResourceView> getConcreteResourcesForPrototype(
 			ResourceView resourcePrototype);
 
-	public boolean planTask(ProjectView project, TaskView task,
+	public void planTask(ProjectView project, TaskView task,
 			LocalDateTime planningStartTime, List<ResourceView> concRes, List<ResourceView> devs);
-	public boolean planRawTask(ProjectView project, TaskView task,
+	public void planRawTask(ProjectView project, TaskView task,
 			LocalDateTime planningStartTime, List<ResourceView> concRes, List<ResourceView> devs);
 
 //	public Map<ProjectView, List<TaskView>> reservationConflict(ResourceView requiredResource,
