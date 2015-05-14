@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.security.auth.login.CredentialException;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 
@@ -15,7 +17,6 @@ import userInterface.IFacade;
 import company.caretaker.TaskManCaretaker;
 import company.taskMan.ProjectView;
 import company.taskMan.TaskMan;
-import company.taskMan.project.Project;
 import company.taskMan.project.TaskView;
 import company.taskMan.resource.Reservation;
 import company.taskMan.resource.ResourceView;
@@ -70,37 +71,37 @@ public class BranchManager implements IFacade {
 	}
 	
 	@Override
-	public boolean createProject(String name, String description, LocalDateTime creationTime, LocalDateTime dueTime) {
+	public void createProject(String name, String description, LocalDateTime creationTime, LocalDateTime dueTime) throws CredentialException {
 		if(!currentUserHasPermission(UserPermission.CREATE_PROJECT)) {
-			return false;
+			throw new CredentialException("User has no permission to create projects");
 		}
-		return currentTaskMan.createProject(name, description, creationTime, dueTime);
+		currentTaskMan.createProject(name, description, creationTime, dueTime);
 	}
 	
 	@Override
-	public boolean createProject(String name, String description,
-			LocalDateTime dueTime) {
+	public void createProject(String name, String description,
+			LocalDateTime dueTime) throws CredentialException {
 		if(!currentUserHasPermission(UserPermission.CREATE_PROJECT)) {
-			return false;
+			throw new CredentialException("User has no permission to create projects");
 		}
-		return currentTaskMan.createProject(name, description, this.currentTime, dueTime);
+		currentTaskMan.createProject(name, description, this.currentTime, dueTime);
 	}
 
 	@Override
-	public boolean createTask(
+	public void createTask(
 			ProjectView project, 
 			String description,
 			int estimatedDuration, 
 			int acceptableDeviation,
 			List<TaskView> prerequisiteTasks, 
 			Map<ResourceView, Integer> requiredResources,
-			TaskView alternativeFor) {
+			TaskView alternativeFor) throws CredentialException{
 		
 		if(!currentUserHasPermission(UserPermission.CREATE_TASK)) {
-			return false;
+			throw new CredentialException("User has no permission ro create tasks");
 		}
 		
-		return currentTaskMan.createTask(project, 
+		currentTaskMan.createTask(project, 
 				description, 
 				estimatedDuration, 
 				acceptableDeviation, 
@@ -110,7 +111,7 @@ public class BranchManager implements IFacade {
 	}
 
 	@Override
-	public boolean createTask(
+	public void createTask(
 			ProjectView project,
 			String description,
 			int estimatedDuration, 
@@ -122,13 +123,13 @@ public class BranchManager implements IFacade {
 			LocalDateTime startTime, 
 			LocalDateTime endTime,
 			LocalDateTime plannedStartTime, 
-			List<ResourceView> plannedDevelopers) {
+			List<ResourceView> plannedDevelopers)  throws CredentialException{
 		
 		if(!currentUserHasPermission(UserPermission.CREATE_TASK)) {
-			return false;
+			throw new CredentialException("User has no permission to create tasks");
 		}
 		
-		return currentTaskMan.createTask(project, 
+		currentTaskMan.createTask(project, 
 				description, 
 				estimatedDuration, 
 				acceptableDeviation, 
@@ -151,60 +152,62 @@ public class BranchManager implements IFacade {
 	 *         parameter is earlier than the current time.
 	 */
 	@Override
-	public boolean advanceTimeTo(LocalDateTime time) {
-		if(!currentUserHasPermission(UserPermission.ADVANCE_TIME));
+	public void advanceTimeTo(LocalDateTime time) 
+			throws IllegalArgumentException, CredentialException{
+		if(!currentUserHasPermission(UserPermission.ADVANCE_TIME))
+			throw new CredentialException("The user has no permission to advance the time");
 		if (time == null)
-			return false;
+			throw new IllegalArgumentException("Time is null");
 		if (time.isAfter(currentTime)) {
 			currentTime = time;
-			return true;
 		} else
-			return false;
+			throw new IllegalArgumentException("The given time is before the currentTime");
 
 	}
 
 	@Override
-	public boolean setTaskFinished(ProjectView project, TaskView task,
-			LocalDateTime endTime) {
+	public void setTaskFinished(ProjectView project, TaskView task,
+			LocalDateTime endTime) throws CredentialException, IllegalArgumentException{
 		if(!currentUserHasPermission(UserPermission.UPDATE_TASK)) {
-			return false;
+			throw new CredentialException("The user has no permission to update the taskstatus");
 		}
 		if (endTime == null) { // || startTime == null) {
-			return false;
+			throw new IllegalArgumentException("The endtime is null");
 		}
 		if (endTime.isAfter(currentTime)) {
-			return false;
+			throw new IllegalArgumentException("The endtime is after the currentTime");
 		}
-		return currentTaskMan.setTaskFinished(project, task, endTime);
+		currentTaskMan.setTaskFinished(project, task, endTime);
 	}
 
 	@Override
-	public boolean setTaskFailed(ProjectView project, TaskView task,
-			LocalDateTime endTime) {
+	public void setTaskFailed(ProjectView project, TaskView task,
+			LocalDateTime endTime) throws CredentialException, IllegalArgumentException {
 		if(!currentUserHasPermission(UserPermission.UPDATE_TASK)) {
-			return false;
+			throw new CredentialException("The user has no permission to update the taskstatus");
 		}
 		if (endTime == null) { // || startTime == null) {
-			return false;
+			throw new IllegalArgumentException("The endtime is null");
 		}
 		if (endTime.isAfter(currentTime)) {
-			return false;
+			throw new IllegalArgumentException("The endtime is after the currentTime");
 		}
-		return currentTaskMan.setTaskFailed(project, task, endTime);
+		currentTaskMan.setTaskFailed(project, task, endTime);
 	}
 	
 	@Override
-	public boolean setTaskExecuting(ProjectView project, TaskView task, LocalDateTime startTime){
+	public void setTaskExecuting(ProjectView project, TaskView task,
+			LocalDateTime startTime)throws CredentialException, IllegalArgumentException{
 		if(!currentUserHasPermission(UserPermission.UPDATE_TASK)) {
-			return false;
+			throw new CredentialException("The user has no permission to update the taskstatus");
 		}
 		if (startTime == null) {
-			return false;
+			throw new IllegalArgumentException("The startTime is null");
 		}
 		if (startTime.isAfter(currentTime)) {
-			return false;
+			throw new IllegalArgumentException("The startTime is after the currentTime");
 		}
-		return currentTaskMan.setTaskExecuting(project,task,startTime);
+		currentTaskMan.setTaskExecuting(project,task,startTime);
 	}
 
 	@Override
@@ -242,36 +245,35 @@ public class BranchManager implements IFacade {
 	}
 
 	@Override
-	public boolean changeToUser(ResourceView user) {
+	public void changeToUser(ResourceView user) throws IllegalArgumentException{
 		User newUser = currentTaskMan.getUser(user);
 		if (user == null) {
-			return false;
+			throw new IllegalArgumentException("Invalid user");
 		} else {
 			currentUser = newUser;
-			return true;
 		}
 	}
 
 	@Override
-	public boolean createResourcePrototype(String name,
+	public void createResourcePrototype(String name,
 			Optional<LocalTime> availabilityStart,
 			Optional<LocalTime> availabilityEnd) {
-		return currentTaskMan.createResourcePrototype(name,availabilityStart,availabilityEnd);
+		currentTaskMan.createResourcePrototype(name,availabilityStart,availabilityEnd);
 	}
 
 	@Override
-	public boolean declareConcreteResource(String name, ResourceView fromPrototype) {
-		return currentTaskMan.declareConcreteResource(name,fromPrototype);
+	public void declareConcreteResource(String name, ResourceView fromPrototype) {
+		currentTaskMan.declareConcreteResource(name,fromPrototype);
 	}
 
 	@Override
-	public boolean createDeveloper(String name) {
-		return currentTaskMan.createDeveloper(name);
+	public void createDeveloper(String name) {
+		currentTaskMan.createDeveloper(name);
 	}
 	
 	@Override
-	public boolean reserveResource(ResourceView resource, ProjectView project, TaskView task, LocalDateTime startTime, LocalDateTime endTime) {
-		return currentTaskMan.reserveResource(resource, project, task, startTime, endTime);
+	public void reserveResource(ResourceView resource, ProjectView project, TaskView task, LocalDateTime startTime, LocalDateTime endTime) {
+		currentTaskMan.reserveResource(resource, project, task, startTime, endTime);
 	}
 
 	@Override
@@ -300,33 +302,35 @@ public class BranchManager implements IFacade {
 	}
 
 	@Override
-	public boolean planTask(ProjectView project, TaskView task,
-			LocalDateTime plannedStartTime, List<ResourceView> concRes, List<ResourceView> devs) {
+	public void planTask(ProjectView project, TaskView task,
+			LocalDateTime plannedStartTime, List<ResourceView> concRes, 
+			List<ResourceView> devs) throws CredentialException{
 		if(!currentUserHasPermission(UserPermission.PLAN_TASK)) {
-			return false;
+			throw new CredentialException("User has no permission to plan a task");
 		}
-		return currentTaskMan.planTask(project, task, plannedStartTime, concRes, devs);
+		currentTaskMan.planTask(project, task, plannedStartTime, concRes, devs);
 	}
 	
 	@Override
-	public boolean planRawTask(ProjectView project, TaskView task,
-			LocalDateTime plannedStartTime, List<ResourceView> concRes, List<ResourceView> devs) {
+	public void planRawTask(ProjectView project, TaskView task,
+			LocalDateTime plannedStartTime, List<ResourceView> concRes, 
+			List<ResourceView> devs) throws CredentialException{
 		if(!currentUserHasPermission(UserPermission.PLAN_TASK)) {
-			return false;
+			throw new CredentialException("User has no permission to plan a task");
 		}
-		return currentTaskMan.planRawTask(project, task, plannedStartTime, concRes, devs);
+		currentTaskMan.planRawTask(project, task, plannedStartTime, concRes, devs);
 	}
 
 	@Override
-	public boolean addRequirementsToResource(List<ResourceView> resourcesToAdd,
+	public void addRequirementsToResource(List<ResourceView> resourcesToAdd,
 			ResourceView prototype) {
-		return currentTaskMan.addRequirementsToResource(resourcesToAdd, prototype);
+		currentTaskMan.addRequirementsToResource(resourcesToAdd, prototype);
 	}
 
 	@Override
-	public boolean addConflictsToResource(List<ResourceView> resourcesToAdd,
+	public void addConflictsToResource(List<ResourceView> resourcesToAdd,
 			ResourceView prototype) {
-		return currentTaskMan.addConflictsToResource(resourcesToAdd, prototype);
+		currentTaskMan.addConflictsToResource(resourcesToAdd, prototype);
 	}
 	
 	/**

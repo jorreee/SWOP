@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.security.auth.login.CredentialException;
+
 import company.BranchView;
 import company.taskMan.ProjectView;
 import company.taskMan.project.TaskView;
@@ -18,7 +20,7 @@ public interface IFacade {
 	public void selectBranch(BranchView branch);
 	public void initializeBranch(String geographicLocation);
 	
-	public boolean advanceTimeTo(LocalDateTime time);
+	public void advanceTimeTo(LocalDateTime time) throws IllegalArgumentException, CredentialException;
 
 	public LocalDateTime getCurrentTime();
 	public boolean isLoggedIn();
@@ -26,33 +28,33 @@ public interface IFacade {
 	
 	public ResourceView getCurrentUser();
 	public List<ResourceView> getPossibleUsers();
-	public boolean changeToUser(ResourceView user);
+	public void changeToUser(ResourceView user);
 
 	
 	public void createProject(String name, String description,
-			LocalDateTime creationTime, LocalDateTime dueTime);
+			LocalDateTime creationTime, LocalDateTime dueTime) throws CredentialException;
 
 	public void createProject(String name, String description,
-			LocalDateTime dueTime);
+			LocalDateTime dueTime) throws CredentialException;
 
 	public void createTask(ProjectView project, String description,
 			int estimatedDuration, int acceptableDeviation,
-			List<TaskView> prerequisiteTasks, Map<ResourceView, Integer> requiredResources, TaskView alternativeFor);
+			List<TaskView> prerequisiteTasks, Map<ResourceView, Integer> requiredResources, TaskView alternativeFor) throws CredentialException;
 	
 	public void createTask(ProjectView project, String description,
 			int estimatedDuration, int acceptableDeviation,
 			List<TaskView> prerequisiteTasks, TaskView alternativeFor, Map<ResourceView, Integer> requiredResources, 
 			String taskStatus, LocalDateTime startTime, LocalDateTime endTime,
-			LocalDateTime plannedStartTime, List<ResourceView> plannedDevelopers);
+			LocalDateTime plannedStartTime, List<ResourceView> plannedDevelopers) throws CredentialException;
 
 	
 	public void setTaskFinished(ProjectView project, TaskView task,
-			LocalDateTime endTime);
+			LocalDateTime endTime) throws CredentialException, IllegalArgumentException;
 
 	public void setTaskFailed(ProjectView project, TaskView task,
-			 LocalDateTime endTime);
+			 LocalDateTime endTime) throws CredentialException, IllegalArgumentException;
 	
-	public void setTaskExecuting(ProjectView project, TaskView task, LocalDateTime startTime);
+	public void setTaskExecuting(ProjectView project, TaskView task, LocalDateTime startTime) throws CredentialException, IllegalArgumentException;
 
 	public List<ProjectView> getProjects();
 
@@ -89,9 +91,9 @@ public interface IFacade {
 			ResourceView resourcePrototype);
 
 	public void planTask(ProjectView project, TaskView task,
-			LocalDateTime planningStartTime, List<ResourceView> concRes, List<ResourceView> devs);
+			LocalDateTime planningStartTime, List<ResourceView> concRes, List<ResourceView> devs) throws CredentialException;
 	public void planRawTask(ProjectView project, TaskView task,
-			LocalDateTime planningStartTime, List<ResourceView> concRes, List<ResourceView> devs);
+			LocalDateTime planningStartTime, List<ResourceView> concRes, List<ResourceView> devs) throws CredentialException;
 
 //	public Map<ProjectView, List<TaskView>> reservationConflict(ResourceView requiredResource,
 //			ProjectView project, TaskView task, LocalDateTime planningStartTime);
