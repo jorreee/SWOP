@@ -14,6 +14,8 @@ import company.taskMan.resource.ResourceView;
 import company.taskMan.task.Dependant;
 import company.taskMan.task.Task;
 import company.taskMan.util.TimeSpan;
+import exceptions.ResourceUnavailableException;
+import exceptions.UnexpectedViewContentException;
 
 /**
  * The project class used by TaskMan. A project will always have a name, a
@@ -151,8 +153,7 @@ public class Project implements Dependant {
 	 *            | The planned start time of the Task
 	 * @param plannedDevelopers
 	 *            | The assigned developers of the Task
-	 * @return True if and only the creation of a Task with a given status was
-	 *         successful.
+	 * @throws IllegalArgumentException, IllegalStateException, ResourceUnavailableException 
 	 */
 	public void createTask(String description, 
 						int estimatedDuration, 
@@ -166,7 +167,7 @@ public class Project implements Dependant {
 						LocalDateTime endTime,
 						LocalDateTime plannedStartTime,
 						List<ResourceView> plannedDevelopers) 
-				throws IllegalArgumentException, IllegalStateException {
+				throws IllegalArgumentException, IllegalStateException, ResourceUnavailableException {
 
 		if(!isValidAlternative(alternativeFor)) {
 			throw new IllegalArgumentException("Invalid alternative");
@@ -254,7 +255,7 @@ public class Project implements Dependant {
 				}
 			}
 			return true;
-		} catch(IllegalArgumentException e) {
+		} catch(Exception e) {
 			return false;
 		}
 //		}
@@ -268,16 +269,16 @@ public class Project implements Dependant {
 	 * @param 	view
 	 * 			the TaskView to unwrap
 	 * @return 	the unwrapped Task if it belonged to this project
-	 * @throws IllegalArgumentException
+	 * @throws IllegalArgumentException, UnexpectedViewContentException 
 	 */
 	private Task unwrapTaskView(TaskView view) 
-			throws IllegalArgumentException {
+			throws IllegalArgumentException, UnexpectedViewContentException {
 		if(view == null) {
 			throw new IllegalArgumentException("There was no task to unwrap!");
 		}
 		Task task = view.unwrap();
 		if(!taskList.contains(task)) {
-			throw new IllegalArgumentException("The task does not belong to this project!");
+			throw new UnexpectedViewContentException("The task does not belong to this project!");
 		}
 		return task;
 	}
@@ -419,7 +420,7 @@ public class Project implements Dependant {
 	 *            | The task to finish
 	 * @param endTime
 	 *            | The given end time of the task
-	 * @throws IllegalArgumentException, IllegalStateException
+	 * @throws IllegalArgumentException, IllegalStateException 
 	 */
 	public void setTaskFinished(TaskView t, LocalDateTime endTime) 
 			throws IllegalArgumentException, IllegalStateException {
@@ -433,10 +434,7 @@ public class Project implements Dependant {
 	 * 			the id of the given task
 	 * @param 	endTime
 	 * 			the end time of the given task
-	 * @return	True if setting the task to failed was successful,
-	 * 			False if it was unsuccessful
-	 * 			False if the start time is null
-	 * 			False if the start time is before creation time
+	 * @throws  IllegalArgumentException, IllegalStateException 
 	 */
 	public void setTaskFailed(TaskView t, LocalDateTime endTime) 
 			throws IllegalArgumentException, IllegalStateException {
@@ -476,11 +474,13 @@ public class Project implements Dependant {
 	 * 			| the concrete resources to plan for the task
 	 * @param devs
 	 * 			| the developers to plan for the task
-	 * @throws IllegalArgumentException, IllegalStateException 
+	 * @throws IllegalArgumentException, IllegalStateException, ResourceUnavailableException 
 	 */
 	public void planTask(TaskView task, LocalDateTime plannedStartTime,
 			List<ResourceView> concRes, List<ResourceView> devs) 
-					throws IllegalArgumentException, IllegalStateException {
+					throws IllegalArgumentException, 
+					IllegalStateException, 
+					ResourceUnavailableException {
 		unwrapTaskView(task).plan(plannedStartTime, concRes, devs);
 	}
 	
@@ -502,11 +502,13 @@ public class Project implements Dependant {
 	 *            | the concrete resources to plan for the task
 	 * @param devs
 	 *            | the developers to plan for the task
-	 * @throws IllegalArgumentException, IllegalStateException 
+	 * @throws IllegalArgumentException, IllegalStateException, ResourceUnavailableException 
 	 */
 	public boolean planRawTask(TaskView task, LocalDateTime plannedStartTime,
 			List<ResourceView> concRes, List<ResourceView> devs) 
-					throws IllegalArgumentException, IllegalStateException {
+					throws IllegalArgumentException, 
+					IllegalStateException, 
+					ResourceUnavailableException {
 		return unwrapTaskView(task).rawPlan(plannedStartTime, concRes, devs);
 	}
 
@@ -568,14 +570,16 @@ public class Project implements Dependant {
 	 *            | The end time of the new reservation
 	 * @return True if the resource was reserved by the given task, false
 	 *         otherwise
+	 * @throws IllegalArgumentException, ResourceUnavailableException 
 	 */
 	public boolean reserve(ResourceView resource, TaskView task,
-			LocalDateTime startTime, LocalDateTime endTime) {
+			LocalDateTime startTime, LocalDateTime endTime) 
+				throws IllegalArgumentException, ResourceUnavailableException, IllegalStateException {
 		Task t = unwrapTaskView(task);
 		if(t == null) {
 			return false;
 		}
-		t.reserve(resource, startTime, endTime); //TODO excpetions vangen
+		t.reserve(resource, startTime, endTime);
 		return true;
 	}
 	

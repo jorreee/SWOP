@@ -1,5 +1,6 @@
 package company.taskMan.resource;
 
+import java.rmi.UnexpectedException;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -15,6 +16,9 @@ import company.taskMan.resource.user.User;
 import company.taskMan.resource.user.UserPrototype;
 import company.taskMan.task.Task;
 import company.taskMan.util.TimeSpan;
+import exceptions.NoSuchResourceException;
+import exceptions.ResourceUnavailableException;
+import exceptions.UnexpectedViewContentException;
 
 /**
  * The resource manager is the part in the system that will keep the data about
@@ -68,33 +72,28 @@ public class ResourceManager {
 	 *            | the optional start time of the availability period
 	 * @param availabilityEnd
 	 *            | the optional end time of the availability period
-	 * @return True when the prototype has been successfully initiated, false
-	 *         otherwise
+	 * @throws IllegalArgumentException
 	 */
-	public boolean createResourcePrototype(String resourceName,
-			Optional<LocalTime> availabilityStart, Optional<LocalTime> availabilityEnd) {
+	public void createResourcePrototype(String resourceName,
+			Optional<LocalTime> availabilityStart, Optional<LocalTime> availabilityEnd) 
+				throws IllegalArgumentException{
 		
 		if(!isValidPeriod(availabilityStart, availabilityEnd)) {
-			return false;
+			throw new IllegalArgumentException("Invalid timestamps");
 		}
 		if(resourceName == null) {
-			return false;
+			throw new IllegalArgumentException("Invalid resource name");
 		}
 		
 		// Create resourcePrototype (should happen before applying conflicting resources,
 		// since a resource can conflict with itself)
-		boolean success = false;
 		ResourcePrototype resprot = null;
 		if(!availabilityStart.isPresent() && !availabilityEnd.isPresent()) {
 			resprot = new ResourcePrototype(resourceName, null);
 		} else {
 			resprot = new ResourcePrototype(resourceName, new AvailabilityPeriod(availabilityStart.get(), availabilityEnd.get()));
 		}
-		success = addResourceType(resprot);
-		if(!success) {
-			return false;
-		}
-		return true;
+		addResourceType(resprot);
 	}
 	
 	/**
@@ -128,8 +127,8 @@ public class ResourceManager {
 	 * @return true if the new resource pool was successfully added to the
 	 *         system
 	 */
-	private boolean addResourceType(ResourcePrototype resProt) {
-		return resPools.add(new ResourcePool(resProt));
+	private void addResourceType(ResourcePrototype resProt) {
+		resPools.add(new ResourcePool(resProt));
 	}
 	
 	/**
@@ -139,46 +138,40 @@ public class ResourceManager {
 	 *            | The name for the new concrete resource
 	 * @param ptype
 	 *            | The prototype for which a new resource should be made
-	 * @return True if and only if the new concrete resource was made and added
-	 *         to its correct pool
+	 * @throws IllegalArgumentException, UnexpectedViewContentException
 	 */
-	public boolean declareConcreteResource(String resName, ResourceView ptype) {
+	public void declareConcreteResource(String resName, ResourceView ptype) 
+			throws IllegalArgumentException, UnexpectedViewContentException {
 		ResourcePrototype prototype = unWrapResourcePrototypeView(ptype);
-		ResourcePool resPool = null;
-		for(ResourcePool rp : resPools) {
-			if(rp.hasAsPrototype(prototype)) {
-				resPool = rp;
-			}
-		}
-		if(resPool == null) {
-			return false;
-		}
-		boolean success = resPool.createResourceInstance(resName);
-		if(success) {
-			return true;
-		} else {
-			return false;
+		ResourcePool resPool;
+		try {
+			resPool = getPoolOf(prototype);
+			resPool.createResourceInstance(resName);
+		} catch (NoSuchResourceException e) {
+			throw new UnexpectedViewContentException(e.getMessage());
 		}
 	}
 	
-	/**
-	 * Get the user who corresponds to the given user
-	 * 
-	 * @param newUser
-	 *            | The user
-	 * @return the user who corresponds to the given user
-	 */
-	public User getUser(ResourceView newUser) {
-		if(newUser == null) {
-			return null;
-		}
-		for(User user : userList) {
-			if(newUser.hasAsResource(user)) {
-				return user;
-			}
-		}
-		return null;
-	}
+//	/**
+//	 * Get the user who corresponds to the given user
+//	 * 
+//	 * @param newUser
+//	 *            | The user
+//	 * @return the user who corresponds to the given user
+//	 * @throws IllegalArgumentException
+//	 */
+//	public User getUser(ResourceView newUser)
+//			throws IllegalArgumentException {
+//		if(newUser == null) {
+//			throw new IllegalArgumentException("newUser must not be null");
+//		}
+//		for(User user : userList) {
+//			if(newUser.hasAsResource(user)) {
+//				return user;
+//			}
+//		}
+//		return null;
+//	}
 	
 	/**
 	 * Find the project manager
@@ -238,32 +231,35 @@ public class ResourceManager {
 	 *            | This parameter will define if the method should check if the
 	 *            resource is actually available to reserve from the given start
 	 *            to end time
-	 * @return True if the new reservation was made and added to the system
+	 * @throws IllegalArgumentException, UnexpectedViewContentException, 
+	 * 		   ResourceUnavailableException, NoSuchResourceException 
 	 */
 	// TODO make a new reservation for every day (only within working hours and taking availability period into account)
-	public boolean reserve(
+	public void reserve(
 			List<ResourceView> resources, 
 			Task reservingTask, 
 			LocalDateTime startTime, 
 			LocalDateTime endTime,
-			boolean checkCanReserve) {
+			boolean checkCanReserve) 
+				throws IllegalArgumentException, 
+					UnexpectedViewContentException, 
+					ResourceUnavailableException {
 		
 		if(resources == null || reservingTask == null ||
 				startTime == null || endTime == null) {
-			return false;
+			throw new IllegalArgumentException("Invalid parameters");
 		}
 		if(endTime.isBefore(startTime)) {
-			return false;
+			throw new IllegalArgumentException("Invalid timestamps");
 		}
 		
 		List<Reservation> newReservations = new ArrayList<Reservation>();
 		
-		boolean error = false;
 		for(ResourceView resource : resources) {
 			ConcreteResource toReserve = null;
-			ResourcePrototype r = unWrapResourcePrototypeView(resource);
-			if(r != null) {
-				
+			try {
+				ResourcePrototype r = unWrapResourcePrototypeView(resource);
+
 				if(checkCanReserve) { // Safe method, check for unreserved resource
 					toReserve = pickUnreservedResource(r, startTime, endTime, newReservations, new ArrayList<ConcreteResource>());
 				} else { // Unsafe method, get the first resource (that is not already chosen)
@@ -271,45 +267,44 @@ public class ResourceManager {
 					List<ResourceView> invalidCrs = new ArrayList<>();
 					for(ResourceView cr : crList) {
 						for(Reservation res : newReservations) {
-							if(res.hasAsResource(unWrapConcreteResourceView(cr))) {
+							if(res.hasAsResource(unWrapConcreteResourceView(cr))) { //FIXME hier worden nog exceptions gegooid
 								invalidCrs.add(cr);
 							}
 						}
 					}
 					crList.removeAll(invalidCrs);
 					if(!crList.isEmpty()) {
-						toReserve = unWrapConcreteResourceView(crList.remove(0));
-					}
+						toReserve = unWrapConcreteResourceView(crList.remove(0));//FIXME hier worden nog exceptions gegooid
+					} //FIXME anders wat?
 				}
-				
-			} else {
-				User user = unWrapUserView(resource);
-				if(user != null) {
+
+			} catch(UnexpectedViewContentException e1) {
+				try {
+					User user = unWrapUserView(resource);
 					toReserve = user;
-				} else {
-					ConcreteResource cr = unWrapConcreteResourceView(resource);
-					if(cr != null) {
+				} catch(UnexpectedViewContentException e2) {
+					try {
+						ConcreteResource cr = unWrapConcreteResourceView(resource);
 						toReserve = cr;
+					} catch(UnexpectedException e3) {
+						//De unwrap was invalid, gooi dus nieuwe exception
+						throw new UnexpectedViewContentException("The view didn't contain a valid object");
 					}
 				}
+			} catch(NoSuchResourceException e4) {
+				throw new ResourceUnavailableException(e4.getMessage());
 			}
-			if(toReserve == null || (checkCanReserve && !canReserve(toReserve,startTime,endTime, newReservations))) {
-				error = true;
-				break;
-			} else {
-				newReservations.add(new Reservation(toReserve, reservingTask, startTime, endTime));
+			if(toReserve == null) {
+				//bv als er geen unreserved resource meer beschikbaar was
+				throw new ResourceUnavailableException("Failed to reserve resource: " + resource.getName());
 			}
+			newReservations.add(new Reservation(toReserve, reservingTask, startTime, endTime));
 		}
-		if(error) {
-			return false;
-		}
-		
+
 		if(!reservingTask.hasEnded()) {
 			activeReservations.addAll(newReservations);
 		}
 		allReservations.addAll(newReservations);
-		
-		return true;
 	}
 
 	/**
@@ -329,24 +324,23 @@ public class ResourceManager {
 	 *            | This parameter will define if the method should check if the
 	 *            resource is actually available to reserve from the given start
 	 *            to end time
-	 * @return The list of users for whom the reservation was made, null if
-	 *         there was an error
+	 * @return The list of users for whom the reservation was made
+	 * @throws IllegalArgumentException, UnexpectedViewContentException, ResourceUnavailableException 
 	 */
-	public List<User> pickDevs(List<ResourceView> devs, Task reservingTask, LocalDateTime start, LocalDateTime end, boolean checkCanReserve) {
+	//TODO hier moet niks gecatched worden, right?
+	public List<User> pickDevs(List<ResourceView> devs, 
+			Task reservingTask, 
+			LocalDateTime start,
+			LocalDateTime end, 
+			boolean checkCanReserve) 
+				throws IllegalArgumentException, UnexpectedViewContentException, ResourceUnavailableException{
 		List<User> users = new ArrayList<>();
 		for(ResourceView dev : devs) {
 			User user = unWrapUserView(dev);
-			if(user == null) {
-				return null;
-			}
 			users.add(user);
 		}
-		boolean success = reserve(devs, reservingTask, start, end, checkCanReserve);
-		if(!success) {
-			return null;
-		} else {
-			return users;
-		}
+		reserve(devs, reservingTask, start, end, checkCanReserve);
+		return users;
 	}
 
 	/**
@@ -396,36 +390,45 @@ public class ResourceManager {
 	 *            Reservations that were already made
 	 * @param dontReserve
 	 *            Concrete resources to ignore
-	 * @return A list of Unreserved Concrete Resources of the Prototype. If none
-	 *         were found, return null.
+	 * @return A list of Unreserved Concrete Resources of the Prototype. 
+	 * @throws IllegalArgumentException, ResourceUnavailableException, NoSuchResourceException 
 	 */
 	private ConcreteResource pickUnreservedResource(ResourcePrototype rp, 
 			LocalDateTime start, 
 			LocalDateTime end, 
 			List<Reservation> alreadyReserved,
-			List<ConcreteResource> dontReserve) {
+			List<ConcreteResource> dontReserve) 
+					throws IllegalArgumentException, ResourceUnavailableException, NoSuchResourceException {
+		if(start == null || end == null || alreadyReserved == null || dontReserve == null) {
+			throw new IllegalArgumentException("Invalid parameters");
+		}
 		List<ConcreteResource> options = getPoolOf(rp).getConcreteResourceList();
 		for(ConcreteResource cr : options) {
 			if(!dontReserve.contains(cr) && canReserve(cr, start, end, alreadyReserved)) {
 				return cr;
 			}
 		}
-		return null;
+		throw new ResourceUnavailableException("There are no \"" + rp.getName() + "\"s available");
 	}
 	
 	/**
 	 * Gets the Resource Pool of a given Prototype.
 	 * @param 	rp
 	 * 			The resource prototype
-	 * @return	If the pool exists, return the pool. Else return null.
+	 * @return	If the pool exists, return the pool. 
+	 * @throws IllegalArgumentException, NoSuchResourceException
 	 */
-	private ResourcePool getPoolOf(ResourcePrototype rp) {
+	private ResourcePool getPoolOf(ResourcePrototype rp) 
+			throws IllegalArgumentException, NoSuchResourceException {
+		if(rp == null) {
+			throw new IllegalArgumentException("rp must not be null");
+		}
 		for(ResourcePool pool : resPools) {
 			if(pool.hasAsPrototype(rp)) {
 				return pool;
 			}
 		}
-		return null;
+		throw new NoSuchResourceException("Invalid resource prototype");
 	}
 	
 	/**
@@ -470,8 +473,9 @@ public class ResourceManager {
 	 *            | The resource to find the prototype of
 	 * @return a resourceView of the prototype associated with the given
 	 *         resource or null if no corresponding prototype was found
+	 * @throws NoSuchResourceException 
 	 */
-	public ResourceView getPrototypeOf(ResourceView view){
+	public ResourceView getPrototypeOf(ResourceView view) throws NoSuchResourceException{
 		for(ResourcePool pool : resPools) {
 			for (Resource res : pool.getConcreteResourceList()){
 				if (view.hasAsResource(res)){
@@ -479,7 +483,7 @@ public class ResourceManager {
 				}
 			}
 		}
-		return null;
+		throw new NoSuchResourceException("Invalid resourceView");
 	}
 	
 	/**
@@ -490,19 +494,20 @@ public class ResourceManager {
 	 * @param resourcePrototype
 	 *            | The prototype for which the concrete resources are wanted
 	 * @return an immutable list of resourceView linked with the concrete
-	 *         resources based on the given resource prototype, null if the
-	 *         prototype is not associated with any pool
+	 *         resources based on the given resource prototype, an empty list
+	 *         if the prototype is not associated with any pool
+	 * @throws UnexpectedViewContentException, IllegalArgumentException, NoSuchResourceException 
 	 */
-	public List<ResourceView> getConcreteResourcesForPrototype(ResourceView resourcePrototype) {
+	public List<ResourceView> getConcreteResourcesForPrototype(ResourceView resourcePrototype) 
+			throws UnexpectedViewContentException, NoSuchResourceException, IllegalArgumentException {
 		ResourcePrototype rprot = unWrapResourcePrototypeView(resourcePrototype);
 		if(rprot == null) {
 			Builder<ResourceView> conResList = ImmutableList.builder();
 			return conResList.build();
 		}
-
 		List<ConcreteResource> concreteRes = getPoolOf(rprot).getConcreteResourceList();
 		Builder<ResourceView> conResList = ImmutableList.builder();
-		for (ConcreteResource res : concreteRes  ){
+		for (ConcreteResource res : concreteRes) {
 			conResList.add(new ResourceView(res));
 		}
 		return conResList.build();
@@ -516,10 +521,12 @@ public class ResourceManager {
 	 *            | The given concrete resource
 	 * @return the concrete resource found in the resourceView, null if it
 	 *         cannot be found in the resource manager's resource pools
+	 * @throws UnexpectedViewContentException, IllegalArgumentException
 	 */
-	private ConcreteResource unWrapConcreteResourceView(ResourceView view){
+	private ConcreteResource unWrapConcreteResourceView(ResourceView view) 
+			throws IllegalArgumentException, UnexpectedViewContentException{
 		if(view == null) {
-			return null;
+			throw new IllegalArgumentException("view must not be null");
 		}
 		for(ResourcePool pool : resPools) {
 				for (ConcreteResource res : pool.getConcreteResourceList()){
@@ -528,7 +535,7 @@ public class ResourceManager {
 					}
 				}
 		}
-		return null;
+		throw new UnexpectedViewContentException("View didn't contain a valid concrete resource");
 	}
 	
 	/**
@@ -537,19 +544,20 @@ public class ResourceManager {
 	 * 
 	 * @param view
 	 *            | The given resource prototype
-	 * @return the resource prototype found in the resourceView, null if it
-	 *         cannot be found in the resource manager's resource pools
+	 * @return the resource prototype found in the resourceView
+	 * @throws UnexpectedViewContentException, IllegalArgumentException
 	 */
-	private ResourcePrototype unWrapResourcePrototypeView(ResourceView view){
+	private ResourcePrototype unWrapResourcePrototypeView(ResourceView view) 
+			throws UnexpectedViewContentException {
 		if(view == null) {
-			return null;
+			throw new IllegalArgumentException("view must not be null");
 		}
 		for(ResourcePool pool : resPools) {
 			if (view.hasAsResource(pool.getPrototype())) {
 				return pool.getPrototype();
 			}
 		}
-		return null;
+		throw new UnexpectedViewContentException("View didn't contain a valid resource Prototype");
 	}
 	
 	/**
@@ -558,19 +566,21 @@ public class ResourceManager {
 	 * 
 	 * @param view
 	 *            | The given user
-	 * @return the user found in the resourceView, null if it
-	 *         cannot be found in the resource manager's user list
+	 * @return the user found in the resourceView
+	 * @throws IllegalArgumentException, UnexpectedViewContentException
+	 * 
 	 */
-	private User unWrapUserView(ResourceView view){
+	public User unWrapUserView(ResourceView view) 
+			throws IllegalArgumentException, UnexpectedViewContentException {
 		if(view == null) {
-			return null;
+			throw new IllegalArgumentException("view must not be null");
 		}
 		for(User user : userList) {
 			if (view.hasAsResource(user)) {
 				return user;
 			}
 		}
-		return null;
+		throw new UnexpectedViewContentException("View didn't contain a valid User");
 	}
 
 	/**

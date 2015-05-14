@@ -8,13 +8,14 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Lists;
-
 import company.taskMan.resource.Resource;
 import company.taskMan.resource.ResourceManager;
 import company.taskMan.resource.ResourcePrototype;
 import company.taskMan.resource.ResourceView;
 import company.taskMan.resource.user.User;
 import company.taskMan.util.TimeSpan;
+
+import exceptions.ResourceUnavailableException;
 
 /**
  * The Task object. A task always has a description, a state, a link to the
@@ -169,6 +170,7 @@ public class Task implements Dependant {
 	 *            | The assigned developers
 	 * @throws IllegalArgumentException
 	 *             | When invalid data was supplied
+	 * @throws ResourceUnavailableException
 	 */
 	public Task(String taskDescription, int estimatedDuration,
 			int acceptableDeviation, ResourceManager resMan,
@@ -176,7 +178,7 @@ public class Task implements Dependant {
 			Map<ResourceView, Integer> requiredResources, Task alternativeFor,
 			String taskStatus, LocalDateTime startTime, LocalDateTime endTime,
 			LocalDateTime plannedStartTime, List<ResourceView> plannedDevelopers)
-			throws IllegalArgumentException {
+			throws IllegalArgumentException, ResourceUnavailableException {
 
 		this(taskDescription, estimatedDuration, acceptableDeviation, resMan,
 				prerequisiteTasks, requiredResources, alternativeFor);
@@ -822,11 +824,11 @@ public class Task implements Dependant {
 	 *            | The resources to plan
 	 * @param devs
 	 *            | The developers to assign
-	 * @throws IllegalArgumentException, IllegalStateException 
+	 * @throws IllegalArgumentException, IllegalStateException, ResourceUnavailableException
 	 */
 	public void plan(LocalDateTime startTime, List<ResourceView> concRes,
 			List<ResourceView> devs) 
-					throws IllegalArgumentException, IllegalStateException {
+					throws IllegalArgumentException, IllegalStateException, ResourceUnavailableException {
 		for (Task t : prerequisites) {
 			if (t.isFailed() && (t.getReplacement() == null)) {
 				throw new IllegalStateException("There is a failed prerequisite without an alternative");
@@ -842,9 +844,10 @@ public class Task implements Dependant {
 				throw new IllegalStateException("Failed to release resources");
 			}
 		}
-		if (!resMan.reserve(concRes, this, startTime, getPlannedEndTime(), true)) {
-			throw new IllegalStateException("Failed to move resource reservations");
-		}
+		resMan.reserve(concRes, this, startTime, getPlannedEndTime(), true);
+//			if (!resMan.reserve(concRes, this, startTime, getPlannedEndTime(), true)) {
+//			throw new IllegalStateException("Failed to move resource reservations");
+//		}
 		List<User> developers = resMan.pickDevs(devs, this, startTime,
 				getPlannedEndTime(), true);
 		if (developers == null) {
@@ -877,10 +880,11 @@ public class Task implements Dependant {
 	 * @param devs
 	 *            | The developers to assign
 	 * @return True if the task was planned and all reservations made
+	 * @throws IllegalArgumentException, ResourceUnavailableException 
 	 */
 	//TODO moet naar void met exceptions
 	public boolean rawPlan(LocalDateTime startTime, List<ResourceView> concRes,
-			List<ResourceView> devs) {
+			List<ResourceView> devs) throws ResourceUnavailableException, IllegalArgumentException {
 		for (Task t : prerequisites) {
 			if (t.isFailed() && (t.getReplacement() == null)) {
 				return false;
@@ -895,9 +899,10 @@ public class Task implements Dependant {
 				return false;
 			}
 		}
-		if (!resMan.reserve(concRes, this, startTime, getPlannedEndTime(),false)) {
-			return false;
-		}
+		resMan.reserve(concRes, this, startTime, getPlannedEndTime(),false);
+//		if (!resMan.reserve(concRes, this, startTime, getPlannedEndTime(),false)) {
+//			return false;
+//		}
 		if (!resMan.hasActiveReservations(this)) {
 			resMan.releaseResources(this, startTime);
 			return false; // verkeerde hoeveelheid reservaties enzo
@@ -953,18 +958,20 @@ public class Task implements Dependant {
 	 *            | The start time of the reservation
 	 * @param endTime
 	 *            | The end time of the reservation
-	 * @throws IllegalArgumentException, IllegalStateException
+	 * @throws IllegalArgumentException, IllegalStateException, ResourceUnavailableException 
 	 */
 	public void reserve(ResourceView resource, LocalDateTime startTime,
 			LocalDateTime endTime) 
-					throws IllegalArgumentException, IllegalStateException {
+					throws IllegalArgumentException, IllegalStateException, ResourceUnavailableException {
 		if(resource == null || startTime == null || endTime == null) {
 			throw new IllegalArgumentException("Invalid null argument");
 		}
-		if(!resMan.reserve(Lists.newArrayList(resource), this, startTime,
-				endTime, true)) {
-			throw new IllegalStateException("Failed to reserve resources");
-		}
+		resMan.reserve(Lists.newArrayList(resource), this, startTime,
+				endTime, true);
+//		if(!resMan.reserve(Lists.newArrayList(resource), this, startTime,
+//				endTime, true)) {
+//			throw new IllegalStateException("Failed to reserve resources");
+//		}
 	}
 
 	/**

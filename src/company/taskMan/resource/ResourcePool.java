@@ -48,9 +48,9 @@ public class ResourcePool {
 	 * @return True if the new resource was successfully created and added to
 	 *         the pool, false otherwise
 	 */
-	public boolean createResourceInstance(String resName) {
+	public void createResourceInstance(String resName) {
 		ConcreteResource conRes = resProt.instantiate(resName);
-		return concreteResList.add(conRes);
+		concreteResList.add(conRes);
 	}
 
 
