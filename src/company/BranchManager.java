@@ -47,6 +47,7 @@ public class BranchManager implements IFacade {
 		caretaker = new TaskManCaretaker(this);
 		currentUser = null;
 		this.prototypes = new ArrayList<>();
+		currentTime = time;
 	}
 	
 //	public void declareBranch(LocalDateTime branchTime, String geographicLocation) {
@@ -445,7 +446,7 @@ public class BranchManager implements IFacade {
 
 	@Override
 	public boolean isLoggedIn() {
-		return currentUser == null && currentTaskMan == null;
+		return currentUser != null && currentTaskMan != null;
 	}
 
 	@Override

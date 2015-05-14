@@ -205,7 +205,10 @@ public class Task implements Dependant {
 		}
 		plan.setPlannedBeginTime(plannedStartTime);
 		List<User> developers;
-		if(taskStatus.equalsIgnoreCase("executing")) {
+		if(taskStatus == null) {
+			developers = resMan.pickDevs(plannedDevelopers, this,
+					plannedStartTime, getPlannedEndTime(), true);
+		} else if(taskStatus.equalsIgnoreCase("executing")) {
 			developers = resMan.pickDevs(plannedDevelopers, this,
 				startTime, getPlannedEndTime(), true);
 		} else {
