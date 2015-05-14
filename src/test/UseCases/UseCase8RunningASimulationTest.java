@@ -145,76 +145,76 @@ public class UseCase8RunningASimulationTest {
 		task10Devs.add(dev3);
 		task20Devs.add(dev3);
 		//Create first project
-		assertTrue(taskManager.createProject("Project 0", "Describing proj 0", project0DueDate));
+		taskManager.createProject("Project 0", "Describing proj 0", project0DueDate);
 		ProjectView project0 = taskManager.getProjects().get(0);
 		// Create task00
 		reqResTask00.put(taskManager.getResourcePrototypes().get(0), 2);
 		reqResTask00.put(taskManager.getResourcePrototypes().get(1), 1);
-		assertTrue(taskManager.createTask(project0, "TASK 00", task00EstDur, task00Dev, task00Dependencies,reqResTask00,null));	
+		taskManager.createTask(project0, "TASK 00", task00EstDur, task00Dev, task00Dependencies,reqResTask00,null);	
 		TaskView task00 = project0.getTasks().get(0);
 		//Create task01
 		task01Dependencies.add(task00);
 		reqResTask01.put(taskManager.getResourcePrototypes().get(0), 1);
 		reqResTask01.put(taskManager.getResourcePrototypes().get(1), 1);
-		assertTrue(taskManager.createTask(project0, "TASK 01", task01EstDur, task01Dev, task01Dependencies, reqResTask01, null));
+		taskManager.createTask(project0, "TASK 01", task01EstDur, task01Dev, task01Dependencies, reqResTask01, null);
 		//Create task02
 		TaskView task01 = taskManager.getProjects().get(0).getTasks().get(1);
 		task02Dependencies.add(task01);
 		reqResTask02.put(taskManager.getResourcePrototypes().get(0), 1);
-		assertTrue(taskManager.createTask(project0, "TASK 02", task02EstDur, task02Dev, task02Dependencies, reqResTask02, null));
+		taskManager.createTask(project0, "TASK 02", task02EstDur, task02Dev, task02Dependencies, reqResTask02, null);
 		TaskView task02 = taskManager.getProjects().get(0).getTasks().get(2);
 		//Create second project
-		assertTrue(taskManager.createProject("Project1", "Project1", project1DueDate));
+		taskManager.createProject("Project1", "Project1", project1DueDate);
 		ProjectView project1 = taskManager.getProjects().get(1);
 		//Create task10
 		reqResTask10.put(taskManager.getResourcePrototypes().get(1), 1);
-		assertTrue(taskManager.createTask(project1, "TASK 10", task10EstDur, task10Dev, task10Dependencies, reqResTask10, null));
+		taskManager.createTask(project1, "TASK 10", task10EstDur, task10Dev, task10Dependencies, reqResTask10, null);
 		TaskView task10 = taskManager.getProjects().get(1).getTasks().get(0);
 		//Create third project
-		assertTrue(taskManager.createProject("Project3", "Project3", project2DueDate));
+		taskManager.createProject("Project3", "Project3", project2DueDate);
 		ProjectView project2 = taskManager.getProjects().get(2);
 		//Create task20
-		assertTrue(taskManager.createTask(project2, "TASK20", task20EstDur, task20Dev, task20Dependencies, reqResTask20, null));
+		taskManager.createTask(project2, "TASK20", task20EstDur, task20Dev, task20Dependencies, reqResTask20, null);
 		TaskView task20 = taskManager.getProjects().get(2).getTasks().get(0);
 		//Plan task00
 		task00ConcRes.add(taskManager.getConcreteResourcesForPrototype(taskManager.getResourcePrototypes().get(0)).get(0));
 		task00ConcRes.add(taskManager.getConcreteResourcesForPrototype(taskManager.getResourcePrototypes().get(0)).get(1));
 		task00ConcRes.add(taskManager.getConcreteResourcesForPrototype(taskManager.getResourcePrototypes().get(1)).get(0));
-		assertTrue(taskManager.planTask(project0, task00, task00Start, task00ConcRes, task00Devs));
+		taskManager.planTask(project0, task00, task00Start, task00ConcRes, task00Devs);
 		//Plan task20
-		assertTrue(taskManager.planTask(project2, task20, task20Start, task20ConcRes, task20Devs));
+		taskManager.planTask(project2, task20, task20Start, task20ConcRes, task20Devs);
 		//Execute and finish task00
-		assertTrue(taskManager.advanceTimeTo(workDate1));
-		assertTrue(taskManager.setTaskExecuting(project0, task00, task00Start));
-		assertTrue(taskManager.setTaskFinished(project0, task00, task00End));
+		taskManager.advanceTimeTo(workDate1);
+		taskManager.setTaskExecuting(project0, task00, task00Start);
+		taskManager.setTaskFinished(project0, task00, task00End);
 		//Execute and finish task20
-		assertTrue(taskManager.setTaskExecuting(project2, task20, task20Start));
-		assertTrue(taskManager.setTaskFinished(project2, task20, task20End));
+		taskManager.setTaskExecuting(project2, task20, task20Start);
+		taskManager.setTaskFinished(project2, task20, task20End);
 		assertTrue(taskManager.getProjects().get(2).isFinished());
 		//plan task01
 		task01ConcRes.add((taskManager.getResourcePrototypes().get(0)));
 		task01ConcRes.add((taskManager.getResourcePrototypes().get(1)));
-		assertTrue(taskManager.planTask(project0, task01, task01Start, task01ConcRes, task01Devs));
+		taskManager.planTask(project0, task01, task01Start, task01ConcRes, task01Devs);
 		//Execute and fail task01
-		assertTrue(taskManager.advanceTimeTo(workDate2));
-		assertTrue(taskManager.setTaskExecuting(project0, task01, task01Start));
-		assertTrue(taskManager.setTaskFailed(project0, task01, task01End));
+		taskManager.advanceTimeTo(workDate2);
+		taskManager.setTaskExecuting(project0, task01, task01Start);
+		taskManager.setTaskFailed(project0, task01, task01End);
 		task02ConcRes.add(taskManager.getResourcePrototypes().get(0));	
-		assertFalse(taskManager.planTask(project0, task02, task02Start, task02ConcRes, task02Devs));
+		taskManager.planTask(project0, task02, task02Start, task02ConcRes, task02Devs);
 		//Plan task10
 		task10ConcRes.add(taskManager.getResourcePrototypes().get(1));
-		assertTrue(taskManager.planTask(project1, task10, task10Start, task10ConcRes, task10Devs));
+		taskManager.planTask(project1, task10, task10Start, task10ConcRes, task10Devs);
 		//create an alternative
-		assertTrue(taskManager.createTask(project0, "Alt", 60, 5, task01Dependencies, reqResTask01, task01));
+		taskManager.createTask(project0, "Alt", 60, 5, task01Dependencies, reqResTask01, task01);
 		TaskView taskAlt = taskManager.getProjects().get(0).getTasks().get(3);
 		//Plan alternative
-		assertTrue(taskManager.planTask(project0, taskAlt, LocalDateTime.of(2015, 2, 11, 8, 0), task01ConcRes, task01Devs));
+		taskManager.planTask(project0, taskAlt, LocalDateTime.of(2015, 2, 11, 8, 0), task01ConcRes, task01Devs);
 		//Succeed Alternative
-		assertTrue(taskManager.advanceTimeTo(workDate3));
-		assertTrue(taskManager.setTaskExecuting(project0, taskAlt, LocalDateTime.of(2015, 2, 11, 8, 0)));
-		assertTrue(taskManager.setTaskFinished(project0, taskAlt, LocalDateTime.of(2015, 2, 11, 9, 0)));
+		taskManager.advanceTimeTo(workDate3);
+		taskManager.setTaskExecuting(project0, taskAlt, LocalDateTime.of(2015, 2, 11, 8, 0));
+		taskManager.setTaskFinished(project0, taskAlt, LocalDateTime.of(2015, 2, 11, 9, 0));
 		//Plan task02
-		assertTrue(taskManager.planTask(project0, task02, task02Start, task02ConcRes, task02Devs));
+		taskManager.planTask(project0, task02, task02Start, task02ConcRes, task02Devs);
 		// INIT current user
 		taskManager.changeToUser(taskManager.getPossibleUsers().get(0));
 	}
@@ -230,8 +230,8 @@ public class UseCase8RunningASimulationTest {
 		ProjectView proj1 = taskManager.getProjects().get(1);
 		TaskView task10 = proj1.getTasks().get(0);
 		taskManager.changeToUser(taskManager.getPossibleUsers().get(1));
-		assertTrue(taskManager.setTaskExecuting(proj1, task10, task10Start));
-		assertTrue(taskManager.setTaskFinished(proj1, task10, LocalDateTime.of(2015, 2, 10, 14, 0)));
+		taskManager.setTaskExecuting(proj1, task10, task10Start);
+		taskManager.setTaskFinished(proj1, task10, LocalDateTime.of(2015, 2, 10, 14, 0));
 		assertTrue(proj1.isFinished());
 		assertEquals(3,taskManager.getProjects().size());
 		assertEquals(5,taskManager.getProjects().get(0).getTasks().size());
@@ -267,8 +267,8 @@ public class UseCase8RunningASimulationTest {
 		ProjectView proj1 = taskManager.getProjects().get(1);
 		TaskView task10 = proj1.getTasks().get(0);
 		taskManager.changeToUser(taskManager.getPossibleUsers().get(1));
-		assertTrue(taskManager.setTaskExecuting(proj1, task10, task10Start));
-		assertTrue(taskManager.setTaskFinished(proj1, task10, LocalDateTime.of(2015, 2, 10, 14, 0)));
+		taskManager.setTaskExecuting(proj1, task10, task10Start);
+		taskManager.setTaskFinished(proj1, task10, LocalDateTime.of(2015, 2, 10, 14, 0));
 		assertTrue(proj1.isFinished());
 		assertEquals(3,taskManager.getProjects().size());
 		assertEquals(5,taskManager.getProjects().get(0).getTasks().size());
