@@ -77,4 +77,14 @@ public class FailedState implements TaskStatus {
 		task.addDependant(d);
 	}
 
+	@Override
+	public boolean delegate(Task task) {
+		return false;
+	}
+
+	@Override
+	public boolean makeUnavailable(Task task) {
+		return false;
+	}
+
 }

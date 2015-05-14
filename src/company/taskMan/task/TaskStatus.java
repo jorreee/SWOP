@@ -21,6 +21,24 @@ public interface TaskStatus {
 	 *         unchanged
 	 */
 	public boolean makeAvailable(Task task);
+	
+	/**
+	 * Change the status to an unavailable statu
+	 * 
+	 * @param task
+	 * 			| The task to make unavailable
+	 * @return True if the new status is unavailable, false if it remained unchanged
+	 */
+	public boolean makeUnavailable(Task task);
+	
+	/**
+	 * Change the status to a delegated status
+	 * 
+	 * @param 	task
+	 * 			   | The task to delegate
+	 * @return	True if the new status is delegated, false if it remained unchanged
+	 */
+	public boolean delegate(Task task);
 
 	/**
 	 * Change the status to an executing status

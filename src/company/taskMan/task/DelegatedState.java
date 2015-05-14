@@ -110,4 +110,16 @@ public class DelegatedState implements TaskStatus {
 		return "Delegated";
 	}
 
+	@Override
+	public boolean delegate(Task task) {
+		return false;
+	}
+
+	@Override
+	public boolean makeUnavailable(Task task) {
+		// TODO Afmaken
+		task.setTaskStatus(new UnavailableState());
+		return true;
+	}
+
 }

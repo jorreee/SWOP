@@ -78,4 +78,14 @@ public class FinishedState implements TaskStatus {
 		return "Finished";
 	}
 
+	@Override
+	public boolean delegate(Task task) {
+		return false;
+	}
+
+	@Override
+	public boolean makeUnavailable(Task task) {
+		return false;
+	}
+
 }

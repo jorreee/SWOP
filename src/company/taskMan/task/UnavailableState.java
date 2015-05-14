@@ -8,12 +8,12 @@ import java.time.LocalDateTime;
  * @author Tim Van Den Broecke, Joran Van de Woestijne, Vincent Van Gestel and
  *         Eli Vangrieken
  */
-public class UnavailableStatus implements TaskStatus {
+public class UnavailableState implements TaskStatus {
 
 	/**
 	 * Construct a new unavailable status
 	 */
-	public UnavailableStatus() {
+	public UnavailableState() {
 	}
 
 	@Override
@@ -84,6 +84,20 @@ public class UnavailableStatus implements TaskStatus {
 	@Override
 	public String toString() {
 		return "Unavailable";
+	}
+
+	@Override
+	public boolean delegate(Task task) {
+		if(task.getPlannedBeginTime() != null) {
+			return false; //task may not be planned
+		}
+		task.setTaskStatus(new DelegatedState());
+		return true;
+	}
+
+	@Override
+	public boolean makeUnavailable(Task task) {
+		return false;
 	}
 	
 }

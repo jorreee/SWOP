@@ -104,7 +104,7 @@ public class Task implements Dependant {
 		}
 		this.requiredResources = reqRes;
 
-		this.state = new UnavailableStatus();
+		this.state = new UnavailableState();
 
 		this.dependants = new ArrayList<Dependant>();
 		this.prerequisites = new ArrayList<Task>();
