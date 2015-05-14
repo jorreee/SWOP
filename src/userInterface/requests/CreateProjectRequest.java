@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import userInterface.IFacade;
 
 public class CreateProjectRequest extends Request {
-	
+
 	public CreateProjectRequest(IFacade facade, BufferedReader inputReader) {
 		super(facade, inputReader);
 	}
@@ -31,17 +31,10 @@ public class CreateProjectRequest extends Request {
 				// System updates details
 				String[] dueBits = input[2].split(" ");
 				LocalDateTime due = LocalDateTime.of(Integer.parseInt(dueBits[0]), Integer.parseInt(dueBits[1]), Integer.parseInt(dueBits[2]), Integer.parseInt(dueBits[3]), Integer.parseInt(dueBits[4]));
-				boolean success = facade.createProject(input[0], input[1], due);
-
-				// Invalid details
-				if(success) {
-					return "Project Created";
-				} else {
-					System.out.println("Something went wrong... Check input and try again\n");
-				}
-
+				facade.createProject(input[0], input[1], due);
+				return "Project Created";
 			} catch(Exception e) {
-				System.out.println("Invalid input\n");
+				System.out.println("Invalid input");
 			}
 			return null;
 		}

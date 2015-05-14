@@ -56,7 +56,6 @@ public class PlanTaskRequest extends Request {
 
 				// PLAN TASK
 				boolean shouldMove = false;
-				boolean success = false;
 				do {
 					PlanningScheme planning = planTask(project, task);
 					if(planning == null) { 
@@ -66,12 +65,12 @@ public class PlanTaskRequest extends Request {
 					// Assign developers to task, assign planning to task, reserve selected resource(types)
 					// This can be done safely or not (raw), be sure to check for conflicts when raw
 					if(planning.isSafePlanning()) {
-						success = facade.planTask(project, task, 
+						facade.planTask(project, task, 
 								planning.getPlanningStartTime(), 
 								planning.getResourcesToReserve(),
 								planning.getDevelopers());
 					} else {
-						success = facade.planRawTask(project, task, 
+						facade.planRawTask(project, task, 
 								planning.getPlanningStartTime(), 
 								planning.getResourcesToReserve(),
 								planning.getDevelopers());
@@ -93,12 +92,9 @@ public class PlanTaskRequest extends Request {
 				}
 				// If task planning needs to be moved, restart process.
 				while (shouldMove == true);
-
-				if(!success) { System.out.println("Failed to plan task, try again"); continue; }
-
 			} catch(Exception e) {
 				e.printStackTrace();
-				System.out.println("Invalid input");
+				System.out.println("Invalid input, try again");
 			}
 		}
 	}
