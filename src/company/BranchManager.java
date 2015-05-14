@@ -10,10 +10,10 @@ import java.util.Optional;
 
 import javax.security.auth.login.CredentialException;
 
+import userInterface.IFacade;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
-
-import userInterface.IFacade;
 import company.caretaker.TaskManCaretaker;
 import company.taskMan.ProjectView;
 import company.taskMan.TaskMan;
@@ -21,11 +21,11 @@ import company.taskMan.project.TaskView;
 import company.taskMan.resource.AvailabilityPeriod;
 import company.taskMan.resource.Reservation;
 import company.taskMan.resource.Resource;
-import company.taskMan.resource.ResourcePool;
 import company.taskMan.resource.ResourcePrototype;
 import company.taskMan.resource.ResourceView;
 import company.taskMan.resource.user.User;
 import company.taskMan.resource.user.UserPermission;
+
 import exceptions.UnexpectedViewContentException;
 
 //TODO list of prototypes in branchMa
@@ -65,6 +65,7 @@ public class BranchManager implements IFacade {
 		TaskMan newTaskMan = new TaskMan(location, prototypes);
 		taskMen.add(newTaskMan);
 		currentTaskMan = newTaskMan;
+		currentUser = newTaskMan.getSuperUser();
 	}
 	
 	/**
