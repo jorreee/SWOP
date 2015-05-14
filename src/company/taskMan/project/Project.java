@@ -179,9 +179,9 @@ public class Project implements Dependant {
 		
 		ArrayList<Task> prereqTasks = new ArrayList<Task>();
 		for(TaskView t : prerequisiteTasks) {
-			if(!isValidTaskView(t)) {
-				return false;
-			}
+//			if(!isValidTaskView(t)) {
+//				return false;
+//			}
 			prereqTasks.add(unwrapTaskView(t));
 		}
 		
@@ -223,17 +223,23 @@ public class Project implements Dependant {
 		}
 		return success;
 	}
-	
-	/**
-	 * Checks whether the given TaskView is a valid TaskView representing a valid Task.
-	 * 
-	 * @param 	view
-	 * 			The TaskView to check.
-	 * @return	True if and only if the TaskView is a valid TaskView.
-	 */
-	private boolean isValidTaskView(TaskView view) {
-		return taskList.contains(unwrapTaskView(view));
-	}
+//	
+//	/**
+//	 * Checks whether the given TaskView is a valid TaskView representing a valid Task.
+//	 * 
+//	 * @param 	view
+//	 * 			The TaskView to check.
+//	 * @return	True if and only if the TaskView is a valid TaskView.
+//	 */
+//	private boolean isValidTaskView(TaskView view) {
+//		if(view == null) {
+//			return false;
+//		}
+//		if(view.unwrap() == null) {
+//			return false;
+//		}
+//		return taskList.contains(unwrapTaskView(view));
+//	}
 	
 	/**
 	 * Checks whether the given TaskView represents a valid Alternative for a certain Task in this Project.
@@ -245,7 +251,8 @@ public class Project implements Dependant {
 		if(view == null) {
 			return true;
 		}
-		if(isValidTaskView(view)) {
+//		if(isValidTaskView(view)) {
+		try {
 			Task task = unwrapTaskView(view);
 			for(Task t : taskList) {
 				if(t.getAlternativeFor() == task) {
@@ -253,8 +260,10 @@ public class Project implements Dependant {
 				}
 			}
 			return true;
+		} catch(IllegalArgumentException e) {
+			return false;
 		}
-		return false;
+//		}
 	}
 	
 	/**
@@ -269,7 +278,7 @@ public class Project implements Dependant {
 	 */// TODO docu
 	private Task unwrapTaskView(TaskView view) {
 		if(view == null) {
-			throw new NullPointerException("There was no task to unwrap!");
+			throw new IllegalArgumentException("There was no task to unwrap!");
 		}
 		Task task = view.unwrap();
 		if(!taskList.contains(task)) {
@@ -300,7 +309,7 @@ public class Project implements Dependant {
 	 */
 	@Override
 	public void updateDependency(Task preTask) throws IllegalStateException{
-		if (!preTask.hasEnded()){
+		if (!taskList.contains(preTask)){
 			throw new IllegalStateException("The preTask didn't belong to this project");
 		}
 		state.finish(this, preTask);
@@ -416,13 +425,11 @@ public class Project implements Dependant {
 	 *            | The task to finish
 	 * @param endTime
 	 *            | The given end time of the task
-	 * @return True if the task was finished, false otherwise
+	 * @throws IllegalArgumentException, IllegalStateException
 	 */
-	public boolean setTaskFinished(TaskView t, LocalDateTime endTime) {
-		if(!isValidTaskView(t)) {
-			return false;
-		}
-		return unwrapTaskView(t).finish(endTime);
+	public void setTaskFinished(TaskView t, LocalDateTime endTime) 
+			throws IllegalArgumentException, IllegalStateException {
+		unwrapTaskView(t).finish(endTime);
 	}
 
 	/**
@@ -437,11 +444,9 @@ public class Project implements Dependant {
 	 * 			False if the start time is null
 	 * 			False if the start time is before creation time
 	 */
-	public boolean setTaskFailed(TaskView t, LocalDateTime endTime) {
-		if(!isValidTaskView(t)) {
-			return false;
-		}
-		return unwrapTaskView(t).fail(endTime);
+	public void setTaskFailed(TaskView t, LocalDateTime endTime) 
+			throws IllegalArgumentException, IllegalStateException {
+		unwrapTaskView(t).fail(endTime);
 	}
 	
 	/**
@@ -451,15 +456,17 @@ public class Project implements Dependant {
 	 *            | The task to execute
 	 * @param startTime
 	 *            | The actual begin time of the task
-	 * @return True if the task started executing, false otherwise
+	 * @throws IllegalArgumentException, IllegalStateException 
 	 */
-	public boolean setTaskExecuting(TaskView task, LocalDateTime startTime){
-		if(!isValidTaskView(task)) {
-			return false;
+	public void setTaskExecuting(TaskView task, LocalDateTime startTime) 
+			throws IllegalArgumentException, IllegalStateException {
+//		if(!isValidTaskView(task)) {
+//			return false;
+//		}
+		if(startTime.isBefore(creationTime)) {
+			throw new IllegalArgumentException("The task has to be executed after its creation time");
 		}
-		if(startTime.isBefore(creationTime))
-			return false;
-		return unwrapTaskView(task).execute(startTime);
+		unwrapTaskView(task).execute(startTime);
 		
 	}
 	
@@ -475,17 +482,12 @@ public class Project implements Dependant {
 	 * 			| the concrete resources to plan for the task
 	 * @param devs
 	 * 			| the developers to plan for the task
-	 * @return
-	 * 			| whether the task has succesfully planned. Also false if the supplied 
-	 * 			| task parameter is invalid
+	 * @throws IllegalArgumentException, IllegalStateException 
 	 */
-	public boolean planTask(TaskView task, LocalDateTime plannedStartTime,
-			List<ResourceView> concRes, List<ResourceView> devs) {
-		Task t = unwrapTaskView(task);
-		if(t == null) {
-			return false;
-		}
-		return t.plan(plannedStartTime, concRes, devs);
+	public void planTask(TaskView task, LocalDateTime plannedStartTime,
+			List<ResourceView> concRes, List<ResourceView> devs) 
+					throws IllegalArgumentException, IllegalStateException {
+		unwrapTaskView(task).plan(plannedStartTime, concRes, devs);
 	}
 	
 	/**
@@ -506,16 +508,12 @@ public class Project implements Dependant {
 	 *            | the concrete resources to plan for the task
 	 * @param devs
 	 *            | the developers to plan for the task
-	 * @return | whether the task has successfully planned. Also false if the
-	 *         supplied | task parameter is invalid
+	 * @throws IllegalArgumentException, IllegalStateException 
 	 */
 	public boolean planRawTask(TaskView task, LocalDateTime plannedStartTime,
-			List<ResourceView> concRes, List<ResourceView> devs) {
-		Task t = unwrapTaskView(task);
-		if (t == null) {
-			return false;
-		}
-		return t.rawPlan(plannedStartTime, concRes, devs);
+			List<ResourceView> concRes, List<ResourceView> devs) 
+					throws IllegalArgumentException, IllegalStateException {
+		return unwrapTaskView(task).rawPlan(plannedStartTime, concRes, devs);
 	}
 
 	/**

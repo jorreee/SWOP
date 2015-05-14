@@ -199,18 +199,18 @@ public class TaskTest {
 	@Test
 	public void finishedEndpointTestSelf(){
 		assertTrue(defaultTest.plan(LocalDateTime.of(2015, 2, 12, 15, 0),concreteResDef,devList));
-		assertTrue(defaultTest.execute(LocalDateTime.of(2015, 2, 12, 15, 0)));
+		defaultTest.execute(LocalDateTime.of(2015, 2, 12, 15, 0));
 		assertFalse(defaultTest.hasFinishedEndpoint());
-		assertTrue(defaultTest.finish(LocalDateTime.of(2015, 2, 12, 16, 0)));
+		defaultTest.finish(LocalDateTime.of(2015, 2, 12, 16, 0));
 		assertTrue(defaultTest.hasFinishedEndpoint());
 	}
 	
 	@Test
 	public void finishedEndpointTestOther(){
 		assertTrue(defaultTest.plan(LocalDateTime.of(2015, 2, 12, 15, 0),concreteResDef,devList));
-		assertTrue(defaultTest.execute(LocalDateTime.of(2015, 2, 12, 15, 0)));
+		defaultTest.execute(LocalDateTime.of(2015, 2, 12, 15, 0));
 		assertFalse(defaultTest.hasFinishedEndpoint());
-		assertTrue(defaultTest.fail(LocalDateTime.of(2015, 2, 12, 16, 0)));
+		defaultTest.fail(LocalDateTime.of(2015, 2, 12, 16, 0));
 		Task alt = new Task("alternative", 80, 5, resMan, 
 				defaultTest.getPrerequisites(),
 				resDef, 
@@ -240,30 +240,30 @@ public class TaskTest {
 		assertFalse(defaultTest.replaceWith(temp2));
 	}
 	
-	@Test(expected=IllegalArgumentException.class)
-	public void setBeginTimeTestNull(){
-		defaultTest.setBeginTime(null);
-	}
+//	@Test(expected=IllegalArgumentException.class)
+//	public void setBeginTimeTestNull(){
+//		defaultTest.setBeginTime(null);
+//	}
+//	
+//	@Test(expected=IllegalStateException.class)
+//	public void setBeginTimeTestAlreadySet(){
+//		defaultTest.plan(LocalDateTime.of(2015, 2, 11, 16, 0),concreteResDef,devList);
+//		assertTrue(defaultTest.setBeginTime(LocalDateTime.of(2015, 2, 11, 16, 0)));
+//		defaultTest.setBeginTime(LocalDateTime.of(2015, 2, 14, 16, 0));
+//	}
 	
-	@Test(expected=IllegalStateException.class)
-	public void setBeginTimeTestAlreadySet(){
-		defaultTest.plan(LocalDateTime.of(2015, 2, 11, 16, 0),concreteResDef,devList);
-		assertTrue(defaultTest.setBeginTime(LocalDateTime.of(2015, 2, 11, 16, 0)));
-		defaultTest.setBeginTime(LocalDateTime.of(2015, 2, 14, 16, 0));
-	}
-	
-	@Test(expected=IllegalArgumentException.class)
-	public void setEndTimeTestNull(){
-		defaultTest.setEndTime(null);
-	}
-	
-	@Test(expected=IllegalStateException.class)
-	public void setEndTimeTestAlreadySet(){
-		defaultTest.plan(LocalDateTime.of(2015, 2, 12, 15, 0),concreteResDef,devList);
-		defaultTest.execute(LocalDateTime.of(2015, 2, 12, 15, 0));
-		assertTrue(defaultTest.fail(LocalDateTime.of(2015, 2, 12, 16, 0)));
-		defaultTest.setEndTime(LocalDateTime.of(2015, 2, 14, 16, 0));
-	}
+//	@Test(expected=IllegalArgumentException.class)
+//	public void setEndTimeTestNull(){
+//		defaultTest.setEndTime(null);
+//	}
+//	
+//	@Test(expected=IllegalStateException.class)
+//	public void setEndTimeTestAlreadySet(){
+//		defaultTest.plan(LocalDateTime.of(2015, 2, 12, 15, 0),concreteResDef,devList);
+//		defaultTest.execute(LocalDateTime.of(2015, 2, 12, 15, 0));
+//		assertTrue(defaultTest.fail(LocalDateTime.of(2015, 2, 12, 16, 0)));
+//		defaultTest.setEndTime(LocalDateTime.of(2015, 2, 14, 16, 0));
+//	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void registerTestSelf(){
@@ -334,8 +334,8 @@ public class TaskTest {
 		LocalDateTime beginTimeAlt = LocalDateTime.of(2015, 2, 12, 14, 0);
 		LocalDateTime endTimeAlt = LocalDateTime.of(2015, 2, 12, 15, 0);
 		assertTrue(alt.plan(beginTimeAlt,concreteResDef,devList));
-		assertTrue(alt.execute(beginTimeAlt));
-		assertTrue(alt.finish(endTimeAlt));
+		alt.execute(beginTimeAlt);
+		alt.finish(endTimeAlt);
 		assertEquals(defaultTest, alt.getAlternativeFor());
 		assertEquals(new TimeSpan(150),alt.getTimeSpent(currentTime));
 	}

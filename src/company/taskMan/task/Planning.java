@@ -75,17 +75,20 @@ public class Planning {
 	 * @param newPlannedBeginTime
 	 *            | The timestamp when the task is meant (planned) to actually
 	 *            begin
-	 * @return True if the task has been successfully planned, false otherwise
+	 * @throws IllegalArgumentException, IllegalStateException 
 	 */
-	public boolean setPlannedBeginTime(LocalDateTime newPlannedBeginTime) {
+	public void setPlannedBeginTime(LocalDateTime newPlannedBeginTime) 
+			throws IllegalArgumentException, IllegalStateException {
 		if(newPlannedBeginTime==null) {
-			return false;
+			throw new IllegalArgumentException("newPlannedBeginTime can not be null");
+		}
+		if(plannedBeginTime != null) {
+			throw new IllegalStateException("There is already a planned begin time set");
 		}
 		if(beginTime != null) {
-			return false; //already started working
+			throw new IllegalStateException("There is already a begin time set");
 		}
 		this.plannedBeginTime = newPlannedBeginTime;
-		return true;
 	}
 	
 	/**
@@ -256,12 +259,9 @@ public class Planning {
 	 * 
 	 * @param plannedDevelopers
 	 *            | The developers to assign
-	 * @return true when the developers were added to the planning, false
-	 *         otherwise
 	 */
-	public boolean setDevelopers(List<User> plannedDevelopers) {
+	public void setDevelopers(List<User> plannedDevelopers) {
 		this.plannedDevelopers = plannedDevelopers;
-		return true;              
 	}
 	
 	/**
