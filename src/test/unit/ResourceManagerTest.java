@@ -43,7 +43,7 @@ public class ResourceManagerTest {
 //			availabilityPeriod14 = Optional.of(LocalTime.of(14,0)),
 //			availabilityPeriod17 = Optional.of(LocalTime.of(17,0));
 	
-	
+	//TODO aanpassen aan nieuwe resourcemanager structuur
 	@Before
 	public void initialize() {
 		//Prepare the resources and developers

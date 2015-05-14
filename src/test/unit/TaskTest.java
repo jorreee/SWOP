@@ -16,6 +16,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import company.taskMan.resource.ResourceManager;
+import company.taskMan.resource.ResourcePrototype;
 import company.taskMan.resource.ResourceView;
 import company.taskMan.task.Task;
 import company.taskMan.util.TimeSpan;
@@ -39,7 +40,7 @@ public class TaskTest {
 	@Before
 	public final void initialize(){
 		//Prepare the resources and developers
-		resMan = new ResourceManager();
+		resMan = new ResourceManager(new ArrayList<ResourcePrototype>());
 		resMan.createResourcePrototype("car", emptyAvailabilityPeriodStart, emptyAvailabilityPeriodEnd);
 		resMan.createResourcePrototype("whiteboard",  emptyAvailabilityPeriodStart, emptyAvailabilityPeriodEnd);
 		for(int i = 0;i<5;i++){
@@ -225,7 +226,7 @@ public class TaskTest {
 	
 	@Test(expected=IllegalStateException.class)
 	public void replaceWithTestNotFailed(){
-		Task temp = new Task("temp",20,3,new ResourceManager(),new ArrayList<Task>(),new HashMap<ResourceView,Integer>(),null);
+		Task temp = new Task("temp",20,3,new ResourceManager(new ArrayList<ResourcePrototype>()),new ArrayList<Task>(),new HashMap<ResourceView,Integer>(),null);
 		assertFalse(defaultTest.isFailed());
 		defaultTest.replaceWith(temp);
 	}
@@ -235,8 +236,8 @@ public class TaskTest {
 		defaultTest.plan(LocalDateTime.of(2015, 2, 11, 16, 0),concreteResDef,devList);
 		defaultTest.execute(LocalDateTime.of(2015, 2, 11, 16, 0));
 		defaultTest.fail(LocalDateTime.of(2015, 2, 12, 16, 0));
-		Task temp = new Task("temp",20,3,new ResourceManager(),new ArrayList<Task>(),new HashMap<ResourceView,Integer>(),null);
-		Task temp2 = new Task("temp",20,3,new ResourceManager(),new ArrayList<Task>(),new HashMap<ResourceView,Integer>(),null);
+		Task temp = new Task("temp",20,3,new ResourceManager(new ArrayList<ResourcePrototype>()),new ArrayList<Task>(),new HashMap<ResourceView,Integer>(),null);
+		Task temp2 = new Task("temp",20,3,new ResourceManager(new ArrayList<ResourcePrototype>()),new ArrayList<Task>(),new HashMap<ResourceView,Integer>(),null);
 		defaultTest.replaceWith(temp);
 		defaultTest.replaceWith(temp2);
 	}
@@ -278,7 +279,7 @@ public class TaskTest {
 	
 	@Test
 	public void registerTestValid(){
-		Task temp = new Task("temp",20,3,new ResourceManager(),new ArrayList<Task>(),
+		Task temp = new Task("temp",20,3,new ResourceManager(new ArrayList<ResourcePrototype>()),new ArrayList<Task>(),
 				new HashMap<ResourceView,Integer>(),null);
 		defaultTest.register(temp);
 	}
@@ -287,7 +288,7 @@ public class TaskTest {
 	public void createTaskWithPrerequisites(){
 		ArrayList<Task> pre = new ArrayList<>();
 		pre.add(defaultTest);
-		Task temp = new Task("temp",20,3,new ResourceManager(),pre,
+		Task temp = new Task("temp",20,3,new ResourceManager(new ArrayList<ResourcePrototype>()),pre,
 				new HashMap<ResourceView,Integer>(),null);
 		assertEquals(1, temp.getPrerequisites().size());
 		assertTrue(temp.getPrerequisites().contains(defaultTest));
