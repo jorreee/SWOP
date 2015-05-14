@@ -154,7 +154,7 @@ public class Project implements Dependant {
 	 * @return True if and only the creation of a Task with a given status was
 	 *         successful.
 	 */
-	public boolean createTask(String description, 
+	public void createTask(String description, 
 						int estimatedDuration, 
 						int acceptableDeviation, 
 						ResourceManager resMan, 
@@ -165,10 +165,11 @@ public class Project implements Dependant {
 						LocalDateTime startTime, 
 						LocalDateTime endTime,
 						LocalDateTime plannedStartTime,
-						List<ResourceView> plannedDevelopers) {
+						List<ResourceView> plannedDevelopers) 
+				throws IllegalArgumentException, IllegalStateException {
 
 		if(!isValidAlternative(alternativeFor)) {
-			return false;
+			throw new IllegalArgumentException("Invalid alternative");
 		}
 		Task altFor;
 		try {
@@ -185,43 +186,35 @@ public class Project implements Dependant {
 			prereqTasks.add(unwrapTaskView(t));
 		}
 		
-		Task newTask = null;
-		
-		try{
-			if(plannedStartTime != null) {
-				newTask = new Task(description, 
-						estimatedDuration, 
-						acceptableDeviation, 
-						resMan, 
-						prereqTasks,
-						requiredResources, 
-						altFor,
-						taskStatus, 
-						startTime, 
-						endTime,
-						plannedStartTime,
-						plannedDevelopers);
-			}
-			else {
-				newTask = new Task(description, 
-						estimatedDuration, 
-						acceptableDeviation, 
-						resMan, 
-						prereqTasks,
-						requiredResources, 
-						altFor);
-			}
-		} catch(IllegalArgumentException e) {
-			return false;
+		Task newTask;
+
+		if(plannedStartTime != null) {
+			newTask = new Task(description, 
+					estimatedDuration, 
+					acceptableDeviation, 
+					resMan, 
+					prereqTasks,
+					requiredResources, 
+					altFor,
+					taskStatus, 
+					startTime, 
+					endTime,
+					plannedStartTime,
+					plannedDevelopers);
 		}
-		
-		boolean success = taskList.add(newTask);
-		
-		if(success) {
-			setProjectStatus(new OngoingState());
-			newTask.register(this);
+		else {
+			newTask = new Task(description, 
+					estimatedDuration, 
+					acceptableDeviation, 
+					resMan, 
+					prereqTasks,
+					requiredResources, 
+					altFor);
 		}
-		return success;
+
+		taskList.add(newTask);
+		setProjectStatus(new OngoingState());
+		newTask.register(this);
 	}
 //	
 //	/**
@@ -243,6 +236,7 @@ public class Project implements Dependant {
 	
 	/**
 	 * Checks whether the given TaskView represents a valid Alternative for a certain Task in this Project.
+	 * 
 	 * @param 	view
 	 * 			The TaskView to check.
 	 * @return	True if and only if the TaskView represents a valid Alternative.
@@ -274,9 +268,10 @@ public class Project implements Dependant {
 	 * @param 	view
 	 * 			the TaskView to unwrap
 	 * @return 	the unwrapped Task if it belonged to this project
-	 * 			NULL otherwise
-	 */// TODO docu
-	private Task unwrapTaskView(TaskView view) {
+	 * @throws IllegalArgumentException
+	 */
+	private Task unwrapTaskView(TaskView view) 
+			throws IllegalArgumentException {
 		if(view == null) {
 			throw new IllegalArgumentException("There was no task to unwrap!");
 		}

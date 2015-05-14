@@ -1,7 +1,6 @@
 package test.unit;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -93,12 +92,16 @@ public class ProjectTest {
 	
 	@Test
 	public void createTaskTest(){
-		assertTrue(defaultProject.createTask("test", 60, 5, resMan, new ArrayList<TaskView>(), new HashMap<ResourceView, Integer>(), null, null, null, null, null, null));
+		defaultProject.createTask("test", 60, 5, resMan, new ArrayList<TaskView>(), 
+				new HashMap<ResourceView, Integer>(), null, null, null, null, null, null);
 	}
 	
 	@Test
 	public void createTaskTestFinishedTask(){
-		assertTrue(defaultProject.createTask("test", 60, 5, resMan, new ArrayList<TaskView>(), new HashMap<ResourceView, Integer>(), null, "finished", LocalDateTime.of(2015,  4, 29, 10, 0), LocalDateTime.of(2015,  4, 29, 11, 0), LocalDateTime.of(2015,  4, 29, 10, 0), new ArrayList<ResourceView>()));
+		defaultProject.createTask("test", 60, 5, resMan, new ArrayList<TaskView>(), 
+				new HashMap<ResourceView, Integer>(), null, "finished", 
+				LocalDateTime.of(2015,  4, 29, 10, 0), LocalDateTime.of(2015,  4, 29, 11, 0), 
+				LocalDateTime.of(2015,  4, 29, 10, 0), new ArrayList<ResourceView>());
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
