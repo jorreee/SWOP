@@ -10,11 +10,12 @@ import java.util.Optional;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
+
 import company.taskMan.resource.user.User;
 import company.taskMan.resource.user.UserPrototype;
 import company.taskMan.task.Task;
 import company.taskMan.util.TimeSpan;
-
+import exceptions.IllegalWhoopsieException;
 import exceptions.NoSuchResourceException;
 import exceptions.ResourceUnavailableException;
 import exceptions.UnexpectedViewContentException;
@@ -48,8 +49,9 @@ public class ResourceManager {
 	 * Instantiate a new ResourceManager. This manager will have no resources
 	 * nor reservations. One user will be present in the system, the project
 	 * manager (admin).
+	 * @throws IllegalWhoopsieException 
 	 */
-	public ResourceManager(List<ResourcePrototype> prototypes) {
+	public ResourceManager(List<ResourcePrototype> prototypes) throws IllegalWhoopsieException {
 		this.resPools = new ArrayList<>();
 		
 		userProt = new UserPrototype();

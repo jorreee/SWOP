@@ -18,6 +18,7 @@ import company.taskMan.resource.ResourceManager;
 import company.taskMan.resource.ResourcePrototype;
 import company.taskMan.resource.ResourceView;
 import company.taskMan.resource.user.User;
+import exceptions.IllegalWhoopsieException;
 import exceptions.ResourceUnavailableException;
 import exceptions.UnexpectedViewContentException;
 
@@ -45,9 +46,11 @@ public class TaskMan {
 	 * 
 	 * @param time
 	 *            The current TaskMan time.
+	 * @throws IllegalWhoopsieException 
 	 * 
 	 */
-	public TaskMan(String location, List<ResourcePrototype> prototypes) throws IllegalArgumentException{
+	public TaskMan(String location, List<ResourcePrototype> prototypes) 
+			throws IllegalArgumentException, IllegalWhoopsieException{
 		if(location == null)
 			throw new IllegalArgumentException("The given location is null");
 		projectList = new ArrayList<>();

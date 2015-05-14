@@ -20,7 +20,8 @@ public interface TaskStatus {
 	 * @return True if the new status is available, False if it remained
 	 *         unchanged
 	 */
-	public void makeAvailable(Task task);
+	public void makeAvailable(Task task) 
+			throws IllegalStateException;
 	
 	/**
 	 * Change the status to a delegated status

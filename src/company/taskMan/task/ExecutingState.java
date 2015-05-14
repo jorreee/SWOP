@@ -19,10 +19,17 @@ public class ExecutingState implements TaskStatus{
 
 	@Override
 	public void makeAvailable(Task task) { }
+
+	@Override
+	public void delegate(Task task, Task newTask) {
+		throw new IllegalStateException("An executing task can't be delegated");
+	}
 	
 	@Override
 	public void execute(Task task, LocalDateTime beginTime) 
-			throws IllegalArgumentException, IllegalStateException { }
+			throws IllegalArgumentException, IllegalStateException {
+		throw new IllegalStateException("The task is already executing");
+	}
 
 	@Override
 	public void finish(Task task, LocalDateTime endTime) 
@@ -106,7 +113,4 @@ public class ExecutingState implements TaskStatus{
 	public void register(Task task, Dependant d) {
 		task.addDependant(d);
 	}
-
-	@Override
-	public void delegate(Task task, Task newTask) { }
 }

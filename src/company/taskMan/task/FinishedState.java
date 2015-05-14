@@ -19,18 +19,29 @@ public class FinishedState implements TaskStatus {
 
 	@Override
 	public void makeAvailable(Task task) { }
+
+	@Override
+	public void delegate(Task task, Task newTask) { 
+		throw new IllegalStateException("This task has already failed and no one can help you anymore");
+	}
 	
 	@Override
 	public void execute(Task task, LocalDateTime beginTime) 
-			throws IllegalArgumentException, IllegalStateException { }
+			throws IllegalArgumentException, IllegalStateException { 
+		throw new IllegalStateException("This task has already finished and you don't need to do it again");
+	}
 
 	@Override
 	public void finish(Task task, LocalDateTime endTime) 
-			throws IllegalArgumentException, IllegalStateException { }
+			throws IllegalArgumentException, IllegalStateException { 
+		throw new IllegalStateException("This task has already finished and everyone is already happy fory you");
+	}
 
 	@Override
 	public void fail(Task task, LocalDateTime endTime) 
-			throws IllegalArgumentException, IllegalStateException { }
+			throws IllegalArgumentException, IllegalStateException { 
+		throw new IllegalStateException("This task has already finished and there's no denying it");
+	}
 
 	@Override
 	public boolean isAvailable() {
@@ -72,8 +83,5 @@ public class FinishedState implements TaskStatus {
 	public String toString() {
 		return "Finished";
 	}
-
-	@Override
-	public void delegate(Task task, Task newTask) { }
 
 }

@@ -19,6 +19,11 @@ public class AvailableState implements TaskStatus {
 
 	@Override
 	public void makeAvailable(Task task) { }
+
+	@Override
+	public void delegate(Task task, Task preTask) { 
+		throw new IllegalStateException("An available task can't be delegated");
+	}
 	
 	@Override
 	public void execute(Task task, LocalDateTime beginTime) 
@@ -29,11 +34,15 @@ public class AvailableState implements TaskStatus {
 
 	@Override
 	public void finish(Task task, LocalDateTime endTime) 
-			throws IllegalArgumentException, IllegalStateException { }
+			throws IllegalArgumentException, IllegalStateException { 
+		throw new IllegalStateException("An available task can't finish");
+	}
 
 	@Override
 	public void fail(Task task, LocalDateTime endTime) 
-			throws IllegalArgumentException, IllegalStateException { }
+			throws IllegalArgumentException, IllegalStateException { 
+		throw new IllegalStateException("An available task can't fail");
+	}
 	
 	@Override
 	public boolean isAvailable() {
@@ -74,8 +83,5 @@ public class AvailableState implements TaskStatus {
 	public void register(Task task, Dependant d) {
 		task.addDependant(d);
 	}
-
-	@Override
-	public void delegate(Task task, Task preTask) { }
 
 }

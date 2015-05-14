@@ -703,7 +703,7 @@ public class Task implements Dependant {
 	 *            | The alternative for this task
 	 * @throws IllegalStateException 
 	 */
-	protected void replaceWith(Task t) throws IllegalStateException {
+	private void replaceWith(Task t) throws IllegalStateException {
 		if (!canBeReplaced()) {
 			throw new IllegalStateException("This task can not be replaced");
 		}

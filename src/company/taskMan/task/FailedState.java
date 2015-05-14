@@ -19,18 +19,29 @@ public class FailedState implements TaskStatus {
 
 	@Override
 	public void makeAvailable(Task task) { }
+
+	@Override
+	public void delegate(Task task, Task newTask) { 
+		throw new IllegalStateException("This task has already failed and no one can help you anymore");
+	}
 	
 	@Override
 	public void execute(Task task, LocalDateTime beginTime) 
-				throws IllegalArgumentException, IllegalStateException { }
+				throws IllegalArgumentException, IllegalStateException { 
+		throw new IllegalStateException("This task has already failed and you only got one try");
+	}
 
 	@Override
 	public void finish(Task task, LocalDateTime endTime) 
-			throws IllegalArgumentException, IllegalStateException{ }
+			throws IllegalArgumentException, IllegalStateException{ 
+		throw new IllegalStateException("This task has already failed and the shame will never go away");
+	}
 
 	@Override
 	public void fail(Task task, LocalDateTime endTime) 
-			throws IllegalArgumentException, IllegalStateException { }
+			throws IllegalArgumentException, IllegalStateException { 
+		throw new IllegalStateException("This task has already failed and you shouldn't remind you of it again");
+	}
 
 	@Override
 	public boolean isAvailable() {
@@ -71,8 +82,5 @@ public class FailedState implements TaskStatus {
 	public void register(Task task, Dependant d) {
 		task.addDependant(d);
 	}
-
-	@Override
-	public void delegate(Task task, Task newTask) { }
 
 }

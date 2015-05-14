@@ -13,8 +13,7 @@ public class UnavailableState implements TaskStatus {
 	/**
 	 * Construct a new unavailable status
 	 */
-	public UnavailableState() {
-	}
+	public UnavailableState() {	}
 
 	@Override
 	public void makeAvailable(Task task) {
@@ -37,16 +36,19 @@ public class UnavailableState implements TaskStatus {
 		}
 		if(task.getPlannedBeginTime() != null) {
 			throw new IllegalStateException("This task is already planned in its current branch and cannot be delegated");
-		}
-		Task oldDelegator = task.getDelegatingTask();
-		task.setDelegatingTask(newTask);
-		try {
-			newTask.setOriginalDelegatedTask(task);
-		} catch(IllegalStateException e) {
-			task.setDelegatingTask(oldDelegator);
-			throw e;
-		}
-		task.setTaskStatus(new DelegatedState());
+		} 
+		if(!task.equals(newTask)) {
+			Task oldDelegator = task.getDelegatingTask();
+			oldDelegator.unregister(task); //TODO hier kan nullpointer komen als de delegating task eerst wordt verwijderd
+			task.setDelegatingTask(newTask);
+			try {
+				newTask.setOriginalDelegatedTask(task);
+			} catch(IllegalStateException e) {
+				task.setDelegatingTask(oldDelegator);
+				throw e;
+			}
+			task.setTaskStatus(new DelegatedState());
+		} //else doe niks alles is okee
 	}
 	
 	@Override
