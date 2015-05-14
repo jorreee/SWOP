@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import company.BranchView;
 import company.taskMan.ProjectView;
 import company.taskMan.project.TaskView;
 import company.taskMan.resource.ResourceView;
@@ -97,4 +98,7 @@ public interface IFacade {
 	public boolean currentUserHasPermission(UserPermission permission);
 	
 	public List<TaskView> getUpdatableTasksForUser(ProjectView project);
+
+	public List<BranchView> getBranches();
+	public void selectBranch(BranchView branch);
 }
