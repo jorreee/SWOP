@@ -294,9 +294,8 @@ public class Project implements Dependant {
 	 * 			The Status to change to.
 	 * @return	True if and only if the Status change was successful.
 	 */
-	protected boolean setProjectStatus(ProjectStatus newStatus) {
+	protected void setProjectStatus(ProjectStatus newStatus) {
 		this.state = newStatus;
-		return true;
 	}
 
 	/**
@@ -308,7 +307,7 @@ public class Project implements Dependant {
 	 * 
 	 */
 	@Override
-	public void updateDependency(Task preTask) throws IllegalStateException{
+	public void updateDependency(Task preTask) throws IllegalStateException {
 		if (!taskList.contains(preTask)){
 			throw new IllegalStateException("The preTask didn't belong to this project");
 		}
