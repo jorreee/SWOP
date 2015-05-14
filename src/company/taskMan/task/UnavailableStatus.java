@@ -8,12 +8,12 @@ import java.time.LocalDateTime;
  * @author Tim Van Den Broecke, Joran Van de Woestijne, Vincent Van Gestel and
  *         Eli Vangrieken
  */
-public class UnavailableTask implements TaskStatus {
+public class UnavailableStatus implements TaskStatus {
 
 	/**
 	 * Construct a new unavailable status
 	 */
-	public UnavailableTask() {
+	public UnavailableStatus() {
 	}
 
 	@Override

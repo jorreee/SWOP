@@ -8,13 +8,13 @@ import java.time.LocalDateTime;
  * @author Tim Van Den Broecke, Joran Van de Woestijne, Vincent Van Gestel and
  *         Eli Vangrieken
  */
-public class ExecutingTask implements TaskStatus{
+public class ExecutingState implements TaskStatus{
 	
 	/**
 	 * Construct a new executing status
 	 * 
 	 */
-	public ExecutingTask() {
+	public ExecutingState() {
 	}
 
 	@Override
@@ -36,7 +36,7 @@ public class ExecutingTask implements TaskStatus{
 			return false;
 		}
 
-		task.setTaskStatus(new FinishedTask());
+		task.setTaskStatus(new FinishedState());
 
 		task.notifyDependants();
 
@@ -52,7 +52,7 @@ public class ExecutingTask implements TaskStatus{
 			return false;
 		}
 
-		task.setTaskStatus(new FailedTask());
+		task.setTaskStatus(new FailedState());
 
 		return true;
 	}

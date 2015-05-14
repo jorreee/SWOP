@@ -73,7 +73,7 @@ public class Project implements Dependant {
 		
 		this.taskList = new ArrayList<Task>();
 		
-		this.state = new OngoingProject();
+		this.state = new OngoingState();
 
 	}
 
@@ -218,7 +218,7 @@ public class Project implements Dependant {
 		boolean success = taskList.add(newTask);
 		
 		if(success) {
-			setProjectStatus(new OngoingProject());
+			setProjectStatus(new OngoingState());
 			newTask.register(this);
 		}
 		return success;

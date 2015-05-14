@@ -10,13 +10,13 @@ import company.taskMan.task.Task;
  * @author Tim Van Den Broecke, Joran Van de Woestijne, Vincent Van Gestel and
  *         Eli Vangrieken
  */
-public class FinishedProject implements ProjectStatus {
+public class FinishedState implements ProjectStatus {
 	
 	/**
 	 * Construct a new finished status
 	 * 
 	 */
-	public FinishedProject() {
+	public FinishedState() {
 	}
 
 	@Override

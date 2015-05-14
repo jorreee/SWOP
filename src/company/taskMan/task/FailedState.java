@@ -8,13 +8,13 @@ import java.time.LocalDateTime;
  * @author Tim Van Den Broecke, Joran Van de Woestijne, Vincent Van Gestel and
  *         Eli Vangrieken
  */
-public class FailedTask implements TaskStatus {
+public class FailedState implements TaskStatus {
 	
 	/**
 	 * Construct a new failed status
 	 * 
 	 */
-	public FailedTask() {
+	public FailedState() {
 	}
 
 	@Override

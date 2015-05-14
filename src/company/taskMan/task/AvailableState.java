@@ -28,7 +28,7 @@ public class AvailableState implements TaskStatus {
 			return false;
 		}
 		
-		task.setTaskStatus(new ExecutingTask());
+		task.setTaskStatus(new ExecutingState());
 		return true;
 		
 	}

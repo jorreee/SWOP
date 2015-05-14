@@ -8,13 +8,13 @@ import java.time.LocalDateTime;
  * @author Tim Van Den Broecke, Joran Van de Woestijne, Vincent Van Gestel and
  *         Eli Vangrieken
  */
-public class FinishedTask implements TaskStatus {
+public class FinishedState implements TaskStatus {
 
 	/**
 	 * Construct a new finished status
 	 * 
 	 */
-	public FinishedTask() {
+	public FinishedState() {
 	}
 
 	@Override
