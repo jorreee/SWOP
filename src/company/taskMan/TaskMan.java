@@ -35,6 +35,7 @@ public class TaskMan {
 	//private LocalDateTime currentTime;
 	//private User currentUser;
 	private ResourceManager resMan;
+	private final String geographicLocation;
 
 	/**
 	 * Creates a TaskMan system instance with a given time.
@@ -43,9 +44,21 @@ public class TaskMan {
 	 *            The current TaskMan time.
 	 * 
 	 */
-	public TaskMan() {
+	public TaskMan(String location) throws IllegalArgumentException{
+		if(location == null)
+			throw new IllegalArgumentException("The given location is null");
 		projectList = new ArrayList<>();
 		resMan = new ResourceManager();
+		geographicLocation = location;
+	}
+	
+	/**
+	 * Returns the geographic location of the TaskMan
+	 * 
+	 * @return	The location of the TaskMan
+	 */
+	public String getGeographicLocation(){
+		return this.geographicLocation;
 	}
 
 	/**

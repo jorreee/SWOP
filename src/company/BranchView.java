@@ -11,7 +11,7 @@ public class BranchView {
 	}
 	
 	public String getGeographicLocation() {
-		branch.getGeographicLocation();
+		return branch.getGeographicLocation();
 	}
 	
 	protected TaskMan unwrap() {
