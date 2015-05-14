@@ -8,13 +8,14 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Lists;
+
 import company.taskMan.resource.Resource;
 import company.taskMan.resource.ResourceManager;
 import company.taskMan.resource.ResourcePrototype;
 import company.taskMan.resource.ResourceView;
 import company.taskMan.resource.user.User;
 import company.taskMan.util.TimeSpan;
-
+import exceptions.NoSuchResourceException;
 import exceptions.ResourceUnavailableException;
 
 /**
@@ -366,6 +367,10 @@ public class Task implements Dependant {
 	 */
 	public boolean hasEnded() {
 		return (isFinished() || isFailed());
+	}
+	
+	public boolean isDelegated() {
+		return state.isDelegated();
 	}
 
 	/**
@@ -929,9 +934,10 @@ public class Task implements Dependant {
 	 * @param amount
 	 *            | The amount of possible starting times wanted.
 	 * @return The possible starting times of the Task
+	 * @throws IllegalArgumentException, NoSuchResourceException, ResourceUnavailableException 
 	 */
 	public List<LocalDateTime> getPossibleTaskStartingTimes(
-			List<ResourceView> concRes, LocalDateTime currentTime, int amount) {
+			List<ResourceView> concRes, LocalDateTime currentTime, int amount) throws ResourceUnavailableException, NoSuchResourceException, IllegalArgumentException {
 		return resMan.getPossibleStartingTimes(this, concRes, currentTime,
 				amount);
 	}

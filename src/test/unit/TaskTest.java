@@ -19,6 +19,7 @@ import company.taskMan.resource.ResourceManager;
 import company.taskMan.resource.ResourceView;
 import company.taskMan.task.Task;
 import company.taskMan.util.TimeSpan;
+import exceptions.ResourceUnavailableException;
 
 public class TaskTest {
 
@@ -114,19 +115,19 @@ public class TaskTest {
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
-	public void createTaskConstr2FailBadStatus(){
+	public void createTaskConstr2FailBadStatus() throws ResourceUnavailableException, IllegalArgumentException{
 		new Task("test",30,5,resMan,new ArrayList<Task>(),new HashMap<ResourceView,Integer>(),null,"fail",
 				LocalDateTime.of(2015, 2, 11, 16, 0),LocalDateTime.of(2015, 2, 12, 16, 0),LocalDateTime.of(2015, 2, 12, 16, 0),null);
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
-	public void createTaskConstr2FailBadTime(){
+	public void createTaskConstr2FailBadTime() throws ResourceUnavailableException, IllegalArgumentException{
 		new Task("test",30,5,resMan,new ArrayList<Task>(),new HashMap<ResourceView,Integer>(),null,"failed",
 				LocalDateTime.of(2015, 2, 12, 16, 0),LocalDateTime.of(2015, 2, 11, 16, 0),LocalDateTime.of(2015, 2, 12, 16, 0),new ArrayList<ResourceView>());
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
-	public void createTaskConstr2FailBadTime2(){
+	public void createTaskConstr2FailBadTime2() throws ResourceUnavailableException, IllegalArgumentException{
 		new Task("test",30,5,resMan,new ArrayList<Task>(),new HashMap<ResourceView,Integer>(),null,"finished",
 				LocalDateTime.of(2015, 2, 12, 16, 0),LocalDateTime.of(2015, 2, 11, 16, 0),LocalDateTime.of(2015, 2, 12, 16, 0),new ArrayList<ResourceView>());
 	}
@@ -152,7 +153,7 @@ public class TaskTest {
 	}
 	
 	@Test
-	public void getSetAltTest(){
+	public void getSetAltTest() throws ResourceUnavailableException, IllegalArgumentException, IllegalStateException{
 		defaultTest.plan(LocalDateTime.of(2015, 2, 11, 16, 0),concreteResDef,devList);
 		defaultTest.execute(LocalDateTime.of(2015, 2, 11, 16, 0));
 		defaultTest.fail(LocalDateTime.of(2015, 2, 12, 16, 0));
@@ -161,7 +162,7 @@ public class TaskTest {
 	}
 	
 	@Test
-	public void setFinishedTest(){
+	public void setFinishedTest() throws ResourceUnavailableException, IllegalArgumentException, IllegalStateException{
 		defaultTest.plan(LocalDateTime.of(2015, 2, 12, 15, 0),concreteResDef,devList);
 		defaultTest.execute(LocalDateTime.of(2015, 2, 12, 15, 0));
 		assertFalse(defaultTest.isFinished());
@@ -170,7 +171,7 @@ public class TaskTest {
 	}
 	
 	@Test
-	public void setFailedTest(){
+	public void setFailedTest() throws ResourceUnavailableException, IllegalArgumentException, IllegalStateException{
 		defaultTest.plan(LocalDateTime.of(2015, 2, 12, 15, 0),concreteResDef,devList);
 		defaultTest.execute(LocalDateTime.of(2015, 2, 12, 15, 0));
 		assertFalse(defaultTest.isFailed());
@@ -179,7 +180,7 @@ public class TaskTest {
 	}
 	
 	@Test
-	public void testHasEndedFinished(){
+	public void testHasEndedFinished() throws ResourceUnavailableException, IllegalArgumentException, IllegalStateException{
 		defaultTest.plan(LocalDateTime.of(2015, 2, 12, 15, 0),concreteResDef,devList);
 		defaultTest.execute(LocalDateTime.of(2015, 2, 12, 15, 0));
 		assertFalse(defaultTest.hasEnded());
@@ -188,7 +189,7 @@ public class TaskTest {
 	}
 	
 	@Test
-	public void testHasEndedFailed(){
+	public void testHasEndedFailed() throws ResourceUnavailableException, IllegalArgumentException, IllegalStateException{
 		defaultTest.plan(LocalDateTime.of(2015, 2, 12, 15, 0),concreteResDef,devList);
 		defaultTest.execute(LocalDateTime.of(2015, 2, 12, 15, 0));
 		assertFalse(defaultTest.hasEnded());
@@ -197,7 +198,7 @@ public class TaskTest {
 	}
 	
 	@Test
-	public void finishedEndpointTestSelf(){
+	public void finishedEndpointTestSelf() throws ResourceUnavailableException, IllegalArgumentException, IllegalStateException{
 		defaultTest.plan(LocalDateTime.of(2015, 2, 12, 15, 0),concreteResDef,devList);
 		defaultTest.execute(LocalDateTime.of(2015, 2, 12, 15, 0));
 		assertFalse(defaultTest.hasFinishedEndpoint());
@@ -206,7 +207,7 @@ public class TaskTest {
 	}
 	
 	@Test
-	public void finishedEndpointTestOther(){
+	public void finishedEndpointTestOther() throws ResourceUnavailableException, IllegalArgumentException, IllegalStateException{
 		defaultTest.plan(LocalDateTime.of(2015, 2, 12, 15, 0),concreteResDef,devList);
 		defaultTest.execute(LocalDateTime.of(2015, 2, 12, 15, 0));
 		assertFalse(defaultTest.hasFinishedEndpoint());
@@ -230,7 +231,7 @@ public class TaskTest {
 	}
 	
 	@Test(expected=IllegalStateException.class)
-	public void replaceWithTestNull(){
+	public void replaceWithTestNull() throws ResourceUnavailableException, IllegalArgumentException, IllegalStateException{
 		defaultTest.plan(LocalDateTime.of(2015, 2, 11, 16, 0),concreteResDef,devList);
 		defaultTest.execute(LocalDateTime.of(2015, 2, 11, 16, 0));
 		defaultTest.fail(LocalDateTime.of(2015, 2, 12, 16, 0));
@@ -299,7 +300,7 @@ public class TaskTest {
 	}
 	
 	@Test
-	public void getTimeSpentTestTaskHasEnded(){
+	public void getTimeSpentTestTaskHasEnded() throws ResourceUnavailableException, IllegalArgumentException, IllegalStateException{
 		LocalDateTime beginTime = LocalDateTime.of(2015, 2, 11, 14, 0);
 		LocalDateTime endTime = LocalDateTime.of(2015, 2, 11, 15, 30);
 		LocalDateTime currentTime = LocalDateTime.of(2015, 2, 12, 14, 0);
@@ -310,7 +311,7 @@ public class TaskTest {
 	}
 	
 	@Test
-	public void getTimeSpentTestTaskExecuting(){
+	public void getTimeSpentTestTaskExecuting() throws ResourceUnavailableException, IllegalArgumentException, IllegalStateException{
 		LocalDateTime beginTime = LocalDateTime.of(2015, 2, 11, 14, 0);
 		LocalDateTime currentTime = LocalDateTime.of(2015, 2, 11, 15, 0);
 		defaultTest.plan(beginTime,concreteResDef,devList);
@@ -319,7 +320,7 @@ public class TaskTest {
 	}
 	
 	@Test
-	public void getTimeSpentTestTaskIsAlternativeAndFinsihed(){
+	public void getTimeSpentTestTaskIsAlternativeAndFinsihed() throws ResourceUnavailableException, IllegalArgumentException, IllegalStateException{
 		LocalDateTime beginTimeDef = LocalDateTime.of(2015, 2, 11, 14, 0);
 		LocalDateTime endTimeDef = LocalDateTime.of(2015, 2, 11, 15, 30);
 		LocalDateTime currentTime = LocalDateTime.of(2015, 2, 12, 16, 0);
@@ -341,7 +342,7 @@ public class TaskTest {
 	}
 	
 	@Test
-	public void getTimeSpentTestTaskIsAlternativeAndExecuting(){
+	public void getTimeSpentTestTaskIsAlternativeAndExecuting() throws ResourceUnavailableException, IllegalArgumentException, IllegalStateException{
 		LocalDateTime beginTimeDef = LocalDateTime.of(2015, 2, 11, 14, 0);
 		LocalDateTime endTimeDef = LocalDateTime.of(2015, 2, 11, 15, 30);
 		LocalDateTime currentTime = LocalDateTime.of(2015, 2, 12, 14, 30);

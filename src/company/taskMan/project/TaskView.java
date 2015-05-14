@@ -14,6 +14,8 @@ import company.taskMan.resource.ResourceView;
 import company.taskMan.resource.user.User;
 import company.taskMan.task.Task;
 import company.taskMan.util.TimeSpan;
+import exceptions.NoSuchResourceException;
+import exceptions.ResourceUnavailableException;
 
 /**
  * A taskView is a wrapper for tasks. The taskView only has limited access to
@@ -265,7 +267,7 @@ public class TaskView {
 	 * @return The percentage of overdue.
 	 */
 	public int getOverTimePercentage(LocalDateTime currentTime) {
-		if (isOnTime(currentTime)) {
+		if(isOnTime(currentTime)) {
 			return 0;
 		}
 		
@@ -328,9 +330,11 @@ public class TaskView {
 	 *            | The amount of suggestions that should be returned
 	 * @return a given amount of suggested starting times for the task to be
 	 *         planned at
+	 * @throws IllegalArgumentException, NoSuchResourceException, ResourceUnavailableException 
 	 */
 	public List<LocalDateTime> getPossibleStartingTimes(
-			List<ResourceView> concRes, LocalDateTime currentTime, int amount) {
+			List<ResourceView> concRes, LocalDateTime currentTime, int amount) 
+				throws ResourceUnavailableException, NoSuchResourceException, IllegalArgumentException {
 		ImmutableList.Builder<LocalDateTime> times = ImmutableList.builder();
 		times.addAll(task.getPossibleTaskStartingTimes(concRes, currentTime, amount));
 		return times.build();

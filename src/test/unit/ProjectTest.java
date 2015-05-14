@@ -13,6 +13,7 @@ import company.taskMan.project.Project;
 import company.taskMan.project.TaskView;
 import company.taskMan.resource.ResourceManager;
 import company.taskMan.resource.ResourceView;
+import exceptions.ResourceUnavailableException;
 
 public class ProjectTest {
 //TODO
@@ -91,13 +92,13 @@ public class ProjectTest {
 	}
 	
 	@Test
-	public void createTaskTest(){
+	public void createTaskTest() throws ResourceUnavailableException, IllegalArgumentException, IllegalStateException {
 		defaultProject.createTask("test", 60, 5, resMan, new ArrayList<TaskView>(), 
 				new HashMap<ResourceView, Integer>(), null, null, null, null, null, null);
 	}
 	
 	@Test
-	public void createTaskTestFinishedTask(){
+	public void createTaskTestFinishedTask() throws ResourceUnavailableException, IllegalArgumentException, IllegalStateException{
 		defaultProject.createTask("test", 60, 5, resMan, new ArrayList<TaskView>(), 
 				new HashMap<ResourceView, Integer>(), null, "finished", 
 				LocalDateTime.of(2015,  4, 29, 10, 0), LocalDateTime.of(2015,  4, 29, 11, 0), 

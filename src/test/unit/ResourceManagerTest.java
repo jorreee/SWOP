@@ -1,6 +1,9 @@
 package test.unit;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -21,6 +24,9 @@ import company.taskMan.resource.ResourceView;
 import company.taskMan.resource.user.User;
 import company.taskMan.resource.user.UserPrototype;
 import company.taskMan.task.Task;
+import exceptions.NoSuchResourceException;
+import exceptions.ResourceUnavailableException;
+import exceptions.UnexpectedViewContentException;
 
 public class ResourceManagerTest {
 	
@@ -61,38 +67,49 @@ public class ResourceManagerTest {
 	public void createResourcePrototypeTestSuccess(){
 		Optional<LocalTime> start = Optional.of(LocalTime.of(10, 0));
 		Optional<LocalTime> end = Optional.of(LocalTime.of(14, 0));
-		assertTrue(resMan.createResourcePrototype("Pencil", start,end));
+		resMan.createResourcePrototype("Pencil", start,end);
 	}
 	
 	@Test
-	public void createResourcePrototypeTestBadDates(){
+	public void createResourcePrototypeTestBadDate1(){
 		Optional<LocalTime> start = Optional.of(LocalTime.of(10, 0));
+		Optional<LocalTime> nul = Optional.empty();
+		resMan.createResourcePrototype("fail", start, nul);
+	}
+	
+	@Test
+	public void createResourcePrototypeTestBadDate2(){
 		Optional<LocalTime> end = Optional.of(LocalTime.of(14, 0));
 		Optional<LocalTime> nul = Optional.empty();
-		assertFalse(resMan.createResourcePrototype("fail", start, nul));
-		assertFalse(resMan.createResourcePrototype("fail", nul, end));
-		assertFalse(resMan.createResourcePrototype("fail", end, start));
+		resMan.createResourcePrototype("fail", nul, end);
 	}
 	
 	@Test
+	public void createResourcePrototypeTestBadDate3(){
+		Optional<LocalTime> start = Optional.of(LocalTime.of(10, 0));
+		Optional<LocalTime> end = Optional.of(LocalTime.of(14, 0));
+		resMan.createResourcePrototype("fail", end, start);
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
 	public void createResourcePrototypeTestBadName(){
 		Optional<LocalTime> start = Optional.of(LocalTime.of(10, 0));
 		Optional<LocalTime> end = Optional.of(LocalTime.of(14, 0));
-		assertFalse(resMan.createResourcePrototype(null, start, end));
+		resMan.createResourcePrototype(null, start, end);
 	}
 	
 	@Test
 	public void declareConcreteResourceTestSuccess(){
 		Optional<LocalTime> start = Optional.of(LocalTime.of(10, 0));
 		Optional<LocalTime> end = Optional.of(LocalTime.of(14, 0));
-		assertTrue(resMan.createResourcePrototype("Pencil", start,end));
+		resMan.createResourcePrototype("Pencil", start,end);
 		
-		assertTrue(resMan.declareConcreteResource("pencil1", resMan.getResourcePrototypes().get(2)));
+		resMan.declareConcreteResource("pencil1", resMan.getResourcePrototypes().get(2));
 	}
 	
-	@Test
+	@Test(expected=UnexpectedViewContentException.class)
 	public void declareConcreteResourceTestFailBadPrototype(){
-		assertFalse(resMan.declareConcreteResource("pencil1", new ResourceView(new ResourcePrototype("fail",null))));
+		resMan.declareConcreteResource("pencil1", new ResourceView(new ResourcePrototype("fail",null)));
 	}
 	
 	@Test
@@ -106,7 +123,7 @@ public class ResourceManagerTest {
 	}
 	
 	@Test
-	public void pickDevsTestSucess(){
+	public void pickDevsTestSucess() throws ResourceUnavailableException, UnexpectedViewContentException, IllegalArgumentException{
 		Task testTask = new Task("Descr", 60, 0, resMan, new ArrayList<Task>(), new HashMap<ResourceView, Integer>(), null);
 		LocalDateTime start = LocalDateTime.of(2015, 4, 4, 10, 0);
 		LocalDateTime end = LocalDateTime.of(2015, 4, 4, 12, 0);
@@ -119,7 +136,7 @@ public class ResourceManagerTest {
 	}
 	
 	@Test
-	public void pickDevsTestFailEmptyList(){
+	public void pickDevsTestFailEmptyList() throws ResourceUnavailableException, UnexpectedViewContentException, IllegalArgumentException{
 		Task testTask = new Task("Descr", 60, 0, resMan, new ArrayList<Task>(), new HashMap<ResourceView, Integer>(), null);
 		LocalDateTime start = LocalDateTime.of(2015, 4, 4, 10, 0);
 		LocalDateTime end = LocalDateTime.of(2015, 4, 4, 12, 0);
@@ -130,7 +147,7 @@ public class ResourceManagerTest {
 	}
 	
 	@Test
-	public void pickDevsTestFailNonExistentUser(){
+	public void pickDevsTestFailNonExistentUser() throws ResourceUnavailableException, UnexpectedViewContentException, IllegalArgumentException{
 		Task testTask = new Task("Descr", 60, 0, resMan, new ArrayList<Task>(), new HashMap<ResourceView, Integer>(), null);
 		LocalDateTime start = LocalDateTime.of(2015, 4, 4, 10, 0);
 		LocalDateTime end = LocalDateTime.of(2015, 4, 4, 12, 0);
@@ -142,7 +159,7 @@ public class ResourceManagerTest {
 	}
 	
 	@Test
-	public void getPossibleStartingTimesTestSuccessSimple() {
+	public void getPossibleStartingTimesTestSuccessSimple() throws ResourceUnavailableException, NoSuchResourceException, IllegalArgumentException {
 		//Simple Test without planned resources
 		Task testTask = new Task("Descr", 60, 0, resMan, new ArrayList<Task>(), new HashMap<ResourceView, Integer>(), null);
 		LocalDateTime currentTime = LocalDateTime.of(2015, 04, 23, 10, 0);
@@ -161,7 +178,7 @@ public class ResourceManagerTest {
 	}
 	
 	@Test
-	public void getPossibleStartingTimesTestSuccessCurrentTimeNonWorking() {
+	public void getPossibleStartingTimesTestSuccessCurrentTimeNonWorking() throws ResourceUnavailableException, NoSuchResourceException, IllegalArgumentException {
 		//Test with currenTime being a non working time
 		Task testTask = new Task("Descr", 60, 0, resMan, new ArrayList<Task>(), new HashMap<ResourceView, Integer>(), null);
 		LocalDateTime currentTime = LocalDateTime.of(2015, 04, 22, 18, 0);
@@ -180,7 +197,7 @@ public class ResourceManagerTest {
 	}
 
 	@Test
-	public void getPossibleStartingTimesTestSuccessReqResourcesOccupied(){
+	public void getPossibleStartingTimesTestSuccessReqResourcesOccupied() throws ResourceUnavailableException, IllegalArgumentException, IllegalStateException{
 		//The required resources are occupied by another task, 
 		//the method must give a time after the planned time of the other task.
 		
@@ -234,7 +251,7 @@ public class ResourceManagerTest {
 	}
 	
 	@Test
-	public void getPossibleStartingTimeTestSuccessReqDeveloperAlreadyAssigned() {
+	public void getPossibleStartingTimeTestSuccessReqDeveloperAlreadyAssigned() throws ResourceUnavailableException, IllegalArgumentException, IllegalStateException {
 		Task plannedTask = new Task("already planned", 120, 0, resMan, new ArrayList<Task>(), new HashMap<ResourceView, Integer>(), null);
 		LocalDateTime currentTime = LocalDateTime.of(2015, 04, 23, 10, 0);
 		
@@ -259,15 +276,15 @@ public class ResourceManagerTest {
 	}
 	
 	@Test
-	public void getPossibleStartingTimesTestSuccessReqResourcesHaveAvailability(){
+	public void getPossibleStartingTimesTestSuccessReqResourcesHaveAvailability() throws ResourceUnavailableException, NoSuchResourceException, IllegalArgumentException{
 		//The required resources have an availability period
 		
 		//Create new resource
 		Optional<LocalTime> start = Optional.of(LocalTime.of(8, 0));
 		Optional<LocalTime> end = Optional.of(LocalTime.of(12, 0));
-		assertTrue(resMan.createResourcePrototype("pencil", start, end));
+		resMan.createResourcePrototype("pencil", start, end);
 		assertEquals(3, resMan.getResourcePrototypes().size());
-		assertTrue(resMan.declareConcreteResource("pencil1", resMan.getResourcePrototypes().get(2)));
+		resMan.declareConcreteResource("pencil1", resMan.getResourcePrototypes().get(2));
 		
 		//Create task
 		HashMap<ResourceView,Integer> reqRes1 = new HashMap<ResourceView, Integer>();
