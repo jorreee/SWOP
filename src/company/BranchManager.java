@@ -1,5 +1,7 @@
 package company;
 
+import initialization.TaskManInitFileChecker;
+
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -11,6 +13,7 @@ import java.util.Optional;
 import javax.security.auth.login.CredentialException;
 
 import userInterface.IFacade;
+import userInterface.Main;
 import userInterface.TaskManException;
 
 import com.google.common.collect.ImmutableList;
@@ -241,13 +244,13 @@ public class BranchManager implements IFacade {
 	}
 
 	@Override
-	public boolean revertFromMemento() {
-		return  caretaker.revertFromMemento();
+	public void revertFromMemento() {
+		caretaker.revertFromMemento();
 	}
 
 	@Override
-	public boolean discardMemento() {
-		return caretaker.discardMemento();
+	public void discardMemento() {
+		caretaker.discardMemento();
 	}
 
 	@Override
@@ -540,9 +543,12 @@ public class BranchManager implements IFacade {
 		
 	}
 
-	public void initializeFromMemento(LocalDateTime systemTime) {
-		// TODO Auto-generated method stub
+	public void initializeFromMemento(LocalDateTime systemTime, TaskManInitFileChecker fileChecker) {
+		currentTime = systemTime;
 		
+		currentTaskMan = new TaskMan(fileChecker.getGeographicLocation(), prototypes);
+		
+		Main.initializeBranch(this, fileChecker, taskMen.indexOf(currentTaskMan));
 	}
 	
 }

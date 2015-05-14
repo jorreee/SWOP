@@ -25,17 +25,17 @@ public class ShowProjectsRequest extends Request {
 		while(true) {
 			try {
 				// For each branch, show List of projects with their status
-				for(BranchView branch : branches) {
-					System.out.println("<" + "> " + branch.getGeographicLocation() + " Branch:");
-					List<ProjectView> projects = branch.getProjects();
+				for(int i = 0 ; i < branches.size() ; i++) {
+					System.out.println("<" + i +  "> " + branches.get(i).getGeographicLocation() + " Branch:");
+					List<ProjectView> projects = branches.get(i).getProjects();
 					int projectAmount = projects.size();
 					if(projectAmount == 0) {
 						System.out.println("  - No projects are present in this branch yet. ");
 					}
-					for(int i = 0 ; i < projectAmount ; i++) {
-						System.out.println("  - Project " + i + " "
-								+ projects.get(i).getName() + ": "
-								+ projects.get(i).getStatusAsString()); // PRINT PROJECT i HEADER
+					for(int j = 0 ; j < projectAmount ; j++) {
+						System.out.println("  - Project " + j + " "
+								+ projects.get(j).getName() + ": "
+								+ projects.get(j).getStatusAsString()); // PRINT PROJECT i HEADER
 					}
 				}
 				// Ask user for project selection

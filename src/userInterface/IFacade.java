@@ -58,9 +58,9 @@ public interface IFacade {
 
 	public boolean storeInMemento();
 
-	public boolean revertFromMemento();
+	public void revertFromMemento();
 
-	public boolean discardMemento();
+	public void discardMemento();
 
 	public void createResourcePrototype(String name,
 			Optional<LocalTime> availabilityStart,

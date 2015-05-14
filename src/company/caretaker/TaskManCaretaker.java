@@ -1,10 +1,7 @@
 package company.caretaker;
 
 import initialization.PlanningCreationData;
-import initialization.TaskManInitFileChecker;
 
-import java.io.StringReader;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.EmptyStackException;
@@ -16,11 +13,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
-import userInterface.Main;
-
 import company.BranchManager;
 import company.taskMan.ProjectView;
-import company.taskMan.TaskMan;
 import company.taskMan.project.TaskView;
 import company.taskMan.resource.AvailabilityPeriod;
 import company.taskMan.resource.Reservation;
@@ -262,7 +256,7 @@ public class TaskManCaretaker {
 			}
 		}
 			
-		return tman.toString();
+		return new TaskManMemento(tman.toString(),branch.getCurrentUser(),null); // TODO afwerken
 	}
 
 	/**
@@ -278,16 +272,8 @@ public class TaskManCaretaker {
 
 	/**
 	 * The top memento of the memento stack will be removed
-	 * 
-	 * @return True if the memento was removed without a problem, false
-	 *         otherwise
 	 */
-	public boolean discardMemento() {
-		try {
+	public void discardMemento() throws EmptyStackException {
 			mementos.pop();
-			return true;
-		} catch(EmptyStackException e) {
-			return false;
-		}
 	}
 }

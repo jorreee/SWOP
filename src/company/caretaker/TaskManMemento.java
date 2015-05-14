@@ -5,9 +5,8 @@ import initialization.TaskManInitFileChecker;
 import java.io.StringReader;
 import java.time.LocalDateTime;
 
-import userInterface.Main;
 import company.BranchManager;
-import company.taskMan.resource.user.User;
+import company.taskMan.resource.ResourceView;
 
 /**
  * This class represents a system memento. These mementos contain data
@@ -21,7 +20,7 @@ public class TaskManMemento {
 	
 	private final String taskman;
 	
-	private final User currentUser;
+	private ResourceView currentUser;
 	
 	private final LocalDateTime currentTime;
 
@@ -32,7 +31,7 @@ public class TaskManMemento {
 	 *            | A string in the format of a TMAN file, the files used for
 	 *            initialization at system startup
 	 */
-	public TaskManMemento(String taskmanToSave, User currentUserLoggedIn, LocalDateTime currentSystemTime) {
+	public TaskManMemento(String taskmanToSave, ResourceView currentUserLoggedIn, LocalDateTime currentSystemTime) {
 		this.taskman = taskmanToSave;
 		this.currentUser = currentUserLoggedIn;
 		this.currentTime = currentSystemTime;
@@ -44,15 +43,19 @@ public class TaskManMemento {
 				new StringReader(taskman));
 		fileChecker.checkFile();
 
-		LocalDateTime systemTime = fileChecker.getSystemTime();
-		
 		// Initialize system through a facade
-		// Set system time
-		branch.initializeFromMemento(currentTime);
+		// reset system time
+		branch.initializeFromMemento(currentTime, fileChecker);
 		
-		Main.initializeBranch(branch, fileChecker);
+		
+		for(ResourceView user : branch.getPossibleUsers()) {
+			if(user.getName().equals(currentUser.getName())) {
+				currentUser = user;
+				break;
+			}
+		}
+		
 		branch.changeToUser(currentUser);
 		// End initialization
 	}
-
 }
