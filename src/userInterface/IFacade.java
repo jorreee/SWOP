@@ -104,5 +104,6 @@ public interface IFacade {
 	public List<TaskView> getUpdatableTasksForUser(ProjectView project);
 
 	public void delegateTask(ProjectView project, TaskView task, BranchView newBranch);
+	public BranchView getResponsibleBranch(TaskView task);
 
 }

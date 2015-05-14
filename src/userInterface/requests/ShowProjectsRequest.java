@@ -4,9 +4,11 @@ import java.io.BufferedReader;
 import java.util.Arrays;
 import java.util.List;
 
+import userInterface.IFacade;
+
+import company.BranchView;
 import company.taskMan.ProjectView;
 import company.taskMan.project.TaskView;
-import userInterface.IFacade;
 
 public class ShowProjectsRequest extends Request {
 
@@ -16,24 +18,26 @@ public class ShowProjectsRequest extends Request {
 
 	@Override
 	public String execute() {
-		List<ProjectView> projects = facade.getProjects();
+		List<BranchView> branches = facade.getBranches();
 
 		while(true) {
 			try {
-				// Show List of projects with their status
-				int projectAmount = projects.size();
-				if(projectAmount == 0) {
-					System.out.println("No projects are present in the system yet. ");
-					return quit();
+				// For each branch, show List of projects with their status
+				for(BranchView branch : branches) {
+					System.out.println("<" + "> " + branch.getGeographicLocation() + " Branch:");
+					List<ProjectView> projects = branch.getProjects();
+					int projectAmount = projects.size();
+					if(projectAmount == 0) {
+						System.out.println("  - No projects are present in this branch yet. ");
+					}
+					for(int i = 0 ; i < projectAmount ; i++) {
+						System.out.println("  - Project " + i + " "
+								+ projects.get(i).getName() + ": "
+								+ projects.get(i).getStatusAsString()); // PRINT PROJECT i HEADER
+					}
 				}
-				for(int i = 0 ; i < projectAmount ; i++) {
-					System.out.println("- Project " + i + " "
-							+ projects.get(i).getName() + ": "
-							+ projects.get(i).getStatusAsString()); // PRINT PROJECT i HEADER
-				}
-
 				// Ask user for project selection
-				System.out.println("Select a project to view more details (type quit to exit)");
+				System.out.println("Select a branch and project to view more details (Format: branch location in list and project location in list, seperated by spaces (type quit to exit)");
 				String input = inputReader.readLine();
 
 				// User quits
@@ -41,13 +45,12 @@ public class ShowProjectsRequest extends Request {
 					return quit();
 
 				// Parse input
-				int projectID = Integer.parseInt(input);
-
-				if(projectID < 0 || projectID > projectAmount) {
-					throw new IllegalArgumentException();
-				}
-
-				ProjectView project = projects.get(projectID);
+				String[] splitInput = input.split(" ");
+				int branchID = Integer.parseInt(splitInput[0]);
+				int projectID = Integer.parseInt(splitInput[1]);
+				
+				BranchView branch = branches.get(branchID);
+				ProjectView project = branch.getProjects().get(projectID);
 
 				// Show overview of project details including list of tasks and their status
 				StringBuilder projectHeader = new StringBuilder(); // build project details
@@ -103,6 +106,9 @@ public class ShowProjectsRequest extends Request {
 							taskiHead.append(", on time");
 						} else {
 							taskiHead.append(", over time by " + tasks.get(i).getOverTimePercentage(facade.getCurrentTime()) + "%");
+						}
+						if(tasks.get(i).isDelegated()) {
+							taskiHead.append(", responsible branch " + facade.getResponsibleBranch(tasks.get(i)).getGeographicLocation());
 						}
 						System.out.println(taskiHead.toString()); // PRINT TASK i FROM SELECTED PROJECT HEADER
 					}
