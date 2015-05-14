@@ -1,3 +1,5 @@
+systemTime: "2014-04-01 09:00"
+
 dailyAvailability :
   - startTime : "12:00"
     endTime   : "17:00"
@@ -28,3 +30,8 @@ resourceTypes:
     requires          : []
     conflictsWith     : []
     dailyAvailability : 0
+  
+  branches:
+    - file            : "input.tman"
+    - file            : "input2.tman"
+    - file            : "input3.tman"

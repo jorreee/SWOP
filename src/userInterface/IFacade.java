@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import company.BranchView;
 import company.taskMan.ProjectView;
 import company.taskMan.project.TaskView;
 import company.taskMan.resource.ResourceView;
@@ -13,10 +14,15 @@ import company.taskMan.resource.user.UserPermission;
 
 public interface IFacade {
 
+	public List<BranchView> getBranches();
+	public void selectBranch(BranchView branch);
+	public void initializeBranch(String geographicLocation);
+	
 	public boolean advanceTimeTo(LocalDateTime time);
 
 	public LocalDateTime getCurrentTime();
 	public boolean isLoggedIn();
+	public void logout();
 	
 	public ResourceView getCurrentUser();
 	public List<ResourceView> getPossibleUsers();
@@ -96,5 +102,7 @@ public interface IFacade {
 	public boolean currentUserHasPermission(UserPermission permission);
 	
 	public List<TaskView> getUpdatableTasksForUser(ProjectView project);
-	
+
+	public void delegateTask(ProjectView project, TaskView task, BranchView newBranch);
+
 }

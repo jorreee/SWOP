@@ -19,8 +19,7 @@ import company.taskMan.resource.ResourceView;
 import company.taskMan.resource.user.User;
 
 //TODO Still not done
-//TODO Remove currentTime and user 
-//TODO remove outcommented methods 
+//TODO remove outcommented methods and other stuff 
 /**
  * The Main System that keeps track of the list of projects and the current
  * Time. The TaskMan is also responsible of maintaining a resource manager
@@ -34,8 +33,9 @@ public class TaskMan {
 
 	private ArrayList<Project> projectList;
 	//private LocalDateTime currentTime;
-	private User currentUser;
+	//private User currentUser;
 	private ResourceManager resMan;
+	private final String geographicLocation;
 
 	/**
 	 * Creates a TaskMan system instance with a given time.
@@ -44,10 +44,21 @@ public class TaskMan {
 	 *            The current TaskMan time.
 	 * 
 	 */
-	public TaskMan(LocalDateTime time) {
+	public TaskMan(String location) throws IllegalArgumentException{
+		if(location == null)
+			throw new IllegalArgumentException("The given location is null");
 		projectList = new ArrayList<>();
 		resMan = new ResourceManager();
-		currentUser = resMan.getSuperUser();
+		geographicLocation = location;
+	}
+	
+	/**
+	 * Returns the geographic location of the TaskMan
+	 * 
+	 * @return	The location of the TaskMan
+	 */
+	public String getGeographicLocation(){
+		return this.geographicLocation;
 	}
 
 	/**
@@ -341,30 +352,30 @@ public class TaskMan {
 		return views.build();
 	}
 
-	/**
-	 * Return a view on the current user in the system
-	 * @return The current (logged in) user
-	 */
-	public ResourceView getCurrentUserName() {
-		return new ResourceView(currentUser);
-	}
+//	/**
+//	 * Return a view on the current user in the system
+//	 * @return The current (logged in) user
+//	 */
+//	public ResourceView getCurrentUserName() {
+//		return new ResourceView(currentUser);
+//	}
 
-	/**
-	 * Change the current logged in user to another one
-	 * 
-	 * @param newUser
-	 *            | The new user to log in
-	 * @return True if the new user was successfully logged in
-	 */
-	public boolean changeToUser(ResourceView newUser) {
-		User user = resMan.getUser(newUser);
-		if (user == null) {
-			return false;
-		} else {
-			currentUser = user;
-			return true;
-		}
-	}
+//	/**
+//	 * Change the current logged in user to another one
+//	 * 
+//	 * @param newUser
+//	 *            | The new user to log in
+//	 * @return True if the new user was successfully logged in
+//	 */
+//	public boolean changeToUser(ResourceView newUser) {
+//		User user = resMan.getUser(newUser);
+//		if (user == null) {
+//			return false;
+//		} else {
+//			currentUser = user;
+//			return true;
+//		}
+//	}
 
 	/**
 	 * Retrieve all possible users. This will be a list of every user in the
@@ -610,14 +621,14 @@ public class TaskMan {
 	 *            | project the current user wants to check
 	 * @return an immutable list of tasks that can be updated by a given user
 	 */
-	public List<TaskView> getUpdatableTasksForUser(ProjectView project) {
+	public List<TaskView> getUpdatableTasksForUser(ProjectView project, User user) {
 		Project p = unwrapProjectView(project);
 		if(p == null) {
 			Builder<TaskView> bob = ImmutableList.builder();
 			return bob.build();
 		}
 		return p.getUpdatableTasksForUser(
-				new ResourceView(currentUser));
+				new ResourceView(user));
 	}
 
 	/**
@@ -656,5 +667,15 @@ public class TaskMan {
 	public User getSuperUser(){
 		return resMan.getSuperUser();
 	}
-
+	
+	/**
+	 * Returns the user belonging to the view
+	 * 
+	 * @param 	newUser
+	 * 			View to unpack
+	 * @return	The user belonging to the view
+	 */
+	public User getUser(ResourceView newUser){
+		return resMan.getUser(newUser);
+	}
 }
