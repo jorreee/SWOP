@@ -15,7 +15,6 @@ import userInterface.TaskManException;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
-
 import company.caretaker.TaskManCaretaker;
 import company.taskMan.ProjectView;
 import company.taskMan.TaskMan;
@@ -27,6 +26,8 @@ import company.taskMan.resource.ResourcePrototype;
 import company.taskMan.resource.ResourceView;
 import company.taskMan.resource.user.User;
 import company.taskMan.resource.user.UserPermission;
+
+import exceptions.IllegalWhoopsieException;
 import exceptions.ResourceUnavailableException;
 import exceptions.UnexpectedViewContentException;
 
@@ -63,8 +64,9 @@ public class BranchManager implements IFacade {
 	 * 
 	 * @param	location
 	 * 			The location of the branch.
+	 * @throws IllegalWhoopsieException, IllegalArgumentException 
 	 */
-	private void declareTaskMan(String location, List<ResourcePrototype> prototypes){
+	private void declareTaskMan(String location, List<ResourcePrototype> prototypes) throws IllegalArgumentException, IllegalWhoopsieException{
 		TaskMan newTaskMan = new TaskMan(location, prototypes);
 		taskMen.add(newTaskMan);
 		currentTaskMan = newTaskMan;
@@ -464,7 +466,7 @@ public class BranchManager implements IFacade {
 	}
 
 	@Override
-	public void initializeBranch(String geographicLocation) {
+	public void initializeBranch(String geographicLocation) throws IllegalArgumentException, IllegalWhoopsieException {
 		this.declareTaskMan(geographicLocation, prototypes);
 	}
 
@@ -477,7 +479,7 @@ public class BranchManager implements IFacade {
 	@Override
 	public void delegateTask(ProjectView project, TaskView task,
 			BranchView newBranch) {
-		// TODO Auto-generated method stub
+//		currentTaskMan.delegateTask(project,task); TODO
 		
 	}
 	
@@ -493,7 +495,7 @@ public class BranchManager implements IFacade {
 	 * 			TaskMan must belong to this manager
 	 */
 	private TaskMan unwrapBranchView(BranchView view) 
-			throws TaskManException{
+			throws TaskManException {
 		if(view == null) {
 			throw new TaskManException(new NullPointerException("There was no branch to unwrap!"));
 		}
@@ -535,6 +537,11 @@ public class BranchManager implements IFacade {
 	@Override
 	public void delegateTask(ProjectView project, TaskView task,
 			BranchView oldBranch, BranchView newBranch) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void initializeFromMemento(LocalDateTime systemTime) {
 		// TODO Auto-generated method stub
 		
 	}
