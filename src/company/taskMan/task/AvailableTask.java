@@ -18,31 +18,23 @@ public class AvailableTask implements TaskStatus {
 	}
 
 	@Override
-	public boolean makeAvailable(Task task) {
-		return false;
-	}
+	public void makeAvailable(Task task) { }
 	
 	@Override
-	public boolean execute(Task task, LocalDateTime beginTime) {
-		if(!task.setBeginTime(beginTime)) {
-			return false;
-		}
-		
-		task.setTaskStatus(new ExecutingTask());
-		return true;
-		
+	public void execute(Task task, LocalDateTime beginTime) 
+			throws IllegalArgumentException, IllegalStateException {
+		task.setBeginTime(beginTime);
+		task.setTaskStatus(new ExecutingTask());		
 	}
 
 	@Override
-	public boolean finish(Task task, LocalDateTime endTime) {
-		return false;
-	}
+	public void finish(Task task, LocalDateTime endTime) 
+			throws IllegalArgumentException, IllegalStateException { }
 
 	@Override
-	public boolean fail(Task task, LocalDateTime endTime) {
-		return false;
-	}
-
+	public void fail(Task task, LocalDateTime endTime) 
+			throws IllegalArgumentException, IllegalStateException { }
+	
 	@Override
 	public boolean isAvailable() {
 		return true;

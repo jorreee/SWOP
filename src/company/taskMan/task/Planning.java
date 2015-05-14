@@ -93,20 +93,24 @@ public class Planning {
 	 * 
 	 * @param beginTime
 	 *            | The actual begin time of the task
-	 * @return True if the new begin time was set, false otherwise
+	 * @throws IllegalArgumentException
+	 * 			| if beginTime == null
+	 * @throws IllegalStateException
+	 * 			| if the begin time was already set 
+	 * 			| if there was no planned begin time set
 	 */
-	public boolean setBeginTime(LocalDateTime beginTime) {
+	public void setBeginTime(LocalDateTime beginTime) 
+			throws IllegalArgumentException, IllegalStateException {
 		if(beginTime==null) {
-			return false;
+			throw new IllegalArgumentException("beginTime must not be null");
 		}
 		if(getBeginTime() != null) {
-			return false; //already set
+			throw new IllegalStateException("Begin time already set");
 		}
 		if(getPlannedBeginTime() == null) {
-			return false; //nog niet gepland
+			throw new IllegalStateException("Task doesn't have a planned start time yet");
 		}
 		this.beginTime = beginTime;
-		return true;
 	}
 	
 	/**
@@ -119,25 +123,29 @@ public class Planning {
 	}
 	
 	/**
-	 * Set the end time to a given timestamp. A task can nog be considered
-	 * "ended". The endtime can only be set once.
+	 * Set the end time to a given timestamp. Can only be set once.
 	 * 
 	 * @param endTime
 	 *            | The new end time
-	 * @return True if the new end time was successfully set, false otherwise
+	 * @throws IllegalArgumentException
+	 * 			| if endTime == null
+	 * @throws IllegalStateException 
+	 * 			| if there is no begin time set
+	 * 			| if the end time is already set
+	 * 
 	 */
-	public boolean setEndTime(LocalDateTime endTime) {
+	public void setEndTime(LocalDateTime endTime) 
+			throws IllegalArgumentException, IllegalStateException {
 		if(getBeginTime() == null) {
-			return false; //The plan hasn't even started yet
+			throw new IllegalStateException("There isn't even a begin time yet!");
 		}
 		if(endTime == null) {
-			return false; 
+			throw new IllegalArgumentException("endTime can not be null."); 
 		}
 		if(getEndTime() != null) {
-			return false; //already set
+			throw new IllegalStateException("There is already an endTime set.");
 		}
 		this.endTime = endTime;
-		return true;
 		
 	}
 	

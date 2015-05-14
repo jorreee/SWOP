@@ -303,7 +303,7 @@ public class Project implements Dependant {
 		if (!preTask.hasEnded()){
 			throw new IllegalStateException("The preTask didn't belong to this project");
 		}
-		state.finish(this, taskList, preTask);
+		state.finish(this, preTask);
 	}
 
 	/**
@@ -395,7 +395,7 @@ public class Project implements Dependant {
 	}
 	
 	/**
-	 * Returns a list of the id's of the available tasks of the project
+	 * Returns a list of the available tasks of the project
 	 * 
 	 * @return	a list of the available tasks' id's
 	 */

@@ -20,7 +20,7 @@ public interface TaskStatus {
 	 * @return True if the new status is available, False if it remained
 	 *         unchanged
 	 */
-	public void makeAvailable(Task task) throws IllegalStateException;
+	public void makeAvailable(Task task);
 
 	/**
 	 * Change the status to an executing status
@@ -28,11 +28,10 @@ public interface TaskStatus {
 	 * @param task
 	 *            | The task to execute
 	 * @param beginTime
-	 *            | The actual begin tim
-	 * @return True if the new status is executing, False if it remained
-	 *         unchanged
+	 *            | The actual begin time
 	 */
-	public void execute(Task task, LocalDateTime beginTime) throws IllegalStateException;
+	public void execute(Task task, LocalDateTime beginTime) 
+			throws IllegalArgumentException, IllegalStateException;
 
 	/**
 	 * Change the status to a finished status
@@ -41,10 +40,9 @@ public interface TaskStatus {
 	 *            | The task to finish
 	 * @param endTime
 	 *            | The actual end time
-	 * @return True if the new status is finished, False if it remained
-	 *         unchanged
 	 */
-	public void finish(Task task, LocalDateTime endTime);
+	public void finish(Task task, LocalDateTime endTime) 
+			throws IllegalArgumentException, IllegalStateException ;
 
 	/**
 	 * Change the status to a failed status
@@ -53,9 +51,9 @@ public interface TaskStatus {
 	 *            | The task to fail
 	 * @param endTime
 	 *            | the actual end time
-	 * @return True if the new status is failed, False if it remained unchanged
 	 */
-	public void fail(Task task, LocalDateTime endTime);
+	public void fail(Task task, LocalDateTime endTime) 
+			throws IllegalArgumentException, IllegalStateException ;
 
 	/**
 	 * Register a new dependant to the current task
@@ -64,7 +62,6 @@ public interface TaskStatus {
 	 *            | The task to register the dependant to
 	 * @param d
 	 *            | The new dependant
-	 * @return true if the dependant was added
 	 */
 	public void register(Task task, Dependant d);
 

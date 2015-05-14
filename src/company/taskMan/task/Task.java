@@ -182,13 +182,9 @@ public class Task implements Dependant {
 		if (taskStatus != null) {
 			state.execute(this, startTime);
 			if (taskStatus.equalsIgnoreCase("failed")) {
-				if (!state.fail(this, endTime)) {
-					throw new IllegalArgumentException("Zéér gaye fout");
-				}
+				state.fail(this, endTime);
 			} else if (taskStatus.equalsIgnoreCase("finished")) {
-				if (!state.finish(this, endTime)) {
-					throw new IllegalArgumentException("Zéér gaye fout");
-				}
+				state.finish(this, endTime);
 			}
 		}
 	}
@@ -234,16 +230,16 @@ public class Task implements Dependant {
 	 * task is an alternative for another task then this will let the
 	 * alternative know to do the same
 	 * 
-	 * @return True if the dependants were successfully notified
+	 * @throws IllegalStateException
+	 * 			| if an update failed
 	 */
-	public boolean notifyDependants() {
+	public void notifyDependants() throws IllegalStateException {
 		for (Dependant t : dependants) {
 			t.updateDependency(this);
 		}
 		if (alternativeFor != null) {
 			alternativeFor.notifyDependants();
 		}
-		return true;
 	}
 
 	/**
@@ -260,9 +256,9 @@ public class Task implements Dependant {
 	public void updateDependency(Task preTask) throws IllegalStateException {
 		int preIndex = prerequisites.indexOf(preTask);
 		if (preIndex < 0) {
-			throw new IllegalStateException("The supplied task didn't occur as a Dependant in this task");
+			throw new IllegalStateException(
+					"The supplied task \"" + preTask.getDescription() + "\" didn't occur as a Dependant in this task");
 		}
-
 		state.makeAvailable(this);
 	}
 
@@ -487,8 +483,10 @@ public class Task implements Dependant {
 	 *            The new begin time of the Task.
 	 * @return True if the new begin time was set
 	 */
+	//TODO mag ook protected?
 	public boolean setBeginTime(LocalDateTime beginTime) {
-		return plan.setBeginTime(beginTime);
+		plan.setBeginTime(beginTime);
+		return true; //TODO iets aan return doen
 	}
 
 	/**
@@ -502,7 +500,8 @@ public class Task implements Dependant {
 	 *             set.
 	 */
 	public boolean setEndTime(LocalDateTime endTime) {
-		return plan.setEndTime(endTime);
+		plan.setEndTime(endTime);
+		return true; //TODO iets aan return doen
 	}
 
 	/**
@@ -608,13 +607,11 @@ public class Task implements Dependant {
 	 * @return True if and only if the updates succeeds.
 	 */
 	public boolean finish(LocalDateTime endTime) {
-		if (!state.finish(this, endTime)) {
-			return false;
-		}
+		state.finish(this, endTime);
 		if (!resMan.releaseResources(this, endTime)) {
-			return false;
+			throw new IllegalStateException("Failed to release resources");
 		}
-		return true;
+		return true; //TODO iets aan return doen
 	}
 
 	/**
@@ -625,13 +622,11 @@ public class Task implements Dependant {
 	 * @return True if and only if the updates succeeds.
 	 */
 	public boolean fail(LocalDateTime endTime) {
-		if (!state.fail(this, endTime)) {
-			return false;
-		}
+		state.fail(this, endTime);
 		if (!resMan.releaseResources(this, endTime)) {
-			return false;
+			throw new IllegalStateException("Failed to release resources");
 		}
-		return true;
+		return true; //TODO iets aan return doen
 	}
 
 	/**
@@ -642,7 +637,8 @@ public class Task implements Dependant {
 	 * @return True if this task is now executing
 	 */
 	public boolean execute(LocalDateTime startTime) {
-		return state.execute(this, startTime);
+		state.execute(this, startTime);
+		return true; //TODO iets aan return doen
 	}
 
 	// /**

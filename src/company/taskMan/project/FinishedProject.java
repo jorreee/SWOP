@@ -1,7 +1,5 @@
 package company.taskMan.project;
 
-import java.util.List;
-
 import company.taskMan.task.Task;
 
 /**
@@ -20,9 +18,7 @@ public class FinishedProject implements ProjectStatus {
 	}
 
 	@Override
-	public boolean finish(Project project, List<Task> tasks, Task lastTask) {
-		return false;
-	}
+	public void finish(Project project, Task lastTask) { }
 
 	@Override
 	public boolean isFinished() {

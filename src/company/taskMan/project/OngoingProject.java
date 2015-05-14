@@ -1,7 +1,5 @@
 package company.taskMan.project;
 
-import java.util.List;
-
 import company.taskMan.task.Task;
 
 /**
@@ -20,9 +18,9 @@ public class OngoingProject implements ProjectStatus {
 	}
 
 	@Override
-	public void finish(Project project, List<Task> tasks, Task lastTask) throws IllegalStateException {
+	public void finish(Project project, Task lastTask) throws IllegalStateException {
 		boolean shouldFinish = true;
-		for (Task t : tasks) {
+		for (Task t : project.getTasks()) {
 			if(!t.hasFinishedEndpoint()) {
 				shouldFinish = false;
 			}

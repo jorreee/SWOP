@@ -18,43 +18,35 @@ public class ExecutingTask implements TaskStatus{
 	}
 
 	@Override
-	public boolean makeAvailable(Task task) {
-		return false;
-	}
+	public void makeAvailable(Task task) { }
 	
 	@Override
-	public boolean execute(Task task, LocalDateTime beginTime) {
-		return false;
-	}
+	public void execute(Task task, LocalDateTime beginTime) 
+			throws IllegalArgumentException, IllegalStateException { }
 
 	@Override
-	public boolean finish(Task task, LocalDateTime endTime) {
+	public void finish(Task task, LocalDateTime endTime) 
+			throws IllegalArgumentException, IllegalStateException {
 		if(!isValidTimeStamps(task.getBeginTime(), endTime)) {
-			return false;
+			throw new IllegalArgumentException("Invalid end time for a task");
 		}
-		if(!task.setEndTime(endTime)) {
-			return false;
-		}
+		task.setEndTime(endTime);
 
 		task.setTaskStatus(new FinishedTask());
 
 		task.notifyDependants();
-
-		return true;
 	}
 
 	@Override
-	public boolean fail(Task task, LocalDateTime endTime) {
+	public void fail(Task task, LocalDateTime endTime) 
+			throws IllegalArgumentException, IllegalStateException {
 		if(!isValidTimeStamps(task.getBeginTime(), endTime)) {
-			return false;
+			throw new IllegalArgumentException("Invalid end time for a task");
 		}
-		if(!task.setEndTime(endTime)) {
-			return false;
-		}
+		task.setEndTime(endTime);
 
 		task.setTaskStatus(new FailedTask());
-
-		return true;
+		
 	}
 	
 	/**

@@ -18,24 +18,19 @@ public class FailedTask implements TaskStatus {
 	}
 
 	@Override
-	public boolean makeAvailable(Task task) {
-		return false;
-	}
+	public void makeAvailable(Task task) { }
 	
 	@Override
-	public boolean execute(Task task, LocalDateTime beginTime) {
-		return false;
-	}
+	public void execute(Task task, LocalDateTime beginTime) 
+				throws IllegalArgumentException, IllegalStateException { }
 
 	@Override
-	public boolean finish(Task task, LocalDateTime endTime) {
-		return false;
-	}
+	public void finish(Task task, LocalDateTime endTime) 
+			throws IllegalArgumentException, IllegalStateException{ }
 
 	@Override
-	public boolean fail(Task task, LocalDateTime endTime) {
-		return false;
-	}
+	public void fail(Task task, LocalDateTime endTime) 
+			throws IllegalArgumentException, IllegalStateException { }
 
 	@Override
 	public boolean isAvailable() {

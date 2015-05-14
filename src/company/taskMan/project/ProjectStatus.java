@@ -1,7 +1,5 @@
 package company.taskMan.project;
 
-import java.util.List;
-
 import company.taskMan.task.Task;
 
 /**
@@ -26,7 +24,7 @@ public interface ProjectStatus {
 	 * @throws IllegalStateException
 	 *			  | 
 	 */
-	public void finish(Project project, List<Task> tasks, Task lastTask);
+	public void finish(Project project, Task lastTask);
 
 	/**
 	 * Check whether or not the project is finished

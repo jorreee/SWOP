@@ -17,34 +17,29 @@ public class UnavailableTask implements TaskStatus {
 	}
 
 	@Override
-	public boolean makeAvailable(Task task) {
+	public void makeAvailable(Task task) {
 		for(Task t : task.getPrerequisites()) {
 			if(!t.hasFinishedEndpoint()) {
-				return false; //unfulfilled prereqs
+				return; //unfulfilled prereqs
 			}
 		}
 		if(task.getPlannedBeginTime() == null) {
-			return false; //not planned
+			return; //not planned
 		}
 		task.setTaskStatus(new AvailableTask());
-		return true;
 	}
 	
 	@Override
-	public boolean execute(Task task, LocalDateTime beginTime) {
-		return false;
-	}
+	public void execute(Task task, LocalDateTime beginTime) 
+			throws IllegalArgumentException, IllegalStateException { }
 
 	@Override
-	public boolean finish(Task task, LocalDateTime endTime) {
-		return false;
-	}
+	public void finish(Task task, LocalDateTime endTime) 
+			throws IllegalArgumentException, IllegalStateException { }
 
 	@Override
-	public boolean fail(Task task, LocalDateTime endTime) {
-		return false;
-	}
-
+	public void fail(Task task, LocalDateTime endTime) 
+			throws IllegalArgumentException, IllegalStateException { }
 
 	@Override
 	public boolean isAvailable() {
