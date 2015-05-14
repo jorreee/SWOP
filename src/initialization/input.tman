@@ -130,9 +130,8 @@ tasks:
     requiredResources  : [{type: 5,  quantity: 1}]
     planning           : 2
     ### TMAN UPDATE ###
-    # Original status was executing, yet an unavailable task can execute
-    status             : delegated
-    responsibleBranch  : 1
+    # Original status was executing, yet an unavailable task can't execute
+    status             :
 
   - project            : 2
     description        : "task 5's description"
@@ -156,7 +155,8 @@ tasks:
     prerequisiteTasks  :
     requiredResources  :
     planning           :
-    status             :
+    status             : delegated
+    responsibleBranch  : 1
 
 reservations:
   - resource:   0

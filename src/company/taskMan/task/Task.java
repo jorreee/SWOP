@@ -204,8 +204,17 @@ public class Task implements Dependant {
 					"A planned start time is required for this kind of creation");
 		}
 		plan.setPlannedBeginTime(plannedStartTime);
-		List<User> developers = resMan.pickDevs(plannedDevelopers, this,
-				startTime, endTime, true);
+		List<User> developers;
+		if(taskStatus == null) {
+			developers = resMan.pickDevs(plannedDevelopers, this,
+					plannedStartTime, getPlannedEndTime(), true);
+		} else if(taskStatus.equalsIgnoreCase("executing")) {
+			developers = resMan.pickDevs(plannedDevelopers, this,
+				startTime, getPlannedEndTime(), true);
+		} else {
+			developers = resMan.pickDevs(plannedDevelopers, this,
+					startTime, endTime, true);
+		}
 		if (developers == null) {
 			throw new IllegalArgumentException(
 					"Very bad developers, very bad! ## dit is een zéér gaye fout");
@@ -772,7 +781,8 @@ public class Task implements Dependant {
 	private boolean isValidTaskStatus(String status) {
 		if (!status.equalsIgnoreCase("finished")
 				&& !status.equalsIgnoreCase("failed")
-				&& !status.equalsIgnoreCase("executing")) {
+				&& !status.equalsIgnoreCase("executing")
+				&& !status.equalsIgnoreCase("delegated")) {
 			return false;
 		}
 		return true;

@@ -8,6 +8,7 @@ public enum UserPermission {
 	CREATE_TASK,
 	PLAN_TASK,
 	UPDATE_TASK,
-	SIMULATE;
+	SIMULATE,
+	DELEGATE_TASK;
 
 }

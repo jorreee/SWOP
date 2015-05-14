@@ -35,7 +35,7 @@ public interface IFacade {
 			LocalDateTime creationTime, LocalDateTime dueTime) throws TaskManException;
 
 	public void createProject(String name, String description,
-			LocalDateTime dueTime) throws CredentialException;
+			LocalDateTime dueTime) throws TaskManException;
 
 	public void createTask(ProjectView project, String description,
 			int estimatedDuration, int acceptableDeviation,
@@ -49,10 +49,10 @@ public interface IFacade {
 
 	
 	public void setTaskFinished(ProjectView project, TaskView task,
-			LocalDateTime endTime) throws CredentialException, IllegalArgumentException;
+			LocalDateTime endTime) throws TaskManException;
 
 	public void setTaskFailed(ProjectView project, TaskView task,
-			 LocalDateTime endTime) throws CredentialException, IllegalArgumentException;
+			 LocalDateTime endTime) throws TaskManException;
 	
 	public void setTaskExecuting(ProjectView project, TaskView task, LocalDateTime startTime) throws TaskManException;
 

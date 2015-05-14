@@ -79,7 +79,6 @@ tasks:
     # a task can be finished, failed, delegated, executing or unspecified (i.e. ongoing)
     status             : finished
     # The branch responsible for the task : index of tman file corresponding to the branch or nothing (this branch is responsible)
-    responsibleBranch  :
     # These time stamps are only required if a task is finished of failed
     startTime          : "2014-01-01 10:00"
     endTime            : "2014-01-02 17:00"
