@@ -659,7 +659,7 @@ public class Task implements Dependant {
 	 * @throws IllegalArgumentException
 	 * 			| if newStatus == null
 	 */
-	protected void setTaskStatus(TaskStatus newStatus) {
+	protected void setTaskStatus(TaskStatus newStatus) throws IllegalArgumentException {
 		if(newStatus == null) {
 			throw new IllegalArgumentException("newStatus can not be null");
 		}
@@ -956,7 +956,8 @@ public class Task implements Dependant {
 	 * @throws IllegalArgumentException, IllegalStateException
 	 */
 	public void reserve(ResourceView resource, LocalDateTime startTime,
-			LocalDateTime endTime) {
+			LocalDateTime endTime) 
+					throws IllegalArgumentException, IllegalStateException {
 		if(resource == null || startTime == null || endTime == null) {
 			throw new IllegalArgumentException("Invalid null argument");
 		}
