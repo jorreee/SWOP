@@ -19,7 +19,8 @@ public enum UserCredential {
 			UserPermission.CREATE_PROJECT,
 			UserPermission.CREATE_TASK,
 			UserPermission.PLAN_TASK,
-			UserPermission.SIMULATE}),
+			UserPermission.SIMULATE,
+			UserPermission.DELEGATE_TASK}),
 	DEVELOPER(new UserPermission[]{
 			UserPermission.SHOW_OVERVIEW,
 			UserPermission.ADVANCE_TIME,

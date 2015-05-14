@@ -3,11 +3,11 @@ package userInterface;
 import java.io.BufferedReader;
 
 import company.taskMan.resource.user.UserPermission;
-
 import userInterface.requests.AdvanceTimeRequest;
 import userInterface.requests.ChangeUserRequest;
 import userInterface.requests.CreateProjectRequest;
 import userInterface.requests.CreateTaskRequest;
+import userInterface.requests.DelegateTaskRequest;
 import userInterface.requests.ExitRequest;
 import userInterface.requests.HelpRequest;
 import userInterface.requests.InvalidRequest;
@@ -94,6 +94,16 @@ public class InputParser {
 					}
 				} else {
 					throw new IllegalArgumentException("you can only plan a task");
+				}
+			case "delegate" :
+				if(input[1].toLowerCase().equals("task")) {
+					if(facade.currentUserHasPermission(UserPermission.DELEGATE_TASK)) { 
+						return new DelegateTaskRequest(facade, inputReader);
+					} else {
+						throw new IllegalStateException("you need to be a project manager to delegate tasks");
+					}
+				} else {
+					throw new IllegalArgumentException("you can only delegate a task");
 				}
 			default	: 
 				return new InvalidRequest(facade, inputReader, "command does not exist");
