@@ -17,6 +17,8 @@ import company.taskMan.resource.Reservation;
 import company.taskMan.resource.ResourceManager;
 import company.taskMan.resource.ResourceView;
 import company.taskMan.resource.user.User;
+import exceptions.ResourceUnavailableException;
+import exceptions.UnexpectedViewContentException;
 
 //TODO Still not done
 //TODO remove outcommented methods and other stuff 
@@ -70,16 +72,16 @@ public class TaskMan {
 	 *            | the ProjectView to unwrap
 	 * @return | the unwrapped Project if it belonged to this TaskMan | NULL
 	 *         otherwise
-	 * @throws IllegalArgumentException
+	 * @throws IllegalArgumentException, UnexpectedViewContentException
 	 */
 	private Project unwrapProjectView(ProjectView view) 
-			throws IllegalArgumentException {
+			throws IllegalArgumentException, UnexpectedViewContentException {
 		if(view == null) {
 			throw new IllegalArgumentException("There was no project to unwrap!");
 		}
 		Project project = view.unwrap();
 		if(!projectList.contains(project)) {
-			throw new IllegalArgumentException("Project does not belong to this TaskManager!");
+			throw new UnexpectedViewContentException("Project does not belong to this TaskManager!");
 		}
 		return project;
 	}
@@ -172,14 +174,14 @@ public class TaskMan {
 	 * @param requiredResources
 	 *            | The resource prototypes and their respective quantities that
 	 *            are required by for this task
-	 * @throws IllegalArgumentException, IllegalStateException
+	 * @throws IllegalArgumentException, IllegalStateException, ResourceUnavailableException 
 	 */
 	public void createTask(ProjectView project, String description,
 			int estimatedDuration, int acceptableDeviation,
 			List<TaskView> prerequisiteTasks,
 			Map<ResourceView, Integer> requiredResources,
 			TaskView alternativeFor) 
-				throws IllegalArgumentException, IllegalStateException {
+				throws IllegalArgumentException, IllegalStateException, ResourceUnavailableException {
 		
 		createTask(project, description, estimatedDuration,
 				acceptableDeviation, prerequisiteTasks, alternativeFor,
@@ -215,7 +217,7 @@ public class TaskMan {
 	 *            | The due time of the planning of the Task.
 	 * @param plannedDevelopers
 	 *            | The planned developers of the Task.
-	 * @throws IllegalArgumentException, IllegalStateException
+	 * @throws IllegalArgumentException, IllegalStateException, ResourceUnavailableException 
 	 */
 	public void createTask(ProjectView projectView, String description,
 			int estimatedDuration, int acceptableDeviation,
@@ -223,7 +225,7 @@ public class TaskMan {
 			Map<ResourceView, Integer> requiredResources, String taskStatus,
 			LocalDateTime startTime, LocalDateTime endTime,
 			LocalDateTime plannedStartTime, List<ResourceView> plannedDevelopers) 
-				throws IllegalArgumentException, IllegalStateException {
+				throws IllegalArgumentException, IllegalStateException, ResourceUnavailableException {
 //		if(!currentUserHasPermission(UserPermission.CREATE_TASK)) {
 //			return false;
 //		}
@@ -387,10 +389,10 @@ public class TaskMan {
 	 *         otherwise
 	 */
 	//TODO exception
-	public boolean createResourcePrototype(String resourceName,
+	public void createResourcePrototype(String resourceName,
 			Optional<LocalTime> availabilityStart,
 			Optional<LocalTime> availabilityEnd) {
-		return resMan.createResourcePrototype(resourceName, availabilityStart,
+		resMan.createResourcePrototype(resourceName, availabilityStart,
 				availabilityEnd);
 	}
 
@@ -405,9 +407,9 @@ public class TaskMan {
 	 *         to its correct pool
 	 */
 	//TODO exception
-	public boolean declareConcreteResource(String name,
+	public void declareConcreteResource(String name,
 			ResourceView fromPrototype) {
-		return resMan.declareConcreteResource(name, fromPrototype);
+		resMan.declareConcreteResource(name, fromPrototype);
 	}
 
 	/**
@@ -437,15 +439,15 @@ public class TaskMan {
 	 *            | The end time of the new reservation
 	 * @return True if the resource was reserved by the given task, false
 	 *         otherwise
+	 * @throws IllegalStateException, IllegalArgumentException, ResourceUnavailableException 
 	 */
 	//TODO exception
-	public boolean reserveResource(ResourceView resource, ProjectView project,
-			TaskView task, LocalDateTime startTime, LocalDateTime endTime) {
-		Project p = unwrapProjectView(project);
-		if (p == null) {
-			return false;
-		}
-		return p.reserve(resource, task, startTime, endTime);
+	public void reserveResource(ResourceView resource, ProjectView project,
+			TaskView task, LocalDateTime startTime, LocalDateTime endTime) 
+					throws ResourceUnavailableException, 
+					IllegalArgumentException, 
+					IllegalStateException {
+		unwrapProjectView(project).reserve(resource, task, startTime, endTime);
 	}
 
 	/**
@@ -472,11 +474,11 @@ public class TaskMan {
 	 *            | The resources to plan
 	 * @param devs
 	 *            | The developers to assign
-	 * @throws IllegalArgumentException, IllegalStateException
+	 * @throws IllegalArgumentException, IllegalStateException, ResourceUnavailableException 
 	 */
 	public void planTask(ProjectView project, TaskView task,
 			LocalDateTime plannedStartTime, List<ResourceView> concRes, List<ResourceView> devs) 
-				throws IllegalArgumentException, IllegalStateException{
+				throws IllegalArgumentException, IllegalStateException, ResourceUnavailableException{
 //		if(!currentUserHasPermission(UserPermission.PLAN_TASK)) {
 //			return false;
 //		}
@@ -507,11 +509,11 @@ public class TaskMan {
 	 *            | The resources to plan
 	 * @param devs
 	 *            | The developers to assign
-	 * @throws IllegalArgumentException, IllegalStateException
+	 * @throws IllegalArgumentException, IllegalStateException, ResourceUnavailableException 
 	 */
 	public void planRawTask(ProjectView project, TaskView task,
 			LocalDateTime plannedStartTime, List<ResourceView> concRes, List<ResourceView> devs) 
-				throws IllegalArgumentException, IllegalStateException{
+				throws IllegalArgumentException, IllegalStateException, ResourceUnavailableException {
 //		if(!currentUserHasPermission(UserPermission.PLAN_TASK)) {
 //			return false;
 //		}
@@ -572,13 +574,12 @@ public class TaskMan {
 	 *            | The new requirements to add
 	 * @param prototype
 	 *            | The prototype that the new requirements should be added to
-	 * @return True if the new requirements were successfully added to the
-	 *         prototype
+	 * @throws IllegalArgumentException
 	 */
 	//TODO exceptions
-	public boolean addRequirementsToResource(List<ResourceView> resourcesToAdd,
+	public void addRequirementsToResource(List<ResourceView> resourcesToAdd,
 			ResourceView prototype) {
-		return resMan.addRequirementsToResource(resourcesToAdd, prototype);
+		resMan.addRequirementsToResource(resourcesToAdd, prototype);
 	}
 
 	/**
@@ -588,13 +589,12 @@ public class TaskMan {
 	 *            | The new conflicts to add
 	 * @param prototype
 	 *            | The prototype that the new conflicts should be added to
-	 * @return True if the new conflicts were successfully added to the
-	 *         prototype
+	 * @throws IllegalArgumentException
 	 */
 	//TODO exceptions
-	public boolean addConflictsToResource(List<ResourceView> resourcesToAdd,
+	public void addConflictsToResource(List<ResourceView> resourcesToAdd,
 			ResourceView prototype) {
-		return resMan.addConflictsToResource(resourcesToAdd, prototype);
+		resMan.addConflictsToResource(resourcesToAdd, prototype);
 	}
 
 //	/**
@@ -671,6 +671,6 @@ public class TaskMan {
 	 * @return	The user belonging to the view
 	 */
 	public User getUser(ResourceView user){
-		return resMan.getUser(user);
+		return resMan.unWrapUserView(user); //TODO public unwrap
 	}
 }

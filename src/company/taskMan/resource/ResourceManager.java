@@ -1,6 +1,5 @@
 package company.taskMan.resource;
 
-import java.rmi.UnexpectedException;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -11,11 +10,11 @@ import java.util.Optional;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
-
 import company.taskMan.resource.user.User;
 import company.taskMan.resource.user.UserPrototype;
 import company.taskMan.task.Task;
 import company.taskMan.util.TimeSpan;
+
 import exceptions.NoSuchResourceException;
 import exceptions.ResourceUnavailableException;
 import exceptions.UnexpectedViewContentException;
@@ -286,7 +285,7 @@ public class ResourceManager {
 					try {
 						ConcreteResource cr = unWrapConcreteResourceView(resource);
 						toReserve = cr;
-					} catch(UnexpectedException e3) {
+					} catch(UnexpectedViewContentException e3) {
 						//De unwrap was invalid, gooi dus nieuwe exception
 						throw new UnexpectedViewContentException("The view didn't contain a valid object");
 					}
@@ -591,40 +590,44 @@ public class ResourceManager {
 	 * 
 	 * @param reqRes
 	 *            | A map linking resourcePrototypes with a specified amount
-	 * @return The list of prototype if the resources are valid, else return null.
+	 * @return The list of prototype if the resources are valid
+	 * @throws NoSuchResourceException, IllegalArgumentException
 	 */
 
-	public Map<ResourcePrototype, Integer> isValidRequiredResources(Map<ResourceView,Integer> reqRes) {
-		if(reqRes == null)
-			return null;
-		Map<ResourcePrototype, Integer> resProtList = new HashMap<ResourcePrototype, Integer>();
-		for(ResourceView rv : reqRes.keySet()) {
-			ResourcePrototype rp = unWrapResourcePrototypeView(rv);
-			if(rp == null) {
-				return null;
-			}
-			int i = reqRes.get(rv);
-			if(i <= 0) {
-				return null;
-			}
-			if(i > getPoolOf(rp).size()) {
-				return null;
-			}
-			resProtList.put(rp, i);
+	public Map<ResourcePrototype, Integer> isValidRequiredResources(Map<ResourceView,Integer> reqRes) 
+			throws IllegalArgumentException, NoSuchResourceException {
+		if(reqRes == null) {
+			throw new IllegalArgumentException("reqRes must not be null");
 		}
-		for(ResourcePrototype prot : resProtList.keySet()){
-			for (ResourcePrototype req : prot.getRequiredResources()){
-				if (!resProtList.containsKey(req)){
-					return null;
+		try {
+			Map<ResourcePrototype, Integer> resProtList = new HashMap<ResourcePrototype, Integer>();
+			for(ResourceView rv : reqRes.keySet()) {
+				ResourcePrototype rp = unWrapResourcePrototypeView(rv);
+				int i = reqRes.get(rv);
+				if(i <= 0) {
+					throw new IllegalArgumentException("Entries must be strictly positive");
+				}
+				if(i > getPoolOf(rp).size()) {
+					throw new IllegalArgumentException("Entry for \"" + rp.getName() + "\" must be <= " + getPoolOf(rp).size());
+				}
+				resProtList.put(rp, i);
+			}
+			for(ResourcePrototype prot : resProtList.keySet()){
+				for (ResourcePrototype req : prot.getRequiredResources()){
+					if (!resProtList.containsKey(req)) {
+						throw new IllegalArgumentException("\"" + prot.getName() + "\" requires \"" + req.getName() + "\"");
+					}
+				}
+				for (ResourcePrototype confl : prot.getConflictingResources()){
+					if (resProtList.containsKey(confl)){
+						throw new IllegalArgumentException("\"" + confl.getName() + "\" conflicts with \"" + prot.getName() + "\"");
+					}
 				}
 			}
-			for (ResourcePrototype confl : prot.getConflictingResources()){
-				if (resProtList.containsKey(confl)){
-					return null;
-				}
-			}
+			return resProtList;
+		} catch(UnexpectedViewContentException e) {
+			throw new NoSuchResourceException(e.getMessage());
 		}
-		return resProtList;
 	}
 
 	/**
@@ -665,23 +668,15 @@ public class ResourceManager {
 	 *            | The new requirements to add
 	 * @param prototype
 	 *            | The prototype that the new requirements should be added to
-	 * @return True if the new requirements were successfully added to the
-	 *         prototype
+	 * @throws IllegalArgumentException
 	 */
-	public boolean addRequirementsToResource(List<ResourceView> reqToAdd, ResourceView prototype){
+	public void addRequirementsToResource(List<ResourceView> reqToAdd, ResourceView prototype) 
+			throws IllegalArgumentException {
 		ResourcePrototype rprot = unWrapResourcePrototypeView(prototype);
-		if(rprot == null) {
-			return false;
-		}
-		for (ResourceView req : reqToAdd ){
+		for (ResourceView req : reqToAdd) {
 			ResourcePrototype unwrapReq = unWrapResourcePrototypeView(req);
-			if (unwrapReq == null){
-				return false;
-			} else { 
-				rprot.addRequiredResource(unwrapReq);
-			}
+			rprot.addRequiredResource(unwrapReq);
 		}
-		return true;
 	}
 	
 	/**
@@ -691,23 +686,15 @@ public class ResourceManager {
 	 *            | The new conflicts to add
 	 * @param prototype
 	 *            | The prototype that the new conflicts should be added to
-	 * @return True if the new conflicts were successfully added to the
-	 *         prototype
+	 * @throws IllegalArgumentException
 	 */
-	public boolean addConflictsToResource(List<ResourceView> conToAdd, ResourceView prototype){
+	public void addConflictsToResource(List<ResourceView> conToAdd, ResourceView prototype) 
+			throws IllegalArgumentException {
 		ResourcePrototype rprot = unWrapResourcePrototypeView(prototype);
-		if(rprot == null) {
-			return false;
-		}
-		for (ResourceView req : conToAdd ){
+		for (ResourceView req : conToAdd) {
 			ResourcePrototype unwrapReq = unWrapResourcePrototypeView(req);
-			if (unwrapReq == null){
-				return false;
-			} else { 
-				rprot.addConflictingResource(unwrapReq);
-			}
+			rprot.addConflictingResource(unwrapReq);
 		}
-		return true;
 	}
 	
 	/**
@@ -726,8 +713,9 @@ public class ResourceManager {
 	 *            | The amount of suggestions that should be calculated
 	 * @return a list of timestamps when a planning could be made without
 	 *         conflicts
+	 * @throws IllegalArgumentException, NoSuchResourceException, ResourceUnavailableException 
 	 */
-	public List<LocalDateTime> getPossibleStartingTimes(Task task, List<ResourceView> allResources, LocalDateTime currentTime, int amount) {
+	public List<LocalDateTime> getPossibleStartingTimes(Task task, List<ResourceView> allResources, LocalDateTime currentTime, int amount) throws ResourceUnavailableException, NoSuchResourceException, IllegalArgumentException {
 		List<LocalDateTime> posTimes = new ArrayList<LocalDateTime>();
 		// Workday timings
 		LocalTime workDayStart = LocalTime.of(8,0);
