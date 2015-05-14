@@ -1,6 +1,8 @@
 # The file format is a simple subset of YAML.
 # Everything after '#' is ignored (i.e. single line comment)
 
+geographicLocation: "Brugge"
+
 resources:
   - name: "Car 1"
     type: 0

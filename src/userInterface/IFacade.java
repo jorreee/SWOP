@@ -14,6 +14,10 @@ import company.taskMan.resource.user.UserPermission;
 
 public interface IFacade {
 
+	public List<BranchView> getBranches();
+	public void selectBranch(BranchView branch);
+	public void initializeBranch(String geographicLocation);
+	
 	public boolean advanceTimeTo(LocalDateTime time);
 
 	public LocalDateTime getCurrentTime();
@@ -99,8 +103,6 @@ public interface IFacade {
 	
 	public List<TaskView> getUpdatableTasksForUser(ProjectView project);
 
-	public List<BranchView> getBranches();
-	public void selectBranch(BranchView branch);
-
 	public void delegateTask(ProjectView project, TaskView task, BranchView newBranch);
+
 }
