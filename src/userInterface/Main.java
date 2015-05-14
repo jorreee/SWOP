@@ -148,6 +148,9 @@ public class Main {
 	public static boolean initializeBranch(IFacade facade, TaskManInitFileChecker fileChecker) {
 		boolean success = false;
 		try {
+			String geographicLocation = fileChecker.getGeographicLocation();
+			facade.initializeBranch(geographicLocation);
+			
 			List<ProjectCreationData> projectData = fileChecker.getProjectDataList();
 			List<TaskCreationData> taskData = fileChecker.getTaskDataList();
 			List<ConcreteResourceCreationData> concreteResources = fileChecker.getConcreteResourceDataList();

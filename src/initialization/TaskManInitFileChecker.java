@@ -32,6 +32,7 @@ public class TaskManInitFileChecker extends StreamTokenizer {
 	List<ResourcePrototypeCreationData> resourcePrototypeDataList = new ArrayList<>();
 	Queue<String> branches = new LinkedList<>();
 	
+	String geo;
 	List<ProjectCreationData> projectDataList = new ArrayList<>();
 	List<TaskCreationData> taskDataList = new ArrayList<>();
 	List<ConcreteResourceCreationData> concreteResourceDataList = new ArrayList<>();
@@ -191,6 +192,8 @@ public class TaskManInitFileChecker extends StreamTokenizer {
 		commentChar('#');
 
 		nextToken();
+		
+		this.geo = expectStringField("geographicLocation");
 
 		expectLabel("resources");
 		while (ttype == '-') {
@@ -342,5 +345,9 @@ public class TaskManInitFileChecker extends StreamTokenizer {
 
 	public Queue<String> getBranches() {
 		return branches;
+	}
+
+	public String getGeographicLocation() {
+		return geo;
 	}
 }
