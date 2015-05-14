@@ -106,7 +106,7 @@ public class ProjectTest {
 		defaultProject.setEndTime(null);
 	}
 	
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void setEndTimeFailAlreadySet(){
 		defaultProject.setEndTime(LocalDateTime.of(2015, 4, 29, 10, 0));
 		defaultProject.setEndTime(LocalDateTime.of(2015, 4, 29, 10, 0));
