@@ -21,6 +21,8 @@ public class BranchManager implements IFacade {
 	private List<TaskMan> taskMen;
 	private TaskMan currentTaskMan;
 	private Delegator delegator;
+	private LocalDateTime currentTime;
+	private ResourceView currentUser;
 	private final TaskManCaretaker caretaker;
 
 	
@@ -30,28 +32,34 @@ public class BranchManager implements IFacade {
 		caretaker = new TaskManCaretaker(this);
 	}
 	
-	public void declareBranch(LocalDateTime branchTime, String geographicLocation) {
-		taskMen.add(new Branch(branchTime, geographicLocation));
-	}
+//	public void declareBranch(LocalDateTime branchTime, String geographicLocation) {
+//		taskMen.add(new Branch(branchTime, geographicLocation));
+//	}
+//	
+//	public void initializeFromMemento() {
+//		this.taskMan = new TaskMan();
+//	}
 	
-	public void initializeFromMemento(LocalDateTime time) {
-		currentTaskMan.initializeFromMemento(time);
+	public void declareTaskMan(){
+		TaskMan newTaskMan = new TaskMan();
+		taskMen.add(newTaskMan);
+		currentTaskMan = newTaskMan;
 	}
 	
 	@Override
 	public LocalDateTime getCurrentTime() { 
-		return currentBranch.getCurrentTime(); 
+		return this.currentTime; 
 	}
 	
 	@Override
 	public boolean createProject(String name, String description, LocalDateTime creationTime, LocalDateTime dueTime) {
-		return currentBranch.createProject(name, description, creationTime, dueTime);
+		return currentTaskMan.createProject(name, description, creationTime, dueTime);
 	}
 	
 	@Override
 	public boolean createProject(String name, String description,
 			LocalDateTime dueTime) {
-		return currentBranch.createProject(name, description, dueTime);
+		return currentTaskMan.createProject(name, description, dueTime);
 	}
 
 	@Override
@@ -64,7 +72,7 @@ public class BranchManager implements IFacade {
 			Map<ResourceView, Integer> requiredResources,
 			TaskView alternativeFor) {
 		
-		return currentBranch.createTask(project, 
+		return currentTaskMan.createTask(project, 
 				description, 
 				estimatedDuration, 
 				acceptableDeviation, 
@@ -88,7 +96,7 @@ public class BranchManager implements IFacade {
 			LocalDateTime plannedStartTime, 
 			List<ResourceView> plannedDevelopers) {
 		
-		return currentBranch.createTask(project, 
+		return currentTaskMan.createTask(project, 
 				description, 
 				estimatedDuration, 
 				acceptableDeviation, 
@@ -104,145 +112,149 @@ public class BranchManager implements IFacade {
 
 	@Override
 	public boolean advanceTimeTo(LocalDateTime time) {
-		return currentBranch.advanceTimeTo(time);
+		return currentTaskMan.advanceTimeTo(time);
 		
 	}
 
 	@Override
 	public boolean setTaskFinished(ProjectView project, TaskView task,
 			LocalDateTime endTime) {
-		return currentBranch.setTaskFinished(project, task, endTime);
+		return currentTaskMan.setTaskFinished(project, task, endTime);
 	}
 
 	@Override
 	public boolean setTaskFailed(ProjectView project, TaskView task,
 			LocalDateTime endTime) {
-		return currentBranch.setTaskFailed(project, task, endTime);
+		return currentTaskMan.setTaskFailed(project, task, endTime);
 	}
 	
 	@Override
 	public boolean setTaskExecuting(ProjectView project, TaskView task, LocalDateTime startTime){
-		return currentBranch.setTaskExecuting(project,task,startTime);
+		return currentTaskMan.setTaskExecuting(project,task,startTime);
 	}
 
 	@Override
 	public List<ProjectView> getProjects() {
-		return currentBranch.getProjects();
+		return currentTaskMan.getProjects();
 	}
 
 	@Override
 	public boolean storeInMemento() {
-		return currentBranch.storeInMemento();
+		if (!currentTaskMan.currentUserHasPermission(UserPermission.SIMULATE)) {
+			return false;
+		}
+		caretaker.storeInMemento();
+		return true;
 	}
 
 	@Override
 	public boolean revertFromMemento() {
-		return currentBranch.revertFromMemento();
+		return  caretaker.revertFromMemento();
 	}
 
 	@Override
 	public boolean discardMemento() {
-		return currentBranch.discardMemento();		
+		return caretaker.discardMemento();
 	}
 
 	@Override
 	public ResourceView getCurrentUser() {
-		return currentBranch.getCurrentUser();
+		return this.currentUser;
 	}
 
 	@Override
 	public List<ResourceView> getPossibleUsers() {
-		return currentBranch.getPossibleUsers();
+		return currentTaskMan.getPossibleUsernames();
 	}
 
 	@Override
 	public boolean changeToUser(ResourceView user) {
-		return currentBranch.changeToUser(user);
+		return currentTaskMan.changeToUser(user);
 	}
 
 	@Override
 	public boolean createResourcePrototype(String name,
 			Optional<LocalTime> availabilityStart,
 			Optional<LocalTime> availabilityEnd) {
-		return currentBranch.createResourcePrototype(name,availabilityStart,availabilityEnd);
+		return currentTaskMan.createResourcePrototype(name,availabilityStart,availabilityEnd);
 	}
 
 	@Override
 	public boolean declareConcreteResource(String name, ResourceView fromPrototype) {
-		return currentBranch.declareConcreteResource(name,fromPrototype);
+		return currentTaskMan.declareConcreteResource(name,fromPrototype);
 	}
 
 	@Override
 	public boolean createDeveloper(String name) {
-		return currentBranch.createDeveloper(name);
+		return currentTaskMan.createDeveloper(name);
 	}
 	
 	@Override
 	public boolean reserveResource(ResourceView resource, ProjectView project, TaskView task, LocalDateTime startTime, LocalDateTime endTime) {
-		return currentBranch.reserveResource(resource, project, task, startTime, endTime);
+		return currentTaskMan.reserveResource(resource, project, task, startTime, endTime);
 	}
 
 	@Override
 	public List<ResourceView> getDeveloperList() {
-		return currentBranch.getDeveloperList();
+		return currentTaskMan.getDeveloperList();
 	}
 
 	@Override
 	public HashMap<ProjectView, List<TaskView>> findConflictingPlannings(TaskView task) {
-		return currentBranch.findConflictingPlannings(task);
+		return currentTaskMan.findConflictingPlannings(task);
 	}
 
 	@Override
 	public List<ResourceView> getResourcePrototypes() {
-		return currentBranch.getResourcePrototypes();
+		return currentTaskMan.getResourcePrototypes();
 	}
 
 	public ResourceView getPrototypeOf(ResourceView resource) {
-		return currentBranch.getPrototypeOf(resource);
+		return currentTaskMan.getPrototypeOf(resource);
 	}
 
 	@Override
 	public List<ResourceView> getConcreteResourcesForPrototype(
 			ResourceView resourcePrototype) {
-		return currentBranch.getConcreteResourcesForPrototype(resourcePrototype);
+		return currentTaskMan.getConcreteResourcesForPrototype(resourcePrototype);
 	}
 
 	@Override
 	public boolean planTask(ProjectView project, TaskView task,
 			LocalDateTime plannedStartTime, List<ResourceView> concRes, List<ResourceView> devs) {
-		return currentBranch.planTask(project, task, plannedStartTime, concRes, devs);
+		return currentTaskMan.planTask(project, task, plannedStartTime, concRes, devs);
 	}
 	
 	@Override
 	public boolean planRawTask(ProjectView project, TaskView task,
 			LocalDateTime plannedStartTime, List<ResourceView> concRes, List<ResourceView> devs) {
-		return currentBranch.planRawTask(project, task, plannedStartTime, concRes, devs);
+		return currentTaskMan.planRawTask(project, task, plannedStartTime, concRes, devs);
 	}
 
 	@Override
 	public boolean addRequirementsToResource(List<ResourceView> resourcesToAdd,
 			ResourceView prototype) {
-		return currentBranch.addRequirementsToResource(resourcesToAdd, prototype);
+		return currentTaskMan.addRequirementsToResource(resourcesToAdd, prototype);
 	}
 
 	@Override
 	public boolean addConflictsToResource(List<ResourceView> resourcesToAdd,
 			ResourceView prototype) {
-		return currentBranch.addConflictsToResource(resourcesToAdd, prototype);
+		return currentTaskMan.addConflictsToResource(resourcesToAdd, prototype);
 	}
 
 	@Override
 	public boolean currentUserHasPermission(UserPermission permission) {
-		return currentBranch.currentUserHasPermission(permission);
+		return currentTaskMan.currentUserHasPermission(permission);
 	}
 	
 	@Override
 	public List<TaskView> getUpdatableTasksForUser(ProjectView project){
-		return currentBranch.getUpdatableTasksForUser(project);
+		return currentTaskMan.getUpdatableTasksForUser(project);
 	}
 
 	public List<Reservation> getAllReservations() {
-		return currentBranch.getAllReservations();
+		return currentTaskMan.getAllReservations();
 	}
 
 	@Override
