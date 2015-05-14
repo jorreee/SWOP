@@ -20,6 +20,7 @@ import company.taskMan.TaskMan;
 import company.taskMan.project.TaskView;
 import company.taskMan.resource.AvailabilityPeriod;
 import company.taskMan.resource.Reservation;
+import company.taskMan.resource.Resource;
 import company.taskMan.resource.ResourcePrototype;
 import company.taskMan.resource.ResourceView;
 import company.taskMan.resource.user.User;
@@ -41,6 +42,7 @@ public class BranchManager implements IFacade {
 		delegator = new Delegator();
 		caretaker = new TaskManCaretaker(this);
 		currentUser = null;
+		this.prototypes = new ArrayList<>();
 	}
 	
 //	public void declareBranch(LocalDateTime branchTime, String geographicLocation) {
@@ -307,7 +309,11 @@ public class BranchManager implements IFacade {
 
 	@Override
 	public List<ResourceView> getResourcePrototypes() {
-		return currentTaskMan.getResourcePrototypes();
+		ImmutableList.Builder<ResourceView> prots = ImmutableList.builder();
+		for(Resource prot : prototypes) {
+			prots.add(new ResourceView(prot));
+		}
+		return prots.build();
 	}
 
 	public ResourceView getPrototypeOf(ResourceView resource) {
@@ -454,6 +460,13 @@ public class BranchManager implements IFacade {
 			return true;
 		}
 		return !end.get().isBefore(start.get());
+	}
+
+	@Override
+	public void delegateTask(ProjectView project, TaskView task,
+			BranchView oldBranch, BranchView newBranch) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }
