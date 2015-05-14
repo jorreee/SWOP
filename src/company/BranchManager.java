@@ -15,6 +15,7 @@ import company.taskMan.TaskMan;
 import company.taskMan.project.TaskView;
 import company.taskMan.resource.Reservation;
 import company.taskMan.resource.ResourceView;
+import company.taskMan.resource.user.User;
 import company.taskMan.resource.user.UserPermission;
 
 public class BranchManager implements IFacade {
@@ -22,14 +23,16 @@ public class BranchManager implements IFacade {
 	private TaskMan currentTaskMan;
 	private Delegator delegator;
 	private LocalDateTime currentTime;
-	private ResourceView currentUser;
+	private User currentUser;
 	private final TaskManCaretaker caretaker;
 
 	
 	public BranchManager(LocalDateTime time) {
 		taskMen = new ArrayList<>();
 		delegator = new Delegator();
+		declareTaskMan();
 		caretaker = new TaskManCaretaker(this);
+		currentUser = currentTaskMan.getSuperUser();
 	}
 	
 //	public void declareBranch(LocalDateTime branchTime, String geographicLocation) {
@@ -159,7 +162,7 @@ public class BranchManager implements IFacade {
 
 	@Override
 	public ResourceView getCurrentUser() {
-		return this.currentUser;
+		return new ResourceView(this.currentUser);
 	}
 
 	@Override

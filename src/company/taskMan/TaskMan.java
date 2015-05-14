@@ -648,5 +648,14 @@ public class TaskMan {
 		}
 		return conflicts;
 	}
+	
+	/**
+	 * Returns the super user of this branch
+	 * 
+	 * @return	The super user of this branch
+	 */
+	public User getSuperUser(){
+		return resMan.getSuperUser();
+	}
 
 }
