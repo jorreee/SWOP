@@ -101,4 +101,6 @@ public interface IFacade {
 
 	public List<BranchView> getBranches();
 	public void selectBranch(BranchView branch);
+
+	public void delegateTask(ProjectView project, TaskView task, BranchView newBranch);
 }
