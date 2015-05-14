@@ -582,6 +582,7 @@ public class Project implements Dependant {
 			return false;
 		}
 		t.reserve(resource, startTime, endTime); //TODO excpetions vangen
+		return true;
 	}
 	
 	/**
