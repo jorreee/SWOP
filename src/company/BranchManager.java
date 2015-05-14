@@ -11,9 +11,11 @@ import java.util.Optional;
 import javax.security.auth.login.CredentialException;
 
 import userInterface.IFacade;
+import userInterface.TaskManException;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
+
 import company.caretaker.TaskManCaretaker;
 import company.taskMan.ProjectView;
 import company.taskMan.TaskMan;
@@ -25,7 +27,7 @@ import company.taskMan.resource.ResourcePrototype;
 import company.taskMan.resource.ResourceView;
 import company.taskMan.resource.user.User;
 import company.taskMan.resource.user.UserPermission;
-
+import exceptions.ResourceUnavailableException;
 import exceptions.UnexpectedViewContentException;
 
 //TODO list of prototypes in branchMa
@@ -79,9 +81,9 @@ public class BranchManager implements IFacade {
 	}
 	
 	@Override
-	public void createProject(String name, String description, LocalDateTime creationTime, LocalDateTime dueTime) throws CredentialException {
+	public void createProject(String name, String description, LocalDateTime creationTime, LocalDateTime dueTime) throws TaskManException {
 		if(!currentUserHasPermission(UserPermission.CREATE_PROJECT)) {
-			throw new CredentialException("User has no permission to create projects");
+			throw new TaskManException(new CredentialException("User has no permission to create projects"));
 		}
 		currentTaskMan.createProject(name, description, creationTime, dueTime);
 	}
@@ -103,19 +105,23 @@ public class BranchManager implements IFacade {
 			int acceptableDeviation,
 			List<TaskView> prerequisiteTasks, 
 			Map<ResourceView, Integer> requiredResources,
-			TaskView alternativeFor) throws CredentialException{
+			TaskView alternativeFor) throws TaskManException {
 		
 		if(!currentUserHasPermission(UserPermission.CREATE_TASK)) {
-			throw new CredentialException("User has no permission ro create tasks");
+			throw new TaskManException(new CredentialException("User has no permission ro create tasks"));
 		}
 		
-		currentTaskMan.createTask(project, 
-				description, 
-				estimatedDuration, 
-				acceptableDeviation, 
-				prerequisiteTasks, 
-				requiredResources,
-				alternativeFor);
+		try {
+			currentTaskMan.createTask(project, 
+					description, 
+					estimatedDuration, 
+					acceptableDeviation, 
+					prerequisiteTasks, 
+					requiredResources,
+					alternativeFor);
+		} catch (Exception e) {
+			throw new TaskManException(e);
+		}
 	}
 
 	@Override
@@ -131,24 +137,24 @@ public class BranchManager implements IFacade {
 			LocalDateTime startTime, 
 			LocalDateTime endTime,
 			LocalDateTime plannedStartTime, 
-			List<ResourceView> plannedDevelopers)  throws CredentialException{
-		
-		if(!currentUserHasPermission(UserPermission.CREATE_TASK)) {
-			throw new CredentialException("User has no permission to create tasks");
-		}
-		
-		currentTaskMan.createTask(project, 
-				description, 
-				estimatedDuration, 
-				acceptableDeviation, 
-				prerequisiteTasks, 
-				alternativeFor,
-				requiredResources,
-				taskStatus,
-				startTime,
-				endTime,
-				plannedStartTime,
-				plannedDevelopers);
+			List<ResourceView> plannedDevelopers)  throws TaskManException {
+			if(!currentUserHasPermission(UserPermission.CREATE_TASK)) {
+				throw new TaskManException(new CredentialException("User has no permission to create tasks"));
+			}
+			try {
+			currentTaskMan.createTask(project, 
+					description, 
+					estimatedDuration, 
+					acceptableDeviation, 
+					prerequisiteTasks, 
+					alternativeFor,
+					requiredResources,
+					taskStatus,
+					startTime,
+					endTime,
+					plannedStartTime,
+					plannedDevelopers);
+		} catch(Exception e) { throw new TaskManException(e); }
 	}
 
 	/**
@@ -161,15 +167,15 @@ public class BranchManager implements IFacade {
 	 */
 	@Override
 	public void advanceTimeTo(LocalDateTime time) 
-			throws IllegalArgumentException, CredentialException{
+			throws TaskManException {
 		if(!currentUserHasPermission(UserPermission.ADVANCE_TIME))
-			throw new CredentialException("The user has no permission to advance the time");
+			throw new TaskManException(new CredentialException("The user has no permission to advance the time"));
 		if (time == null)
-			throw new IllegalArgumentException("Time is null");
+			throw new TaskManException(new IllegalArgumentException("Time is null"));
 		if (time.isAfter(currentTime)) {
 			currentTime = time;
 		} else
-			throw new IllegalArgumentException("The given time is before the currentTime");
+			throw new TaskManException(new IllegalArgumentException("The given time is before the currentTime"));
 
 	}
 
@@ -205,15 +211,15 @@ public class BranchManager implements IFacade {
 	
 	@Override
 	public void setTaskExecuting(ProjectView project, TaskView task,
-			LocalDateTime startTime)throws CredentialException, IllegalArgumentException{
+			LocalDateTime startTime) throws TaskManException {
 		if(!currentUserHasPermission(UserPermission.UPDATE_TASK)) {
-			throw new CredentialException("The user has no permission to update the taskstatus");
+			throw new TaskManException(new CredentialException("The user has no permission to update the taskstatus"));
 		}
 		if (startTime == null) {
-			throw new IllegalArgumentException("The startTime is null");
+			throw new TaskManException(new IllegalArgumentException("The startTime is null"));
 		}
 		if (startTime.isAfter(currentTime)) {
-			throw new IllegalArgumentException("The startTime is after the currentTime");
+			throw new TaskManException(new IllegalArgumentException("The startTime is after the currentTime"));
 		}
 		currentTaskMan.setTaskExecuting(project,task,startTime);
 	}
@@ -297,7 +303,11 @@ public class BranchManager implements IFacade {
 	
 	@Override
 	public void reserveResource(ResourceView resource, ProjectView project, TaskView task, LocalDateTime startTime, LocalDateTime endTime) {
-		currentTaskMan.reserveResource(resource, project, task, startTime, endTime);
+		try {
+			currentTaskMan.reserveResource(resource, project, task, startTime, endTime);
+		} catch (Exception e) {
+			throw new TaskManException(e);
+		}
 	}
 
 	@Override
@@ -332,21 +342,31 @@ public class BranchManager implements IFacade {
 	@Override
 	public void planTask(ProjectView project, TaskView task,
 			LocalDateTime plannedStartTime, List<ResourceView> concRes, 
-			List<ResourceView> devs) throws CredentialException{
+			List<ResourceView> devs) throws TaskManException{
 		if(!currentUserHasPermission(UserPermission.PLAN_TASK)) {
-			throw new CredentialException("User has no permission to plan a task");
+			throw new TaskManException(new CredentialException("User has no permission to plan a task"));
 		}
-		currentTaskMan.planTask(project, task, plannedStartTime, concRes, devs);
+		try {
+			currentTaskMan.planTask(project, task, plannedStartTime, concRes, devs);
+		} catch (ResourceUnavailableException | IllegalArgumentException
+				| IllegalStateException e) {
+			throw new TaskManException(e);
+		}
 	}
 	
 	@Override
 	public void planRawTask(ProjectView project, TaskView task,
 			LocalDateTime plannedStartTime, List<ResourceView> concRes, 
-			List<ResourceView> devs) throws CredentialException{
+			List<ResourceView> devs){
 		if(!currentUserHasPermission(UserPermission.PLAN_TASK)) {
-			throw new CredentialException("User has no permission to plan a task");
+			throw new TaskManException(new CredentialException("User has no permission to plan a task"));
 		}
-		currentTaskMan.planRawTask(project, task, plannedStartTime, concRes, devs);
+		try {
+			currentTaskMan.planRawTask(project, task, plannedStartTime, concRes, devs);
+		} catch (ResourceUnavailableException | IllegalArgumentException
+				| IllegalStateException e) {
+			throw new TaskManException(e);
+		}
 	}
 	
 	/**
