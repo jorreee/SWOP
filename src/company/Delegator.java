@@ -36,18 +36,19 @@ public class Delegator {
 			delegations.remove(originalDelegation);
 			// The task gets delegated back to it's original branch
 			if (originalDelegation.get().getOriginalBranch() == newB){
-				task.unDelegate();
+				origB.delegateTask(task, task);
 			}
 			else {
 				delegations.add(new Delegation(task,newB,originalDelegation.get().getOriginalBranch()));
-				origB.delegateTask(task);
-				newB.makeTaskFromDelegation(task);
+				Task newTask = newB.makeTaskFromDelegation(task);
+				origB.delegateTask(task, newTask);
+				
 			}
 		}
 		else {
 			delegations.add(new Delegation(task,newB,origB));
-			origB.delegateTask(task);
-			newB.makeTaskFromDelegation(task);
+			Task newTask = newB.makeTaskFromDelegation(task);
+			origB.delegateTask(task, newTask);
 		}
 		
 		
