@@ -173,7 +173,7 @@ public class Project implements Dependant {
 		Task altFor;
 		try {
 			altFor = unwrapTaskView(alternativeFor);
-		} catch(NullPointerException e) {
+		} catch(IllegalArgumentException e) {
 			altFor = null;
 		}
 		
@@ -581,7 +581,7 @@ public class Project implements Dependant {
 		if(t == null) {
 			return false;
 		}
-		return t.reserve(resource, startTime, endTime);
+		t.reserve(resource, startTime, endTime); //TODO excpetions vangen
 	}
 	
 	/**

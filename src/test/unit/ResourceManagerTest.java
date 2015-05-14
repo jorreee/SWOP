@@ -211,7 +211,7 @@ public class ResourceManagerTest {
 		//Plan first task
 		ArrayList<ResourceView> devs = new ArrayList<>();
 		devs.add(weer);
-		assertTrue(firstTask.plan(LocalDateTime.of(2015, 04, 23, 10, 0), concRes, devs));
+		firstTask.plan(LocalDateTime.of(2015, 04, 23, 10, 0), concRes, devs);
 		
 		ArrayList<ResourceView> conRes2 = new ArrayList<>();
 		conRes2.add(resMan.getResourcePrototypes().get(0));
@@ -238,7 +238,7 @@ public class ResourceManagerTest {
 		Task plannedTask = new Task("already planned", 120, 0, resMan, new ArrayList<Task>(), new HashMap<ResourceView, Integer>(), null);
 		LocalDateTime currentTime = LocalDateTime.of(2015, 04, 23, 10, 0);
 		
-		assertTrue(plannedTask.plan(currentTime, new ArrayList<ResourceView>(), Lists.newArrayList(weer)));
+		plannedTask.plan(currentTime, new ArrayList<ResourceView>(), Lists.newArrayList(weer));
 		
 		Task toPlan = new Task("to plan", 60, 0, resMan, new ArrayList<Task>(), new HashMap<ResourceView, Integer>(), null);
 		List<LocalDateTime> possibleTimes = resMan.getPossibleStartingTimes(

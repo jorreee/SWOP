@@ -865,12 +865,13 @@ public class ResourceManager {
 			allReservations.removeAll(toChange);
 			return false;
 		}
-		if(!task.releaseDevelopers()) {
-			activeReservations.addAll(toRemoveActive);
-			allReservations.addAll(toRemoveAll);
-			allReservations.removeAll(toChange);
-			return false;
-		}
+//		if(!task.releaseDevelopers()) {
+//			activeReservations.addAll(toRemoveActive);
+//			allReservations.addAll(toRemoveAll);
+//			allReservations.removeAll(toChange);
+//			return false;
+//		}
+		task.releaseDevelopers();
 		return true;
 	}
 
