@@ -22,7 +22,7 @@ public class UpdateTaskStatusRequest extends Request {
 		int i = 0;
 		for(ProjectView project : projects) {
 			System.out.println("[" + i + "] Project " + project.getName() + ":");
-			List<TaskView> availableTasks = facade.getUpdatableTasksForUser(project);
+			List<TaskView> availableTasks = project.getUpdatableTasksForUser(facade.getCurrentUser());
 			int j = 0;
 			for(TaskView task : availableTasks) {
 				System.out.println("  (" + j + ") Task \"" + task.getDescription() + "\" is " + task.getStatusAsString().toLowerCase());
@@ -49,7 +49,7 @@ public class UpdateTaskStatusRequest extends Request {
 				taskID = Integer.parseInt(input.split(" ")[1]);
 
 				ProjectView project = projects.get(projectID);
-				TaskView task = facade.getUpdatableTasksForUser(project).get(taskID);
+				TaskView task = project.getUpdatableTasksForUser(facade.getCurrentUser()).get(taskID);
 
 				// UPDATE TASK
 

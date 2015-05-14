@@ -340,11 +340,6 @@ public class BranchManager implements IFacade {
 	public boolean currentUserHasPermission(UserPermission permission) {
 		return currentUser.getPermissions().contains(permission);
 	}
-	
-	@Override
-	public List<TaskView> getUpdatableTasksForUser(ProjectView project){
-		return currentTaskMan.getUpdatableTasksForUser(project, currentUser);
-	}
 
 	public List<Reservation> getAllReservations() {
 		return currentTaskMan.getAllReservations();

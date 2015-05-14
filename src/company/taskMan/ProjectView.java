@@ -6,6 +6,7 @@ import java.util.List;
 import com.google.common.collect.ImmutableList;
 import company.taskMan.project.Project;
 import company.taskMan.project.TaskView;
+import company.taskMan.resource.ResourceView;
 import company.taskMan.task.Task;
 import company.taskMan.util.TimeSpan;
 
@@ -124,6 +125,10 @@ public class ProjectView {
 			}
 		}
 		return availableTasks.build();
+	}
+	
+	public List<TaskView> getUpdatableTasksForUser(ResourceView user) {
+		return project.getUpdatableTasksForUser(user);
 	}
 
 	/**

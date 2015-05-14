@@ -100,8 +100,6 @@ public interface IFacade {
 //			TaskView conflictingTask);
 
 	public boolean currentUserHasPermission(UserPermission permission);
-	
-	public List<TaskView> getUpdatableTasksForUser(ProjectView project);
 
 	public void delegateTask(ProjectView project, TaskView task, BranchView newBranch);
 

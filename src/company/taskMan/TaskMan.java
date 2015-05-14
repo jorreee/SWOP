@@ -124,21 +124,13 @@ public class TaskMan {
 	 *            The creation time of the project
 	 * @param dueTime
 	 *            The due time of the project
-	 * @return true if the project creation was successful false if the creation
-	 *         was unsuccessful
+	 * @throws IllegalArgumentException
 	 */
-	public boolean createProject(String name, String description,
-			LocalDateTime creationTime, LocalDateTime dueTime) {
-//		if(!currentUserHasPermission(UserPermission.CREATE_PROJECT)) {
-//			return false;
-//		}
-		Project project = null;
-		try {
-			project = new Project(name, description, creationTime, dueTime);
-		} catch (IllegalArgumentException e) {
-			return false;
-		}
-		return projectList.add(project);
+	public void createProject(String name, String description,
+			LocalDateTime creationTime, LocalDateTime dueTime) 
+				throws IllegalArgumentException {
+		Project project = new Project(name, description, creationTime, dueTime);
+		projectList.add(project);
 	}
 
 //	/**
@@ -180,19 +172,16 @@ public class TaskMan {
 	 * @param requiredResources
 	 *            | The resource prototypes and their respective quantities that
 	 *            are required by for this task
-	 * @return True if the creation of a new Task was successful. False if the
-	 *         projectID is a valid one. False if the creation was unsuccessful
+	 * @throws IllegalArgumentException, IllegalStateException
 	 */
-	public boolean createTask(ProjectView project, String description,
+	public void createTask(ProjectView project, String description,
 			int estimatedDuration, int acceptableDeviation,
 			List<TaskView> prerequisiteTasks,
 			Map<ResourceView, Integer> requiredResources,
-			TaskView alternativeFor) {
-
-//		if(!currentUserHasPermission(UserPermission.CREATE_TASK)) {
-//			return false;
-//		}
-		return createTask(project, description, estimatedDuration,
+			TaskView alternativeFor) 
+				throws IllegalArgumentException, IllegalStateException {
+		
+		createTask(project, description, estimatedDuration,
 				acceptableDeviation, prerequisiteTasks, alternativeFor,
 				requiredResources, null, null, null, null, null);
 
@@ -226,23 +215,23 @@ public class TaskMan {
 	 *            | The due time of the planning of the Task.
 	 * @param plannedDevelopers
 	 *            | The planned developers of the Task.
-	 * @return True if and only if the creation of the Raw Planned Task was
-	 *         successful.
+	 * @throws IllegalArgumentException, IllegalStateException
 	 */
-	public boolean createTask(ProjectView projectView, String description,
+	public void createTask(ProjectView projectView, String description,
 			int estimatedDuration, int acceptableDeviation,
 			List<TaskView> prerequisiteTasks, TaskView alternativeFor,
 			Map<ResourceView, Integer> requiredResources, String taskStatus,
 			LocalDateTime startTime, LocalDateTime endTime,
-			LocalDateTime plannedStartTime, List<ResourceView> plannedDevelopers) {
+			LocalDateTime plannedStartTime, List<ResourceView> plannedDevelopers) 
+				throws IllegalArgumentException, IllegalStateException {
 //		if(!currentUserHasPermission(UserPermission.CREATE_TASK)) {
 //			return false;
 //		}
-		Project project = unwrapProjectView(projectView);
-		if (project == null) {
-			return false;
-		}
-		return project.createTask(description, estimatedDuration,
+//		Project project = unwrapProjectView(projectView);
+//		if (project == null) {
+//			return false;
+//		}
+		unwrapProjectView(projectView).createTask(description, estimatedDuration,
 				acceptableDeviation, resMan, prerequisiteTasks,
 				requiredResources, alternativeFor, taskStatus, startTime,
 				endTime, plannedStartTime, plannedDevelopers);
@@ -258,11 +247,11 @@ public class TaskMan {
 	 *            the id of the given task
 	 * @param endTime
 	 *            the end time of the given task
-	 * @return True if setting the task to finished was successful, False if it
-	 *         was unsuccessful false if the project ID isn't a valid one
+	 * @throws IllegalArgumentException, IllegalStateException
 	 */
-	public boolean setTaskFinished(ProjectView project, TaskView taskID,
-			LocalDateTime endTime) {
+	public void setTaskFinished(ProjectView project, TaskView taskID,
+			LocalDateTime endTime) 
+					throws IllegalArgumentException, IllegalStateException {
 //		if(!currentUserHasPermission(UserPermission.UPDATE_TASK)) {
 //			return false;
 //		}
@@ -272,11 +261,11 @@ public class TaskMan {
 //		if (endTime.isAfter(currentTime)) {
 //			return false;
 //		}
-		Project p = unwrapProjectView(project);
-		if (p == null) {
-			return false;
-		}
-		return p.setTaskFinished(taskID, endTime);
+//		Project p = unwrapProjectView(project);
+//		if (p == null) {
+//			return false;
+//		}
+		unwrapProjectView(project).setTaskFinished(taskID, endTime);
 	}
 
 	/**
@@ -289,13 +278,11 @@ public class TaskMan {
 	 *            the id of the given task
 	 * @param endTime
 	 *            the end time of the given task
-	 * @return True if setting the task to failed was successful. False if it
-	 *         was unsuccessful. False if the project ID isn't a valid one.
-	 *         False if the end time is null or the end time comes after the
-	 *         current time.
+	 * @throws IllegalArgumentException, IllegalStateException
 	 */
-	public boolean setTaskFailed(ProjectView project, TaskView taskID,
-			LocalDateTime endTime) {
+	public void setTaskFailed(ProjectView project, TaskView taskID,
+			LocalDateTime endTime) 
+				throws IllegalArgumentException, IllegalStateException{
 //		if(!currentUserHasPermission(UserPermission.UPDATE_TASK)) {
 //			return false;
 //		}
@@ -305,11 +292,7 @@ public class TaskMan {
 //		if (endTime.isAfter(currentTime)) {
 //			return false;
 //		}
-		Project p = unwrapProjectView(project);
-		if (p == null) {
-			return false;
-		}
-		return p.setTaskFailed(taskID, endTime);
+		unwrapProjectView(project).setTaskFailed(taskID, endTime);
 	}
 
 	/**
@@ -321,10 +304,11 @@ public class TaskMan {
 	 *            | The task that should be executing
 	 * @param startTime
 	 *            | The actual begin time of the task
-	 * @return True if the task is now executing
+	 * @throws IllegalArgumentException, IllegalStateException
 	 */
-	public boolean setTaskExecuting(ProjectView project, TaskView task,
-			LocalDateTime startTime) {
+	public void setTaskExecuting(ProjectView project, TaskView task,
+			LocalDateTime startTime) 
+				throws IllegalArgumentException, IllegalStateException{
 //		if(!currentUserHasPermission(UserPermission.UPDATE_TASK)) {
 //			return false;
 //		}
@@ -334,18 +318,19 @@ public class TaskMan {
 //		if (startTime.isAfter(currentTime)) {
 //			return false;
 //		}
-		Project p = unwrapProjectView(project);
-		if (p == null) {
-			return false;
-		}
-		return p.setTaskExecuting(task, startTime);
+//		Project p = unwrapProjectView(project);
+//		if (p == null) {
+//			return false;
+//		}
+		unwrapProjectView(project).setTaskExecuting(task, startTime);
 	}
 
 	/**
 	 * Returns a list of ProjectView objects that each contain one of this
 	 * taskman's projects
 	 * 
-	 * @return | a list of ProjectViews
+	 * @return 
+	 * 			| a list of ProjectViews
 	 */
 	public List<ProjectView> getProjects() {
 		Builder<ProjectView> views = ImmutableList.builder();
@@ -401,6 +386,7 @@ public class TaskMan {
 	 * @return True when the prototype has been successfully initiated, false
 	 *         otherwise
 	 */
+	//TODO exception
 	public boolean createResourcePrototype(String resourceName,
 			Optional<LocalTime> availabilityStart,
 			Optional<LocalTime> availabilityEnd) {
@@ -418,6 +404,7 @@ public class TaskMan {
 	 * @return True if and only if the new concrete resource was made and added
 	 *         to its correct pool
 	 */
+	//TODO exception
 	public boolean declareConcreteResource(String name,
 			ResourceView fromPrototype) {
 		return resMan.declareConcreteResource(name, fromPrototype);
@@ -430,6 +417,7 @@ public class TaskMan {
 	 *            | The name of the new developer
 	 * @return true if the new developer was added to the system
 	 */
+	//TODO exception
 	public boolean createDeveloper(String name) {
 		return resMan.createDeveloper(name);
 	}
@@ -450,6 +438,7 @@ public class TaskMan {
 	 * @return True if the resource was reserved by the given task, false
 	 *         otherwise
 	 */
+	//TODO exception
 	public boolean reserveResource(ResourceView resource, ProjectView project,
 			TaskView task, LocalDateTime startTime, LocalDateTime endTime) {
 		Project p = unwrapProjectView(project);
@@ -483,18 +472,19 @@ public class TaskMan {
 	 *            | The resources to plan
 	 * @param devs
 	 *            | The developers to assign
-	 * @return True if the task was planned and all reservations made
+	 * @throws IllegalArgumentException, IllegalStateException
 	 */
-	public boolean planTask(ProjectView project, TaskView task,
-			LocalDateTime plannedStartTime, List<ResourceView> concRes, List<ResourceView> devs) {
+	public void planTask(ProjectView project, TaskView task,
+			LocalDateTime plannedStartTime, List<ResourceView> concRes, List<ResourceView> devs) 
+				throws IllegalArgumentException, IllegalStateException{
 //		if(!currentUserHasPermission(UserPermission.PLAN_TASK)) {
 //			return false;
 //		}
-		Project p = unwrapProjectView(project);
-		if(p == null) {
-			return false;
-		}
-		return p.planTask(task, plannedStartTime, concRes, devs);
+//		Project p = unwrapProjectView(project);
+//		if(p == null) {
+//			return false;
+//		}
+		unwrapProjectView(project).planTask(task, plannedStartTime, concRes, devs);
 	}
 	
 	/**
@@ -517,18 +507,19 @@ public class TaskMan {
 	 *            | The resources to plan
 	 * @param devs
 	 *            | The developers to assign
-	 * @return True if the task was planned and all reservations made
+	 * @throws IllegalArgumentException, IllegalStateException
 	 */
-	public boolean planRawTask(ProjectView project, TaskView task,
-			LocalDateTime plannedStartTime, List<ResourceView> concRes, List<ResourceView> devs) {
+	public void planRawTask(ProjectView project, TaskView task,
+			LocalDateTime plannedStartTime, List<ResourceView> concRes, List<ResourceView> devs) 
+				throws IllegalArgumentException, IllegalStateException{
 //		if(!currentUserHasPermission(UserPermission.PLAN_TASK)) {
 //			return false;
 //		}
-		Project p = unwrapProjectView(project);
-		if(p == null) {
-			return false;
-		}
-		return p.planRawTask(task, plannedStartTime, concRes, devs);
+//		Project p = unwrapProjectView(project);
+//		if(p == null) {
+//			return false;
+//		}
+		unwrapProjectView(project).planRawTask(task, plannedStartTime, concRes, devs);
 	}
 
 	/**
@@ -584,6 +575,7 @@ public class TaskMan {
 	 * @return True if the new requirements were successfully added to the
 	 *         prototype
 	 */
+	//TODO exceptions
 	public boolean addRequirementsToResource(List<ResourceView> resourcesToAdd,
 			ResourceView prototype) {
 		return resMan.addRequirementsToResource(resourcesToAdd, prototype);
@@ -599,6 +591,7 @@ public class TaskMan {
 	 * @return True if the new conflicts were successfully added to the
 	 *         prototype
 	 */
+	//TODO exceptions
 	public boolean addConflictsToResource(List<ResourceView> resourcesToAdd,
 			ResourceView prototype) {
 		return resMan.addConflictsToResource(resourcesToAdd, prototype);
@@ -614,24 +607,24 @@ public class TaskMan {
 //	public boolean currentUserHasPermission(UserPermission permission) {
 //		return currentUser.getPermissions().contains(permission);
 //	}
-
-	/**
-	 * Retrieve a list of all tasks that can be updated by the current user for
-	 * a given project
-	 * 
-	 * @param project
-	 *            | project the current user wants to check
-	 * @return an immutable list of tasks that can be updated by a given user
-	 */
-	public List<TaskView> getUpdatableTasksForUser(ProjectView project, User user) {
-		Project p = unwrapProjectView(project);
-		if(p == null) {
-			Builder<TaskView> bob = ImmutableList.builder();
-			return bob.build();
-		}
-		return p.getUpdatableTasksForUser(
-				new ResourceView(user));
-	}
+//
+//	/**
+//	 * Retrieve a list of all tasks that can be updated by the current user for
+//	 * a given project
+//	 * 
+//	 * @param project
+//	 *            | project the current user wants to check
+//	 * @return an immutable list of tasks that can be updated by a given user
+//	 */
+//	public List<TaskView> getUpdatableTasksForUser(ProjectView project, User user) {
+//		Project p = unwrapProjectView(project);
+//		if(p == null) {
+//			Builder<TaskView> bob = ImmutableList.builder();
+//			return bob.build();
+//		}
+//		return p.getUpdatableTasksForUser(
+//				new ResourceView(user));
+//	}
 
 	/**
 	 * Return an immutable list of all the reservations present in the resource
@@ -673,11 +666,11 @@ public class TaskMan {
 	/**
 	 * Returns the user belonging to the view
 	 * 
-	 * @param 	newUser
+	 * @param 	user
 	 * 			View to unpack
 	 * @return	The user belonging to the view
 	 */
-	public User getUser(ResourceView newUser){
-		return resMan.getUser(newUser);
+	public User getUser(ResourceView user){
+		return resMan.getUser(user);
 	}
 }
