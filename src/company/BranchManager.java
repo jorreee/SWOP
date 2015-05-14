@@ -224,7 +224,7 @@ public class BranchManager implements IFacade {
 
 	@Override
 	public ResourceView getCurrentUser() {
-		return new ResourceView(this.currentUser);
+		return new ResourceView(currentUser);
 	}
 
 	@Override
@@ -234,7 +234,13 @@ public class BranchManager implements IFacade {
 
 	@Override
 	public boolean changeToUser(ResourceView user) {
-		return currentTaskMan.changeToUser(user);
+		User newUser = currentTaskMan.getUser(user);
+		if (user == null) {
+			return false;
+		} else {
+			currentUser = newUser;
+			return true;
+		}
 	}
 
 	@Override
@@ -328,7 +334,7 @@ public class BranchManager implements IFacade {
 	
 	@Override
 	public List<TaskView> getUpdatableTasksForUser(ProjectView project){
-		return currentTaskMan.getUpdatableTasksForUser(project);
+		return currentTaskMan.getUpdatableTasksForUser(project, currentUser);
 	}
 
 	public List<Reservation> getAllReservations() {
