@@ -267,17 +267,17 @@ public class TaskManInitFileChecker extends StreamTokenizer {
 			} else if (isWord("failed")) {
 				nextToken();
 				status = TaskStatus.FAILED;
-			} else if (isWord("delegating")) {
+			} else if (isWord("delegated")) {
 				nextToken();
 				status = TaskStatus.DELEGATED;
 				responsibleBranch = expectIntField("responsibleBranch");
 			}
 			LocalDateTime startTime = null;
 			LocalDateTime endTime = null;
-			if (status != null) {
+			if (status != null && status != TaskStatus.DELEGATED) {
 				startTime = expectDateField("startTime");
 			}
-			if (status != null && status != TaskStatus.EXECUTING) {
+			if (status != null && (status != TaskStatus.EXECUTING && status != TaskStatus.DELEGATED)) {
 				endTime = expectDateField("endTime");
 			}
 			

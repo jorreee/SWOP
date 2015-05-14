@@ -21,10 +21,12 @@ import company.taskMan.project.TaskView;
 import company.taskMan.resource.AvailabilityPeriod;
 import company.taskMan.resource.Reservation;
 import company.taskMan.resource.Resource;
+import company.taskMan.resource.ResourcePool;
 import company.taskMan.resource.ResourcePrototype;
 import company.taskMan.resource.ResourceView;
 import company.taskMan.resource.user.User;
 import company.taskMan.resource.user.UserPermission;
+import exceptions.UnexpectedViewContentException;
 
 //TODO list of prototypes in branchMa
 public class BranchManager implements IFacade {
@@ -33,7 +35,7 @@ public class BranchManager implements IFacade {
 	private Delegator delegator;
 	private LocalDateTime currentTime;
 	private User currentUser;
-	private List<ResourcePrototype> prototypes;
+	private List<ResourcePrototype> prototypes; // FIXME DIT MOET BETER, PLEASE!
 	private final TaskManCaretaker caretaker;
 
 	
@@ -345,17 +347,63 @@ public class BranchManager implements IFacade {
 		}
 		currentTaskMan.planRawTask(project, task, plannedStartTime, concRes, devs);
 	}
-
-	@Override
-	public void addRequirementsToResource(List<ResourceView> resourcesToAdd,
-			ResourceView prototype) {
-		currentTaskMan.addRequirementsToResource(resourcesToAdd, prototype);
+	
+	/**
+	 * Unwrap a resourceView to its resource prototype contents. This method
+	 * will return null if the resource cannot be found
+	 * 
+	 * @param view
+	 *            | The given resource prototype
+	 * @return the resource prototype found in the resourceView
+	 * @throws UnexpectedViewContentException, IllegalArgumentException
+	 */
+	private ResourcePrototype unWrapResourcePrototypeView(ResourceView view) 
+			throws UnexpectedViewContentException {
+		if(view == null) {
+			throw new IllegalArgumentException("view must not be null");
+		}
+		for(ResourcePrototype prototype : prototypes) {
+			if (view.hasAsResource(prototype)) {
+				return prototype;
+			}
+		}
+		throw new UnexpectedViewContentException("View didn't contain a valid resource Prototype");
 	}
 
-	@Override
-	public void addConflictsToResource(List<ResourceView> resourcesToAdd,
-			ResourceView prototype) {
-		currentTaskMan.addConflictsToResource(resourcesToAdd, prototype);
+	/**
+	 * Add resource requirements to a prototype
+	 * 
+	 * @param reqToAdd
+	 *            | The new requirements to add
+	 * @param prototype
+	 *            | The prototype that the new requirements should be added to
+	 * @throws IllegalArgumentException
+	 */
+	public void addRequirementsToResource(List<ResourceView> reqToAdd, ResourceView prototype) 
+			throws IllegalArgumentException {
+		ResourcePrototype rprot = unWrapResourcePrototypeView(prototype);
+		for (ResourceView req : reqToAdd) {
+			ResourcePrototype unwrapReq = unWrapResourcePrototypeView(req);
+			rprot.addRequiredResource(unwrapReq);
+		}
+	}
+	
+	/**
+	 * Add resource conflicts to a prototype
+	 * 
+	 * @param conToAdd
+	 *            | The new conflicts to add
+	 * @param prototype
+	 *            | The prototype that the new conflicts should be added to
+	 * @throws IllegalArgumentException
+	 */
+	public void addConflictsToResource(List<ResourceView> conToAdd, ResourceView prototype) 
+			throws IllegalArgumentException {
+		ResourcePrototype rprot = unWrapResourcePrototypeView(prototype);
+		for (ResourceView req : conToAdd) {
+			ResourcePrototype unwrapReq = unWrapResourcePrototypeView(req);
+			rprot.addConflictingResource(unwrapReq);
+		}
 	}
 	
 	/**
