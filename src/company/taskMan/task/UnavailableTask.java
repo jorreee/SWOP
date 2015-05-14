@@ -26,7 +26,7 @@ public class UnavailableTask implements TaskStatus {
 		if(task.getPlannedBeginTime() == null) {
 			return false; //not planned
 		}
-		task.setTaskStatus(new AvailableTask());
+		task.setTaskStatus(new AvailableState());
 		return true;
 	}
 	

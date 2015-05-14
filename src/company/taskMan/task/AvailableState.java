@@ -8,13 +8,13 @@ import java.time.LocalDateTime;
  * @author Tim Van Den Broecke, Joran Van de Woestijne, Vincent Van Gestel and
  *         Eli Vangrieken
  */
-public class AvailableTask implements TaskStatus {
+public class AvailableState implements TaskStatus {
 	
 	/**
 	 * Construct a new available status
 	 * 
 	 */
-	public AvailableTask() {
+	public AvailableState() {
 	}
 
 	@Override
