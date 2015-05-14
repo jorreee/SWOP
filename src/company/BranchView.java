@@ -1,5 +1,8 @@
 package company;
 
+import java.util.List;
+
+import company.taskMan.ProjectView;
 import company.taskMan.TaskMan;
 
 public class BranchView {
@@ -16,5 +19,9 @@ public class BranchView {
 	
 	protected TaskMan unwrap() {
 		return branch;
+	}
+	
+	public List<ProjectView> getProjects() {
+		return branch.getProjects();
 	}
 }

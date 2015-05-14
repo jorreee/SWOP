@@ -18,6 +18,7 @@ import java.util.Stack;
 
 import userInterface.Main;
 
+import company.BranchManager;
 import company.taskMan.ProjectView;
 import company.taskMan.TaskMan;
 import company.taskMan.project.TaskView;
@@ -35,7 +36,7 @@ import company.taskMan.resource.ResourceView;
 public class TaskManCaretaker {
 
 	private final Stack<TaskManMemento> mementos;
-	private final TaskMan branch;
+	private final BranchManager branch;
 
 	/**
 	 * Constructs a caretaker linked to a specific facade
@@ -44,7 +45,7 @@ public class TaskManCaretaker {
 	 *            | the facade with which the caretaker will talk (its taskman
 	 *            can be saved and restored)
 	 */
-	public TaskManCaretaker(TaskMan branch) {
+	public TaskManCaretaker(BranchManager branch) {
 		this.mementos = new Stack<>();
 		this.branch = branch;
 	}
