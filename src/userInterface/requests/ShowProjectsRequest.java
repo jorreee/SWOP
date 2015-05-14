@@ -2,6 +2,7 @@ package userInterface.requests;
 
 import java.io.BufferedReader;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import userInterface.IFacade;
@@ -9,6 +10,7 @@ import userInterface.IFacade;
 import company.BranchView;
 import company.taskMan.ProjectView;
 import company.taskMan.project.TaskView;
+import company.taskMan.resource.ResourceView;
 
 public class ShowProjectsRequest extends Request {
 
@@ -141,14 +143,40 @@ public class ShowProjectsRequest extends Request {
 							+ task.getDescription() + ", "
 							+ task.getEstimatedDuration() + " minutes, "
 							+ task.getAcceptableDeviation() + "% margin");
-
+					if(task.isPlanned()) {
+						taskHeader.append(", planned to start " + task.getPlannedBeginTime());
+						Iterator<ResourceView> devs = task.getPlannedDevelopers().iterator();
+						if(devs.hasNext()) {
+							taskHeader.append("assigned developers: ");
+						}
+						while(devs.hasNext()) {
+							ResourceView dev = devs.next();
+							taskHeader.append(dev.getName());
+							if(devs.hasNext()) {
+								taskHeader.append(", ");
+							}
+						}
+						Iterator<ResourceView> reservedResources = task.getReservedResources().iterator();
+						if(reservedResources.hasNext()) {
+							taskHeader.append("reserved resources: ");
+						}
+						while(reservedResources.hasNext()) {
+							ResourceView reservedResource = reservedResources.next();
+							taskHeader.append(reservedResource.getName());
+							if(reservedResources.hasNext()) {
+								taskHeader.append(", ");
+							}
+						}
+					}
 					if(task.isOnTime(facade.getCurrentTime())) {
 						taskHeader.append(", on time");
 					}
 					else {
 						taskHeader.append(", over time by " + task.getOverTimePercentage(facade.getCurrentTime()) + "%");
 					}
-
+					if(task.isDelegated()) {
+						taskHeader.append(", responsible branch " + facade.getResponsibleBranch(task).getGeographicLocation());
+					}
 					if(task.hasPrerequisites()) {
 						List<TaskView> prereqs = task.getPrerequisites();
 						taskHeader.append(", depends on");
