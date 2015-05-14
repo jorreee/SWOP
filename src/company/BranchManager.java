@@ -27,7 +27,6 @@ import company.taskMan.resource.ResourceView;
 import company.taskMan.resource.user.User;
 import company.taskMan.resource.user.UserPermission;
 
-import exceptions.IllegalWhoopsieException;
 import exceptions.ResourceUnavailableException;
 import exceptions.UnexpectedViewContentException;
 
@@ -64,9 +63,9 @@ public class BranchManager implements IFacade {
 	 * 
 	 * @param	location
 	 * 			The location of the branch.
-	 * @throws IllegalWhoopsieException, IllegalArgumentException 
+	 * @throws  IllegalArgumentException 
 	 */
-	private void declareTaskMan(String location, List<ResourcePrototype> prototypes) throws IllegalArgumentException, IllegalWhoopsieException{
+	private void declareTaskMan(String location, List<ResourcePrototype> prototypes) throws IllegalArgumentException{
 		TaskMan newTaskMan = new TaskMan(location, prototypes);
 		taskMen.add(newTaskMan);
 		currentTaskMan = newTaskMan;
@@ -466,7 +465,7 @@ public class BranchManager implements IFacade {
 	}
 
 	@Override
-	public void initializeBranch(String geographicLocation) throws IllegalArgumentException, IllegalWhoopsieException {
+	public void initializeBranch(String geographicLocation) throws IllegalArgumentException {
 		this.declareTaskMan(geographicLocation, prototypes);
 	}
 

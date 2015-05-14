@@ -25,7 +25,7 @@ public enum UserCredential {
 			UserPermission.SHOW_OVERVIEW,
 			UserPermission.ADVANCE_TIME,
 			UserPermission.UPDATE_TASK}),
-	THE_WEER(UserPermission.values());
+	SUPER_USER(UserPermission.values());
 	
 	private List<UserPermission> permissions;
 	

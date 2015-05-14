@@ -51,7 +51,7 @@ public class TaskManMemento {
 		branch.initializeFromMemento(currentTime);
 		
 		Main.initializeBranch(branch, fileChecker);
-		
+		branch.changeToUser(currentUser);
 		// End initialization
 	}
 

@@ -12,13 +12,11 @@ import company.taskMan.project.TaskView;
 import company.taskMan.resource.ResourceView;
 import company.taskMan.resource.user.UserPermission;
 
-import exceptions.IllegalWhoopsieException;
-
 public interface IFacade {
 
 	public List<BranchView> getBranches();
 	public void selectBranch(BranchView branch);
-	public void initializeBranch(String geographicLocation) throws IllegalArgumentException, IllegalWhoopsieException;
+	public void initializeBranch(String geographicLocation) throws IllegalArgumentException;
 	
 	public void advanceTimeTo(LocalDateTime time) throws TaskManException;
 

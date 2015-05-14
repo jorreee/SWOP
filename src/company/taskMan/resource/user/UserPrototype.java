@@ -2,8 +2,6 @@ package company.taskMan.resource.user;
 
 import company.taskMan.resource.ResourcePrototype;
 
-import exceptions.IllegalWhoopsieException;
-
 public class UserPrototype extends ResourcePrototype {
 
 	public UserPrototype() {
@@ -66,12 +64,10 @@ public class UserPrototype extends ResourcePrototype {
 	 * @return
 	 * 			| a new User with all system permissions
 	 */
-	public User instantiateSuperUser(String name) 
-			throws IllegalWhoopsieException {
-		throw new IllegalWhoopsieException("WELL PUT ME IN A DRESS AND CALL ME BONNIE");
-//		User user = new User(name,this);
-//		user.addCredential(UserCredential.THE_WEER);
-//		return user;
+	public User instantiateSuperUser(String name) {
+		User user = new User(name,this);
+		user.addCredential(UserCredential.SUPER_USER);
+		return user;
 	}
 
 }
