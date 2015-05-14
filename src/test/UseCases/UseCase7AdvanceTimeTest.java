@@ -93,18 +93,18 @@ public class UseCase7AdvanceTimeTest {
 		taskManager.createDeveloper("Patrick Star");
 		devList1.add(taskManager.getDeveloperList().get(0));
 
-		assertTrue(taskManager.createProject("Test1", "testing 1", project0DueDate));
+		taskManager.createProject("Test1", "testing 1", project0DueDate);
 		ProjectView project0 = taskManager.getProjects().get(0);
 
-		assertTrue(taskManager.createTask(project0, "Design system", task00EstDur, task00Dev, task00Dependencies, task00Res, null));		// TASK 1
+		taskManager.createTask(project0, "Design system", task00EstDur, task00Dev, task00Dependencies, task00Res, null);		// TASK 1
 		TaskView task00 = project0.getTasks().get(0);
-		assertTrue(taskManager.planTask(project0, task00, taskManager.getCurrentTime(), task00concRes, devList1));
+		taskManager.planTask(project0, task00, taskManager.getCurrentTime(), task00concRes, devList1);
 		task01Dependencies.add(task00);
-		assertTrue(taskManager.createTask(project0, "Implement Native", task01EstDur, task01Dev, task01Dependencies, task01Res, null));	// TASK 2
+		taskManager.createTask(project0, "Implement Native", task01EstDur, task01Dev, task01Dependencies, task01Res, null);	// TASK 2
 		task02Dependencies.add(project0.getTasks().get(1));
-		assertTrue(taskManager.createTask(project0, "Test code", task02EstDur, task02Dev, task02Dependencies, task02Res, null));			// TASK 3
+		taskManager.createTask(project0, "Test code", task02EstDur, task02Dev, task02Dependencies, task02Res, null);			// TASK 3
 		task03Dependencies.add(project0.getTasks().get(1));
-		assertTrue(taskManager.createTask(project0, "Document code", task03EstDur, task03Dev, task03Dependencies, task03Res, null));		// TASK 4
+		taskManager.createTask(project0, "Document code", task03EstDur, task03Dev, task03Dependencies, task03Res, null);		// TASK 4
 
 	}
 
@@ -117,7 +117,7 @@ public class UseCase7AdvanceTimeTest {
 		TaskView task03 = project0.getTasks().get(3);
 		// Step 1 and 2 are implicit0
 		// Step 3 assumption: the user inputs CORRECT data
-		assertTrue(taskManager.advanceTimeTo(newDateNoChanges));
+		taskManager.advanceTimeTo(newDateNoChanges);
 		assertEquals(taskManager.getCurrentTime(),newDateNoChanges);
 		// Step 4
 		assertTrue(task00.getStatusAsString().equalsIgnoreCase("available"));
@@ -135,7 +135,7 @@ public class UseCase7AdvanceTimeTest {
 		TaskView task03 = project0.getTasks().get(3);
 		// Step 1 and 2 are implicit
 		// Step 3 assumption: the user inputs CORRECT data
-		assertTrue(taskManager.advanceTimeTo(newDateWithChanges));
+		taskManager.advanceTimeTo(newDateWithChanges);
 		assertEquals(taskManager.getCurrentTime(),newDateWithChanges);
 		// Step 4
 		assertTrue(task00.getStatusAsString().equalsIgnoreCase("available"));
@@ -153,7 +153,7 @@ public class UseCase7AdvanceTimeTest {
 		TaskView task03 = project0.getTasks().get(3);
 		// Step 1 and 2 are implicit
 		// Step 3 assumption: the user inputs NO data
-		assertFalse(taskManager.advanceTimeTo(newDateVeryBad1));
+		taskManager.advanceTimeTo(newDateVeryBad1);
 		assertEquals(taskManager.getCurrentTime(),startDate);
 		// Step 4
 		assertTrue(task00.getStatusAsString().equalsIgnoreCase("available"));
@@ -171,7 +171,7 @@ public class UseCase7AdvanceTimeTest {
 		TaskView task03 = project0.getTasks().get(3);
 		// Step 1 and 2 are implicit
 		// Step 3 assumption: the user inputs INVALID data
-		assertFalse(taskManager.advanceTimeTo(newDateVeryBad2));
+		taskManager.advanceTimeTo(newDateVeryBad2);
 		assertEquals(taskManager.getCurrentTime(),startDate);
 		// Step 4
 		assertTrue(task00.getStatusAsString().equalsIgnoreCase("available"));
@@ -181,7 +181,7 @@ public class UseCase7AdvanceTimeTest {
 
 		//-----------------------------------------------------------
 
-		assertFalse(taskManager.advanceTimeTo(newDateVeryBad3));
+		taskManager.advanceTimeTo(newDateVeryBad3);
 		assertEquals(taskManager.getCurrentTime(),startDate);
 		// Step 4
 		assertTrue(task00.getStatusAsString().equalsIgnoreCase("available"));
