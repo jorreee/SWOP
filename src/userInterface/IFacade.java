@@ -17,6 +17,7 @@ public interface IFacade {
 
 	public LocalDateTime getCurrentTime();
 	public boolean isLoggedIn();
+	public void logout();
 	
 	public ResourceView getCurrentUser();
 	public List<ResourceView> getPossibleUsers();
@@ -96,5 +97,4 @@ public interface IFacade {
 	public boolean currentUserHasPermission(UserPermission permission);
 	
 	public List<TaskView> getUpdatableTasksForUser(ProjectView project);
-	
 }

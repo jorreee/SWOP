@@ -12,23 +12,26 @@ import initialization.TaskManInitFileChecker;
 import initialization.TaskStatus;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
+
+import userInterface.requests.ChangeUserRequest;
+import userInterface.requests.Request;
 
 import company.BranchManager;
 import company.taskMan.ProjectView;
 import company.taskMan.project.TaskView;
 import company.taskMan.resource.ResourceView;
-import userInterface.requests.ChangeUserRequest;
-import userInterface.requests.Request;
 /**
  * Main class of the User Interface of the project TaskMan.
  * @author Tim Van Den Broecke, Joran Van de Woestijne, Vincent Van Gestel and Eli Vangrieken
@@ -44,7 +47,7 @@ public class Main {
 		if(args.length < 1) {
 			facade = new BranchManager(LocalDateTime.now());
 		} else {
-			facade = initializeFromStream(new FileReader(args[0]));
+			facade = initializeFromFile(new File(args[0]));
 		}
 		
 		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
@@ -74,25 +77,72 @@ public class Main {
 		} // Repeat
 	}
 
-	private static IFacade initializeFromStream(Reader fileReader) {
+	private static IFacade initializeFromFile(File file) throws FileNotFoundException {
 
-		// Initialize variables from file
 		TaskManInitFileChecker fileChecker;
-
-		fileChecker = new TaskManInitFileChecker(fileReader);
-		fileChecker.checkFile();
-
+		// Initialize system from file
+		fileChecker = new TaskManInitFileChecker(new FileReader(file));
+		fileChecker.checkSystemFile();
+		
 		LocalDateTime systemTime = fileChecker.getSystemTime();
+		List<ResourcePrototypeCreationData> resourcePrototypes = fileChecker.getResourcePrototypeDataList();
 
 		// Get facade
 		IFacade facade = new BranchManager(systemTime);
-		boolean success = initializeBranch(facade, fileChecker);
-		if(success) {
-			return facade;
-		} else {
+		
+		// Init resource prototypes
+		List<ResourceView> resourceProts = new ArrayList<>();
+		boolean success = true;
+		for(ResourcePrototypeCreationData rprot : resourcePrototypes) {
+			success = facade.createResourcePrototype(
+					rprot.getName(),
+					fileChecker.getDailyAvailabilityStartByIndex(rprot.getAvailabilityIndex()),
+					fileChecker.getDailyAvailabilityEndByIndex(rprot.getAvailabilityIndex()));
+			if(!success) { failInit("creating a resource prototype!"); }
+			List<ResourceView> currentExistingProts = facade.getResourcePrototypes();
+			ResourceView currentProt = currentExistingProts.get(facade.getResourcePrototypes().size() -1); 
+			resourceProts.add(currentProt);
+			List<ResourceView> requirements = new ArrayList<>();
+			for(Integer index : rprot.getRequirements()) {
+				requirements.add(currentExistingProts.get(index));
+			}
+			List<ResourceView> conflicts = new ArrayList<>();
+			for(Integer index : rprot.getConflicts()) {
+				conflicts.add(currentExistingProts.get(index));
+			}
+			success = facade.addRequirementsToResource(requirements, currentProt);
+			if(!success) { failInit("adding requirements to a prototype!"); }
+			success = facade.addConflictsToResource(conflicts, currentProt);
+			if(!success) { failInit("adding conflicts to a prototype!"); }
+		}
+		
+		if(!success) {
 			System.out.println("Initialization from tman failed, check your file!");
 			return new BranchManager(LocalDateTime.now());
 		}
+		
+		// Get branch init files
+		Queue<String> branches = fileChecker.getBranches();
+		
+		String branch = branches.poll();
+		while(branch != null) {
+			FileReader branchReader = new FileReader(file.getParent() + File.separator + branch);
+			
+			// Initialize branches from file
+			fileChecker = new TaskManInitFileChecker(branchReader);
+			fileChecker.checkFile();
+	
+			success = initializeBranch(facade, fileChecker);
+			branch = branches.poll();
+			if(!success) {
+				System.out.println("Initialization from tman failed, check your file!");
+				return new BranchManager(LocalDateTime.now());
+			}
+		}
+		
+		facade.logout();
+		
+		return facade;
 	}
 
 	public static boolean initializeBranch(IFacade facade, TaskManInitFileChecker fileChecker) {
@@ -100,36 +150,12 @@ public class Main {
 		try {
 			List<ProjectCreationData> projectData = fileChecker.getProjectDataList();
 			List<TaskCreationData> taskData = fileChecker.getTaskDataList();
-			List<ResourcePrototypeCreationData> resourcePrototypes = fileChecker.getResourcePrototypeDataList();
 			List<ConcreteResourceCreationData> concreteResources = fileChecker.getConcreteResourceDataList();
 			List<DeveloperCreationData> developers = fileChecker.getDeveloperDataList();
 			List<ReservationCreationData> reservations = fileChecker.getReservationDataList();
-
+			List<ResourceView> resourceProts = facade.getResourcePrototypes();
 			// Initialize system through a facade
-			// Init resource prototypes
-			List<ResourceView> resourceProts = new ArrayList<>();
-			for(ResourcePrototypeCreationData rprot : resourcePrototypes) {
-				success = facade.createResourcePrototype(
-						rprot.getName(),
-						fileChecker.getDailyAvailabilityStartByIndex(rprot.getAvailabilityIndex()),
-						fileChecker.getDailyAvailabilityEndByIndex(rprot.getAvailabilityIndex()));
-				if(!success) { failInit("creating a resource prototype!"); }
-				List<ResourceView> currentExistingProts = facade.getResourcePrototypes();
-				ResourceView currentProt = currentExistingProts.get(facade.getResourcePrototypes().size() -1); 
-				resourceProts.add(currentProt);
-				List<ResourceView> requirements = new ArrayList<>();
-				for(Integer index : rprot.getRequirements()) {
-					requirements.add(currentExistingProts.get(index));
-				}
-				List<ResourceView> conflicts = new ArrayList<>();
-				for(Integer index : rprot.getConflicts()) {
-					conflicts.add(currentExistingProts.get(index));
-				}
-				success = facade.addRequirementsToResource(requirements, currentProt);
-				if(!success) { failInit("adding requirements to a prototype!"); }
-				success = facade.addConflictsToResource(conflicts, currentProt);
-				if(!success) { failInit("adding conflicts to a prototype!"); }
-			}
+
 			// Init concrete resources
 			List<ResourceView> allConcreteResources = new ArrayList<>();
 			for(ConcreteResourceCreationData cres : concreteResources) {
@@ -232,18 +258,6 @@ public class Main {
 						rcd.getEndTime());
 				if(!success) { failInit("trying to reserve resource " + rcd.getResource() + " for task " + rcd.getTask() + "!"); }
 			}
-			
-			// Init current user
-			String username = fileChecker.getCurrentUser();
-			ResourceView currentUser = null;
-			for(ResourceView user : facade.getPossibleUsers()) {
-				if(user.getName().equalsIgnoreCase(username)) {
-					currentUser = user;
-					break;
-				}
-			}
-			success = facade.changeToUser(currentUser);
-			if(!success) { failInit("changing the current user!"); }
 			
 		} catch(Exception e) {
 			e.printStackTrace();
