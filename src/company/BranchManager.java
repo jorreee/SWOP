@@ -404,5 +404,11 @@ public class BranchManager implements IFacade {
 		return taskMan;
 
 	}
+
+	@Override
+	public BranchView getResponsibleBranch(TaskView task) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 }
