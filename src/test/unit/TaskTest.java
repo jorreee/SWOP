@@ -282,21 +282,21 @@ public class TaskTest {
 		assertFalse(defaultTest.setEndTime(LocalDateTime.of(2015, 2, 14, 16, 0)));
 	}
 	
-	@Test
+	@Test(expected=IllegalArgumentException.class)
 	public void registerTestSelf(){
-		assertFalse(defaultTest.register(defaultTest));
+		defaultTest.register(defaultTest);
 	}
 	
-	@Test
+	@Test(expected=IllegalArgumentException.class)
 	public void registerTestNull(){
-		assertFalse(defaultTest.register(null));
+		defaultTest.register(null);
 	}
 	
 	@Test
 	public void registerTestValid(){
 		Task temp = new Task("temp",20,3,new ResourceManager(),new ArrayList<Task>(),
 				new HashMap<ResourceView,Integer>(),null);
-		assertTrue(defaultTest.register(temp));
+		defaultTest.register(temp);
 	}
 	
 	@Test
