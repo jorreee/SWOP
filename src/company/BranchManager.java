@@ -90,9 +90,9 @@ public class BranchManager implements IFacade {
 	
 	@Override
 	public void createProject(String name, String description,
-			LocalDateTime dueTime) throws CredentialException {
+			LocalDateTime dueTime) throws TaskManException {
 		if(!currentUserHasPermission(UserPermission.CREATE_PROJECT)) {
-			throw new CredentialException("User has no permission to create projects");
+			throw new TaskManException(new CredentialException("User has no permission to create projects"));
 		}
 		currentTaskMan.createProject(name, description, this.currentTime, dueTime);
 	}
@@ -181,30 +181,30 @@ public class BranchManager implements IFacade {
 
 	@Override
 	public void setTaskFinished(ProjectView project, TaskView task,
-			LocalDateTime endTime) throws CredentialException, IllegalArgumentException{
+			LocalDateTime endTime) throws TaskManException{
 		if(!currentUserHasPermission(UserPermission.UPDATE_TASK)) {
-			throw new CredentialException("The user has no permission to update the taskstatus");
+			throw new TaskManException(new CredentialException("The user has no permission to update the taskstatus"));
 		}
 		if (endTime == null) { // || startTime == null) {
-			throw new IllegalArgumentException("The endtime is null");
+			throw new TaskManException(new IllegalArgumentException("The endtime is null"));
 		}
 		if (endTime.isAfter(currentTime)) {
-			throw new IllegalArgumentException("The endtime is after the currentTime");
+			throw new TaskManException(new IllegalArgumentException("The endtime is after the currentTime"));
 		}
 		currentTaskMan.setTaskFinished(project, task, endTime);
 	}
 
 	@Override
 	public void setTaskFailed(ProjectView project, TaskView task,
-			LocalDateTime endTime) throws CredentialException, IllegalArgumentException {
+			LocalDateTime endTime) throws TaskManException{
 		if(!currentUserHasPermission(UserPermission.UPDATE_TASK)) {
-			throw new CredentialException("The user has no permission to update the taskstatus");
+			throw new TaskManException(new CredentialException("The user has no permission to update the taskstatus"));
 		}
 		if (endTime == null) { // || startTime == null) {
-			throw new IllegalArgumentException("The endtime is null");
+			throw new TaskManException(new IllegalArgumentException("The endtime is null"));
 		}
 		if (endTime.isAfter(currentTime)) {
-			throw new IllegalArgumentException("The endtime is after the currentTime");
+			throw new TaskManException(new IllegalArgumentException("The endtime is after the currentTime"));
 		}
 		currentTaskMan.setTaskFailed(project, task, endTime);
 	}
@@ -259,10 +259,10 @@ public class BranchManager implements IFacade {
 	}
 
 	@Override
-	public void changeToUser(ResourceView user) throws IllegalArgumentException{
+	public void changeToUser(ResourceView user) throws TaskManException{
 		User newUser = currentTaskMan.getUser(user);
 		if (user == null) {
-			throw new IllegalArgumentException("Invalid user");
+			throw new TaskManException(new IllegalArgumentException("Invalid user"));
 		} else {
 			currentUser = newUser;
 		}
@@ -271,13 +271,13 @@ public class BranchManager implements IFacade {
 	@Override
 	public void createResourcePrototype(String name,
 			Optional<LocalTime> availabilityStart,
-			Optional<LocalTime> availabilityEnd) throws IllegalArgumentException{
+			Optional<LocalTime> availabilityEnd) throws TaskManException{
 //		currentTaskMan.createResourcePrototype(name,availabilityStart,availabilityEnd);
 		if(!isValidPeriod(availabilityStart, availabilityEnd)) {
-			throw new IllegalArgumentException("Invalod time period");
+			throw new TaskManException(new IllegalArgumentException("Invalod time period"));
 		}
 		if(name == null) {
-			throw new IllegalArgumentException("Null is not allowed as name");
+			throw new TaskManException(new IllegalArgumentException("Null is not allowed as name"));
 		}
 		
 		// Create resourcePrototype (should happen before applying conflicting resources,
@@ -379,16 +379,16 @@ public class BranchManager implements IFacade {
 	 * @throws UnexpectedViewContentException, IllegalArgumentException
 	 */
 	private ResourcePrototype unWrapResourcePrototypeView(ResourceView view) 
-			throws UnexpectedViewContentException {
+			throws TaskManException {
 		if(view == null) {
-			throw new IllegalArgumentException("view must not be null");
+			throw new TaskManException(new IllegalArgumentException("view must not be null"));
 		}
 		for(ResourcePrototype prototype : prototypes) {
 			if (view.hasAsResource(prototype)) {
 				return prototype;
 			}
 		}
-		throw new UnexpectedViewContentException("View didn't contain a valid resource Prototype");
+		throw new TaskManException(new UnexpectedViewContentException("View didn't contain a valid resource Prototype"));
 	}
 
 	/**
@@ -492,13 +492,13 @@ public class BranchManager implements IFacade {
 	 * 			TaskMan must belong to this manager
 	 */
 	private TaskMan unwrapBranchView(BranchView view) 
-			throws NullPointerException, IllegalArgumentException{
+			throws TaskManException{
 		if(view == null) {
-			throw new NullPointerException("There was no branch to unwrap!");
+			throw new TaskManException(new NullPointerException("There was no branch to unwrap!"));
 		}
 		TaskMan taskMan = view.unwrap();
 		if(!taskMen.contains(taskMan))
-			throw new IllegalArgumentException("Branch does not belong to this BranchManager!");
+			throw new TaskManException(new IllegalArgumentException("Branch does not belong to this BranchManager!"));
 		return taskMan;
 
 	}
