@@ -64,9 +64,8 @@ public interface TaskStatus {
 	 *            | The task to register the dependant to
 	 * @param d
 	 *            | The new dependant
-	 * @return true if the dependant was added
 	 */
-	public boolean register(Task task, Dependant d);
+	public void register(Task task, Dependant d);
 
 	/**
 	 * Is this state an available state
@@ -102,5 +101,11 @@ public interface TaskStatus {
 	 * @return true if the state is executing
 	 */
 	public boolean isExecuting();
+	
+	/**
+	 * Is this state a delegated state
+	 * @return true if the state is delegated
+	 */
+	public boolean isDelegated();
 
 }

@@ -2,26 +2,20 @@ package company.taskMan.task;
 
 import java.time.LocalDateTime;
 
+
 /**
- * This class represents the finished state of a task
+ * This class represents the delegated state of a task
  * 
  * @author Tim Van Den Broecke, Joran Van de Woestijne, Vincent Van Gestel and
  *         Eli Vangrieken
  */
-public class FinishedState implements TaskStatus {
-
-	/**
-	 * Construct a new finished status
-	 * 
-	 */
-	public FinishedState() {
-	}
+public class DelegatedState implements TaskStatus {
 
 	@Override
 	public boolean makeAvailable(Task task) {
 		return false;
 	}
-	
+
 	@Override
 	public boolean execute(Task task, LocalDateTime beginTime) {
 		return false;
@@ -29,12 +23,19 @@ public class FinishedState implements TaskStatus {
 
 	@Override
 	public boolean finish(Task task, LocalDateTime endTime) {
+		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean fail(Task task, LocalDateTime endTime) {
+		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public void register(Task task, Dependant d) {
+		task.addDependant(task);
 	}
 
 	@Override
@@ -49,33 +50,27 @@ public class FinishedState implements TaskStatus {
 
 	@Override
 	public boolean isFinished() {
-		return true;
+		return false;
 	}
 
 	@Override
 	public boolean isFailed() {
 		return false;
 	}
-	
+
 	@Override
-	public boolean isExecuting(){
+	public boolean isExecuting() {
 		return false;
 	}
 	
 	@Override
 	public boolean isDelegated(){
-		return false;
-	}
-
-	@Override
-	public void register(Task task, Dependant d) {
-		task.addDependant(d);
-		task.notifyDependants();
+		return true;
 	}
 	
 	@Override
 	public String toString() {
-		return "Finished";
+		return "Delegated";
 	}
 
 }

@@ -69,13 +69,18 @@ public class AvailableState implements TaskStatus {
 	}
 	
 	@Override
+	public boolean isDelegated(){
+		return false;
+	}
+	
+	@Override
 	public String toString() {
 		return "Available";
 	}
 
 	@Override
-	public boolean register(Task task, Dependant d) {
-		return true;
+	public void register(Task task, Dependant d) {
+		task.addDependant(d);
 	}
 
 }
