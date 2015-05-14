@@ -17,10 +17,10 @@ import company.taskMan.resource.Reservation;
 import company.taskMan.resource.ResourceManager;
 import company.taskMan.resource.ResourceView;
 import company.taskMan.resource.user.User;
-import company.taskMan.resource.user.UserPermission;
 
 //TODO Still not done
 //TODO Remove currentTime and user 
+//TODO remove outcommented methods 
 /**
  * The Main System that keeps track of the list of projects and the current
  * Time. The TaskMan is also responsible of maintaining a resource manager
@@ -33,7 +33,7 @@ import company.taskMan.resource.user.UserPermission;
 public class TaskMan {
 
 	private ArrayList<Project> projectList;
-	private LocalDateTime currentTime;
+	//private LocalDateTime currentTime;
 	private User currentUser;
 	private ResourceManager resMan;
 
@@ -46,7 +46,6 @@ public class TaskMan {
 	 */
 	public TaskMan(LocalDateTime time) {
 		projectList = new ArrayList<>();
-		currentTime = time;
 		resMan = new ResourceManager();
 		currentUser = resMan.getSuperUser();
 	}
@@ -72,34 +71,34 @@ public class TaskMan {
 		return project;
 	}
 
-	/**
-	 * Advances the current time to the given time.
-	 * 
-	 * @param time
-	 *            The time to which the system should advance
-	 * @return True if the advance time was successful. False if the time
-	 *         parameter is earlier than the current time.
-	 */
-	public boolean advanceTimeTo(LocalDateTime time) {
-		if(!currentUserHasPermission(UserPermission.ADVANCE_TIME));
-		if (time == null)
-			return false;
-		if (time.isAfter(currentTime)) {
-			currentTime = time;
-			return true;
-		} else
-			return false;
+//	/**
+//	 * Advances the current time to the given time.
+//	 * 
+//	 * @param time
+//	 *            The time to which the system should advance
+//	 * @return True if the advance time was successful. False if the time
+//	 *         parameter is earlier than the current time.
+//	 */
+//	public boolean advanceTimeTo(LocalDateTime time) {
+//		if(!currentUserHasPermission(UserPermission.ADVANCE_TIME));
+//		if (time == null)
+//			return false;
+//		if (time.isAfter(currentTime)) {
+//			currentTime = time;
+//			return true;
+//		} else
+//			return false;
+//
+//	}
 
-	}
-
-	/**
-	 * Gets the current time
-	 * 
-	 * @return the current time
-	 */
-	public LocalDateTime getCurrentTime() {
-		return currentTime;
-	}
+//	/**
+//	 * Gets the current time
+//	 * 
+//	 * @return the current time
+//	 */
+//	public LocalDateTime getCurrentTime() {
+//		return currentTime;
+//	}
 
 	/**
 	 * Creates a new Project with a creation time
@@ -117,9 +116,9 @@ public class TaskMan {
 	 */
 	public boolean createProject(String name, String description,
 			LocalDateTime creationTime, LocalDateTime dueTime) {
-		if(!currentUserHasPermission(UserPermission.CREATE_PROJECT)) {
-			return false;
-		}
+//		if(!currentUserHasPermission(UserPermission.CREATE_PROJECT)) {
+//			return false;
+//		}
 		Project project = null;
 		try {
 			project = new Project(name, description, creationTime, dueTime);
@@ -129,25 +128,25 @@ public class TaskMan {
 		return projectList.add(project);
 	}
 
-	/**
-	 * Creates a new Project with the current time as the creation time.
-	 * 
-	 * @param name
-	 *            The name of the project
-	 * @param description
-	 *            The description of the project
-	 * @param dueTime
-	 *            The due time of the project
-	 * @return true if the project creation was successful false if the creation
-	 *         was unsuccessful
-	 */
-	public boolean createProject(String name, String description,
-			LocalDateTime dueTime) {
-		if(!currentUserHasPermission(UserPermission.CREATE_PROJECT)) {
-			return false;
-		}
-		return createProject(name, description, getCurrentTime(), dueTime);
-	}
+//	/**
+//	 * Creates a new Project with the current time as the creation time.
+//	 * 
+//	 * @param name
+//	 *            The name of the project
+//	 * @param description
+//	 *            The description of the project
+//	 * @param dueTime
+//	 *            The due time of the project
+//	 * @return true if the project creation was successful false if the creation
+//	 *         was unsuccessful
+//	 */
+//	public boolean createProject(String name, String description,
+//			LocalDateTime dueTime) {
+////		if(!currentUserHasPermission(UserPermission.CREATE_PROJECT)) {
+////			return false;
+////		}
+//		return createProject(name, description, getCurrentTime(), dueTime);
+//	}
 
 	/**
 	 * Creates a new Task without a set status.
@@ -177,9 +176,9 @@ public class TaskMan {
 			Map<ResourceView, Integer> requiredResources,
 			TaskView alternativeFor) {
 
-		if(!currentUserHasPermission(UserPermission.CREATE_TASK)) {
-			return false;
-		}
+//		if(!currentUserHasPermission(UserPermission.CREATE_TASK)) {
+//			return false;
+//		}
 		return createTask(project, description, estimatedDuration,
 				acceptableDeviation, prerequisiteTasks, alternativeFor,
 				requiredResources, null, null, null, null, null);
@@ -223,9 +222,9 @@ public class TaskMan {
 			Map<ResourceView, Integer> requiredResources, String taskStatus,
 			LocalDateTime startTime, LocalDateTime endTime,
 			LocalDateTime plannedStartTime, List<ResourceView> plannedDevelopers) {
-		if(!currentUserHasPermission(UserPermission.CREATE_TASK)) {
-			return false;
-		}
+//		if(!currentUserHasPermission(UserPermission.CREATE_TASK)) {
+//			return false;
+//		}
 		Project project = unwrapProjectView(projectView);
 		if (project == null) {
 			return false;
@@ -251,15 +250,15 @@ public class TaskMan {
 	 */
 	public boolean setTaskFinished(ProjectView project, TaskView taskID,
 			LocalDateTime endTime) {
-		if(!currentUserHasPermission(UserPermission.UPDATE_TASK)) {
-			return false;
-		}
-		if (endTime == null) { // || startTime == null) {
-			return false;
-		}
-		if (endTime.isAfter(currentTime)) {
-			return false;
-		}
+//		if(!currentUserHasPermission(UserPermission.UPDATE_TASK)) {
+//			return false;
+//		}
+//		if (endTime == null) { // || startTime == null) {
+//			return false;
+//		}
+//		if (endTime.isAfter(currentTime)) {
+//			return false;
+//		}
 		Project p = unwrapProjectView(project);
 		if (p == null) {
 			return false;
@@ -284,15 +283,15 @@ public class TaskMan {
 	 */
 	public boolean setTaskFailed(ProjectView project, TaskView taskID,
 			LocalDateTime endTime) {
-		if(!currentUserHasPermission(UserPermission.UPDATE_TASK)) {
-			return false;
-		}
-		if (endTime == null) { // || startTime == null) {
-			return false;
-		}
-		if (endTime.isAfter(currentTime)) {
-			return false;
-		}
+//		if(!currentUserHasPermission(UserPermission.UPDATE_TASK)) {
+//			return false;
+//		}
+//		if (endTime == null) { // || startTime == null) {
+//			return false;
+//		}
+//		if (endTime.isAfter(currentTime)) {
+//			return false;
+//		}
 		Project p = unwrapProjectView(project);
 		if (p == null) {
 			return false;
@@ -313,15 +312,15 @@ public class TaskMan {
 	 */
 	public boolean setTaskExecuting(ProjectView project, TaskView task,
 			LocalDateTime startTime) {
-		if(!currentUserHasPermission(UserPermission.UPDATE_TASK)) {
-			return false;
-		}
-		if (startTime == null) {
-			return false;
-		}
-		if (startTime.isAfter(currentTime)) {
-			return false;
-		}
+//		if(!currentUserHasPermission(UserPermission.UPDATE_TASK)) {
+//			return false;
+//		}
+//		if (startTime == null) {
+//			return false;
+//		}
+//		if (startTime.isAfter(currentTime)) {
+//			return false;
+//		}
 		Project p = unwrapProjectView(project);
 		if (p == null) {
 			return false;
@@ -475,9 +474,9 @@ public class TaskMan {
 	 */
 	public boolean planTask(ProjectView project, TaskView task,
 			LocalDateTime plannedStartTime, List<ResourceView> concRes, List<ResourceView> devs) {
-		if(!currentUserHasPermission(UserPermission.PLAN_TASK)) {
-			return false;
-		}
+//		if(!currentUserHasPermission(UserPermission.PLAN_TASK)) {
+//			return false;
+//		}
 		Project p = unwrapProjectView(project);
 		if(p == null) {
 			return false;
@@ -509,9 +508,9 @@ public class TaskMan {
 	 */
 	public boolean planRawTask(ProjectView project, TaskView task,
 			LocalDateTime plannedStartTime, List<ResourceView> concRes, List<ResourceView> devs) {
-		if(!currentUserHasPermission(UserPermission.PLAN_TASK)) {
-			return false;
-		}
+//		if(!currentUserHasPermission(UserPermission.PLAN_TASK)) {
+//			return false;
+//		}
 		Project p = unwrapProjectView(project);
 		if(p == null) {
 			return false;
@@ -592,16 +591,16 @@ public class TaskMan {
 		return resMan.addConflictsToResource(resourcesToAdd, prototype);
 	}
 
-	/**
-	 * Check whether or not this user has a specific credential
-	 * 
-	 * @param permission
-	 *            | The permission to check
-	 * @return True if the user has the credential, false otherwise
-	 */
-	public boolean currentUserHasPermission(UserPermission permission) {
-		return currentUser.getPermissions().contains(permission);
-	}
+//	/**
+//	 * Check whether or not this user has a specific credential
+//	 * 
+//	 * @param permission
+//	 *            | The permission to check
+//	 * @return True if the user has the credential, false otherwise
+//	 */
+//	public boolean currentUserHasPermission(UserPermission permission) {
+//		return currentUser.getPermissions().contains(permission);
+//	}
 
 	/**
 	 * Retrieve a list of all tasks that can be updated by the current user for

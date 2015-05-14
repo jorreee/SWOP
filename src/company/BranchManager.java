@@ -18,6 +18,7 @@ import company.taskMan.resource.ResourceView;
 import company.taskMan.resource.user.User;
 import company.taskMan.resource.user.UserPermission;
 
+//TODO list of prototypes in branchMa
 public class BranchManager implements IFacade {
 	private List<TaskMan> taskMen;
 	private TaskMan currentTaskMan;
@@ -49,20 +50,31 @@ public class BranchManager implements IFacade {
 		currentTaskMan = newTaskMan;
 	}
 	
+	/**
+	 * Gets the current time
+	 * 
+	 * @return the current time
+	 */
 	@Override
-	public LocalDateTime getCurrentTime() { 
-		return this.currentTime; 
+	public LocalDateTime getCurrentTime() {
+		return currentTime;
 	}
 	
 	@Override
 	public boolean createProject(String name, String description, LocalDateTime creationTime, LocalDateTime dueTime) {
+		if(!currentUserHasPermission(UserPermission.CREATE_PROJECT)) {
+			return false;
+		}
 		return currentTaskMan.createProject(name, description, creationTime, dueTime);
 	}
 	
 	@Override
 	public boolean createProject(String name, String description,
 			LocalDateTime dueTime) {
-		return currentTaskMan.createProject(name, description, dueTime);
+		if(!currentUserHasPermission(UserPermission.CREATE_PROJECT)) {
+			return false;
+		}
+		return currentTaskMan.createProject(name, description, this.currentTime, dueTime);
 	}
 
 	@Override
@@ -74,6 +86,10 @@ public class BranchManager implements IFacade {
 			List<TaskView> prerequisiteTasks, 
 			Map<ResourceView, Integer> requiredResources,
 			TaskView alternativeFor) {
+		
+		if(!currentUserHasPermission(UserPermission.CREATE_TASK)) {
+			return false;
+		}
 		
 		return currentTaskMan.createTask(project, 
 				description, 
@@ -99,6 +115,10 @@ public class BranchManager implements IFacade {
 			LocalDateTime plannedStartTime, 
 			List<ResourceView> plannedDevelopers) {
 		
+		if(!currentUserHasPermission(UserPermission.CREATE_TASK)) {
+			return false;
+		}
+		
 		return currentTaskMan.createTask(project, 
 				description, 
 				estimatedDuration, 
@@ -113,26 +133,68 @@ public class BranchManager implements IFacade {
 				plannedDevelopers);
 	}
 
+	/**
+	 * Advances the current time to the given time.
+	 * 
+	 * @param time
+	 *            The time to which the system should advance
+	 * @return True if the advance time was successful. False if the time
+	 *         parameter is earlier than the current time.
+	 */
 	@Override
 	public boolean advanceTimeTo(LocalDateTime time) {
-		return currentTaskMan.advanceTimeTo(time);
-		
+		if(!currentUserHasPermission(UserPermission.ADVANCE_TIME));
+		if (time == null)
+			return false;
+		if (time.isAfter(currentTime)) {
+			currentTime = time;
+			return true;
+		} else
+			return false;
+
 	}
 
 	@Override
 	public boolean setTaskFinished(ProjectView project, TaskView task,
 			LocalDateTime endTime) {
+		if(!currentUserHasPermission(UserPermission.UPDATE_TASK)) {
+			return false;
+		}
+		if (endTime == null) { // || startTime == null) {
+			return false;
+		}
+		if (endTime.isAfter(currentTime)) {
+			return false;
+		}
 		return currentTaskMan.setTaskFinished(project, task, endTime);
 	}
 
 	@Override
 	public boolean setTaskFailed(ProjectView project, TaskView task,
 			LocalDateTime endTime) {
+		if(!currentUserHasPermission(UserPermission.UPDATE_TASK)) {
+			return false;
+		}
+		if (endTime == null) { // || startTime == null) {
+			return false;
+		}
+		if (endTime.isAfter(currentTime)) {
+			return false;
+		}
 		return currentTaskMan.setTaskFailed(project, task, endTime);
 	}
 	
 	@Override
 	public boolean setTaskExecuting(ProjectView project, TaskView task, LocalDateTime startTime){
+		if(!currentUserHasPermission(UserPermission.UPDATE_TASK)) {
+			return false;
+		}
+		if (startTime == null) {
+			return false;
+		}
+		if (startTime.isAfter(currentTime)) {
+			return false;
+		}
 		return currentTaskMan.setTaskExecuting(project,task,startTime);
 	}
 
@@ -143,7 +205,7 @@ public class BranchManager implements IFacade {
 
 	@Override
 	public boolean storeInMemento() {
-		if (!currentTaskMan.currentUserHasPermission(UserPermission.SIMULATE)) {
+		if (!currentUserHasPermission(UserPermission.SIMULATE)) {
 			return false;
 		}
 		caretaker.storeInMemento();
@@ -225,12 +287,18 @@ public class BranchManager implements IFacade {
 	@Override
 	public boolean planTask(ProjectView project, TaskView task,
 			LocalDateTime plannedStartTime, List<ResourceView> concRes, List<ResourceView> devs) {
+		if(!currentUserHasPermission(UserPermission.PLAN_TASK)) {
+			return false;
+		}
 		return currentTaskMan.planTask(project, task, plannedStartTime, concRes, devs);
 	}
 	
 	@Override
 	public boolean planRawTask(ProjectView project, TaskView task,
 			LocalDateTime plannedStartTime, List<ResourceView> concRes, List<ResourceView> devs) {
+		if(!currentUserHasPermission(UserPermission.PLAN_TASK)) {
+			return false;
+		}
 		return currentTaskMan.planRawTask(project, task, plannedStartTime, concRes, devs);
 	}
 
@@ -245,10 +313,17 @@ public class BranchManager implements IFacade {
 			ResourceView prototype) {
 		return currentTaskMan.addConflictsToResource(resourcesToAdd, prototype);
 	}
-
+	
+	/**
+	 * Check whether or not this user has a specific credential
+	 * 
+	 * @param permission
+	 *            | The permission to check
+	 * @return True if the user has the credential, false otherwise
+	 */
 	@Override
 	public boolean currentUserHasPermission(UserPermission permission) {
-		return currentTaskMan.currentUserHasPermission(permission);
+		return currentUser.getPermissions().contains(permission);
 	}
 	
 	@Override
