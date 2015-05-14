@@ -43,7 +43,7 @@ public class TaskMan {
 	 *            The current TaskMan time.
 	 * 
 	 */
-	public TaskMan(LocalDateTime time) {
+	public TaskMan() {
 		projectList = new ArrayList<>();
 		resMan = new ResourceManager();
 	}
