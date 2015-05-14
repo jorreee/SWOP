@@ -15,6 +15,7 @@ import company.taskMan.project.Project;
 import company.taskMan.project.TaskView;
 import company.taskMan.resource.Reservation;
 import company.taskMan.resource.ResourceManager;
+import company.taskMan.resource.ResourcePrototype;
 import company.taskMan.resource.ResourceView;
 import company.taskMan.resource.user.User;
 
@@ -44,11 +45,11 @@ public class TaskMan {
 	 *            The current TaskMan time.
 	 * 
 	 */
-	public TaskMan(String location) throws IllegalArgumentException{
+	public TaskMan(String location, List<ResourcePrototype> prototypes) throws IllegalArgumentException{
 		if(location == null)
 			throw new IllegalArgumentException("The given location is null");
 		projectList = new ArrayList<>();
-		resMan = new ResourceManager();
+		resMan = new ResourceManager(prototypes);
 		geographicLocation = location;
 	}
 	

@@ -11,6 +11,7 @@ import javax.security.auth.login.CredentialException;
 import company.BranchView;
 import company.taskMan.ProjectView;
 import company.taskMan.project.TaskView;
+import company.taskMan.resource.ResourcePrototype;
 import company.taskMan.resource.ResourceView;
 import company.taskMan.resource.user.UserPermission;
 
@@ -18,7 +19,7 @@ public interface IFacade {
 
 	public List<BranchView> getBranches();
 	public void selectBranch(BranchView branch);
-	public void initializeBranch(String geographicLocation);
+	public void initializeBranch(String geographicLocation, List<ResourcePrototype> prototypes);
 	
 	public void advanceTimeTo(LocalDateTime time) throws IllegalArgumentException, CredentialException;
 

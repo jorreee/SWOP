@@ -18,7 +18,9 @@ import company.caretaker.TaskManCaretaker;
 import company.taskMan.ProjectView;
 import company.taskMan.TaskMan;
 import company.taskMan.project.TaskView;
+import company.taskMan.resource.AvailabilityPeriod;
 import company.taskMan.resource.Reservation;
+import company.taskMan.resource.ResourcePrototype;
 import company.taskMan.resource.ResourceView;
 import company.taskMan.resource.user.User;
 import company.taskMan.resource.user.UserPermission;
@@ -30,6 +32,7 @@ public class BranchManager implements IFacade {
 	private Delegator delegator;
 	private LocalDateTime currentTime;
 	private User currentUser;
+	private List<ResourcePrototype> prototypes;
 	private final TaskManCaretaker caretaker;
 
 	
@@ -54,8 +57,8 @@ public class BranchManager implements IFacade {
 	 * @param	location
 	 * 			The location of the branch.
 	 */
-	private void declareTaskMan(String location){
-		TaskMan newTaskMan = new TaskMan(location);
+	private void declareTaskMan(String location, List<ResourcePrototype> prototypes){
+		TaskMan newTaskMan = new TaskMan(location, prototypes);
 		taskMen.add(newTaskMan);
 		currentTaskMan = newTaskMan;
 	}
@@ -257,8 +260,24 @@ public class BranchManager implements IFacade {
 	@Override
 	public void createResourcePrototype(String name,
 			Optional<LocalTime> availabilityStart,
-			Optional<LocalTime> availabilityEnd) {
-		currentTaskMan.createResourcePrototype(name,availabilityStart,availabilityEnd);
+			Optional<LocalTime> availabilityEnd) throws IllegalArgumentException{
+//		currentTaskMan.createResourcePrototype(name,availabilityStart,availabilityEnd);
+		if(!isValidPeriod(availabilityStart, availabilityEnd)) {
+			throw new IllegalArgumentException("Invalod time period");
+		}
+		if(name == null) {
+			throw new IllegalArgumentException("Null is not allowed as name");
+		}
+		
+		// Create resourcePrototype (should happen before applying conflicting resources,
+		// since a resource can conflict with itself)
+		ResourcePrototype resprot = null;
+		if(!availabilityStart.isPresent() && !availabilityEnd.isPresent()) {
+			resprot = new ResourcePrototype(name, null);
+		} else {
+			resprot = new ResourcePrototype(name, new AvailabilityPeriod(availabilityStart.get(), availabilityEnd.get()));
+		}
+		prototypes.add(resprot);
 	}
 
 	@Override
@@ -369,8 +388,8 @@ public class BranchManager implements IFacade {
 	}
 
 	@Override
-	public void initializeBranch(String geographicLocation) {
-		this.declareTaskMan(geographicLocation);
+	public void initializeBranch(String geographicLocation, List<ResourcePrototype> prototypes) {
+		this.declareTaskMan(geographicLocation, prototypes);
 	}
 
 	@Override
@@ -413,6 +432,28 @@ public class BranchManager implements IFacade {
 	public BranchView getResponsibleBranch(TaskView task) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	/**
+	 * Check whether the given availability period start and end times are valid
+	 * 
+	 * @param start
+	 *            | the optional startTime that should be valid
+	 * @param end
+	 *            | the optional endTime that should be valid
+	 * @return True if the given timestamps define a valid availability period
+	 */
+	private boolean isValidPeriod(Optional<LocalTime> start, Optional<LocalTime> end) {
+		if(start.isPresent() && !end.isPresent()) {
+			return false;
+		}
+		if(!start.isPresent() && end.isPresent()) {
+			return false;
+		}
+		if(!start.isPresent() && !end.isPresent()) {
+			return true;
+		}
+		return !end.get().isBefore(start.get());
 	}
 	
 }

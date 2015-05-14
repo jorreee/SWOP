@@ -10,6 +10,7 @@ import java.util.Optional;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
+import com.sun.scenario.effect.impl.prism.PrTexture;
 
 import company.taskMan.resource.user.User;
 import company.taskMan.resource.user.UserPrototype;
@@ -46,7 +47,7 @@ public class ResourceManager {
 	 * nor reservations. One user will be present in the system, the project
 	 * manager (admin).
 	 */
-	public ResourceManager() {
+	public ResourceManager(List<ResourcePrototype> prototypes) {
 		this.resPools = new ArrayList<>();
 		
 		userProt = new UserPrototype();
@@ -56,6 +57,10 @@ public class ResourceManager {
 		
 		activeReservations = new ArrayList<>();
 		allReservations = new ArrayList<>();
+		
+		for(ResourcePrototype prot: prototypes){
+			addResourceType(prot);
+		}
 	}
 
 	/**
