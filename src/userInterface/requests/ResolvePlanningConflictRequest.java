@@ -37,7 +37,7 @@ public class ResolvePlanningConflictRequest extends Request {
 			System.out.println("The task conflicts with an executing task. The task currently being scheduled must be moved.");
 			movePlanningTask = true;
 			return "Conflict resolved";
-			
+
 		}
 		System.out.println("Move task currently being scheduled? (Y/N)");
 
@@ -71,24 +71,27 @@ public class ResolvePlanningConflictRequest extends Request {
 					System.out.println("Now re-planning task: " + conflictingTask.getDescription() + ", from project: " + project.getName());
 					// Plan specific conflicting task
 					PlanningScheme newPlanning = planTaskRequest.planTask(project, conflictingTask);
-					
+
 					// Register newly planned reservations and assign newly planned planning to the conflicting task
-					boolean success = facade.planRawTask(project, conflictingTask, newPlanning.getPlanningStartTime(),newPlanning.getResourcesToReserve(),newPlanning.getDevelopers());
-					
-					if(!success) { System.out.println("Failed to plan task, try again"); continue; }
-					
-					// If selected planning conflicts with another task planning init resolve conflict request
-					Map<ProjectView, List<TaskView>> newConflictingTasks = facade.findConflictingPlannings(conflictingTask);
-	
-					if(!newConflictingTasks.isEmpty()) {
-						ResolvePlanningConflictRequest resolveConflictRequest = new ResolvePlanningConflictRequest(facade, inputReader, newConflictingTasks);
-						System.out.println(resolveConflictRequest.execute());
-						// Conflict dictates that this planning should start over
-						if(resolveConflictRequest.shouldMovePlanningTask()) {
-							shouldMove = true;
+					try {
+						facade.planRawTask(project, conflictingTask, newPlanning.getPlanningStartTime(),newPlanning.getResourcesToReserve(),newPlanning.getDevelopers());
+
+						// If selected planning conflicts with another task planning init resolve conflict request
+						Map<ProjectView, List<TaskView>> newConflictingTasks = facade.findConflictingPlannings(conflictingTask);
+
+						if(!newConflictingTasks.isEmpty()) {
+							ResolvePlanningConflictRequest resolveConflictRequest = new ResolvePlanningConflictRequest(facade, inputReader, newConflictingTasks);
+							System.out.println(resolveConflictRequest.execute());
+							// Conflict dictates that this planning should start over
+							if(resolveConflictRequest.shouldMovePlanningTask()) {
+								shouldMove = true;
+							}
+						} else {
+							shouldMove = false;
 						}
-					} else {
-						shouldMove = false;
+					} catch(Exception e) {
+						e.printStackTrace();
+						System.out.println("Failed to plan task, try again");
 					}
 				} while(shouldMove);
 			}

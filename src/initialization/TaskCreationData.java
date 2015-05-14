@@ -20,6 +20,7 @@ public class TaskCreationData {
 	private final List<Integer> prerequisiteTasks;
 	private final List<IntPair> requiredResources;
 	private final TaskStatus status;
+	private final Integer responsibleBranch;
 	private final LocalDateTime startTime;
 	private final LocalDateTime endTime;
 	private PlanningCreationData planningData;
@@ -27,8 +28,8 @@ public class TaskCreationData {
 	public TaskCreationData(int project, String description,
 			int estimatedDuration, int acceptableDeviation, int alternativeFor,
 			List<Integer> prerequisiteTasks, List<IntPair> requiredResources,
-			TaskStatus status, LocalDateTime startTime, LocalDateTime endTime,
-			PlanningCreationData planningData) {
+			TaskStatus status, Integer responsibleBranch, LocalDateTime startTime,
+			LocalDateTime endTime, PlanningCreationData planningData) {
 		this.project = project;
 		this.description = description;
 		this.estimatedDuration = estimatedDuration;
@@ -37,6 +38,7 @@ public class TaskCreationData {
 		this.prerequisiteTasks = prerequisiteTasks;
 		this.requiredResources = requiredResources;
 		this.status = status;
+		this.responsibleBranch = responsibleBranch;
 		this.startTime = startTime;
 		this.endTime = endTime;
 		this.planningData = planningData;
@@ -74,6 +76,10 @@ public class TaskCreationData {
 		return status;
 	}
 
+	public Integer getResponsibleBranch() {
+		return responsibleBranch;
+	}
+	
 	public LocalDateTime getStartTime() {
 		return startTime;
 	}

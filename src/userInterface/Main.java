@@ -29,6 +29,7 @@ import userInterface.requests.ChangeUserRequest;
 import userInterface.requests.Request;
 
 import company.BranchManager;
+import company.BranchView;
 import company.taskMan.ProjectView;
 import company.taskMan.project.TaskView;
 import company.taskMan.resource.ResourceView;
@@ -39,6 +40,8 @@ import company.taskMan.resource.ResourceView;
 public class Main {
 
 	private static boolean initSuccess = true;
+	private static List<Delegation> delegations = new ArrayList<>();
+
 
 	public static void main(String[] args) throws IOException {
 		System.out.println("~~~~~~~~~~~~~~~ TASKMAN ~~~~~~~~~~~~~~~");		
@@ -94,11 +97,12 @@ public class Main {
 		List<ResourceView> resourceProts = new ArrayList<>();
 		boolean success = true;
 		for(ResourcePrototypeCreationData rprot : resourcePrototypes) {
-			success = facade.createResourcePrototype(
+			try{
+				facade.createResourcePrototype(
 					rprot.getName(),
 					fileChecker.getDailyAvailabilityStartByIndex(rprot.getAvailabilityIndex()),
 					fileChecker.getDailyAvailabilityEndByIndex(rprot.getAvailabilityIndex()));
-			if(!success) { failInit("creating a resource prototype!"); }
+			} catch(Exception e) { e.printStackTrace(); failInit("creating a resource prototype!"); }
 			List<ResourceView> currentExistingProts = facade.getResourcePrototypes();
 			ResourceView currentProt = currentExistingProts.get(facade.getResourcePrototypes().size() -1); 
 			resourceProts.add(currentProt);
@@ -110,10 +114,12 @@ public class Main {
 			for(Integer index : rprot.getConflicts()) {
 				conflicts.add(currentExistingProts.get(index));
 			}
-			success = facade.addRequirementsToResource(requirements, currentProt);
-			if(!success) { failInit("adding requirements to a prototype!"); }
-			success = facade.addConflictsToResource(conflicts, currentProt);
-			if(!success) { failInit("adding conflicts to a prototype!"); }
+			try {
+				facade.addRequirementsToResource(requirements, currentProt);
+			} catch(Exception e) { e.printStackTrace(); failInit("adding requirements to a prototype!"); }
+			try {
+				facade.addConflictsToResource(conflicts, currentProt);
+			} catch(Exception e) { e.printStackTrace(); failInit("adding conflicts to a prototype!"); }
 		}
 		
 		if(!success) {
@@ -124,6 +130,7 @@ public class Main {
 		// Get branch init files
 		Queue<String> branches = fileChecker.getBranches();
 		
+		int branchID = 0;
 		String branch = branches.poll();
 		while(branch != null) {
 			FileReader branchReader = new FileReader(file.getParent() + File.separator + branch);
@@ -132,21 +139,28 @@ public class Main {
 			fileChecker = new TaskManInitFileChecker(branchReader);
 			fileChecker.checkFile();
 	
-			success = initializeBranch(facade, fileChecker);
+			success = initializeBranch(facade, fileChecker, branchID);
 			branch = branches.poll();
 			if(!success) {
 				System.out.println("Initialization from tman failed, check your file!");
 				return new BranchManager(LocalDateTime.now());
 			}
+			
+			branchID++;
 		}
 		
 		facade.logout();
 		
+		// Delegate tasks to their responsible branches
+		List<BranchView> branchViews = facade.getBranches();
+		for(Delegation delegation : delegations) {
+			facade.delegateTask(delegation.project, delegation.task, branchViews.get(delegation.oldBranch), branchViews.get(delegation.newBranch));
+		}
+		
 		return facade;
 	}
 
-	public static boolean initializeBranch(IFacade facade, TaskManInitFileChecker fileChecker) {
-		boolean success = false;
+	public static boolean initializeBranch(IFacade facade, TaskManInitFileChecker fileChecker, int branchID) {
 		try {
 			String geographicLocation = fileChecker.getGeographicLocation();
 			facade.initializeBranch(geographicLocation);
@@ -157,29 +171,33 @@ public class Main {
 			List<DeveloperCreationData> developers = fileChecker.getDeveloperDataList();
 			List<ReservationCreationData> reservations = fileChecker.getReservationDataList();
 			List<ResourceView> resourceProts = facade.getResourcePrototypes();
+			
 			// Initialize system through a facade
 
 			// Init concrete resources
 			List<ResourceView> allConcreteResources = new ArrayList<>();
 			for(ConcreteResourceCreationData cres : concreteResources) {
-				success = facade.declareConcreteResource(cres.getName(), resourceProts.get(cres.getTypeIndex()));
-				if(!success) { failInit("creating a concrete resource!"); }
+				try {
+					facade.declareConcreteResource(cres.getName(), resourceProts.get(cres.getTypeIndex()));
+				} catch(Exception e) { e.printStackTrace(); failInit("creating a concrete resource!"); }
 				List<ResourceView> specificResources = facade.getConcreteResourcesForPrototype(resourceProts.get(cres.getTypeIndex()));
 				allConcreteResources.add(specificResources.get(specificResources.size() - 1));
 			}
 			// --------------------------------
 			// Init developers
 			for(DeveloperCreationData dev : developers) {
-				success = facade.createDeveloper(dev.getName());
-				if(!success) { failInit("creating developer" + dev.getName() + "!"); }
+				try {
+					facade.createDeveloper(dev.getName());
+				} catch(Exception e) { e.printStackTrace(); failInit("creating developer" + dev.getName() + "!"); }
 			}
 
 			// --------------------------------
 
 			// Init projects
 			for(ProjectCreationData pcd : projectData) {
-				success = facade.createProject(pcd.getName(), pcd.getDescription(), pcd.getCreationTime(), pcd.getDueTime());
-				if(!success) { failInit("creating project" + pcd.getName() + "!"); }
+				try {
+					facade.createProject(pcd.getName(), pcd.getDescription(), pcd.getCreationTime(), pcd.getDueTime());
+				} catch(Exception e) { e.printStackTrace(); failInit("creating project" + pcd.getName() + "!"); }
 			}
 			// Init tasks (planned and unplanned)
 			List<TaskView> creationList = new ArrayList<>();
@@ -205,6 +223,7 @@ public class Main {
 				}
 
 				PlanningCreationData planning = tcd.getPlanningData();
+				try {
 				if(planning != null) {
 
 					List<ResourceView> devs = facade.getDeveloperList();
@@ -213,7 +232,7 @@ public class Main {
 						plannedDevelopers.add(devs.get(integer));
 					}
 
-					success = facade.createTask(
+					facade.createTask(
 							project, 
 							tcd.getDescription(),
 							tcd.getEstimatedDuration(),
@@ -227,7 +246,7 @@ public class Main {
 							planning.getPlannedStartTime(),
 							plannedDevelopers);
 				} else {
-					success = facade.createTask(
+					facade.createTask(
 							project, 
 							tcd.getDescription(),
 							tcd.getEstimatedDuration(),
@@ -242,10 +261,16 @@ public class Main {
 							null);
 
 				}
-				if(!success) { failInit("creating task: " + tcd.getDescription() + ", in project " + tcd.getProject() + "!"); }
-
+				
 				List<TaskView> tasks = project.getTasks();
 				creationList.add(tasks.get(tasks.size() - 1));
+				
+				if(tcd.getResponsibleBranch() != null) {
+					delegations.add(new Delegation(project, tasks.get(tasks.size() - 1), branchID, tcd.getResponsibleBranch()));
+				}
+				} catch(Exception e) { e.printStackTrace(); failInit("creating task: " + tcd.getDescription() + ", in project " + tcd.getProject() + "!"); }
+
+
 			}
 			// Init reservations
 			for(ReservationCreationData rcd : reservations) {
@@ -253,13 +278,14 @@ public class Main {
 				ProjectView project = facade.getProjects().get(taskData.get(rcd.getTask()).getProject());
 				TaskView task = creationList.get(rcd.getTask());
 
-				success = facade.reserveResource(
+				try {
+					facade.reserveResource(
 						allConcreteResources.get(rcd.getResource()), 
 						project,
 						task,
 						rcd.getStartTime(),
 						rcd.getEndTime());
-				if(!success) { failInit("trying to reserve resource " + rcd.getResource() + " for task " + rcd.getTask() + "!"); }
+				} catch(Exception e) { e.printStackTrace(); failInit("trying to reserve resource " + rcd.getResource() + " for task " + rcd.getTask() + "!"); }
 			}
 			
 		} catch(Exception e) {
@@ -275,4 +301,18 @@ public class Main {
 		initSuccess = false;
 	}
 
+}
+
+class Delegation {
+	protected final ProjectView project;
+	protected final TaskView task;
+	protected final Integer oldBranch;
+	protected final Integer newBranch;
+	
+	protected Delegation(ProjectView project, TaskView task, Integer oldBranch, Integer newBranch) {
+		this.project = project;
+		this.task = task;
+		this.oldBranch = oldBranch;
+		this.newBranch = newBranch;
+	}
 }

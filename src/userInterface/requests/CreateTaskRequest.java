@@ -85,18 +85,12 @@ public class CreateTaskRequest extends Request {
 				// List<TaskView> prerequisiteTasks,
 				// Map<ResourceView, Integer> requiredResources
 				// TaskView alternativeFor);
-				boolean success = facade.createTask(
+				facade.createTask(
 						projects.get(Integer.parseInt(input[0])), input[1],
 						Integer.parseInt(input[2]), Integer.parseInt(input[3]),
 						prereqList, reqRes, altFor);
 
-				// Invalid details
-				if(success) {
-					return "Task Created";
-				} else {
-					System.out.println("Invalid input");
-				}
-
+				return "Task Created";
 			} catch(Exception e) {
 				e.printStackTrace();
 				System.out.println("Invalid input\n");

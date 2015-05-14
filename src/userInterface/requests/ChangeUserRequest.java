@@ -23,15 +23,15 @@ public class ChangeUserRequest extends Request{
 			} else {
 				System.out.println("Currently not logged in");
 			}
-			
+
 			// SELECT BRANCH
 			List<BranchView> branches = facade.getBranches();
-			
+
 			System.out.println("Please select your branch (type quit to exit)");
 			for(int i = 0 ; i < branches.size() ; i++) {
 				System.out.println("<" + i + "> The " + branches.get(i).getGeographicLocation() + " Branch");
 			}
-			
+
 			try {
 				String userInput = inputReader.readLine();
 				// Escape
@@ -39,13 +39,13 @@ public class ChangeUserRequest extends Request{
 				{
 					return quit();
 				}
-				
+
 				facade.selectBranch(branches.get(Integer.parseInt(userInput)));
 			} catch(Exception e) {
 				e.printStackTrace();
 				System.out.println("Invalid branch, try again");
 			}
-			
+
 			// SELECT USER
 			// Display different options
 			List<ResourceView> possibleUsers = facade.getPossibleUsers();
@@ -55,7 +55,7 @@ public class ChangeUserRequest extends Request{
 				System.out.println("(" + i + ") Possible user: " + user.getName());
 				i++;
 			}
-			
+
 			// Ask user for username to log in as
 			System.out.println("Select a user (type quit to exit)");
 			try{
@@ -64,11 +64,9 @@ public class ChangeUserRequest extends Request{
 				// Escape
 				if(userInput.equalsIgnoreCase("quit"))
 					return quit();
-				
-				if(facade.changeToUser(possibleUsers.get(Integer.valueOf(userInput)))) // Valid User
-					return "Now logged in as " + facade.getCurrentUser().getName();
-				else // Invalid User
-					System.out.println("Invalid username, try again");
+
+				facade.changeToUser(possibleUsers.get(Integer.valueOf(userInput))); // Valid User
+				return "Now logged in as " + facade.getCurrentUser().getName();
 			} catch(Exception e) {
 				e.printStackTrace();
 				System.out.println("Invalid username, try again");
@@ -79,5 +77,5 @@ public class ChangeUserRequest extends Request{
 	private String quit() {
 		return "User unaltered";
 	}
-	
+
 }

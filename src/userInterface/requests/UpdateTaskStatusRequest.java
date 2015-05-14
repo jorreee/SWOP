@@ -18,7 +18,7 @@ public class UpdateTaskStatusRequest extends Request {
 	public String execute() {
 		// Show list of available tasks and their project
 		List<ProjectView> projects = facade.getProjects();
-		
+
 		int i = 0;
 		for(ProjectView project : projects) {
 			System.out.println("[" + i + "] Project " + project.getName() + ":");
@@ -55,60 +55,48 @@ public class UpdateTaskStatusRequest extends Request {
 
 				switch(task.getStatusAsString().toLowerCase()){
 				case "available" :{
-					boolean success = false;
-					while(!success) {
-						// Show update form and ask user for input
-						System.out.println("The status of the task will be set to executing.");
-						System.out.println("Please enter the start time of execution.");
+					// Show update form and ask user for input
+					System.out.println("The status of the task will be set to executing.");
+					System.out.println("Please enter the start time of execution.");
 
-						System.out.println("Start Time? (Format: Y M D H M)");
-						String startTime = inputReader.readLine();
+					System.out.println("Start Time? (Format: Y M D H M)");
+					String startTime = inputReader.readLine();
 
-						// User quits
-						if(startTime.toLowerCase().equals("quit"))
-							return quit();
+					// User quits
+					if(startTime.toLowerCase().equals("quit"))
+						return quit();
 
-						String[] startBits = startTime.split(" ");
-						LocalDateTime start = LocalDateTime.of(Integer.parseInt(startBits[0]), Integer.parseInt(startBits[1]), Integer.parseInt(startBits[2]), Integer.parseInt(startBits[3]), Integer.parseInt(startBits[4]));
+					String[] startBits = startTime.split(" ");
+					LocalDateTime start = LocalDateTime.of(Integer.parseInt(startBits[0]), Integer.parseInt(startBits[1]), Integer.parseInt(startBits[2]), Integer.parseInt(startBits[3]), Integer.parseInt(startBits[4]));
 
-						success = facade.setTaskExecuting(project, task, start);
-						// Invalid details
-						if(!success)
-							System.out.println("Invalid input");
-					}
+					facade.setTaskExecuting(project, task, start);
 					return "Task updated!";
 				}
 				case "executing" :{				
-					boolean success = false;
-					while(!success) {
-						// Show update form and ask user for input
-						System.out.println("Please enter the new status and end time. Everything should go on a seperate line (type quit at any time to exit)");
-						System.out.println("Task Status? (Finished or Failed)");
-						String status = inputReader.readLine();
+					// Show update form and ask user for input
+					System.out.println("Please enter the new status and end time. Everything should go on a seperate line (type quit at any time to exit)");
+					System.out.println("Task Status? (Finished or Failed)");
+					String status = inputReader.readLine();
 
-						// User quits
-						if(status.toLowerCase().equals("quit"))
-							return quit();	
+					// User quits
+					if(status.toLowerCase().equals("quit"))
+						return quit();	
 
-						System.out.println("End Time? (Format: Y M D H M)");
-						String endTime = inputReader.readLine();
+					System.out.println("End Time? (Format: Y M D H M)");
+					String endTime = inputReader.readLine();
 
-						// User quits
-						if(endTime.toLowerCase().equals("quit"))
-							return quit();
+					// User quits
+					if(endTime.toLowerCase().equals("quit"))
+						return quit();
 
-						String[] endBits = endTime.split(" ");
-						LocalDateTime end = LocalDateTime.of(Integer.parseInt(endBits[0]), Integer.parseInt(endBits[1]), Integer.parseInt(endBits[2]), Integer.parseInt(endBits[3]), Integer.parseInt(endBits[4]));
+					String[] endBits = endTime.split(" ");
+					LocalDateTime end = LocalDateTime.of(Integer.parseInt(endBits[0]), Integer.parseInt(endBits[1]), Integer.parseInt(endBits[2]), Integer.parseInt(endBits[3]), Integer.parseInt(endBits[4]));
 
-						// System updates details
-						if(status.toLowerCase().equals("finished"))
-							success = facade.setTaskFinished(project, task, end);
-						if(status.toLowerCase().equals("failed"))
-							success = facade.setTaskFailed(project, task, end);
-						// Invalid details
-						if(!success)
-							System.out.println("Invalid input");
-					}
+					// System updates details
+					if(status.toLowerCase().equals("finished"))
+						facade.setTaskFinished(project, task, end);
+					if(status.toLowerCase().equals("failed"))
+						facade.setTaskFailed(project, task, end);
 					return "Task updated!";
 				}
 				}

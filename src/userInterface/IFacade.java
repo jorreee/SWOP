@@ -6,9 +6,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.security.auth.login.CredentialException;
+
 import company.BranchView;
 import company.taskMan.ProjectView;
 import company.taskMan.project.TaskView;
+import company.taskMan.resource.ResourcePrototype;
 import company.taskMan.resource.ResourceView;
 import company.taskMan.resource.user.UserPermission;
 
@@ -18,7 +21,7 @@ public interface IFacade {
 	public void selectBranch(BranchView branch);
 	public void initializeBranch(String geographicLocation);
 	
-	public boolean advanceTimeTo(LocalDateTime time);
+	public void advanceTimeTo(LocalDateTime time) throws IllegalArgumentException, CredentialException;
 
 	public LocalDateTime getCurrentTime();
 	public boolean isLoggedIn();
@@ -26,33 +29,33 @@ public interface IFacade {
 	
 	public ResourceView getCurrentUser();
 	public List<ResourceView> getPossibleUsers();
-	public boolean changeToUser(ResourceView user);
+	public void changeToUser(ResourceView user);
 
 	
-	public boolean createProject(String name, String description,
-			LocalDateTime creationTime, LocalDateTime dueTime);
+	public void createProject(String name, String description,
+			LocalDateTime creationTime, LocalDateTime dueTime) throws CredentialException;
 
-	public boolean createProject(String name, String description,
-			LocalDateTime dueTime);
+	public void createProject(String name, String description,
+			LocalDateTime dueTime) throws CredentialException;
 
-	public boolean createTask(ProjectView project, String description,
+	public void createTask(ProjectView project, String description,
 			int estimatedDuration, int acceptableDeviation,
-			List<TaskView> prerequisiteTasks, Map<ResourceView, Integer> requiredResources, TaskView alternativeFor);
+			List<TaskView> prerequisiteTasks, Map<ResourceView, Integer> requiredResources, TaskView alternativeFor) throws CredentialException;
 	
-	public boolean createTask(ProjectView project, String description,
+	public void createTask(ProjectView project, String description,
 			int estimatedDuration, int acceptableDeviation,
 			List<TaskView> prerequisiteTasks, TaskView alternativeFor, Map<ResourceView, Integer> requiredResources, 
 			String taskStatus, LocalDateTime startTime, LocalDateTime endTime,
-			LocalDateTime plannedStartTime, List<ResourceView> plannedDevelopers);
+			LocalDateTime plannedStartTime, List<ResourceView> plannedDevelopers) throws CredentialException;
 
 	
-	public boolean setTaskFinished(ProjectView project, TaskView task,
-			LocalDateTime endTime);
+	public void setTaskFinished(ProjectView project, TaskView task,
+			LocalDateTime endTime) throws CredentialException, IllegalArgumentException;
 
-	public boolean setTaskFailed(ProjectView project, TaskView task,
-			 LocalDateTime endTime);
+	public void setTaskFailed(ProjectView project, TaskView task,
+			 LocalDateTime endTime) throws CredentialException, IllegalArgumentException;
 	
-	public boolean setTaskExecuting(ProjectView project, TaskView task, LocalDateTime startTime);
+	public void setTaskExecuting(ProjectView project, TaskView task, LocalDateTime startTime) throws CredentialException, IllegalArgumentException;
 
 	public List<ProjectView> getProjects();
 
@@ -62,16 +65,16 @@ public interface IFacade {
 
 	public boolean discardMemento();
 
-	public boolean createResourcePrototype(String name,
+	public void createResourcePrototype(String name,
 			Optional<LocalTime> availabilityStart,
 			Optional<LocalTime> availabilityEnd);
 
-	public boolean declareConcreteResource(String name, ResourceView resourceView);
+	public void declareConcreteResource(String name, ResourceView resourceView);
 
-	public boolean createDeveloper(String name);
+	public void createDeveloper(String name);
 
 //	public boolean reserveResource(ResourceView resource, ProjectView project, TaskView task);
-	public boolean reserveResource(ResourceView resource, ProjectView project, TaskView task, LocalDateTime startTime, LocalDateTime endTime);
+	public void reserveResource(ResourceView resource, ProjectView project, TaskView task, LocalDateTime startTime, LocalDateTime endTime);
 
 //	public List<LocalDateTime> getPossibleTaskStartingTimes(ProjectView project, TaskView task, int amount);
 
@@ -82,16 +85,16 @@ public interface IFacade {
 
 	public List<ResourceView> getResourcePrototypes();
 	
-	public boolean addRequirementsToResource(List<ResourceView> resourcesToAdd, ResourceView prototype);
-	public boolean addConflictsToResource(List<ResourceView> resourcesToAdd, ResourceView prototype);
+	public void addRequirementsToResource(List<ResourceView> resourcesToAdd, ResourceView prototype);
+	public void addConflictsToResource(List<ResourceView> resourcesToAdd, ResourceView prototype);
 
 	public List<ResourceView> getConcreteResourcesForPrototype(
 			ResourceView resourcePrototype);
 
-	public boolean planTask(ProjectView project, TaskView task,
-			LocalDateTime planningStartTime, List<ResourceView> concRes, List<ResourceView> devs);
-	public boolean planRawTask(ProjectView project, TaskView task,
-			LocalDateTime planningStartTime, List<ResourceView> concRes, List<ResourceView> devs);
+	public void planTask(ProjectView project, TaskView task,
+			LocalDateTime planningStartTime, List<ResourceView> concRes, List<ResourceView> devs) throws CredentialException;
+	public void planRawTask(ProjectView project, TaskView task,
+			LocalDateTime planningStartTime, List<ResourceView> concRes, List<ResourceView> devs) throws CredentialException;
 
 //	public Map<ProjectView, List<TaskView>> reservationConflict(ResourceView requiredResource,
 //			ProjectView project, TaskView task, LocalDateTime planningStartTime);
@@ -102,6 +105,8 @@ public interface IFacade {
 	public boolean currentUserHasPermission(UserPermission permission);
 
 	public void delegateTask(ProjectView project, TaskView task, BranchView newBranch);
+	public void delegateTask(ProjectView project, TaskView task, BranchView oldBranch, BranchView newBranch);
 	public BranchView getResponsibleBranch(TaskView task);
+
 
 }
