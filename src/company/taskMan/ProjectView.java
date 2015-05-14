@@ -4,9 +4,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.google.common.collect.ImmutableList;
-
 import company.taskMan.project.Project;
 import company.taskMan.project.TaskView;
+import company.taskMan.task.Task;
 import company.taskMan.util.TimeSpan;
 
 /**
@@ -97,7 +97,10 @@ public class ProjectView {
 	 */
 	public List<TaskView> getTasks() {
 		ImmutableList.Builder<TaskView> tasks = ImmutableList.builder();
-		tasks.addAll(project.getTaskViews());
+//		tasks.addAll(project.getTasks());
+		for(Task t : project.getTasks()) {
+			tasks.add(new TaskView(t));
+		}
 		return tasks.build();
 	}
 
@@ -108,11 +111,16 @@ public class ProjectView {
 	 * @return a list of the available tasks
 	 */
 	public List<TaskView> getAvailableTasks() {
-		ImmutableList.Builder<TaskView> availableTasks = ImmutableList
-				.builder();
-		for (TaskView task : project.getTaskViews()) {
-			if (task.isAvailable()) {
-				availableTasks.add(task);
+		ImmutableList.Builder<TaskView> availableTasks = ImmutableList.builder();
+//		for (TaskView task : project.getTasks()) {
+//			if (task.isAvailable()) {
+//				availableTasks.add(task);
+//			}
+//		}
+//		return availableTasks.build();
+		for(Task t : project.getTasks()) {
+			if (t.isAvailable()) {
+				availableTasks.add(new TaskView(t));
 			}
 		}
 		return availableTasks.build();
@@ -204,9 +212,9 @@ public class ProjectView {
 	public List<TaskView> getUnplannedTasks() {
 		ImmutableList.Builder<TaskView> unavailableTasks = ImmutableList
 				.builder();
-		for (TaskView task : project.getTaskViews()) {
+		for (Task task : project.getTasks()) {
 			if (task.isUnavailable()) {
-				unavailableTasks.add(task);
+				unavailableTasks.add(new TaskView(task));
 			}
 		}
 		return unavailableTasks.build();

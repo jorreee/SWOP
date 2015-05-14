@@ -23,16 +23,17 @@ public interface ProjectStatus {
 	 *            | A list of tasks belonging to the project
 	 * @param lastTask
 	 *            | The last task to end
-	 * @return True if the status changed to a finished status, false otherwise
+	 * @throws IllegalStateException
+	 *			  | 
 	 */
-	public boolean finish(Project project, List<Task> tasks, Task lastTask);
+	public void finish(Project project, List<Task> tasks, Task lastTask);
 
 	/**
 	 * Check whether or not the project is finished
 	 * 
 	 * @return True when this state is a finished state, false otherwise
 	 */
-	public boolean isFinished();
+	public boolean isFinished() throws IllegalStateException;
 
 	/**
 	 * Check whether or not the project is still ongoing

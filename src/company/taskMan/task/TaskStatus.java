@@ -20,7 +20,7 @@ public interface TaskStatus {
 	 * @return True if the new status is available, False if it remained
 	 *         unchanged
 	 */
-	public boolean makeAvailable(Task task);
+	public void makeAvailable(Task task) throws IllegalStateException;
 
 	/**
 	 * Change the status to an executing status
@@ -32,7 +32,7 @@ public interface TaskStatus {
 	 * @return True if the new status is executing, False if it remained
 	 *         unchanged
 	 */
-	public boolean execute(Task task, LocalDateTime beginTime);
+	public void execute(Task task, LocalDateTime beginTime) throws IllegalStateException;
 
 	/**
 	 * Change the status to a finished status
@@ -44,7 +44,7 @@ public interface TaskStatus {
 	 * @return True if the new status is finished, False if it remained
 	 *         unchanged
 	 */
-	public boolean finish(Task task, LocalDateTime endTime);
+	public void finish(Task task, LocalDateTime endTime);
 
 	/**
 	 * Change the status to a failed status
@@ -55,7 +55,7 @@ public interface TaskStatus {
 	 *            | the actual end time
 	 * @return True if the new status is failed, False if it remained unchanged
 	 */
-	public boolean fail(Task task, LocalDateTime endTime);
+	public void fail(Task task, LocalDateTime endTime);
 
 	/**
 	 * Register a new dependant to the current task
@@ -66,7 +66,7 @@ public interface TaskStatus {
 	 *            | The new dependant
 	 * @return true if the dependant was added
 	 */
-	public boolean register(Task task, Dependant d);
+	public void register(Task task, Dependant d);
 
 	/**
 	 * Is this state an available state

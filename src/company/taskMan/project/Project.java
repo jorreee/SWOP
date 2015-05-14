@@ -299,11 +299,11 @@ public class Project implements Dependant {
 	 * 
 	 */
 	@Override
-	public boolean updateDependency(Task preTask) {
+	public void updateDependency(Task preTask) throws IllegalStateException{
 		if (!preTask.hasEnded()){
-			return false;
+			throw new IllegalStateException("The preTask didn't belong to this project");
 		}
-		return state.finish(this, taskList, preTask);
+		state.finish(this, taskList, preTask);
 	}
 
 	/**
@@ -318,9 +318,9 @@ public class Project implements Dependant {
 		if(endTime==null) {
 			throw new IllegalArgumentException("The new endTime is null");
 		}
-		if(getEndTime()!=null) {
-			throw new IllegalArgumentException("The endtime is already set");
-		}
+//		if(getEndTime()!=null) {
+//			throw new IllegalArgumentException("The endtime is already set");
+//		}
 		this.endTime = endTime;
 	}
 	
@@ -383,12 +383,15 @@ public class Project implements Dependant {
 	 * 
 	 * @return	A list of Tasks.
 	 */
-	public List<TaskView> getTaskViews(){
-		ArrayList<TaskView> tasks = new ArrayList<TaskView>();
-		for(Task t : taskList) {
-			tasks.add(new TaskView(t));
-		}
-		return tasks;
+	public List<Task> getTasks(){
+//		ArrayList<TaskView> tasks = new ArrayList<TaskView>();
+//		for(Task t : taskList) {
+//			tasks.add(new TaskView(t));
+//		}
+//		return tasks;
+		ImmutableList.Builder<Task> tasks = ImmutableList.builder();
+		tasks.addAll(taskList);
+		return tasks.build();
 	}
 	
 	/**

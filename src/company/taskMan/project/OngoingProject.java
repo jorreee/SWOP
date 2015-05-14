@@ -20,15 +20,17 @@ public class OngoingProject implements ProjectStatus {
 	}
 
 	@Override
-	public boolean finish(Project project, List<Task> tasks, Task lastTask) {
+	public void finish(Project project, List<Task> tasks, Task lastTask) throws IllegalStateException {
+		boolean shouldFinish = true;
 		for (Task t : tasks) {
 			if(!t.hasFinishedEndpoint()) {
-				return false;
+				shouldFinish = false;
 			}
 		}
-		project.setProjectStatus(new FinishedProject());
-		project.setEndTime(lastTask.getEndTime());
-		return true;
+		if(shouldFinish) {
+			project.setProjectStatus(new FinishedProject());
+			project.setEndTime(lastTask.getEndTime());
+		}
 	}
 
 	@Override

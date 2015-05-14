@@ -15,14 +15,14 @@ import company.taskMan.util.TimeSpan;
 public interface Dependant {
 	
 	/**
-	 * A prerequisite has changed, the state of the dependant might change.
+	 * Update dependency of this Dependant on preTask. 
 	 * 
 	 * @param preTask
 	 *            | The prerequisite that has changed
-	 * @return True if the dependencies were successfully updated, False
-	 *         otherwise
+	 * @throws IllegalStateException
+	 * 				| if preTask isn't a Dependant
 	 */
-	public boolean updateDependency(Task preTask);
+	public void updateDependency(Task preTask) throws IllegalStateException;
 
 	/**
 	 * Get the longest possible duration that a series of dependants (this one and

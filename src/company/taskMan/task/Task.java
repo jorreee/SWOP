@@ -246,17 +246,24 @@ public class Task implements Dependant {
 		return true;
 	}
 
+	/**
+	 * Update dependency of this task on preTask. When this method is called,
+	 * this task will check the state of all prerequisites and when they all
+	 * have finished endpoints, this task's state will change to available.
+	 * 
+	 * @param preTask
+	 *            | The prerequisite that has changed
+	 * @throws IllegalStateException
+	 * 				| if preTask isn't a Dependant on this object
+	 */
 	@Override
-	public boolean updateDependency(Task preTask) {
+	public void updateDependency(Task preTask) throws IllegalStateException {
 		int preIndex = prerequisites.indexOf(preTask);
-
 		if (preIndex < 0) {
-			return false;
+			throw new IllegalStateException("The supplied task didn't occur as a Dependant in this task");
 		}
 
 		state.makeAvailable(this);
-
-		return true;
 	}
 
 	/**
