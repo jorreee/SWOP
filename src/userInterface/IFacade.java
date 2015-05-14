@@ -19,7 +19,7 @@ public interface IFacade {
 
 	public List<BranchView> getBranches();
 	public void selectBranch(BranchView branch);
-	public void initializeBranch(String geographicLocation, List<ResourcePrototype> prototypes);
+	public void initializeBranch(String geographicLocation);
 	
 	public void advanceTimeTo(LocalDateTime time) throws IllegalArgumentException, CredentialException;
 

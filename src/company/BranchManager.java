@@ -388,7 +388,7 @@ public class BranchManager implements IFacade {
 	}
 
 	@Override
-	public void initializeBranch(String geographicLocation, List<ResourcePrototype> prototypes) {
+	public void initializeBranch(String geographicLocation) {
 		this.declareTaskMan(geographicLocation, prototypes);
 	}
 
