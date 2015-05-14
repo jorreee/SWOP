@@ -55,8 +55,7 @@ public class TaskManCaretaker {
 	 * safekeeping. Every system state should be storeable.
 	 */
 	public void storeInMemento() {
-		String taskman = buildMemento();
-		mementos.push(new TaskManMemento(taskman));
+		mementos.push(buildMemento());
 	}
 	
 	/**
@@ -68,7 +67,8 @@ public class TaskManCaretaker {
 	 * 
 	 * @return The TMAN string based upon the current state of the system
 	 */
-	private String buildMemento() {
+	// TODO bring docu up to date
+	private TaskManMemento buildMemento() {
 		StringBuilder tman = new StringBuilder();
 		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 		DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
@@ -270,24 +270,10 @@ public class TaskManCaretaker {
 	 * TaskMan will be initialized with values stored in the memento on the top
 	 * of the stack. In the case of a simulation, the last simulation started
 	 * will be reverted first.
-	 * 
-	 * @return True if the system was initialized without errors, false
-	 *         otherwise
 	 */
-	public boolean revertFromMemento() {
-		TaskManInitFileChecker fileChecker = new TaskManInitFileChecker(
-				new StringReader(mementos.pop().getMementoAsString()));
-		fileChecker.checkFile();
-
-		LocalDateTime systemTime = fileChecker.getSystemTime();
-		
-		// Initialize system through a facade
-		// Set system time
-		branch.initializeFromMemento(systemTime);
-		
-		boolean success = Main.initializeBranch(branch, fileChecker);
-		// End initialization
-		return success;		
+	public void revertFromMemento() {
+		TaskManMemento memento = mementos.pop();
+		memento.revert(branch);
 	}
 
 	/**

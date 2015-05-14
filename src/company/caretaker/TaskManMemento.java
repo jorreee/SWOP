@@ -1,5 +1,14 @@
 package company.caretaker;
 
+import initialization.TaskManInitFileChecker;
+
+import java.io.StringReader;
+import java.time.LocalDateTime;
+
+import userInterface.Main;
+import company.BranchManager;
+import company.taskMan.resource.user.User;
+
 /**
  * This class represents a system memento. These mementos contain data
  * representing the system at a specific moment in time. The TaskManCaretaker is
@@ -11,6 +20,10 @@ package company.caretaker;
 public class TaskManMemento {
 	
 	private final String taskman;
+	
+	private final User currentUser;
+	
+	private final LocalDateTime currentTime;
 
 	/**
 	 * Construct a memento with a specified string (a TMAN)
@@ -19,17 +32,27 @@ public class TaskManMemento {
 	 *            | A string in the format of a TMAN file, the files used for
 	 *            initialization at system startup
 	 */
-	public TaskManMemento(String taskmanToSave) {
+	public TaskManMemento(String taskmanToSave, User currentUserLoggedIn, LocalDateTime currentSystemTime) {
 		this.taskman = taskmanToSave;
+		this.currentUser = currentUserLoggedIn;
+		this.currentTime = currentSystemTime;
 	}
 	
-	/**
-	 * Retrieve the TMAN file present in this memento
-	 * 
-	 * @return The string stored in the memento
-	 */
-	public String getMementoAsString() {
-		return taskman;
+	public void revert(BranchManager branch) {
+
+		TaskManInitFileChecker fileChecker = new TaskManInitFileChecker(
+				new StringReader(taskman));
+		fileChecker.checkFile();
+
+		LocalDateTime systemTime = fileChecker.getSystemTime();
+		
+		// Initialize system through a facade
+		// Set system time
+		branch.initializeFromMemento(currentTime);
+		
+		Main.initializeBranch(branch, fileChecker);
+		
+		// End initialization
 	}
 
 }
