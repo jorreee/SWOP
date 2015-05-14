@@ -9,29 +9,33 @@ import java.util.Map;
 import java.util.Optional;
 
 import userInterface.IFacade;
-
+import company.caretaker.TaskManCaretaker;
 import company.taskMan.ProjectView;
+import company.taskMan.TaskMan;
 import company.taskMan.project.TaskView;
 import company.taskMan.resource.Reservation;
 import company.taskMan.resource.ResourceView;
 import company.taskMan.resource.user.UserPermission;
 
 public class BranchManager implements IFacade {
-	private List<Branch> branches;
-	private Branch currentBranch;
+	private List<TaskMan> taskMen;
+	private TaskMan currentTaskMan;
 	private Delegator delegator;
+	private final TaskManCaretaker caretaker;
+
 	
 	public BranchManager(LocalDateTime time) {
-		branches = new ArrayList<>();
+		taskMen = new ArrayList<>();
 		delegator = new Delegator();
+		caretaker = new TaskManCaretaker(this);
 	}
 	
 	public void declareBranch(LocalDateTime branchTime, String geographicLocation) {
-		branches.add(new Branch(branchTime, geographicLocation));
+		taskMen.add(new Branch(branchTime, geographicLocation));
 	}
 	
 	public void initializeFromMemento(LocalDateTime time) {
-		currentBranch.initializeFromMemento(time);
+		currentTaskMan.initializeFromMemento(time);
 	}
 	
 	@Override
@@ -239,5 +243,11 @@ public class BranchManager implements IFacade {
 
 	public List<Reservation> getAllReservations() {
 		return currentBranch.getAllReservations();
+	}
+
+	@Override
+	public boolean isLoggedIn() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }
