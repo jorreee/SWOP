@@ -417,4 +417,8 @@ public class TaskView {
 		}
 		return resRes.build();
 	}
+
+	public boolean isDelegated() {
+		return task.isDelegated();
+	}
 }
