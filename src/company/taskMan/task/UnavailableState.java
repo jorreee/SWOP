@@ -28,18 +28,44 @@ public class UnavailableState implements TaskStatus {
 		}
 		task.setTaskStatus(new AvailableState());
 	}
+
+	@Override
+	public void delegate(Task task, Task newTask) 
+			throws IllegalArgumentException, IllegalStateException {
+		if(newTask == null) {
+			throw new IllegalArgumentException("newTask must not be null");
+		}
+		if(task.getPlannedBeginTime() != null) {
+			throw new IllegalStateException("This task is already planned in its current branch and cannot be delegated");
+		}
+		Task oldDelegator = task.getDelegatingTask();
+		task.setDelegatingTask(newTask);
+		try {
+			newTask.setOriginalDelegatedTask(task);
+		} catch(IllegalStateException e) {
+			task.setDelegatingTask(oldDelegator);
+			throw e;
+		}
+		task.setTaskStatus(new DelegatedState());
+	}
 	
 	@Override
 	public void execute(Task task, LocalDateTime beginTime) 
-			throws IllegalArgumentException, IllegalStateException { }
+			throws IllegalArgumentException, IllegalStateException { 
+		throw new IllegalStateException("An unavailable task can't start executing");
+	}
 
 	@Override
 	public void finish(Task task, LocalDateTime endTime) 
-			throws IllegalArgumentException, IllegalStateException { }
+			throws IllegalArgumentException, IllegalStateException { 
+		throw new IllegalStateException("An unavailable task can't finish");
+	}
 
 	@Override
 	public void fail(Task task, LocalDateTime endTime) 
-			throws IllegalArgumentException, IllegalStateException { }
+			throws IllegalArgumentException, IllegalStateException { 
+		throw new IllegalStateException("An unavailable task can't fail");
+	}
 
 	@Override
 	public boolean isAvailable() {
@@ -79,15 +105,6 @@ public class UnavailableState implements TaskStatus {
 	@Override
 	public String toString() {
 		return "Unavailable";
-	}
-
-	@Override
-	public void delegate(Task task, Task newTask) {
-		if(task.getPlannedBeginTime() != null) {
-			throw new IllegalStateException("This task is already planned in its current branch and cannot be delegated");
-		}
-		//TODO delegator connectie maken in Task
-		task.setTaskStatus(new DelegatedState());
 	}
 	
 }

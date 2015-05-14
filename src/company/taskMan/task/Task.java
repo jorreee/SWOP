@@ -711,7 +711,7 @@ public class Task implements Dependant {
 	}
 	
 	public void delegate(Task delegatingTask) {
-		
+		state.delegate(this, delegatingTask);
 	}
 
 	/**

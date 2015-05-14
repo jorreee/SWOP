@@ -27,9 +27,11 @@ public interface TaskStatus {
 	 * 
 	 * @param 	task
 	 * 			   | The task to delegate
-	 * @return	True if the new status is delegated, false if it remained unchanged
+	 * @param   newTask
+	 * 			| the delegating task
 	 */
-	public void delegate(Task task, Task newTask);
+	public void delegate(Task task, Task newTask) 
+			throws IllegalArgumentException, IllegalStateException;
 
 	/**
 	 * Change the status to an executing status
