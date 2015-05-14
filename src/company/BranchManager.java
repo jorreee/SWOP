@@ -8,10 +8,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableList.Builder;
+
 import userInterface.IFacade;
 import company.caretaker.TaskManCaretaker;
 import company.taskMan.ProjectView;
 import company.taskMan.TaskMan;
+import company.taskMan.project.Project;
 import company.taskMan.project.TaskView;
 import company.taskMan.resource.Reservation;
 import company.taskMan.resource.ResourceView;
@@ -31,9 +35,8 @@ public class BranchManager implements IFacade {
 	public BranchManager(LocalDateTime time) {
 		taskMen = new ArrayList<>();
 		delegator = new Delegator();
-		declareTaskMan();
 		caretaker = new TaskManCaretaker(this);
-		currentUser = currentTaskMan.getSuperUser();
+		currentUser = null;
 	}
 	
 //	public void declareBranch(LocalDateTime branchTime, String geographicLocation) {
@@ -44,8 +47,14 @@ public class BranchManager implements IFacade {
 //		this.taskMan = new TaskMan();
 //	}
 	
-	public void declareTaskMan(){
-		TaskMan newTaskMan = new TaskMan();
+	/**
+	 * declares a TaskMan
+	 * 
+	 * @param	location
+	 * 			The location of the branch.
+	 */
+	private void declareTaskMan(String location){
+		TaskMan newTaskMan = new TaskMan(location);
 		taskMen.add(newTaskMan);
 		currentTaskMan = newTaskMan;
 	}
@@ -343,7 +352,62 @@ public class BranchManager implements IFacade {
 
 	@Override
 	public boolean isLoggedIn() {
-		// TODO Auto-generated method stub
-		return false;
+		return currentUser == null && currentTaskMan == null;
 	}
+
+	@Override
+	public List<BranchView> getBranches() {
+		Builder<BranchView> views = ImmutableList.builder();
+		for (TaskMan taskMan : taskMen)
+			views.add(new BranchView(taskMan));
+		return views.build();
+	}
+
+	@Override
+	public void selectBranch(BranchView branch) {
+		TaskMan taskMan = unwrapBranchView(branch);
+		currentTaskMan = taskMan;
+	}
+
+	@Override
+	public void initializeBranch(String geographicLocation) {
+		this.declareTaskMan(geographicLocation);
+	}
+
+	@Override
+	public void logout() {
+		currentUser = null;
+		currentTaskMan = null;
+	}
+
+	@Override
+	public void delegateTask(ProjectView project, TaskView task,
+			BranchView newBranch) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	/**
+	 * Unwraps the BranchView to a TaskMan object
+	 * 
+	 * @param 	view
+	 * 			The view to unwrap
+	 * @return	The TaskMan if if belongs to this BranchManager
+	 * @throws 	NullPointerException
+	 * 			View can't be null
+	 * @throws 	IllegalArgumentException
+	 * 			TaskMan must belong to this manager
+	 */
+	private TaskMan unwrapBranchView(BranchView view) 
+			throws NullPointerException, IllegalArgumentException{
+		if(view == null) {
+			throw new NullPointerException("There was no branch to unwrap!");
+		}
+		TaskMan taskMan = view.unwrap();
+		if(!taskMen.contains(taskMan))
+			throw new IllegalArgumentException("Branch does not belong to this BranchManager!");
+		return taskMan;
+
+	}
+	
 }
