@@ -102,6 +102,8 @@ public interface IFacade {
 	public boolean currentUserHasPermission(UserPermission permission);
 
 	public void delegateTask(ProjectView project, TaskView task, BranchView newBranch);
+	public void delegateTask(ProjectView project, TaskView task, BranchView oldBranch, BranchView newBranch);
 	public BranchView getResponsibleBranch(TaskView task);
+
 
 }

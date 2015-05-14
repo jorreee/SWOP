@@ -29,6 +29,7 @@ import userInterface.requests.ChangeUserRequest;
 import userInterface.requests.Request;
 
 import company.BranchManager;
+import company.BranchView;
 import company.taskMan.ProjectView;
 import company.taskMan.project.TaskView;
 import company.taskMan.resource.ResourceView;
@@ -39,6 +40,8 @@ import company.taskMan.resource.ResourceView;
 public class Main {
 
 	private static boolean initSuccess = true;
+	private static List<Delegation> delegations = new ArrayList<>();
+
 
 	public static void main(String[] args) throws IOException {
 		System.out.println("~~~~~~~~~~~~~~~ TASKMAN ~~~~~~~~~~~~~~~");		
@@ -127,6 +130,7 @@ public class Main {
 		// Get branch init files
 		Queue<String> branches = fileChecker.getBranches();
 		
+		int branchID = 0;
 		String branch = branches.poll();
 		while(branch != null) {
 			FileReader branchReader = new FileReader(file.getParent() + File.separator + branch);
@@ -135,20 +139,28 @@ public class Main {
 			fileChecker = new TaskManInitFileChecker(branchReader);
 			fileChecker.checkFile();
 	
-			success = initializeBranch(facade, fileChecker);
+			success = initializeBranch(facade, fileChecker, branchID);
 			branch = branches.poll();
 			if(!success) {
 				System.out.println("Initialization from tman failed, check your file!");
 				return new BranchManager(LocalDateTime.now());
 			}
+			
+			branchID++;
 		}
 		
 		facade.logout();
 		
+		// Delegate tasks to their responsible branches
+		List<BranchView> branchViews = facade.getBranches();
+		for(Delegation delegation : delegations) {
+			facade.delegateTask(delegation.project, delegation.task, branchViews.get(delegation.oldBranch), branchViews.get(delegation.newBranch));
+		}
+		
 		return facade;
 	}
 
-	public static boolean initializeBranch(IFacade facade, TaskManInitFileChecker fileChecker) {
+	public static boolean initializeBranch(IFacade facade, TaskManInitFileChecker fileChecker, int branchID) {
 		try {
 			String geographicLocation = fileChecker.getGeographicLocation();
 			facade.initializeBranch(geographicLocation);
@@ -159,6 +171,7 @@ public class Main {
 			List<DeveloperCreationData> developers = fileChecker.getDeveloperDataList();
 			List<ReservationCreationData> reservations = fileChecker.getReservationDataList();
 			List<ResourceView> resourceProts = facade.getResourcePrototypes();
+			
 			// Initialize system through a facade
 
 			// Init concrete resources
@@ -248,10 +261,16 @@ public class Main {
 							null);
 
 				}
-				} catch(Exception e) { e.printStackTrace(); failInit("creating task: " + tcd.getDescription() + ", in project " + tcd.getProject() + "!"); }
-
+				
 				List<TaskView> tasks = project.getTasks();
 				creationList.add(tasks.get(tasks.size() - 1));
+				
+				if(tcd.getResponsibleBranch() != null) {
+					delegations.add(new Delegation(project, tasks.get(tasks.size() - 1), branchID, tcd.getResponsibleBranch()));
+				}
+				} catch(Exception e) { e.printStackTrace(); failInit("creating task: " + tcd.getDescription() + ", in project " + tcd.getProject() + "!"); }
+
+
 			}
 			// Init reservations
 			for(ReservationCreationData rcd : reservations) {
@@ -282,4 +301,18 @@ public class Main {
 		initSuccess = false;
 	}
 
+}
+
+class Delegation {
+	protected final ProjectView project;
+	protected final TaskView task;
+	protected final Integer oldBranch;
+	protected final Integer newBranch;
+	
+	protected Delegation(ProjectView project, TaskView task, Integer oldBranch, Integer newBranch) {
+		this.project = project;
+		this.task = task;
+		this.oldBranch = oldBranch;
+		this.newBranch = newBranch;
+	}
 }

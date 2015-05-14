@@ -257,6 +257,7 @@ public class TaskManInitFileChecker extends StreamTokenizer {
 				planning = expectInt();
 			expectLabel("status");
 			TaskStatus status = null;
+			Integer responsibleBranch = null;
 			if (isWord("executing")) {
 				nextToken();
 				status = TaskStatus.EXECUTING;
@@ -266,6 +267,10 @@ public class TaskManInitFileChecker extends StreamTokenizer {
 			} else if (isWord("failed")) {
 				nextToken();
 				status = TaskStatus.FAILED;
+			} else if (isWord("delegating")) {
+				nextToken();
+				status = TaskStatus.DELEGATED;
+				responsibleBranch = expectIntField("responsibleBranch");
 			}
 			LocalDateTime startTime = null;
 			LocalDateTime endTime = null;
@@ -275,15 +280,15 @@ public class TaskManInitFileChecker extends StreamTokenizer {
 			if (status != null && status != TaskStatus.EXECUTING) {
 				endTime = expectDateField("endTime");
 			}
-
+			
 			PlanningCreationData planningData = null;
 			if (planning != null)
 				planningData = planningDataList.get(planning);
 
 			taskDataList.add(new TaskCreationData(project, description,
 					estimatedDuration, acceptableDeviation, alternativeFor,
-					prerequisiteTasks, requiredResources, status, startTime,
-					endTime, planningData));
+					prerequisiteTasks, requiredResources, status, responsibleBranch,
+					startTime, endTime, planningData));
 		}
 
 		expectLabel("reservations");

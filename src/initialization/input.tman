@@ -79,7 +79,6 @@ tasks:
     # a task can be finished, failed, delegated, executing or unspecified (i.e. ongoing)
     status             : finished
     # The branch responsible for the task : index of tman file corresponding to the branch or nothing (this branch is responsible)
-    responsibleBranch  :
     # These time stamps are only required if a task is finished of failed
     startTime          : "2014-01-01 10:00"
     endTime            : "2014-01-02 17:00"
@@ -95,7 +94,6 @@ tasks:
     ### TMAN UPDATE ###
     # Original status was available, but no executing in system yet, so for completion
     status             : executing
-    responsibleBranch  :
     # An executing task requires an actual start time
     startTime          : "2014-01-02 17:00"
 
@@ -108,7 +106,6 @@ tasks:
     requiredResources  :
     planning           :
     status             :
-    responsibleBranch  :
 
   - project            : 1
     description        : "task 3's description"
@@ -121,7 +118,6 @@ tasks:
     ### TMAN UPDATE ###
     # original status was failed, impossible to fail unavailable tasks
     status             :
-    responsibleBranch  :
 
   - project            : 1
     description        : "task 4's description"
@@ -135,8 +131,8 @@ tasks:
     planning           : 2
     ### TMAN UPDATE ###
     # Original status was executing, yet an unavailable task can execute
-    status             :
-    responsibleBranch  :
+    status             : delegated
+    responsibleBranch  : 1
 
   - project            : 2
     description        : "task 5's description"
@@ -149,7 +145,6 @@ tasks:
     ### TMAN UPDATE ###
     # this task is now failed for completion's sake
     status             : failed
-    responsibleBranch  :
     startTime          : "2014-01-01 10:00"
     endTime            : "2014-01-02 17:00"
 
@@ -162,7 +157,6 @@ tasks:
     requiredResources  :
     planning           :
     status             :
-    responsibleBranch  :
 
 reservations:
   - resource:   0
