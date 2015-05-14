@@ -20,7 +20,7 @@ import company.taskMan.resource.user.User;
 import company.taskMan.resource.user.UserPermission;
 
 //TODO Still not done
-
+//TODO Remove currentTime and user 
 /**
  * The Main System that keeps track of the list of projects and the current
  * Time. The TaskMan is also responsible of maintaining a resource manager
@@ -647,6 +647,15 @@ public class TaskMan {
 			}
 		}
 		return conflicts;
+	}
+	
+	/**
+	 * Returns the super user of this branch
+	 * 
+	 * @return	The super user of this branch
+	 */
+	public User getSuperUser(){
+		return resMan.getSuperUser();
 	}
 
 }

@@ -8,12 +8,12 @@ import java.time.LocalDateTime;
  * @author Tim Van Den Broecke, Joran Van de Woestijne, Vincent Van Gestel and
  *         Eli Vangrieken
  */
-public class UnavailableTask implements TaskStatus {
+public class UnavailableState implements TaskStatus {
 
 	/**
 	 * Construct a new unavailable status
 	 */
-	public UnavailableTask() {
+	public UnavailableState() {
 	}
 
 	@Override
@@ -26,7 +26,7 @@ public class UnavailableTask implements TaskStatus {
 		if(task.getPlannedBeginTime() == null) {
 			return; //not planned
 		}
-		task.setTaskStatus(new AvailableTask());
+		task.setTaskStatus(new AvailableState());
 	}
 	
 	@Override
@@ -65,15 +65,29 @@ public class UnavailableTask implements TaskStatus {
 	public boolean isExecuting(){
 		return false;
 	}
+	
+	@Override
+	public boolean isDelegated(){
+		return false;
+	}
 
 	@Override
-	public boolean register(Task task, Dependant d) {
-		return true;
+	public void register(Task task, Dependant d) {
+		task.addDependant(d);
 	}
 	
 	@Override
 	public String toString() {
 		return "Unavailable";
+	}
+
+	@Override
+	public void delegate(Task task, Task newTask) {
+		if(task.getPlannedBeginTime() != null) {
+			throw new IllegalStateException("This task is already planned in its current branch and cannot be delegated");
+		}
+		//TODO delegator connectie maken in Task
+		task.setTaskStatus(new DelegatedState());
 	}
 	
 }

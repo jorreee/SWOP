@@ -104,7 +104,7 @@ public class Task implements Dependant {
 		}
 		this.requiredResources = reqRes;
 
-		this.state = new UnavailableTask();
+		this.state = new UnavailableState();
 
 		this.dependants = new ArrayList<Dependant>();
 		this.prerequisites = new ArrayList<Task>();
@@ -200,12 +200,8 @@ public class Task implements Dependant {
 	 *            | The new dependant
 	 * @return true if the dependant was added
 	 */
-	public boolean register(Dependant t) {
-		if (!isValidDependant(t)) {
-			return false;
-		}
-		dependants.add(t);
-		return state.register(this, t);
+	public void register(Dependant dep) {
+		state.register(this, dep);
 	}
 
 	/**
@@ -1068,5 +1064,19 @@ public class Task implements Dependant {
 	 */
 	public boolean releaseDevelopers() {
 		return plan.setDevelopers(new ArrayList<User>());
+	}
+	
+	/**
+	 * Adds a dependant to the list of dependants.
+	 * @param 	dependant
+	 * 			The dependant to add to the list
+	 * @return	True if the addition was succesful, else false
+	 */
+	public void addDependant(Dependant dependant) throws IllegalArgumentException{
+		if (!isValidDependant(dependant)) {
+			throw new IllegalArgumentException("Invalid Dependant to add");
+		}
+		dependants.add(dependant);
+		
 	}
 }

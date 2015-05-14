@@ -21,6 +21,15 @@ public interface TaskStatus {
 	 *         unchanged
 	 */
 	public void makeAvailable(Task task);
+	
+	/**
+	 * Change the status to a delegated status
+	 * 
+	 * @param 	task
+	 * 			   | The task to delegate
+	 * @return	True if the new status is delegated, false if it remained unchanged
+	 */
+	public void delegate(Task task, Task newTask);
 
 	/**
 	 * Change the status to an executing status
@@ -99,5 +108,11 @@ public interface TaskStatus {
 	 * @return true if the state is executing
 	 */
 	public boolean isExecuting();
+	
+	/**
+	 * Is this state a delegated state
+	 * @return true if the state is delegated
+	 */
+	public boolean isDelegated();
 
 }

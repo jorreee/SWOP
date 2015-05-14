@@ -8,13 +8,13 @@ import java.time.LocalDateTime;
  * @author Tim Van Den Broecke, Joran Van de Woestijne, Vincent Van Gestel and
  *         Eli Vangrieken
  */
-public class ExecutingTask implements TaskStatus{
+public class ExecutingState implements TaskStatus{
 	
 	/**
 	 * Construct a new executing status
 	 * 
 	 */
-	public ExecutingTask() {
+	public ExecutingState() {
 	}
 
 	@Override
@@ -32,7 +32,7 @@ public class ExecutingTask implements TaskStatus{
 		}
 		task.setEndTime(endTime);
 
-		task.setTaskStatus(new FinishedTask());
+		task.setTaskStatus(new FinishedState());
 
 		task.notifyDependants();
 	}
@@ -45,8 +45,7 @@ public class ExecutingTask implements TaskStatus{
 		}
 		task.setEndTime(endTime);
 
-		task.setTaskStatus(new FailedTask());
-		
+		task.setTaskStatus(new FailedState());
 	}
 	
 	/**
@@ -94,12 +93,20 @@ public class ExecutingTask implements TaskStatus{
 	}
 	
 	@Override
+	public boolean isDelegated(){
+		return false;
+	}
+	
+	@Override
 	public String toString() {
 		return "Executing";
 	}
 
 	@Override
-	public boolean register(Task task, Dependant d) {
-		return true;
+	public void register(Task task, Dependant d) {
+		task.addDependant(d);
 	}
+
+	@Override
+	public void delegate(Task task, Task newTask) { }
 }

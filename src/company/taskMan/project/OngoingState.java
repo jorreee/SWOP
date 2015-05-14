@@ -8,13 +8,13 @@ import company.taskMan.task.Task;
  * @author Tim Van Den Broecke, Joran Van de Woestijne, Vincent Van Gestel and
  *         Eli Vangrieken
  */
-public class OngoingProject implements ProjectStatus {
+public class OngoingState implements ProjectStatus {
 	
 	/**
 	 * Construct a new ongoing status
 	 * 
 	 */
-	public OngoingProject() {
+	public OngoingState() {
 	}
 
 	@Override
@@ -26,7 +26,7 @@ public class OngoingProject implements ProjectStatus {
 			}
 		}
 		if(shouldFinish) {
-			project.setProjectStatus(new FinishedProject());
+			project.setProjectStatus(new FinishedState());
 			project.setEndTime(lastTask.getEndTime());
 		}
 	}

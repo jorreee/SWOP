@@ -3,18 +3,18 @@ package company.taskMan.task;
 import java.time.LocalDateTime;
 
 /**
- * This class represents the failed state of a task
+ * This class represents the available state of a task
  * 
  * @author Tim Van Den Broecke, Joran Van de Woestijne, Vincent Van Gestel and
  *         Eli Vangrieken
  */
-public class FailedTask implements TaskStatus {
+public class AvailableState implements TaskStatus {
 	
 	/**
-	 * Construct a new failed status
+	 * Construct a new available status
 	 * 
 	 */
-	public FailedTask() {
+	public AvailableState() {
 	}
 
 	@Override
@@ -22,19 +22,22 @@ public class FailedTask implements TaskStatus {
 	
 	@Override
 	public void execute(Task task, LocalDateTime beginTime) 
-				throws IllegalArgumentException, IllegalStateException { }
+			throws IllegalArgumentException, IllegalStateException {
+		task.setBeginTime(beginTime);
+		task.setTaskStatus(new ExecutingState());
+	}
 
 	@Override
 	public void finish(Task task, LocalDateTime endTime) 
-			throws IllegalArgumentException, IllegalStateException{ }
+			throws IllegalArgumentException, IllegalStateException { }
 
 	@Override
 	public void fail(Task task, LocalDateTime endTime) 
 			throws IllegalArgumentException, IllegalStateException { }
-
+	
 	@Override
 	public boolean isAvailable() {
-		return false;
+		return true;
 	}
 
 	@Override
@@ -49,7 +52,7 @@ public class FailedTask implements TaskStatus {
 
 	@Override
 	public boolean isFailed() {
-		return true;
+		return false;
 	}
 	
 	@Override
@@ -58,13 +61,21 @@ public class FailedTask implements TaskStatus {
 	}
 	
 	@Override
+	public boolean isDelegated(){
+		return false;
+	}
+	
+	@Override
 	public String toString() {
-		return "Failed";
+		return "Available";
 	}
 
 	@Override
-	public boolean register(Task task, Dependant d) {
-		return true;
+	public void register(Task task, Dependant d) {
+		task.addDependant(d);
 	}
+
+	@Override
+	public void delegate(Task task, Task preTask) { }
 
 }
