@@ -57,7 +57,7 @@ public class Delegator {
 				if (!cache.remove(originalDelegation)){
 				delegations.remove(originalDelegation);
 				}
-				// The task gets delegated back to it's original branch
+				// The task gets delegated back to its original branch
 				if (originalDelegation.get().getOriginalBranch() == newB){
 					origB.delegateTask(task, task);
 				}

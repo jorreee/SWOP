@@ -37,8 +37,21 @@ public class Task implements Dependant {
 
 	private Planning plan;
 
+	/**
+	 * ALTERNATIVE-related variables. The connection goes both ways
+	 */
 	private final Task alternativeFor;
 	private Task replacement;
+	
+	/**
+	 * DELEGATION-related variables. The connection goes both ways
+	 */
+	private Task originalDelegatedTask;
+	private Task delegatingTask;
+	
+	/**
+	 * DEPENDENCY-related variables. 
+	 */
 	private ArrayList<Dependant> dependants;
 	private ArrayList<Task> prerequisites;
 
@@ -223,6 +236,14 @@ public class Task implements Dependant {
 	 */
 	public void register(Dependant dep) throws IllegalArgumentException {
 		state.register(this, dep);
+	}
+	
+	public void unregister(Dependant dep) throws IllegalStateException {
+		int depIndex = dependants.indexOf(dep);
+		if(depIndex < 0) {
+			throw new IllegalStateException("The dependant wasn't registered on this task");
+		}
+		dependants.remove(depIndex);
 	}
 
 	/**
@@ -551,6 +572,37 @@ public class Task implements Dependant {
 	public Task getReplacement() {
 		return replacement;
 	}
+	
+	public Task getOriginalDelegatedTask() {
+		return originalDelegatedTask;
+	}
+	
+	protected void setOriginalDelegatedTask(Task original) 
+			throws IllegalArgumentException, IllegalStateException {
+		if(original == null) {
+			throw new IllegalArgumentException("original must not be null");
+		}
+		if(originalDelegatedTask != null) {
+			throw new IllegalStateException("This task is already delegating some task!");
+		}
+		this.originalDelegatedTask = original;
+	}
+	
+	public Task getDelegatingTask() {
+		return delegatingTask;
+	}
+	
+	/**
+	 * Informs this task of which Task is delegating it. If the parameter is 
+	 * null, this task will take matters into its own hands again.
+	 * 
+	 * @param delegating
+	 * 			| the task that is delegating it
+	 */
+	protected void setDelegatingTask(Task delegating) {
+		delegating.register(this);
+		this.delegatingTask = delegating;
+	}
 
 	/**
 	 * Get the longest possible duration that a series of tasks (this one and
@@ -651,11 +703,15 @@ public class Task implements Dependant {
 	 *            | The alternative for this task
 	 * @throws IllegalStateException 
 	 */
-	public void replaceWith(Task t) throws IllegalStateException {
+	protected void replaceWith(Task t) throws IllegalStateException {
 		if (!canBeReplaced()) {
 			throw new IllegalStateException("This task can not be replaced");
 		}
 		this.replacement = t;
+	}
+	
+	public void delegate(Task delegatingTask) {
+		
 	}
 
 	/**
