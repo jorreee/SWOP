@@ -236,7 +236,7 @@ public class UseCase8RunningASimulationTest {
 		assertEquals(3,taskManager.getProjects().size());
 		assertEquals(5,taskManager.getProjects().get(0).getTasks().size());
 		//Revert the memento
-		assertTrue(taskManager.revertFromMemento());
+		taskManager.revertFromMemento();
 		assertEquals(3,taskManager.getProjects().size());
 		project0 = taskManager.getProjects().get(0);
 		//Check the first project
@@ -273,7 +273,7 @@ public class UseCase8RunningASimulationTest {
 		assertEquals(3,taskManager.getProjects().size());
 		assertEquals(5,taskManager.getProjects().get(0).getTasks().size());
 		//Discard the memento
-		assertTrue(taskManager.discardMemento());
+		taskManager.discardMemento();
 		assertEquals(3,taskManager.getProjects().size());
 		//Check the first project
 		assertEquals(5,taskManager.getProjects().get(0).getTasks().size());
