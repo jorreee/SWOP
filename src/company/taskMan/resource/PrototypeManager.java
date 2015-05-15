@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import userInterface.TaskManException;
+import exceptions.UnexpectedViewContentException;
 
 
 public class PrototypeManager {
@@ -31,10 +31,9 @@ public class PrototypeManager {
 	 */
 	public void addRequirementsToResource(List<ResourceView> reqToAdd, ResourceView prototype) 
 			throws IllegalArgumentException {
-		// TODO niet meer casten
-		ResourcePrototype rprot = (ResourcePrototype) prototype.unwrap();
+		ResourcePrototype rprot = unwrap(prototype);
 		for (ResourceView req : reqToAdd) {
-			ResourcePrototype unwrapReq = (ResourcePrototype) req.unwrap();
+			ResourcePrototype unwrapReq = unwrap(req);
 			rprot.addRequiredResource(unwrapReq);
 		}
 	}
@@ -50,28 +49,43 @@ public class PrototypeManager {
 	 */
 	public void addConflictsToResource(List<ResourceView> conToAdd, ResourceView prototype) 
 			throws IllegalArgumentException {
-		// TODO niet meer casten
-		ResourcePrototype rprot = (ResourcePrototype) prototype.unwrap();
-		for (ResourceView req : conToAdd) {
-			ResourcePrototype unwrapReq = (ResourcePrototype) req.unwrap();
-			rprot.addConflictingResource(unwrapReq);
+		ResourcePrototype rprot = unwrap(prototype);
+		for (ResourceView con : conToAdd) {
+			ResourcePrototype unwrapCon = unwrap(con);
+			rprot.addConflictingResource(unwrapCon);
 		}
+	}
+	
+	private ResourcePrototype unwrap(ResourceView view) 
+			throws IllegalArgumentException {
+		if(view == null) {
+			throw new IllegalArgumentException("view must not be null");
+		}
+		ResourcePrototype r;
+		try {
+			r = (ResourcePrototype) view.unwrap();
+			if(!prototypes.contains(r)) {
+				throw new UnexpectedViewContentException("The resourceView didn't contain a valid resourcePrototype");
+			}
+		} catch(ClassCastException e) {
+			throw new UnexpectedViewContentException("The resourceView didn't contain a resourcePrototype");
+		}
+		return r;
 	}
 	
 	public void createResourcePrototype(String name,
 			Optional<LocalTime> availabilityStart,
-			Optional<LocalTime> availabilityEnd) throws TaskManException{	
+			Optional<LocalTime> availabilityEnd) 
+					throws IllegalArgumentException {	
 		//	currentTaskMan.createResourcePrototype(name,availabilityStart,availabilityEnd);
 		if(!isValidPeriod(availabilityStart, availabilityEnd)) {
-			throw new TaskManException(new IllegalArgumentException("Invalid time period"));
+			throw new IllegalArgumentException("Invalid time period");
 		}
 		if(name == null) {
-			throw new TaskManException(new IllegalArgumentException("Null is not allowed as name"));
+			throw new IllegalArgumentException("name must not be null");
 		}
 
-		// Create resourcePrototype (should happen before applying conflicting resources,
-		// since a resource can conflict with itself)
-		ResourcePrototype resprot = null;
+		ResourcePrototype resprot;
 		if(!availabilityStart.isPresent() && !availabilityEnd.isPresent()) {
 			resprot = new ResourcePrototype(name, null);
 		} else {

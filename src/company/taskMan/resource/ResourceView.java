@@ -28,8 +28,13 @@ public class ResourceView {
 		this.resource = resource;
 	}
 	
-	// TODO unwrap mooier, mooie ;) xxx
-
+	/**
+	 * Returns the containing resource
+	 */
+	public Resource unwrap(){
+		return resource;
+	}
+	
 	/**
 	 * Retrieve the name of the resource
 	 * 
@@ -130,9 +135,5 @@ public class ResourceView {
 		} catch(ClassCastException e) {
 			return false;
 		}
-	}
-	
-	public Resource unwrap(){
-		return resource;
 	}
 }

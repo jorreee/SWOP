@@ -40,6 +40,9 @@ public class TaskView {
 		this.task = t;
 	}
 	
+	/**
+	 * Returns the contained task 
+	 */
 	protected Task unwrap() {
 		return task;
 	}

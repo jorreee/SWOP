@@ -18,12 +18,10 @@ import userInterface.TaskManException;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
-
 import company.caretaker.TaskManCaretaker;
 import company.taskMan.ProjectView;
 import company.taskMan.TaskMan;
 import company.taskMan.project.TaskView;
-import company.taskMan.resource.AvailabilityPeriod;
 import company.taskMan.resource.PrototypeManager;
 import company.taskMan.resource.Reservation;
 import company.taskMan.resource.Resource;
@@ -31,23 +29,23 @@ import company.taskMan.resource.ResourcePrototype;
 import company.taskMan.resource.ResourceView;
 import company.taskMan.resource.user.User;
 import company.taskMan.resource.user.UserPermission;
+
 import exceptions.ResourceUnavailableException;
-import exceptions.UnexpectedViewContentException;
 
 //TODO list of prototypes in branchMa
 public class BranchManager implements IFacade {
 	private List<TaskMan> taskMen;
 	private TaskMan currentTaskMan;
-	private Delegator delegator;
+//	private Delegator delegator;
 	private LocalDateTime currentTime;
 	private User currentUser;
-	private PrototypeManager protMan; // FIXME DIT MOET BETER, PLEASE!
+	private PrototypeManager protMan; //TODO protten laten
 	private final TaskManCaretaker caretaker;
 
 	
 	public BranchManager(LocalDateTime time) {
 		taskMen = new ArrayList<>();
-		delegator = new Delegator();
+//		delegator = new Delegator();
 		caretaker = new TaskManCaretaker(this);
 		currentUser = null;
 		protMan = new PrototypeManager();
@@ -278,10 +276,16 @@ public class BranchManager implements IFacade {
 	public void createResourcePrototype(String name,
 			Optional<LocalTime> availabilityStart,
 			Optional<LocalTime> availabilityEnd) throws TaskManException{
-			
-		protMan.createResourcePrototype(name,availabilityStart,availabilityEnd);
+		try{
+			protMan.createResourcePrototype(name,availabilityStart,availabilityEnd);
+		} catch(IllegalArgumentException e) {
+			throw new TaskManException(e);
+		}
 	}
 
+	/**
+	 * declares a concrete resource for the current branch
+	 */
 	@Override
 	public void declareConcreteResource(String name, ResourceView fromPrototype) {
 		currentTaskMan.declareConcreteResource(name,fromPrototype);
@@ -464,15 +468,25 @@ public class BranchManager implements IFacade {
 
 	@Override
 	public void addRequirementsToResource(List<ResourceView> resourcesToAdd,
-			ResourceView prototype) {
-		protMan.addRequirementsToResource(resourcesToAdd, prototype);
+			ResourceView prototype) 
+			throws IllegalArgumentException {
+		try {
+			protMan.addRequirementsToResource(resourcesToAdd, prototype);
+		} catch(IllegalArgumentException e) {
+			throw new TaskManException(e);
+		}
 		
 	}
 
 	@Override
 	public void addConflictsToResource(List<ResourceView> resourcesToAdd,
-			ResourceView prototype) {
-		protMan.addConflictsToResource(resourcesToAdd, prototype);
+			ResourceView prototype) 
+			throws IllegalArgumentException {
+		try {
+			protMan.addConflictsToResource(resourcesToAdd, prototype);
+		} catch(IllegalArgumentException e) {
+			throw new TaskManException(e);
+		}
 		
 	}
 	
