@@ -18,18 +18,19 @@ import userInterface.TaskManException;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
+
 import company.caretaker.TaskManCaretaker;
 import company.taskMan.ProjectView;
 import company.taskMan.TaskMan;
 import company.taskMan.project.TaskView;
 import company.taskMan.resource.AvailabilityPeriod;
+import company.taskMan.resource.PrototypeManager;
 import company.taskMan.resource.Reservation;
 import company.taskMan.resource.Resource;
 import company.taskMan.resource.ResourcePrototype;
 import company.taskMan.resource.ResourceView;
 import company.taskMan.resource.user.User;
 import company.taskMan.resource.user.UserPermission;
-
 import exceptions.ResourceUnavailableException;
 import exceptions.UnexpectedViewContentException;
 
@@ -40,7 +41,7 @@ public class BranchManager implements IFacade {
 	private Delegator delegator;
 	private LocalDateTime currentTime;
 	private User currentUser;
-	private List<ResourcePrototype> prototypes; // FIXME DIT MOET BETER, PLEASE!
+	private PrototypeManager protMan; // FIXME DIT MOET BETER, PLEASE!
 	private final TaskManCaretaker caretaker;
 
 	
@@ -49,7 +50,7 @@ public class BranchManager implements IFacade {
 		delegator = new Delegator();
 		caretaker = new TaskManCaretaker(this);
 		currentUser = null;
-		this.prototypes = new ArrayList<>();
+		protMan = new PrototypeManager();
 		currentTime = time;
 	}
 	
@@ -277,23 +278,8 @@ public class BranchManager implements IFacade {
 	public void createResourcePrototype(String name,
 			Optional<LocalTime> availabilityStart,
 			Optional<LocalTime> availabilityEnd) throws TaskManException{
-//		currentTaskMan.createResourcePrototype(name,availabilityStart,availabilityEnd);
-		if(!isValidPeriod(availabilityStart, availabilityEnd)) {
-			throw new TaskManException(new IllegalArgumentException("Invalod time period"));
-		}
-		if(name == null) {
-			throw new TaskManException(new IllegalArgumentException("Null is not allowed as name"));
-		}
-		
-		// Create resourcePrototype (should happen before applying conflicting resources,
-		// since a resource can conflict with itself)
-		ResourcePrototype resprot = null;
-		if(!availabilityStart.isPresent() && !availabilityEnd.isPresent()) {
-			resprot = new ResourcePrototype(name, null);
-		} else {
-			resprot = new ResourcePrototype(name, new AvailabilityPeriod(availabilityStart.get(), availabilityEnd.get()));
-		}
-		prototypes.add(resprot);
+			
+		protMan.createResourcePrototype(name,availabilityStart,availabilityEnd);
 	}
 
 	@Override
@@ -328,7 +314,7 @@ public class BranchManager implements IFacade {
 	@Override
 	public List<ResourceView> getResourcePrototypes() {
 		ImmutableList.Builder<ResourceView> prots = ImmutableList.builder();
-		for(Resource prot : prototypes) {
+		for(Resource prot : protMan.getPrototypes()) {
 			prots.add(new ResourceView(prot));
 		}
 		return prots.build();
@@ -374,63 +360,8 @@ public class BranchManager implements IFacade {
 		}
 	}
 	
-	/**
-	 * Unwrap a resourceView to its resource prototype contents. This method
-	 * will return null if the resource cannot be found
-	 * 
-	 * @param view
-	 *            | The given resource prototype
-	 * @return the resource prototype found in the resourceView
-	 * @throws UnexpectedViewContentException, IllegalArgumentException
-	 */
-	private ResourcePrototype unWrapResourcePrototypeView(ResourceView view) 
-			throws TaskManException {
-		if(view == null) {
-			throw new TaskManException(new IllegalArgumentException("view must not be null"));
-		}
-		for(ResourcePrototype prototype : prototypes) {
-			if (view.hasAsResource(prototype)) {
-				return prototype;
-			}
-		}
-		throw new TaskManException(new UnexpectedViewContentException("View didn't contain a valid resource Prototype"));
-	}
-
-	/**
-	 * Add resource requirements to a prototype
-	 * 
-	 * @param reqToAdd
-	 *            | The new requirements to add
-	 * @param prototype
-	 *            | The prototype that the new requirements should be added to
-	 * @throws IllegalArgumentException
-	 */
-	public void addRequirementsToResource(List<ResourceView> reqToAdd, ResourceView prototype) 
-			throws IllegalArgumentException {
-		ResourcePrototype rprot = unWrapResourcePrototypeView(prototype);
-		for (ResourceView req : reqToAdd) {
-			ResourcePrototype unwrapReq = unWrapResourcePrototypeView(req);
-			rprot.addRequiredResource(unwrapReq);
-		}
-	}
 	
-	/**
-	 * Add resource conflicts to a prototype
-	 * 
-	 * @param conToAdd
-	 *            | The new conflicts to add
-	 * @param prototype
-	 *            | The prototype that the new conflicts should be added to
-	 * @throws IllegalArgumentException
-	 */
-	public void addConflictsToResource(List<ResourceView> conToAdd, ResourceView prototype) 
-			throws IllegalArgumentException {
-		ResourcePrototype rprot = unWrapResourcePrototypeView(prototype);
-		for (ResourceView req : conToAdd) {
-			ResourcePrototype unwrapReq = unWrapResourcePrototypeView(req);
-			rprot.addConflictingResource(unwrapReq);
-		}
-	}
+
 	
 	/**
 	 * Check whether or not this user has a specific credential
@@ -469,7 +400,7 @@ public class BranchManager implements IFacade {
 
 	@Override
 	public void initializeBranch(String geographicLocation) throws IllegalArgumentException {
-		this.declareTaskMan(geographicLocation, prototypes);
+		this.declareTaskMan(geographicLocation, protMan.getPrototypes());
 	}
 
 	@Override
@@ -514,27 +445,7 @@ public class BranchManager implements IFacade {
 		return null;
 	}
 	
-	/**
-	 * Check whether the given availability period start and end times are valid
-	 * 
-	 * @param start
-	 *            | the optional startTime that should be valid
-	 * @param end
-	 *            | the optional endTime that should be valid
-	 * @return True if the given timestamps define a valid availability period
-	 */
-	private boolean isValidPeriod(Optional<LocalTime> start, Optional<LocalTime> end) {
-		if(start.isPresent() && !end.isPresent()) {
-			return false;
-		}
-		if(!start.isPresent() && end.isPresent()) {
-			return false;
-		}
-		if(!start.isPresent() && !end.isPresent()) {
-			return true;
-		}
-		return !end.get().isBefore(start.get());
-	}
+	
 
 	@Override
 	public void delegateTask(ProjectView project, TaskView task,
@@ -546,9 +457,23 @@ public class BranchManager implements IFacade {
 	public void initializeFromMemento(LocalDateTime systemTime, TaskManInitFileChecker fileChecker) {
 		currentTime = systemTime;
 		
-		currentTaskMan = new TaskMan(fileChecker.getGeographicLocation(), prototypes);
+		currentTaskMan = new TaskMan(fileChecker.getGeographicLocation(), protMan.getPrototypes());
 		
 		Main.initializeBranch(this, fileChecker, taskMen.indexOf(currentTaskMan));
+	}
+
+	@Override
+	public void addRequirementsToResource(List<ResourceView> resourcesToAdd,
+			ResourceView prototype) {
+		protMan.addRequirementsToResource(resourcesToAdd, prototype);
+		
+	}
+
+	@Override
+	public void addConflictsToResource(List<ResourceView> resourcesToAdd,
+			ResourceView prototype) {
+		protMan.addConflictsToResource(resourcesToAdd, prototype);
+		
 	}
 	
 }

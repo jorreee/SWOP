@@ -131,4 +131,8 @@ public class ResourceView {
 			return false;
 		}
 	}
+	
+	public Resource unwrap(){
+		return resource;
+	}
 }
