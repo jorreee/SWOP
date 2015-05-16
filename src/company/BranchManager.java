@@ -415,14 +415,17 @@ public class BranchManager implements IFacade {
 	@Override
 	public void delegateTask(ProjectView project, TaskView task,
 			BranchView newBranch) {
-//		currentTaskMan.delegateTask(project,task); TODO
-		
+		TaskMan taskMan = unwrapBranchView(newBranch);  
+		currentTaskMan.delegateTask(project, task, taskMan);
 	}
 	
 	@Override
 	public void delegateTask(ProjectView project, TaskView task,
 			BranchView oldBranch, BranchView newBranch) {
-		// TODO Auto-generated method stub
+		TaskMan oldTman = unwrapBranchView(oldBranch);
+		TaskMan newTman = unwrapBranchView(newBranch);
+		
+		oldTman.delegateTask(project, task, newTman);
 		
 	}
 	

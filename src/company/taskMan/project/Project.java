@@ -11,6 +11,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import company.BranchView;
 import company.taskMan.Delegator;
+import company.taskMan.TaskMan;
 import company.taskMan.resource.ResourceManager;
 import company.taskMan.resource.ResourceView;
 import company.taskMan.task.Dependant;
@@ -652,6 +653,12 @@ public class Project implements Dependant {
 
 	public Optional<BranchView> getResponsibleBranch(Delegator delegator, TaskView task) {
 		return delegator.getResponsibleBranch(task.unwrap());
+	}
+
+	public void delegateTask(Delegator delegator, TaskView task,
+			TaskMan origBranch, TaskMan newBranch) {
+		Task t = unwrapTaskView(task);
+		delegator.delegateTask(t, newBranch, origBranch);
 	}
 
 }

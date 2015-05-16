@@ -698,4 +698,10 @@ public class TaskMan {
 	public Optional<BranchView> getResponsibleBranch(ProjectView project, TaskView task) {
 		return project.unwrap().getResponsibleBranch(delegator, task);
 	}
+
+	public void delegateTask(ProjectView project, TaskView task,
+			TaskMan newTman) {
+		Project p = unwrapProjectView(project);
+		p.delegateTask(delegator, task, this, newTman);
+	}
 }
