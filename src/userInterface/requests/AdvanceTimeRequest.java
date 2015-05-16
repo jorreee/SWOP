@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.time.LocalDateTime;
 
 import userInterface.IFacade;
+import userInterface.TaskManException;
 
 public class AdvanceTimeRequest extends Request {
 
@@ -34,6 +35,8 @@ public class AdvanceTimeRequest extends Request {
 				// Invalid timestamp
 				return "Time advanced to " + time.toString();
 				// Use Case ends
+			} catch(TaskManException e) {
+				System.out.println(e.getMessage());
 			} catch(Exception e) {
 				System.out.println("Invalid input, try again");
 			}

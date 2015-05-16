@@ -11,6 +11,7 @@ import company.taskMan.ProjectView;
 import company.taskMan.project.TaskView;
 import company.taskMan.resource.ResourceView;
 import userInterface.IFacade;
+import userInterface.TaskManException;
 
 public class CreateTaskRequest extends Request {
 
@@ -20,27 +21,27 @@ public class CreateTaskRequest extends Request {
 
 	@Override
 	public String execute() {
-		List<ProjectView> projects = facade.getProjects();
-		int pi = 0;
-		for(ProjectView project : projects) {
-			System.out.println("[" + pi + "] Project " + project.getName());
-			pi++;
-		}
-		
-		List<ResourceView> resourceTypes = facade.getResourcePrototypes();
-		for(int i = 0 ; i < resourceTypes.size() ; i++) {
-			System.out.println(i + ": Resouce: " + resourceTypes.get(i).getName()
-					+ ", total quantity " + facade.getConcreteResourcesForPrototype(resourceTypes.get(i)).size());
-		}
-		
 		while(true) {
+			List<ProjectView> projects = facade.getProjects();
+			int pi = 0;
+			for(ProjectView project : projects) {
+				System.out.println("[" + pi + "] Project " + project.getName());
+				pi++;
+			}
+
+			List<ResourceView> resourceTypes = facade.getResourcePrototypes();
+			for(int i = 0 ; i < resourceTypes.size() ; i++) {
+				System.out.println(i + ": Resouce: " + resourceTypes.get(i).getName()
+						+ ", total quantity " + facade.getConcreteResourcesForPrototype(resourceTypes.get(i)).size());
+			}
+
 			try {
 				String[] creationForm = { "Project ID", "Description",
 						"Estimated Duration (in minutes)",
 						"Acceptable Deviation (a precentage)",
 						"Alternative For (-1 for no alternative)",
 						"Prerequisite Tasks (Seperated by spaces, nothing for no prerequisites)",
-						"Desired resources (Resource type and quantity separated by spaces, nothing for no resources)"};
+				"Desired resources (Resource type and quantity separated by spaces, nothing for no resources)"};
 				String[] input = new String[creationForm.length];
 				for(int i=0 ; i < creationForm.length ; i++) {
 					// Show task creation form
@@ -56,7 +57,7 @@ public class CreateTaskRequest extends Request {
 
 				ProjectView project = projects.get(Integer.parseInt(input[0]));
 				List<TaskView> tasks = project.getTasks();
-				
+
 				// System updates details
 				ArrayList<TaskView> prereqList = new ArrayList<>();
 				for(String prereq : input[5].split(" ")) {
@@ -64,22 +65,24 @@ public class CreateTaskRequest extends Request {
 						prereqList.add(tasks.get(Integer.parseInt(prereq)));
 					}
 				}
-				
+
 				HashMap<ResourceView, Integer> reqRes = new HashMap<>();
 				Iterator<String> resourceInput = Arrays.asList(input[6].split(" ")).iterator();
 				while(resourceInput.hasNext()) {
-					Integer type = Integer.parseInt(resourceInput.next());
+					String next = resourceInput.next();
+					if(next.equals("")) { break; }
+					Integer type = Integer.parseInt(next);
 					Integer quantity = Integer.parseInt(resourceInput.next());
 					reqRes.put(resourceTypes.get(type), quantity);
 				}
-				
+
 				//-1 mag geen error geven
 				TaskView altFor = null;
 				int altForID = Integer.parseInt(input[4]);
 				if(altForID >= 0) {
 					altFor = tasks.get(altForID);
 				}
-				
+
 				// createTask(ProjectView project, String description,
 				// int estimatedDuration, int acceptableDeviation,
 				// List<TaskView> prerequisiteTasks,
@@ -91,11 +94,12 @@ public class CreateTaskRequest extends Request {
 						prereqList, reqRes, altFor);
 
 				return "Task Created";
+			} catch(TaskManException e) {
+				System.out.println(e.getMessage());
 			} catch(Exception e) {
 				e.printStackTrace();
 				System.out.println("Invalid input\n");
 			}
-			return null;
 		}
 	}
 

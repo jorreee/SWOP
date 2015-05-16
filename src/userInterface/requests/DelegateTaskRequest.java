@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.util.List;
 
 import userInterface.IFacade;
+import userInterface.TaskManException;
 import company.BranchView;
 import company.taskMan.ProjectView;
 import company.taskMan.project.TaskView;
@@ -52,7 +53,7 @@ public class DelegateTaskRequest extends Request {
 				// SELECT NEW BRANCH
 				List<BranchView> branches = facade.getBranches();
 
-				System.out.println("Please select your branch (type quit to exit)");
+				System.out.println("Please select the branch to delegate to (type quit to exit)");
 				for(int i = 0 ; i < branches.size() ; i++) {
 					System.out.println("<" + i + "> The " + branches.get(i).getGeographicLocation() + " Branch");
 				}
@@ -68,6 +69,8 @@ public class DelegateTaskRequest extends Request {
 
 				facade.delegateTask(project, task, newBranch);
 				return "Task " + task.getDescription() + " was delegated to the " + newBranch.getGeographicLocation() + " Branch!";
+			} catch(TaskManException e) {
+				System.out.println(e.getMessage());
 			} catch(Exception e) {
 				e.printStackTrace();
 				System.out.println("Invalid selection! Try again");

@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.time.LocalDateTime;
 
 import userInterface.IFacade;
+import userInterface.TaskManException;
 
 public class CreateProjectRequest extends Request {
 
@@ -33,6 +34,8 @@ public class CreateProjectRequest extends Request {
 				LocalDateTime due = LocalDateTime.of(Integer.parseInt(dueBits[0]), Integer.parseInt(dueBits[1]), Integer.parseInt(dueBits[2]), Integer.parseInt(dueBits[3]), Integer.parseInt(dueBits[4]));
 				facade.createProject(input[0], input[1], due);
 				return "Project Created";
+			} catch(TaskManException e) {
+				System.out.println(e.getMessage());
 			} catch(Exception e) {
 				System.out.println("Invalid input");
 			}

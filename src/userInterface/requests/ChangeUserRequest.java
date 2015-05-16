@@ -4,7 +4,7 @@ import java.io.BufferedReader;
 import java.util.List;
 
 import userInterface.IFacade;
-
+import userInterface.TaskManException;
 import company.BranchView;
 import company.taskMan.resource.ResourceView;
 
@@ -41,6 +41,8 @@ public class ChangeUserRequest extends Request{
 				}
 
 				facade.selectBranch(branches.get(Integer.parseInt(userInput)));
+			} catch(TaskManException e) {
+				System.out.println(e.getMessage());
 			} catch(Exception e) {
 				e.printStackTrace();
 				System.out.println("Invalid branch, try again");
@@ -67,6 +69,8 @@ public class ChangeUserRequest extends Request{
 
 				facade.changeToUser(possibleUsers.get(Integer.valueOf(userInput))); // Valid User
 				return "Now logged in as " + facade.getCurrentUser().getName();
+			} catch(TaskManException e) {
+				System.out.println(e.getMessage());
 			} catch(Exception e) {
 				e.printStackTrace();
 				System.out.println("Invalid username, try again");

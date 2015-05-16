@@ -13,6 +13,7 @@ import company.taskMan.ProjectView;
 import company.taskMan.project.TaskView;
 import company.taskMan.resource.ResourceView;
 import userInterface.IFacade;
+import userInterface.TaskManException;
 
 public class PlanTaskRequest extends Request {
 
@@ -92,6 +93,8 @@ public class PlanTaskRequest extends Request {
 				}
 				// If task planning needs to be moved, restart process.
 				while (shouldMove == true);
+			} catch(TaskManException e) {
+				System.out.println(e.getMessage());
 			} catch(Exception e) {
 				e.printStackTrace();
 				System.out.println("Invalid input, try again");
@@ -223,6 +226,8 @@ public class PlanTaskRequest extends Request {
 
 
 				return planning;
+			} catch(TaskManException e) {
+				System.out.println(e.getMessage());
 			} catch(Exception e) {
 				System.out.println("Invalid input");
 			}

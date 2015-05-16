@@ -7,6 +7,7 @@ import java.util.List;
 import company.taskMan.ProjectView;
 import company.taskMan.project.TaskView;
 import userInterface.IFacade;
+import userInterface.TaskManException;
 
 public class UpdateTaskStatusRequest extends Request {
 
@@ -101,6 +102,8 @@ public class UpdateTaskStatusRequest extends Request {
 				}
 				}
 
+			} catch(TaskManException e) {
+				System.out.println(e.getMessage());
 			} catch(Exception e) {
 				System.out.println("Invalid input");
 			}

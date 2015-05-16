@@ -7,6 +7,7 @@ import java.util.Map;
 import company.taskMan.ProjectView;
 import company.taskMan.project.TaskView;
 import userInterface.IFacade;
+import userInterface.TaskManException;
 
 public class ResolvePlanningConflictRequest extends Request {
 
@@ -89,6 +90,8 @@ public class ResolvePlanningConflictRequest extends Request {
 						} else {
 							shouldMove = false;
 						}
+					} catch(TaskManException e) {
+						System.out.println(e.getMessage());
 					} catch(Exception e) {
 						e.printStackTrace();
 						System.out.println("Failed to plan task, try again");
