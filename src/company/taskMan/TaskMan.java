@@ -10,6 +10,7 @@ import java.util.Optional;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
+import company.BranchView;
 import company.taskMan.project.Project;
 import company.taskMan.project.TaskView;
 import company.taskMan.resource.Reservation;
@@ -38,6 +39,7 @@ public class TaskMan {
 	//private LocalDateTime currentTime;
 	//private User currentUser;
 	private ResourceManager resMan;
+	private Delegator delegator;
 	private final String geographicLocation;
 
 	/**
@@ -52,6 +54,7 @@ public class TaskMan {
 			throw new IllegalArgumentException("The given location is null");
 		projectList = new ArrayList<>();
 		resMan = new ResourceManager(prototypes);
+		delegator = new Delegator();
 		geographicLocation = location;
 	}
 	
@@ -673,5 +676,9 @@ public class TaskMan {
 	 */
 	public User getUser(ResourceView user){
 		return resMan.unWrapUserView(user); //TODO public unwrap
+	}
+
+	public Optional<BranchView> getResponsibleBranch(ProjectView project, TaskView task) {
+		return project.unwrap().getResponsibleBranch(delegator, task);
 	}
 }

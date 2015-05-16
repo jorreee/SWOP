@@ -5,15 +5,18 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
-
+import company.BranchView;
+import company.taskMan.Delegator;
 import company.taskMan.resource.ResourceManager;
 import company.taskMan.resource.ResourceView;
 import company.taskMan.task.Dependant;
 import company.taskMan.task.Task;
 import company.taskMan.util.TimeSpan;
+
 import exceptions.ResourceUnavailableException;
 import exceptions.UnexpectedViewContentException;
 
@@ -633,6 +636,10 @@ public class Project implements Dependant {
 			}
 		}
 		return conflictTasks;
+	}
+
+	public Optional<BranchView> getResponsibleBranch(Delegator delegator, TaskView task) {
+		return delegator.getResponsibleBranch(task.unwrap());
 	}
 
 }

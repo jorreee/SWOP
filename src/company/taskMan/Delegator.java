@@ -1,4 +1,4 @@
-package company;
+package company.taskMan;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -7,11 +7,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-
-
-
-
-import company.taskMan.TaskMan;
+import company.BranchView;
 import company.taskMan.task.Task;
 
 public class Delegator {
@@ -119,6 +115,15 @@ public class Delegator {
 		
 		public TaskMan getOriginalBranch(){
 			return originalBranch;
+		}
+	}
+
+	public Optional<BranchView> getResponsibleBranch(Task task) {
+		Optional<Delegation> delegation = getDelegationContainingTask(task);
+		if(delegation.isPresent()) {
+			return Optional.of(new BranchView(delegation.get().newBranch));
+		} else {
+			return Optional.empty();
 		}
 	}
 }

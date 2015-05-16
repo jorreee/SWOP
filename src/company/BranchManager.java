@@ -32,11 +32,9 @@ import company.taskMan.resource.user.UserPermission;
 
 import exceptions.ResourceUnavailableException;
 
-//TODO list of prototypes in branchMa
 public class BranchManager implements IFacade {
 	private List<TaskMan> taskMen;
 	private TaskMan currentTaskMan;
-//	private Delegator delegator;
 	private LocalDateTime currentTime;
 	private User currentUser;
 	private PrototypeManager protMan; //TODO protten laten
@@ -45,7 +43,6 @@ public class BranchManager implements IFacade {
 	
 	public BranchManager(LocalDateTime time) {
 		taskMen = new ArrayList<>();
-//		delegator = new Delegator();
 		caretaker = new TaskManCaretaker(this);
 		currentUser = null;
 		protMan = new PrototypeManager();
@@ -364,9 +361,6 @@ public class BranchManager implements IFacade {
 		}
 	}
 	
-	
-
-	
 	/**
 	 * Check whether or not this user has a specific credential
 	 * 
@@ -420,6 +414,13 @@ public class BranchManager implements IFacade {
 		
 	}
 	
+	@Override
+	public void delegateTask(ProjectView project, TaskView task,
+			BranchView oldBranch, BranchView newBranch) {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	/**
 	 * Unwraps the BranchView to a TaskMan object
 	 * 
@@ -444,20 +445,10 @@ public class BranchManager implements IFacade {
 	}
 
 	@Override
-	public BranchView getResponsibleBranch(TaskView task) {
-		// TODO Auto-generated method stub
-		return null;
+	public Optional<BranchView> getResponsibleBranch(ProjectView project, TaskView task, BranchView originalBranch) {
+		return originalBranch.unwrap().getResponsibleBranch(project, task);
 	}
 	
-	
-
-	@Override
-	public void delegateTask(ProjectView project, TaskView task,
-			BranchView oldBranch, BranchView newBranch) {
-		// TODO Auto-generated method stub
-		
-	}
-
 	public void initializeFromMemento(LocalDateTime systemTime, TaskManInitFileChecker fileChecker) {
 		currentTime = systemTime;
 		

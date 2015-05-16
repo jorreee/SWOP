@@ -103,7 +103,7 @@ public interface IFacade {
 
 	public void delegateTask(ProjectView project, TaskView task, BranchView newBranch);
 	public void delegateTask(ProjectView project, TaskView task, BranchView oldBranch, BranchView newBranch);
-	public BranchView getResponsibleBranch(TaskView task);
+	public Optional<BranchView> getResponsibleBranch(ProjectView project, TaskView task, BranchView originalBranch);
 
 
 }

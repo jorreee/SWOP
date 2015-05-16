@@ -110,7 +110,7 @@ public class ShowProjectsRequest extends Request {
 							taskiHead.append(", over time by " + tasks.get(i).getOverTimePercentage(facade.getCurrentTime()) + "%");
 						}
 						if(tasks.get(i).isDelegated()) {
-							taskiHead.append(", responsible branch " + facade.getResponsibleBranch(tasks.get(i)).getGeographicLocation());
+							taskiHead.append(", responsible branch " + facade.getResponsibleBranch(project, tasks.get(i), branch).get().getGeographicLocation());
 						}
 						System.out.println(taskiHead.toString()); // PRINT TASK i FROM SELECTED PROJECT HEADER
 					}
@@ -175,7 +175,7 @@ public class ShowProjectsRequest extends Request {
 						taskHeader.append(", over time by " + task.getOverTimePercentage(facade.getCurrentTime()) + "%");
 					}
 					if(task.isDelegated()) {
-						taskHeader.append(", responsible branch " + facade.getResponsibleBranch(task).getGeographicLocation());
+						taskHeader.append(", responsible branch " + facade.getResponsibleBranch(project, task, branch).get().getGeographicLocation());
 					}
 					if(task.hasPrerequisites()) {
 						List<TaskView> prereqs = task.getPrerequisites();
