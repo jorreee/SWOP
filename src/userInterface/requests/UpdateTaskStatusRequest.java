@@ -17,7 +17,7 @@ public class UpdateTaskStatusRequest extends Request {
 	@Override
 	public String execute() {
 		// Show list of available tasks and their project
-		List<ProjectView> projects = facade.getProjects();
+		List<ProjectView> projects = facade.getAllProjects();
 
 		int i = 0;
 		for(ProjectView project : projects) {

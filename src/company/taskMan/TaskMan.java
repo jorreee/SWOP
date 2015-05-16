@@ -85,7 +85,7 @@ public class TaskMan {
 			throw new IllegalArgumentException("There was no project to unwrap!");
 		}
 		Project project = view.unwrap();
-		if(!projectList.contains(project)) {
+		if(project != delegationProject && !projectList.contains(project)) {
 			throw new UnexpectedViewContentException("Project does not belong to this TaskManager!");
 		}
 		return project;
@@ -341,6 +341,21 @@ public class TaskMan {
 	 */
 	public List<ProjectView> getProjects() {
 		Builder<ProjectView> views = ImmutableList.builder();
+		for (Project project : projectList)
+			views.add(new ProjectView(project));
+		return views.build();
+	}
+	
+	/**
+	 * Returns a list of ProjectView objects that each contain one of this
+	 * taskman's projects and the delegation project
+	 * 
+	 * @return 
+	 * 			| a list of ProjectViews
+	 */
+	public List<ProjectView> getAllProjects() {
+		Builder<ProjectView> views = ImmutableList.builder();
+		views.add(new ProjectView(delegationProject));
 		for (Project project : projectList)
 			views.add(new ProjectView(project));
 		return views.build();
@@ -650,10 +665,11 @@ public class TaskMan {
 	public HashMap<ProjectView, List<TaskView>> findConflictingPlannings(
 			TaskView task) {
 		HashMap<ProjectView, List<TaskView>> conflicts = new HashMap<>();
-		for (Project proj : projectList){
-			List<TaskView> conflictingTasks = proj.findConflictingPlannings(task);
+		for (ProjectView proj : getAllProjects()){
+			Project project = proj.unwrap();
+			List<TaskView> conflictingTasks = project.findConflictingPlannings(task);
 			if (!conflictingTasks.isEmpty()){
-			conflicts.put(new ProjectView(proj), conflictingTasks);
+			conflicts.put(proj, conflictingTasks);
 			}
 		}
 		return conflicts;

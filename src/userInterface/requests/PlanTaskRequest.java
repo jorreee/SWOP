@@ -29,7 +29,7 @@ public class PlanTaskRequest extends Request {
 		while(true) {
 			try {
 				// Show a list of projects and their unplanned tasks
-				List<ProjectView> projects = facade.getProjects();
+				List<ProjectView> projects = facade.getAllProjects();
 
 				for(int i = 0 ; i < projects.size() ; i++) {
 					System.out.println("(" + i + ") Project " + projects.get(i).getName() + ":");

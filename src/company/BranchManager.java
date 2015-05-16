@@ -229,6 +229,11 @@ public class BranchManager implements IFacade {
 	public List<ProjectView> getProjects() {
 		return currentTaskMan.getProjects();
 	}
+	
+	@Override
+	public List<ProjectView> getAllProjects() {
+		return currentTaskMan.getAllProjects();
+	}
 
 	@Override
 	public boolean storeInMemento() {

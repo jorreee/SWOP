@@ -55,6 +55,7 @@ public interface IFacade {
 	public void setTaskExecuting(ProjectView project, TaskView task, LocalDateTime startTime) throws TaskManException;
 
 	public List<ProjectView> getProjects();
+	public List<ProjectView> getAllProjects();
 
 	public boolean storeInMemento();
 
@@ -104,6 +105,5 @@ public interface IFacade {
 	public void delegateTask(ProjectView project, TaskView task, BranchView newBranch);
 	public void delegateTask(ProjectView project, TaskView task, BranchView oldBranch, BranchView newBranch);
 	public Optional<BranchView> getResponsibleBranch(ProjectView project, TaskView task, BranchView originalBranch);
-
 
 }
