@@ -10,6 +10,7 @@ import java.util.Optional;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
+
 import company.BranchView;
 import company.taskMan.project.DelegationProject;
 import company.taskMan.project.Project;
@@ -19,7 +20,7 @@ import company.taskMan.resource.ResourceManager;
 import company.taskMan.resource.ResourcePrototype;
 import company.taskMan.resource.ResourceView;
 import company.taskMan.resource.user.User;
-
+import company.taskMan.task.Task;
 import exceptions.ResourceUnavailableException;
 import exceptions.UnexpectedViewContentException;
 
@@ -703,5 +704,15 @@ public class TaskMan {
 			TaskMan newTman) {
 		Project p = unwrapProjectView(project);
 		p.delegateTask(delegator, task, this, newTman);
+	}
+
+	public Task delegateAccept(Task task, TaskMan fromBranch) {
+		Task newTask = delegationProject.createTask(description, estimatedDuration, acceptableDeviation, resMan, prerequisiteTasks, requiredResources, alternativeFor, taskStatus, startTime, endTime, plannedStartTime, plannedDevelopers);
+		delegator.delegateAccept(newTask, this, fromBranch);
+		return newTask;
+	}
+
+	public void removeDelegatedTask(Task task) {
+		delegationProject.removeTask(new TaskView(task));		
 	}
 }
