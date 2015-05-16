@@ -42,7 +42,7 @@ public class Project implements Dependant {
 
 	private ProjectStatus state;
 
-	private ArrayList<Task> taskList;
+	protected ArrayList<Task> taskList;
 
 	/**
 	 * Creates a new Project.
@@ -219,6 +219,18 @@ public class Project implements Dependant {
 		taskList.add(newTask);
 		setProjectStatus(new OngoingState());
 		newTask.register(this);
+	}
+	
+	/**
+	 * A method to support the removal of tasks in a project. Tasks can only be
+	 * removed from some specific types of project. Regular projects do not
+	 * support this operation.
+	 * 
+	 * @param task
+	 *            | The task to remove
+	 */
+	public void removeTask(TaskView task) {
+		throw new UnsupportedOperationException("Tasks cannot be deleted in a regular project");
 	}
 //	
 //	/**

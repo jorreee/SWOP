@@ -11,6 +11,7 @@ import java.util.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import company.BranchView;
+import company.taskMan.project.DelegationProject;
 import company.taskMan.project.Project;
 import company.taskMan.project.TaskView;
 import company.taskMan.resource.Reservation;
@@ -36,8 +37,7 @@ import exceptions.UnexpectedViewContentException;
 public class TaskMan {
 
 	private ArrayList<Project> projectList;
-	//private LocalDateTime currentTime;
-	//private User currentUser;
+	private Project delegationProject;
 	private ResourceManager resMan;
 	private Delegator delegator;
 	private final String geographicLocation;
@@ -53,6 +53,7 @@ public class TaskMan {
 		if(location == null)
 			throw new IllegalArgumentException("The given location is null");
 		projectList = new ArrayList<>();
+		delegationProject = new DelegationProject();
 		resMan = new ResourceManager(prototypes);
 		delegator = new Delegator();
 		geographicLocation = location;
