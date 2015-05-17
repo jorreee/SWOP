@@ -6,17 +6,14 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.EmptyStackException;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Stack;
 
 import company.BranchManager;
 import company.taskMan.ProjectView;
 import company.taskMan.project.TaskView;
-import company.taskMan.resource.AvailabilityPeriod;
 import company.taskMan.resource.Reservation;
 import company.taskMan.resource.ResourceView;
 
@@ -30,18 +27,18 @@ import company.taskMan.resource.ResourceView;
 public class TaskManCaretaker {
 
 	private final Stack<TaskManMemento> mementos;
-	private final BranchManager branch;
+	private final BranchManager branchManager;
 
 	/**
 	 * Constructs a caretaker linked to a specific facade
 	 * 
-	 * @param branch
+	 * @param branchManager
 	 *            | the facade with which the caretaker will talk (its taskman
 	 *            can be saved and restored)
 	 */
-	public TaskManCaretaker(BranchManager branch) {
+	public TaskManCaretaker(BranchManager branchManager) {
 		this.mementos = new Stack<>();
-		this.branch = branch;
+		this.branchManager = branchManager;
 	}
 
 	/**
@@ -65,11 +62,12 @@ public class TaskManCaretaker {
 	private TaskManMemento buildMemento() {
 		StringBuilder tman = new StringBuilder();
 		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-		DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
 		
-		List<ProjectView> existingProjects = branch.getProjects();
-		List<ResourceView> existingPrototypes = branch.getResourcePrototypes();
-		List<ResourceView> existingDevelopers = branch.getDeveloperList();
+		List<ProjectView> existingProjects = branchManager.getProjects();
+		List<ResourceView> existingPrototypes = branchManager.getResourcePrototypes();
+		List<ResourceView> existingDevelopers = branchManager.getDeveloperList();
+		
+		// TODO add delegation FROM information
 		
 		List<TaskView> existingTasks = new ArrayList<>();
 		for(ProjectView project : existingProjects) {
@@ -87,60 +85,17 @@ public class TaskManCaretaker {
 			}
 		}
 		
-		List<Reservation> existingReservations = branch.getAllReservations();
+		List<Reservation> existingReservations = branchManager.getAllReservations();
 		
-		// SystemTime
-		tman.append("systemTime: \"" + branch.getCurrentTime().format(dateTimeFormatter) +"\"");
-		
-		// DailyAvailability
-		// Construct AvailabilityPeriod List
-		Set<AvailabilityPeriod> availabilityPeriodSet = new HashSet<>();
-		for(ResourceView prototype : existingPrototypes) {
-			if(prototype.isDailyAvailable()) {
-				availabilityPeriodSet.add(new AvailabilityPeriod(prototype.getDailyAvailabilityStartTime(), prototype.getDailyAvailabilityEndTime()));
-			}
-		}
-		List<AvailabilityPeriod> existingAvailabilityPeriods = new ArrayList<>(availabilityPeriodSet);
-		
-		tman.append("\ndailyAvailability :");
-		if(!existingAvailabilityPeriods.isEmpty()) {
-			for(AvailabilityPeriod dailyAvailability : existingAvailabilityPeriods) {
-				tman.append("\n  - startTime : \"" + dailyAvailability.getStartTime().format(timeFormatter) + "\"\n"
-						+ "    endTime   : \"" + dailyAvailability.getEndTime().format(timeFormatter) + "\"");
-			}
-		}
-		
-		// resourceType
-		tman.append("\nresourceTypes:");
-		for(ResourceView resprot : existingPrototypes) {
-			tman.append("\n  - name              : \"" + resprot.getName() + "\""); // name
-			tman.append("\n    requires          : [");
-			Iterator<ResourceView> requiredProts = resprot.getRequiredResources().listIterator();
-			while(requiredProts.hasNext()) {
-				tman.append(existingPrototypes.indexOf(requiredProts.next())); // requires
-				if(requiredProts.hasNext()) { tman.append(","); }
-			}
-			tman.append("]");
-			tman.append("\n    conflictsWith     : [");
-			Iterator<ResourceView> conflictingProts = resprot.getConflictingResources().listIterator();
-			while(conflictingProts.hasNext()) {
-				tman.append(existingPrototypes.indexOf(conflictingProts.next())); // conflicts
-				if(conflictingProts.hasNext()) { tman.append(","); }
-			}
-			tman.append("]");
-			tman.append("\n    dailyAvailability :");
-			if(resprot.isDailyAvailable()) {
-				tman.append(" " + existingAvailabilityPeriods.indexOf(
-						new AvailabilityPeriod(resprot.getDailyAvailabilityStartTime(), resprot.getDailyAvailabilityEndTime())));
-			}
-		}
+		// Geographic Location
+		tman.append("geographicLocation: \"" + branchManager.getGeographicLocation() +"\"");
 		
 		// resources
 		Map<ResourceView, Integer> existingConcreteResources = new HashMap<>();
 		for(int i = 0 ; i < existingPrototypes.size() ; i++) {
 			ResourceView prototype = existingPrototypes.get(i);
 			
-			List<ResourceView> concreteResources = branch.getConcreteResourcesForPrototype(prototype);
+			List<ResourceView> concreteResources = branchManager.getConcreteResourcesForPrototype(prototype);
 			for(ResourceView concreteResource : concreteResources) {
 				existingConcreteResources.put(concreteResource, i);
 			}
@@ -161,7 +116,7 @@ public class TaskManCaretaker {
 		
 		// currentUser
 		tman.append("\ncurrentUser:");
-		tman.append("\n  - name: \"" + branch.getCurrentUser().getName() + "\""); // Current logged in person (admin or dev)
+		tman.append("\n  - name: \"" + branchManager.getCurrentUser().getName() + "\""); // Current logged in person (admin or dev)
 		
 		// projects
 		tman.append("\nprojects:");
@@ -231,7 +186,9 @@ public class TaskManCaretaker {
 				}
 				tman.append("\n    planning           : " + planningIndex); // planning
 				String taskStatus = task.getStatusAsString().toLowerCase();
-				if(taskStatus.equalsIgnoreCase("unavailable") || taskStatus.equalsIgnoreCase("available")) {
+				if(taskStatus.equalsIgnoreCase("unavailable")
+						|| taskStatus.equalsIgnoreCase("available")
+						|| taskStatus.equalsIgnoreCase("delegated")) {
 					taskStatus = new String();
 				}
 				tman.append("\n    status             : " + taskStatus); // status
@@ -256,7 +213,7 @@ public class TaskManCaretaker {
 			}
 		}
 			
-		return new TaskManMemento(tman.toString(),branch.getCurrentUser(),null); // TODO afwerken
+		return new TaskManMemento(tman.toString(),branchManager.getCurrentUser(),branchManager.getCurrentTime());
 	}
 
 	/**
@@ -267,7 +224,7 @@ public class TaskManCaretaker {
 	 */
 	public void revertFromMemento() {
 		TaskManMemento memento = mementos.pop();
-		memento.revert(branch);
+		memento.revert(branchManager);
 	}
 
 	/**

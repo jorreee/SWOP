@@ -18,6 +18,7 @@ import userInterface.TaskManException;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
+
 import company.caretaker.TaskManCaretaker;
 import company.taskMan.ProjectView;
 import company.taskMan.TaskMan;
@@ -29,7 +30,6 @@ import company.taskMan.resource.ResourcePrototype;
 import company.taskMan.resource.ResourceView;
 import company.taskMan.resource.user.User;
 import company.taskMan.resource.user.UserPermission;
-
 import exceptions.ResourceUnavailableException;
 
 public class BranchManager implements IFacade {
@@ -241,17 +241,21 @@ public class BranchManager implements IFacade {
 			return false;
 		}
 		caretaker.storeInMemento();
+		currentTaskMan.setBufferMode(true);
 		return true;
 	}
 
 	@Override
 	public void revertFromMemento() {
 		caretaker.revertFromMemento();
+		currentTaskMan.clearBuffer();
+		currentTaskMan.setBufferMode(false);
 	}
 
 	@Override
 	public void discardMemento() {
 		caretaker.discardMemento();
+		currentTaskMan.setBufferMode(false);
 	}
 
 	@Override
@@ -400,6 +404,11 @@ public class BranchManager implements IFacade {
 		TaskMan taskMan = unwrapBranchView(branch);
 		currentTaskMan = taskMan;
 	}
+	
+	public String getGeographicLocation() {
+		return currentTaskMan.getGeographicLocation();
+	}
+	
 
 	@Override
 	public void initializeBranch(String geographicLocation) throws IllegalArgumentException {
@@ -488,5 +497,4 @@ public class BranchManager implements IFacade {
 		}
 		
 	}
-	
 }

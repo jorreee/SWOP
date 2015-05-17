@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Queue;
+import java.util.Stack;
 import java.util.stream.Collectors;
 
 import company.BranchView;
@@ -14,13 +14,15 @@ public class Delegator {
 
 	List<Delegation> delegationsToBranch;
 	List<Delegation> delegationsFromBranch;
-	Queue<Delegation> buffer;
+	LinkedList<Delegation> buffer;
+	Stack<Integer> bufferCheckpoints;
 	boolean bufferMode;
 
 	public Delegator(){
 		delegationsFromBranch = new ArrayList<Delegation>();
 		delegationsToBranch = new ArrayList<Delegation>();
 		buffer = new LinkedList<Delegation>();
+		bufferCheckpoints = new Stack<>();
 		bufferMode = false;
 	}
 
@@ -108,11 +110,20 @@ public class Delegator {
 		}
 	}
 
-
 	public void setBufferMode (boolean bool){
 		bufferMode = bool;
 		if(!bufferMode) {
 			executeBuffer();
+			bufferCheckpoints.pop();
+		} else {
+			bufferCheckpoints.push(buffer.size());
+		}
+	}
+
+	public void clearBuffer() {
+		Integer checkpoint = bufferCheckpoints.pop();
+		while(buffer.size() > checkpoint) {
+			buffer.removeLast();
 		}
 	}
 

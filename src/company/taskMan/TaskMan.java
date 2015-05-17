@@ -732,4 +732,12 @@ public class TaskMan {
 	public void removeDelegatedTask(Task task) {
 		delegationProject.removeTask(new TaskView(task));		
 	}
+
+	public void clearBuffer() {
+		delegator.clearBuffer();
+	}
+
+	public void setBufferMode(boolean bool) {
+		delegator.setBufferMode(bool);
+	}
 }

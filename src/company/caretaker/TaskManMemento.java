@@ -24,6 +24,8 @@ public class TaskManMemento {
 	
 	private final LocalDateTime currentTime;
 
+	// TODO add delegation TO and FROM links for rebuilding
+	
 	/**
 	 * Construct a memento with a specified string (a TMAN)
 	 * 
@@ -47,7 +49,7 @@ public class TaskManMemento {
 		// reset system time
 		branch.initializeFromMemento(currentTime, fileChecker);
 		
-		
+		// Look for new User representing previous "Current User"
 		for(ResourceView user : branch.getPossibleUsers()) {
 			if(user.getName().equals(currentUser.getName())) {
 				currentUser = user;
@@ -55,7 +57,12 @@ public class TaskManMemento {
 			}
 		}
 		
+		// Reset Current User
 		branch.changeToUser(currentUser);
+		
+		// Reset Delegation links (TO and FROM list)
+		// TODO
+		
 		// End initialization
 	}
 }
