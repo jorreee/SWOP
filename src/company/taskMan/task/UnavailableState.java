@@ -39,7 +39,9 @@ public class UnavailableState implements TaskStatus {
 		} 
 		if(!task.equals(newTask)) {
 			Task oldDelegator = task.getDelegatingTask();
-			oldDelegator.unregister(task); //TODO hier kan nullpointer komen als de delegating task eerst wordt verwijderd
+			if(oldDelegator != null) {
+				oldDelegator.unregister(task); //TODO hier kan nullpointer komen als de delegating task eerst wordt verwijderd
+			}
 			task.setDelegatingTask(newTask);
 			try {
 				newTask.setOriginalDelegatedTask(task);

@@ -70,7 +70,7 @@ public class Delegator {
 				fromBranch.removeDelegatedTask(task);
 				
 				// A.2 (re-)delegate the original task in its respective delegator
-				originalDelegation.getOriginalBranch().delegateTask(, toBranch); //TODO finish
+				originalDelegation.getOriginalBranch().delegateTask(task, toBranch);
 			}
 			// B. If this task hasn't been delegated before
 			else {
@@ -119,6 +119,7 @@ public class Delegator {
 	public Optional<BranchView> getResponsibleBranch(Task task) {
 		Optional<Delegation> delegation = getToDelegationContainingTask(task);
 		if(delegation.isPresent()) {
+			// TODO verify with toBranch (simulation), delegation.get().getBranch().verifyDelegation();
 			return Optional.of(new BranchView(delegation.get().newBranch));
 		} else {
 			return Optional.empty();
@@ -130,10 +131,10 @@ public class Delegator {
 		private TaskMan newBranch;
 		private TaskMan originalBranch;
 
-		private Delegation(Task task,TaskMan newB, TaskMan origB){
+		private Delegation(Task task,TaskMan toBranch, TaskMan fromBranch){
 			delegatedTask = task;
-			newBranch = newB;
-			originalBranch = origB;
+			newBranch = toBranch;
+			originalBranch = fromBranch;
 		}
 
 		public Task getTask(){

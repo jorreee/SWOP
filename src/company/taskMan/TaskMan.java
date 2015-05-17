@@ -705,9 +705,26 @@ public class TaskMan {
 		Project p = unwrapProjectView(project);
 		p.delegateTask(delegator, task, this, newTman);
 	}
+	
+	public void delegateTask(Task task, TaskMan toBranch) {
+		delegator.delegateTask(task, toBranch, this);
+	}
 
-	public Task delegateAccept(Task task, TaskMan fromBranch) {
-		Task newTask = delegationProject.createTask(description, estimatedDuration, acceptableDeviation, resMan, prerequisiteTasks, requiredResources, alternativeFor, taskStatus, startTime, endTime, plannedStartTime, plannedDevelopers);
+	public Task delegateAccept(Task task, TaskMan fromBranch) throws IllegalArgumentException {
+		Map<ResourcePrototype, Integer> requiredResources= task.getRequiredResources();
+		Map<ResourceView, Integer> wrappedResources = new HashMap<>();
+		
+		for(ResourcePrototype res : requiredResources.keySet()) {
+			wrappedResources.put(new ResourceView(res), requiredResources.get(res));
+		}
+		
+		try {
+			delegationProject.createTask(task.getDescription(), task.getEstimatedDuration().getSpanMinutes(), task.getAcceptableDeviation(), resMan, new ArrayList<TaskView>(), wrappedResources, null, null, null, null, null, null);
+		} catch (ResourceUnavailableException | IllegalArgumentException
+				| IllegalStateException e) {
+			throw new IllegalArgumentException("Task cannot be accepted for delegation, reason: " + e.getMessage());
+		}
+		Task newTask = delegationProject.getTasks().get(delegationProject.getTasks().size() - 1);
 		delegator.delegateAccept(newTask, this, fromBranch);
 		return newTask;
 	}

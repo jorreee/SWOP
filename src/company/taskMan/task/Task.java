@@ -152,6 +152,61 @@ public class Task implements Dependant {
 			}
 		}
 	}
+	
+//	public Task(String taskDescription, int estimatedDuration,
+//			int acceptableDeviation, ResourceManager resMan,
+//			List<Task> prerequisiteTasks,
+//			Map<ResourceView, Integer> requiredResources, Task alternativeFor, Task originalDelegatedTask)
+//			throws IllegalArgumentException {
+//
+//		if (!isValidDescription(taskDescription)) {
+//			throw new IllegalArgumentException("Invalid description");
+//		}
+//		if (!isValidDuration(estimatedDuration)) {
+//			throw new IllegalArgumentException("Invalid duration");
+//		}
+//		if (!isValidDeviation(acceptableDeviation)) {
+//			throw new IllegalArgumentException("Invalid deviation");
+//		}
+//		if (!isValidPrerequisites(prerequisiteTasks)) {
+//			throw new IllegalArgumentException("Invalid prerequisites");
+//		}
+//		if (prerequisiteTasks.contains(alternativeFor)) {
+//			throw new IllegalArgumentException("Alt can't be a prerequisite");
+//		}
+//		if (!isValidResourceManager(resMan)) {
+//			throw new IllegalArgumentException("Invalid resource manager");
+//		}
+//		this.description = taskDescription;
+//		this.plan = new Planning(estimatedDuration, acceptableDeviation);
+//		this.resMan = resMan;
+//		Map<ResourcePrototype, Integer> reqRes = resMan
+//				.isValidRequiredResources(requiredResources);
+//		if (reqRes == null) {
+//			throw new IllegalArgumentException("Very bad required resources");
+//		}
+//		this.requiredResources = reqRes;
+//
+//		this.state = new UnavailableState();
+//
+//		this.dependants = new ArrayList<Dependant>();
+//		this.prerequisites = new ArrayList<Task>();
+//
+//		this.alternativeFor = alternativeFor;
+//		if (alternativeFor != null) {
+//			alternativeFor.replaceWith(this);
+//		}
+//		replacement = null;
+//
+//		this.originalDelegatedTask = originalDelegatedTask;
+//		
+//		for (Task t : prerequisiteTasks) {
+//			t.register(this);
+//			this.prerequisites.add(t);
+//		}
+//
+//		removeAlternativesDependencies();
+//	}
 
 	/**
 	 * Create a new Task
