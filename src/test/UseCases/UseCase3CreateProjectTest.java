@@ -13,7 +13,7 @@ import company.BranchManager;
 import company.taskMan.ProjectView;
 import userInterface.IFacade;
 
-public class UseCase2CreateProjectTest {
+public class UseCase3CreateProjectTest {
 
 	private IFacade taskManager;
 	private final LocalDateTime startDate = LocalDateTime.of(2015, 2, 9, 8, 0),

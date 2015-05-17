@@ -22,7 +22,7 @@ import company.taskMan.resource.ResourceView;
 import company.taskMan.resource.user.UserPrototype;
 import userInterface.IFacade;
 
-public class UseCase4PlanTaskTest {
+public class UseCase5PlanTaskTest {
 	private IFacade taskManager;
 	private final LocalDateTime startDate = LocalDateTime.of(2015, 2, 9, 8, 0),
 			project0DueDate = LocalDateTime.of(2015, 2, 13, 23, 59),

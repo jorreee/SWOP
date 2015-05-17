@@ -21,7 +21,7 @@ import company.taskMan.project.TaskView;
 import company.taskMan.resource.ResourceView;
 import userInterface.IFacade;
 
-public class UseCase1ShowProjectsTest {
+public class UseCase2ShowProjectsTest {
 
 	private IFacade taskManager;
 	private final LocalDateTime startDate = LocalDateTime.of(2015, 2, 9, 8, 0),
