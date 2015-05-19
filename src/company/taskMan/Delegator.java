@@ -26,7 +26,7 @@ public class Delegator {
 		bufferMode = false;
 	}
 
-	public void delegateTask(Task task, TaskMan toBranch, TaskMan fromBranch) throws IllegalArgumentException { // TODO allow for re-delegation of tasks
+	public void delegateTask(Task task, Branch toBranch, Branch fromBranch) throws IllegalArgumentException { // TODO allow for re-delegation of tasks
 		// Delegation came back to the original branch
 		if (toBranch == fromBranch)
 		{
@@ -43,8 +43,8 @@ public class Delegator {
 		}
 	}
 
-	public void delegateAccept(Task newTask, TaskMan toBranch,
-			TaskMan fromBranch) {
+	public void delegateAccept(Task newTask, Branch toBranch,
+			Branch fromBranch) {
 		delegationsFromBranch.add(new Delegation(newTask, toBranch, fromBranch));
 	}
 
@@ -53,8 +53,8 @@ public class Delegator {
 		while (!buffer.isEmpty()){
 			Delegation deleg = buffer.poll();						// Next delegation to commit (a TO request)
 			Task task = deleg.getTask();							// Task to delegate
-			TaskMan toBranch = deleg.getBranch();					// Branch to delegate TO
-			TaskMan fromBranch = deleg.getOriginalBranch();			// Branch to delegate FROM
+			Branch toBranch = deleg.getBranch();					// Branch to delegate TO
+			Branch fromBranch = deleg.getOriginalBranch();			// Branch to delegate FROM
 
 			Task originalTask = task.getOriginalDelegatedTask();	// The original task (this task has been delegated before) or null
 			Optional<Delegation> optionalOriginalDelegation = getFromDelegationContainingTask(originalTask);	// Delegation made to this delegator (a FROM request)
@@ -139,10 +139,10 @@ public class Delegator {
 
 	private class Delegation{
 		private Task delegatedTask;
-		private TaskMan newBranch;
-		private TaskMan originalBranch;
+		private Branch newBranch;
+		private Branch originalBranch;
 
-		private Delegation(Task task,TaskMan toBranch, TaskMan fromBranch){
+		private Delegation(Task task,Branch toBranch, Branch fromBranch){
 			delegatedTask = task;
 			newBranch = toBranch;
 			originalBranch = fromBranch;
@@ -152,11 +152,11 @@ public class Delegator {
 			return delegatedTask;
 		}
 
-		public TaskMan getBranch(){
+		public Branch getBranch(){
 			return newBranch;
 		}
 
-		public TaskMan getOriginalBranch(){
+		public Branch getOriginalBranch(){
 			return originalBranch;
 		}
 	}

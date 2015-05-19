@@ -21,7 +21,7 @@ import com.google.common.collect.ImmutableList.Builder;
 
 import company.caretaker.TaskManCaretaker;
 import company.taskMan.ProjectView;
-import company.taskMan.TaskMan;
+import company.taskMan.Branch;
 import company.taskMan.project.TaskView;
 import company.taskMan.resource.PrototypeManager;
 import company.taskMan.resource.Reservation;
@@ -33,8 +33,8 @@ import company.taskMan.resource.user.UserPermission;
 import exceptions.ResourceUnavailableException;
 
 public class BranchManager implements IFacade {
-	private List<TaskMan> taskMen;
-	private TaskMan currentTaskMan;
+	private List<Branch> taskMen;
+	private Branch currentTaskMan;
 	private LocalDateTime currentTime;
 	private User currentUser;
 	private PrototypeManager protMan; //TODO protten laten
@@ -65,7 +65,7 @@ public class BranchManager implements IFacade {
 	 * @throws  IllegalArgumentException 
 	 */
 	private void declareTaskMan(String location, List<ResourcePrototype> prototypes) throws IllegalArgumentException{
-		TaskMan newTaskMan = new TaskMan(location, prototypes);
+		Branch newTaskMan = new Branch(location, prototypes);
 		taskMen.add(newTaskMan);
 		currentTaskMan = newTaskMan;
 		currentUser = newTaskMan.getSuperUser();
@@ -394,14 +394,14 @@ public class BranchManager implements IFacade {
 	@Override
 	public List<BranchView> getBranches() {
 		Builder<BranchView> views = ImmutableList.builder();
-		for (TaskMan taskMan : taskMen)
+		for (Branch taskMan : taskMen)
 			views.add(new BranchView(taskMan));
 		return views.build();
 	}
 
 	@Override
 	public void selectBranch(BranchView branch) {
-		TaskMan taskMan = unwrapBranchView(branch);
+		Branch taskMan = unwrapBranchView(branch);
 		currentTaskMan = taskMan;
 	}
 	
@@ -424,15 +424,15 @@ public class BranchManager implements IFacade {
 	@Override
 	public void delegateTask(ProjectView project, TaskView task,
 			BranchView newBranch) {
-		TaskMan taskMan = unwrapBranchView(newBranch);  
+		Branch taskMan = unwrapBranchView(newBranch);  
 		currentTaskMan.delegateTask(project, task, taskMan);
 	}
 	
 	@Override
 	public void delegateTask(ProjectView project, TaskView task,
 			BranchView oldBranch, BranchView newBranch) {
-		TaskMan oldTman = unwrapBranchView(oldBranch);
-		TaskMan newTman = unwrapBranchView(newBranch);
+		Branch oldTman = unwrapBranchView(oldBranch);
+		Branch newTman = unwrapBranchView(newBranch);
 		
 		oldTman.delegateTask(project, task, newTman);
 		
@@ -449,12 +449,12 @@ public class BranchManager implements IFacade {
 	 * @throws 	IllegalArgumentException
 	 * 			TaskMan must belong to this manager
 	 */
-	private TaskMan unwrapBranchView(BranchView view) 
+	private Branch unwrapBranchView(BranchView view) 
 			throws TaskManException {
 		if(view == null) {
 			throw new TaskManException(new NullPointerException("There was no branch to unwrap!"));
 		}
-		TaskMan taskMan = view.unwrap();
+		Branch taskMan = view.unwrap();
 		if(!taskMen.contains(taskMan))
 			throw new TaskManException(new IllegalArgumentException("Branch does not belong to this BranchManager!"));
 		return taskMan;
@@ -469,7 +469,7 @@ public class BranchManager implements IFacade {
 	public void initializeFromMemento(LocalDateTime systemTime, TaskManInitFileChecker fileChecker) {
 		currentTime = systemTime;
 		
-		currentTaskMan = new TaskMan(fileChecker.getGeographicLocation(), protMan.getPrototypes());
+		currentTaskMan = new Branch(fileChecker.getGeographicLocation(), protMan.getPrototypes());
 		
 		Main.initializeBranch(this, fileChecker, taskMen.indexOf(currentTaskMan));
 	}

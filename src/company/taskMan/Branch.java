@@ -35,7 +35,7 @@ import exceptions.UnexpectedViewContentException;
  *         Eli Vangrieken
  * 
  */
-public class TaskMan {
+public class Branch {
 
 	private ArrayList<Project> projectList;
 	private Project delegationProject;
@@ -49,7 +49,7 @@ public class TaskMan {
 	 * @param time
 	 *            The current TaskMan time.
 	 */
-	public TaskMan(String location, List<ResourcePrototype> prototypes) 
+	public Branch(String location, List<ResourcePrototype> prototypes) 
 			throws IllegalArgumentException {
 		if(location == null)
 			throw new IllegalArgumentException("The given location is null");
@@ -701,16 +701,16 @@ public class TaskMan {
 	}
 
 	public void delegateTask(ProjectView project, TaskView task,
-			TaskMan newTman) {
+			Branch newTman) {
 		Project p = unwrapProjectView(project);
 		p.delegateTask(delegator, task, this, newTman);
 	}
 	
-	public void delegateTask(Task task, TaskMan toBranch) {
+	public void delegateTask(Task task, Branch toBranch) {
 		delegator.delegateTask(task, toBranch, this);
 	}
 
-	public Task delegateAccept(Task task, TaskMan fromBranch) throws IllegalArgumentException {
+	public Task delegateAccept(Task task, Branch fromBranch) throws IllegalArgumentException {
 		Map<ResourcePrototype, Integer> requiredResources= task.getRequiredResources();
 		Map<ResourceView, Integer> wrappedResources = new HashMap<>();
 		

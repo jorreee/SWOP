@@ -3,13 +3,13 @@ package company;
 import java.util.List;
 
 import company.taskMan.ProjectView;
-import company.taskMan.TaskMan;
+import company.taskMan.Branch;
 
 public class BranchView {
 
-	private final TaskMan branch;
+	private final Branch branch;
 	
-	public BranchView(TaskMan newBranch) {
+	public BranchView(Branch newBranch) {
 		this.branch = newBranch;
 	}
 	
@@ -17,7 +17,7 @@ public class BranchView {
 		return branch.getGeographicLocation();
 	}
 	
-	protected TaskMan unwrap() {
+	protected Branch unwrap() {
 		return branch;
 	}
 	
