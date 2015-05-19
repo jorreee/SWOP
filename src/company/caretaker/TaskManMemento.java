@@ -20,7 +20,7 @@ public class TaskManMemento {
 	
 	private final String taskman;
 	
-	private ResourceView currentUser;
+	private final String currentUsername;
 	
 	private final LocalDateTime currentTime;
 
@@ -35,7 +35,7 @@ public class TaskManMemento {
 	 */
 	public TaskManMemento(String taskmanToSave, ResourceView currentUserLoggedIn, LocalDateTime currentSystemTime) {
 		this.taskman = taskmanToSave;
-		this.currentUser = currentUserLoggedIn;
+		this.currentUsername = currentUserLoggedIn.getName();
 		this.currentTime = currentSystemTime;
 	}
 	
@@ -50,8 +50,9 @@ public class TaskManMemento {
 		branch.initializeFromMemento(currentTime, fileChecker);
 		
 		// Look for new User representing previous "Current User"
+		ResourceView currentUser = null;
 		for(ResourceView user : branch.getPossibleUsers()) {
-			if(user.getName().equals(currentUser.getName())) {
+			if(user.getName().equals(currentUsername)) {
 				currentUser = user;
 				break;
 			}
