@@ -6,10 +6,11 @@ public class TaskDelegationProxy implements Dependant {
 	
 	Task task;
 	TaskDelegationProxy other;
-	boolean hasUnfinishedPrereqs;
+	private boolean hasUnfinishedPrereqs;
 	
 	public TaskDelegationProxy(Task t) {
 		this.task = t;
+		hasUnfinishedPrereqs = true;
 	}
 	
 	public void link(TaskDelegationProxy other) {
@@ -22,7 +23,11 @@ public class TaskDelegationProxy implements Dependant {
 	}
 	
 	private void updateProxyPrereqsFinished() {
-		
+		hasUnfinishedPrereqs = false;;
+	}
+	
+	public boolean hasUnfinishedPrereqs() {
+		return hasUnfinishedPrereqs;
 	}
 
 	@Override
@@ -43,7 +48,7 @@ public class TaskDelegationProxy implements Dependant {
 					return;
 				}
 			}
-			hasUnfinishedPrereqs = true;
+			hasUnfinishedPrereqs = false;
 			other.updateProxyPrereqsFinished();
 		}
 	}
