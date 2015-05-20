@@ -26,7 +26,7 @@ public class BranchRepresentative {
 		bufferMode = false;
 	}
 
-	public void delegateTask(Task task, Branch toBranch, Branch fromBranch) throws IllegalArgumentException { // TODO allow for re-delegation of tasks
+	public void delegateTask(Task task, Branch fromBranch, Branch toBranch) throws IllegalArgumentException { // TODO allow for re-delegation of tasks
 		// Delegation came back to the original branch
 		if (toBranch == fromBranch)
 		{
@@ -34,7 +34,7 @@ public class BranchRepresentative {
 			delegationsToBranch.remove(getToDelegationContainingTask(task).get());
 		} else // A new delegation
 		{
-			buffer.add(new Delegation(task, toBranch, fromBranch));
+			buffer.add(new Delegation(task, fromBranch, toBranch));
 			
 			if (!bufferMode)
 			{
@@ -43,9 +43,9 @@ public class BranchRepresentative {
 		}
 	}
 
-	public void delegateAccept(Task newTask, Branch toBranch,
-			Branch fromBranch) {
-		delegationsFromBranch.add(new Delegation(newTask, toBranch, fromBranch));
+	public void delegateAccept(Task newTask, Branch fromBranch,
+			Branch toBranch) {
+		delegationsFromBranch.add(new Delegation(newTask, fromBranch, toBranch));
 	}
 
 	public void executeBuffer(){
@@ -53,8 +53,8 @@ public class BranchRepresentative {
 		while (!buffer.isEmpty()){
 			Delegation deleg = buffer.poll();						// Next delegation to commit (a TO request)
 			Task task = deleg.getTask();							// Task to delegate
-			Branch toBranch = deleg.getBranch();					// Branch to delegate TO
 			Branch fromBranch = deleg.getOriginalBranch();			// Branch to delegate FROM
+			Branch toBranch = deleg.getBranch();					// Branch to delegate TO
 
 			Task originalTask = task.getOriginalDelegatedTask();	// The original task (this task has been delegated before) or null
 			Optional<Delegation> optionalOriginalDelegation = getFromDelegationContainingTask(originalTask);	// Delegation made to this delegator (a FROM request)
@@ -139,25 +139,31 @@ public class BranchRepresentative {
 
 	private class Delegation{
 		private Task delegatedTask;
-		private Branch newBranch;
 		private Branch originalBranch;
+		private Branch newBranch;
+		private Task newTask;
 
-		private Delegation(Task task,Branch toBranch, Branch fromBranch){
+		private Delegation(Task task,Branch origBranch, Branch newBranch, Task newTask){
 			delegatedTask = task;
-			newBranch = toBranch;
-			originalBranch = fromBranch;
+			originalBranch = origBranch;
+			this.newBranch = newBranch;
+			this.newTask = newTask;
 		}
 
 		public Task getTask(){
 			return delegatedTask;
 		}
 
+		public Branch getOriginalBranch(){
+			return originalBranch;
+		}
+		
 		public Branch getBranch(){
 			return newBranch;
 		}
-
-		public Branch getOriginalBranch(){
-			return originalBranch;
+		
+		public Task getNewTask(){
+			return newTask;
 		}
 	}
 }
