@@ -135,23 +135,23 @@ public class Task implements Dependant {
 			this.prerequisites.add(t);
 		}
 
-		removeAlternativesDependencies();
+//		removeAlternativesDependencies();
 	}
 
-	/**
-	 * Prevent double storing of dependencies
-	 */
-	private void removeAlternativesDependencies() {
-		if (alternativeFor != null) {
-			int depIndex;
-			for (Dependant d : alternativeFor.getDependants()) {
-				depIndex = dependants.indexOf(d);
-				if (depIndex >= 0) {
-					dependants.remove(depIndex);
-				}
-			}
-		}
-	}
+//	/**
+//	 * Prevent double storing of dependencies
+//	 */
+//	private void removeAlternativesDependencies() {
+//		if (alternativeFor != null) {
+//			int depIndex;
+//			for (Dependant d : alternativeFor.getDependants()) {
+//				depIndex = dependants.indexOf(d);
+//				if (depIndex >= 0) {
+//					dependants.remove(depIndex);
+//				}
+//			}
+//		}
+//	}
 	
 //	public Task(String taskDescription, int estimatedDuration,
 //			int acceptableDeviation, ResourceManager resMan,
@@ -704,7 +704,7 @@ public class Task implements Dependant {
 	 * 
 	 * @return a list of all the dependants of this task
 	 */
-	public List<Dependant> getDependants() {
+	private List<Dependant> getDependants() {
 		return dependants;
 	}
 
