@@ -70,21 +70,21 @@ public class ResourceManagerTest {
 		resMan.createResourcePrototype("Pencil", start,end);
 	}
 	
-	@Test
+	@Test(expected = IllegalArgumentException.class)
 	public void createResourcePrototypeTestBadDate1(){
 		Optional<LocalTime> start = Optional.of(LocalTime.of(10, 0));
 		Optional<LocalTime> nul = Optional.empty();
 		resMan.createResourcePrototype("fail", start, nul);
 	}
 	
-	@Test
+	@Test(expected = IllegalArgumentException.class)
 	public void createResourcePrototypeTestBadDate2(){
 		Optional<LocalTime> end = Optional.of(LocalTime.of(14, 0));
 		Optional<LocalTime> nul = Optional.empty();
 		resMan.createResourcePrototype("fail", nul, end);
 	}
 	
-	@Test
+	@Test(expected = IllegalArgumentException.class)
 	public void createResourcePrototypeTestBadDate3(){
 		Optional<LocalTime> start = Optional.of(LocalTime.of(10, 0));
 		Optional<LocalTime> end = Optional.of(LocalTime.of(14, 0));
@@ -146,7 +146,7 @@ public class ResourceManagerTest {
 		assertEquals(0,res.size());
 	}
 	
-	@Test
+	@Test(expected = UnexpectedViewContentException.class)
 	public void pickDevsTestFailNonExistentUser() throws ResourceUnavailableException, UnexpectedViewContentException, IllegalArgumentException{
 		Task testTask = new Task("Descr", 60, 0, resMan, new ArrayList<Task>(), new HashMap<ResourceView, Integer>(), null);
 		LocalDateTime start = LocalDateTime.of(2015, 4, 4, 10, 0);
@@ -154,8 +154,7 @@ public class ResourceManagerTest {
 		List<ResourceView> devs = new ArrayList<>();
 		
 		devs.add(new ResourceView(new User("Fail", new UserPrototype())));
-		List<User> res = resMan.pickDevs(devs, testTask, start, end,true);
-		assertNull(res);
+		resMan.pickDevs(devs, testTask, start, end,true);
 	}
 	
 	@Test
