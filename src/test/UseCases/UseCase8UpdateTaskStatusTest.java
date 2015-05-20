@@ -34,7 +34,7 @@ public class UseCase8UpdateTaskStatusTest {
 			task02StartDateGood = LocalDateTime.of(2015, 2, 9, 12, 10),
 			task02EndDateGood = LocalDateTime.of(2015, 2, 9, 14, 0),
 			task00StartDateVeryBad1 = LocalDateTime.of(2015,2,1,8,0),
-			task00EndDateVeryBad1 = task00EndDateGood,
+			//task00EndDateVeryBad1 = task00EndDateGood,
 			task00EndDateVeryBad2 = LocalDateTime.of(2015,2,9,17,0),
 			newTaskEndDateGood = LocalDateTime.of(2015, 2, 9, 11, 0);
 	private final int task00EstDur = 60,
@@ -507,19 +507,32 @@ public class UseCase8UpdateTaskStatusTest {
 		// Step 1 is implicit
 		// Step 2 and 3 are handled in UI
 		// Step 4 and 5
+		boolean error = false;
+		try{
 		branchManager.setTaskFinished(project0, task00, task00EndDateGood);
 		// Step 6
 		assertTrue(task00.getStatusAsString().equalsIgnoreCase("failed"));
 		assertTrue(task01.getStatusAsString().equalsIgnoreCase("unavailable"));
 		assertTrue(task02.getStatusAsString().equalsIgnoreCase("unavailable"));
 		assertFalse(project0.isFinished());
+		}catch (TaskManException e){
+			error = true;
+		}
+		assertTrue(error);
+		error = false;
 
 		//---------------------------------------------------------------------------------
 
 		// Step 1 is implicit
 		// Step 2 and 3 are handled in UI
 		// Step 4 and 5
-		branchManager.setTaskFailed(project0, task00, task00EndDateGood);
+		try{
+			branchManager.setTaskFailed(project0, task00, task00EndDateGood);
+		}catch (TaskManException e){
+			error = true;
+		}
+		assertTrue(error);
+		error = false;
 		// Step 6
 		assertTrue(task00.getStatusAsString().equalsIgnoreCase("failed"));
 		assertTrue(task01.getStatusAsString().equalsIgnoreCase("unavailable"));
@@ -543,7 +556,14 @@ public class UseCase8UpdateTaskStatusTest {
 		// Step 1 is implicit
 		// Step 2 and 3 are handled in UI
 		// Step 4 and 5
+		boolean error = false;
+		try{
 		branchManager.setTaskFinished(project0, task00, task00EndDateGood);
+		}catch (TaskManException e){
+			error = true;
+		}
+		assertTrue(error);
+		error = false;
 		// Step 6
 
 		task01ConcreteResources.add(branchManager.getResourcePrototypes().get(0));
@@ -557,8 +577,13 @@ public class UseCase8UpdateTaskStatusTest {
 		assertFalse(project0.isFinished());
 
 		//----------------------------------------------------------------------------------
-
+		try{
 		branchManager.setTaskFailed(project0, task00, task00EndDateGood);
+		}catch (TaskManException e){
+			error = true;
+		}
+		assertTrue(error);
+		error = false;
 		// Step 6
 		assertTrue(task00.getStatusAsString().equalsIgnoreCase("finished"));
 		assertTrue(task01.getStatusAsString().equalsIgnoreCase("available"));
