@@ -24,7 +24,7 @@ public class TaskManMemento {
 	
 	private final LocalDateTime currentTime;
 
-	// TODO add delegation TO and FROM links for rebuilding
+	// TODO FIXME DELEGATIONS FIXEN
 	
 	/**
 	 * Construct a memento with a specified string (a TMAN)
@@ -62,7 +62,7 @@ public class TaskManMemento {
 		branch.changeToUser(currentUser);
 		
 		// Reset Delegation links (TO and FROM list)
-		// TODO
+		// TODO AAAAAAAAAAAAAAAAAH
 		
 		// End initialization
 	}
