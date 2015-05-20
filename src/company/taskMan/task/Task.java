@@ -337,9 +337,9 @@ public class Task implements Dependant {
 		for (Dependant d : dependants) {
 			d.updateDependencyFinished(this);
 		}
-//		if (alternativeFor != null) {
-//			alternativeFor.notifyDependants();
-//		}
+		if (alternativeFor != null) {
+			alternativeFor.notifyFinished();
+		}
 	}
 
 	/**
@@ -776,7 +776,6 @@ public class Task implements Dependant {
 			throw new IllegalStateException("This task can not be replaced");
 		}
 		this.replacement = t;
-		t.register(this);
 	}
 	
 	/**
