@@ -39,6 +39,11 @@ public class TaskManMemento {
 		this.currentTime = currentSystemTime;
 	}
 	
+	/**
+	 * Revert the branch to the last memento save.
+	 * @param 	branch
+	 * 			The branch to revert.
+	 */
 	public void revert(BranchManager branch) {
 
 		TaskManInitFileChecker fileChecker = new TaskManInitFileChecker(

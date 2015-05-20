@@ -28,7 +28,7 @@ import exceptions.UnexpectedViewContentException;
 //TODO remove outcommented methods and other stuff 
 /**
  * The Main System that keeps track of the list of projects and the current
- * Time. The TaskMan is also responsible of maintaining a resource manager
+ * Time. The Branch is also responsible of maintaining a resource manager
  * (which in turn is responsible for managing the resources of the system).
  * 
  * @author Tim Van den Broecke, Joran Van de Woestijne, Vincent Van Gestel and
@@ -44,10 +44,10 @@ public class Branch {
 	private final String geographicLocation;
 
 	/**
-	 * Creates a TaskMan system instance with a given time.
+	 * Creates a Branch system instance with a given time.
 	 * 
 	 * @param time
-	 *            The current TaskMan time.
+	 *            The current Branch time.
 	 */
 	public Branch(String location, List<ResourcePrototype> prototypes) 
 			throws IllegalArgumentException {
@@ -61,9 +61,9 @@ public class Branch {
 	}
 	
 	/**
-	 * Returns the geographic location of the TaskMan
+	 * Returns the geographic location of the 
 	 * 
-	 * @return	The location of the TaskMan
+	 * @return	The location of the Branch
 	 */
 	public String getGeographicLocation(){
 		return this.geographicLocation;
@@ -71,12 +71,12 @@ public class Branch {
 
 	/**
 	 * Unwraps the ProjectView object and returns the Project that it contained
-	 * IF the unwrapped project belongs to this taskman:
+	 * IF the unwrapped project belongs to this Branch:
 	 * projectList.contains(project)
 	 * 
 	 * @param view
 	 *            | the ProjectView to unwrap
-	 * @return | the unwrapped Project if it belonged to this TaskMan | NULL
+	 * @return | the unwrapped Project if it belonged to this Branch | NULL
 	 *         otherwise
 	 * @throws IllegalArgumentException, UnexpectedViewContentException
 	 */
@@ -87,7 +87,7 @@ public class Branch {
 		}
 		Project project = view.unwrap();
 		if(project != delegationProject && !projectList.contains(project)) {
-			throw new UnexpectedViewContentException("Project does not belong to this TaskManager!");
+			throw new UnexpectedViewContentException("Project does not belong to this Branch");
 		}
 		return project;
 	}
@@ -335,7 +335,7 @@ public class Branch {
 
 	/**
 	 * Returns a list of ProjectView objects that each contain one of this
-	 * taskman's projects
+	 * Branch's projects
 	 * 
 	 * @return 
 	 * 			| a list of ProjectViews
@@ -349,7 +349,7 @@ public class Branch {
 	
 	/**
 	 * Returns a list of ProjectView objects that each contain one of this
-	 * taskman's projects and the delegation project
+	 * Branch's projects and the delegation project
 	 * 
 	 * @return 
 	 * 			| a list of ProjectViews
@@ -695,20 +695,53 @@ public class Branch {
 		return resMan.unWrapUserView(user); //TODO public unwrap
 	}
 
+	/**
+	 *  Get the responsible branch for the given task
+	 * @param 	project
+	 * 			The project containing the task
+	 * @param 	task
+	 * 			the task to get the responsible branch from.
+	 * @return	The responsible branch for the task.
+	 */
 	public Optional<BranchView> getResponsibleBranch(ProjectView project, TaskView task) {
 		return project.unwrap().getResponsibleBranch(delegator, task);
 	}
 
+	/**
+	 *  Delegate the task in the given taskview to the given branch.
+	 * @param 	project
+	 * 			The project containing the task to delegate.
+	 * @param 	task
+	 * 			The task to delegate.
+	 * @param 	newTman
+	 * 			The new branch to delegate the task to.
+	 */
 	public void delegateTask(ProjectView project, TaskView task,
 			Branch newTman) {
 		Project p = unwrapProjectView(project);
 		p.delegateTask(delegator, task, this, newTman);
 	}
 	
+	/**
+	 * Delegate the given task to the given branch.
+	 * @param 	task
+	 * 			The task to delegate 
+	 * @param 	toBranch
+	 * 			The branch to delegate the task to
+	 */
 	public void delegateTask(Task task, Branch toBranch) {
 		delegator.delegateTask(task, toBranch, this);
 	}
 
+	/**
+	 * Accept the incoming delegation of the task from the given branch and make a new task in the current branch.
+	 * @param 	task
+	 * 			The task to delegate into this branch.
+	 * @param 	fromBranch
+	 * 			The branch to delegate from
+	 * @return	The newly created delegation task in this branch
+	 * @throws IllegalArgumentException
+	 */
 	public Task delegateAccept(Task task, Branch fromBranch) throws IllegalArgumentException {
 		Map<ResourcePrototype, Integer> requiredResources= task.getRequiredResources();
 		Map<ResourceView, Integer> wrappedResources = new HashMap<>();
@@ -736,6 +769,11 @@ public class Branch {
 		delegator.clearBuffer();
 	}
 
+	/**
+	 * Toggles buffer mode to on or off
+	 * @param 	bool
+	 * 			True means on, false means off
+	 */
 	public void setBufferMode(boolean bool) {
 		delegator.setBufferMode(bool);
 	}
