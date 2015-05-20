@@ -328,9 +328,7 @@ public class Task implements Dependant {
 	}
 
 	/**
-	 * Notify the dependants of this task that this task has changed. If this
-	 * task is an alternative for another task then this will let the
-	 * alternative know to do the same
+	 * Notify the dependants of this task that this task has changed. 
 	 * 
 	 * @throws IllegalStateException
 	 * 			| if an update failed
@@ -339,15 +337,17 @@ public class Task implements Dependant {
 		for (Dependant t : dependants) {
 			t.updateDependency(this);
 		}
-		if (alternativeFor != null) {
-			alternativeFor.notifyDependants();
-		}
+//		if (alternativeFor != null) {
+//			alternativeFor.notifyDependants();
+//		}
 	}
 
 	/**
 	 * Update dependency of this task on preTask. When this method is called,
-	 * this task will check the state of all prerequisites and when they all
-	 * have finished endpoints, this task's state will change to available.
+	 * this task will check the state of all prerequisites. When they all
+	 * have finished endpoints, this task's state will change to available. 
+	 * If this task has failed and this method is called by its replacement, 
+	 * this task will notify its dependants.
 	 * 
 	 * @param preTask
 	 *            | The prerequisite that has changed
@@ -358,10 +358,14 @@ public class Task implements Dependant {
 	public void updateDependency(Task preTask) throws IllegalStateException {
 		int preIndex = prerequisites.indexOf(preTask);
 		if (preIndex < 0) {
-			throw new IllegalStateException(
-					"The supplied task \"" + preTask.getDescription() + "\" didn't occur as a Dependant in this task");
+			if(preTask.equals(replacement)) {
+				notifyDependants(); //Dit wil zeggen dat de taak was gereplaced en dat de originele moet zeggen dat hij "finished" is
+			} else {
+				throw new IllegalStateException("The supplied task \"" + preTask.getDescription() + "\" didn't occur as a Dependant in this task");
+			}
+		} else {
+			state.makeAvailable(this);
 		}
-		state.makeAvailable(this);
 	}
 
 	/**
@@ -699,14 +703,14 @@ public class Task implements Dependant {
 		return prerequisites;
 	}
 
-	/**
-	 * Return a list of all the dependants of this task
-	 * 
-	 * @return a list of all the dependants of this task
-	 */
-	private List<Dependant> getDependants() {
-		return dependants;
-	}
+//	/**
+//	 * Return a list of all the dependants of this task
+//	 * 
+//	 * @return a list of all the dependants of this task
+//	 */
+//	private List<Dependant> getDependants() {
+//		return dependants;
+//	}
 
 	/**
 	 * Returns the status of the Task as a String.
@@ -772,6 +776,7 @@ public class Task implements Dependant {
 			throw new IllegalStateException("This task can not be replaced");
 		}
 		this.replacement = t;
+		t.register(this);
 	}
 	
 	/**
