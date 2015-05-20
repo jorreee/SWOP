@@ -456,11 +456,11 @@ public class BranchManager implements IFacade {
 	
 	@Override //voor INIT
 	public void delegateTask(ProjectView project, TaskView task,
-			BranchView oldBranch, BranchView newBranch) {
-		Branch oldBranch = unwrapBranchView(oldBranch);
-		Branch newTman = unwrapBranchView(newBranch);
+			BranchView oldBranchView, BranchView newBranchView) {
+		Branch oldBranch = unwrapBranchView(oldBranchView);
+		Branch newBranch = unwrapBranchView(newBranchView);
 		
-		oldBranch.delegateTask(project, task, newTman);
+		oldBranch.delegateTask(project, task, newBranch);
 		
 	}
 	
