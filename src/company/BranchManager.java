@@ -31,6 +31,7 @@ import company.taskMan.resource.ResourceView;
 import company.taskMan.resource.user.User;
 import company.taskMan.resource.user.UserPermission;
 import exceptions.ResourceUnavailableException;
+import exceptions.UnexpectedViewContentException;
 
 public class BranchManager implements IFacade {
 	private List<Branch> branches;
@@ -449,17 +450,17 @@ public class BranchManager implements IFacade {
 	@Override
 	public void delegateTask(ProjectView project, TaskView task,
 			BranchView newBranch) {
-		Branch taskMan = unwrapBranchView(newBranch);  
-		currentBranch.delegateTask(project, task, taskMan);
+		Branch branch = unwrapBranchView(newBranch);  
+		currentBranch.delegateTask(project, task, branch);
 	}
 	
-	@Override
+	@Override //voor INIT
 	public void delegateTask(ProjectView project, TaskView task,
 			BranchView oldBranch, BranchView newBranch) {
-		Branch oldTman = unwrapBranchView(oldBranch);
+		Branch oldBranch = unwrapBranchView(oldBranch);
 		Branch newTman = unwrapBranchView(newBranch);
 		
-		oldTman.delegateTask(project, task, newTman);
+		oldBranch.delegateTask(project, task, newTman);
 		
 	}
 	
@@ -477,11 +478,12 @@ public class BranchManager implements IFacade {
 	private Branch unwrapBranchView(BranchView view) 
 			throws TaskManException {
 		if(view == null) {
-			throw new TaskManException(new NullPointerException("There was no branch to unwrap!"));
+			throw new TaskManException(new IllegalArgumentException("There was no branch to unwrap!"));
 		}
 		Branch taskMan = view.unwrap();
-		if(!branches.contains(taskMan))
-			throw new TaskManException(new IllegalArgumentException("Branch does not belong to this BranchManager!"));
+		if(!branches.contains(taskMan)) {
+			throw new TaskManException(new UnexpectedViewContentException("Branch does not belong to this BranchManager!"));
+		}
 		return taskMan;
 
 	}

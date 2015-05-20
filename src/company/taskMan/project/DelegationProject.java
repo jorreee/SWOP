@@ -1,13 +1,6 @@
 package company.taskMan.project;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import company.taskMan.resource.ResourceManager;
-import company.taskMan.resource.ResourceView;
-import company.taskMan.task.Task;
 
 public class DelegationProject extends Project {
 	
