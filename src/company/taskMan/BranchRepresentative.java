@@ -169,9 +169,15 @@ public class BranchRepresentative implements Dependant {
 		}
 	}
 
+	/**
+	 * 
+	 * @param plannableTask
+	 * @throws IllegalStateException
+	 * 			| when plannableTask isn't delegated 
+	 */
 	@Override
-	public void updateDependencyPlannable(Task plannableTask) {
-		// TODO stuur een bericht naar delegating task dat hij kan gepland worden
+	public void updateDependencyPlannable(Task plannableTask) throws IllegalStateException {
+		// TODO stuur een bericht naar delegating task dat hij kan gepland worden?
 		
 	}
 

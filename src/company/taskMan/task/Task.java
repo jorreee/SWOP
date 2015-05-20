@@ -368,15 +368,6 @@ public class Task implements Dependant {
 		}
 	}
 	
-	protected void notifyPlannable() {
-		for(Dependant d : dependants) {
-			d.updateDependencyPlannable(this);
-		}
-	}
-	
-	@Override
-	public void updateDependencyPlannable(Task plannableTask) { }
-	
 	/**
 	 * Checks whether the Task is finished.
 	 * 
@@ -422,7 +413,7 @@ public class Task implements Dependant {
 	 * @return True when this task can be replaced by another
 	 */
 	private boolean canBeReplaced() {
-		if (!isFailed()) {
+		if (!isFailed() && !isDelegated()) {
 			return false;
 		}
 		if (getReplacement() != null) {
@@ -774,7 +765,7 @@ public class Task implements Dependant {
 	}
 
 	/**
-	 * Replace this task with another one
+	 * Replace this task with another one and register to its updates
 	 * 
 	 * @param t
 	 *            | The alternative for this task

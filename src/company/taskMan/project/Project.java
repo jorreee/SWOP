@@ -325,9 +325,6 @@ public class Project implements Dependant {
 		}
 		state.finish(this, preTask);
 	}
-	
-	@Override
-	public void updateDependencyPlannable(Task plannableTask) { }
 
 	/**
 	 * Sets the end time of the Project.
@@ -661,7 +658,7 @@ public class Project implements Dependant {
 	public void delegateTask(BranchRepresentative delegator, TaskView task,
 			Branch origBranch, Branch newBranch) {
 		Task t = unwrapTaskView(task);
-		delegator.delegateTask(t, newBranch, origBranch);
+//		delegator.delegateTask(t, newBranch, origBranch);//TODO gewoon taak een ref naar nieuwe taak geven?
 	}
 
 }

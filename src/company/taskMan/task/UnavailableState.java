@@ -22,7 +22,6 @@ public class UnavailableState implements TaskStatus {
 				return; //unfulfilled prereqs
 			}
 		}
-		task.notifyPlannable();
 		if(task.getPlannedBeginTime() == null) {
 			return; //not planned
 		}

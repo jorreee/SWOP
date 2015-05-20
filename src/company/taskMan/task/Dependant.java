@@ -23,8 +23,6 @@ public interface Dependant {
 	 * 				| if preTask isn't a Dependant
 	 */
 	public void updateDependencyFinished(Task preTask) throws IllegalStateException;
-	
-	public void updateDependencyPlannable(Task plannableTask);
 
 	/**
 	 * Get the longest possible duration that a series of dependants (this one and
