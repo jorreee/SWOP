@@ -24,6 +24,7 @@ import company.taskMan.resource.ResourcePrototype;
 import company.taskMan.resource.ResourceView;
 import company.taskMan.task.Task;
 import userInterface.IFacade;
+import userInterface.TaskManException;
 
 public class UseCase4CreateTaskTest {
 
@@ -63,14 +64,16 @@ public class UseCase4CreateTaskTest {
 	@Before
 	public final void initialize() {
 		branchManager = new BranchManager(startDate);
+		branchManager.createResourcePrototype("car", emptyAvailabilityPeriodStart, emptyAvailabilityPeriodEnd);
+		branchManager.createResourcePrototype("whiteboard", emptyAvailabilityPeriodStart, emptyAvailabilityPeriodEnd);
 		branchManager.initializeBranch("Leuven");
 
 		branchManager.createProject("Test1", "testing 1", project0DueDate);
-		branchManager.createResourcePrototype("car", emptyAvailabilityPeriodStart, emptyAvailabilityPeriodEnd);
+		
 		for(int i = 0;i<=5;i++){
 			branchManager.declareConcreteResource("car" + i, branchManager.getResourcePrototypes().get(0));
 		}
-		branchManager.createResourcePrototype("whiteboard", emptyAvailabilityPeriodStart, emptyAvailabilityPeriodEnd);
+		
 		for(int i = 0;i<=5;i++){
 			branchManager.declareConcreteResource("whiteboard" + i, branchManager.getResourcePrototypes().get(1));
 		}
@@ -275,7 +278,7 @@ public class UseCase4CreateTaskTest {
 		assertEquals(p0tasks.size(),0);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = TaskManException.class)
 	public void flow4aUnknownAltTest() {
 		List<ProjectView> projects = branchManager.getProjects();
 		assertTrue(projects.size() == 1);
@@ -293,7 +296,7 @@ public class UseCase4CreateTaskTest {
 
 	}
 
-	@Test
+	@Test(expected = TaskManException.class)
 	public void flow4aBadAltTest() {
 		List<ProjectView> projects = branchManager.getProjects();
 		assertTrue(projects.size() == 1);
@@ -347,7 +350,7 @@ public class UseCase4CreateTaskTest {
 
 	}
 	
-	@Test
+	@Test(expected = TaskManException.class)
 	public void flow4aDoubleAltTest() {
 		List<ProjectView> projects = branchManager.getProjects();
 		assertTrue(projects.size() == 1);
@@ -377,7 +380,7 @@ public class UseCase4CreateTaskTest {
 		assertTrue(p0tasks.size() == 2);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = TaskManException.class)
 	public void flow4aUnknownDepTest() {
 		List<ProjectView> projects = branchManager.getProjects();
 		assertTrue(projects.size() == 1);
@@ -399,7 +402,7 @@ public class UseCase4CreateTaskTest {
 		
 	}
 	
-	@Test
+	@Test(expected = TaskManException.class)
 	public void flow4aBadDepTest() {
 		List<ProjectView> projects = branchManager.getProjects();
 		assertTrue(projects.size() == 1);
@@ -426,7 +429,7 @@ public class UseCase4CreateTaskTest {
 		assertTrue(p0tasks.size() == 1);
 	}
 	
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = TaskManException.class)
 	public void flow4aUnknownProjectTest() {
 		Project unexistent = new Project("Very bad", "Very bad project", startDate, project0DueDate);
 		List<ProjectView> projects = branchManager.getProjects();
@@ -448,26 +451,26 @@ public class UseCase4CreateTaskTest {
 		p0tasks = project0.getTasks();
 		assertEquals(p0tasks.size(),1);
 		
-		//-------------------------------------------------------------------------------------------------
-		// TODO eigen testcase
-		// Step 1 and 2 are implicit
-		// Step 3
-		branchManager.createTask(new ProjectView(unexistent), "A new TASK", newTaskDur, newTaskDev, newTaskDependencies, reqResTask00, t00);
-		// Step 4
-		assertEquals(branchManager.getProjects().size(),1);
-		p0tasks = project0.getTasks();
-		assertEquals(p0tasks.size(),1);
-		
-		//-------------------------------------------------------------------------------------------------
-		// TODO eigen testcase
-		// Step 1 and 2 are implicit
-		// Step 3
-		newTaskDependencies.add(t00);
-		branchManager.createTask(new ProjectView(unexistent), "A new TASK", newTaskDur, newTaskDev, newTaskDependencies, reqResTask00, null);
-		// Step 4
-		assertEquals(branchManager.getProjects().size(),1);
-		p0tasks = project0.getTasks();
-		assertEquals(p0tasks.size(),1);
+//		//-------------------------------------------------------------------------------------------------
+//		
+//		// Step 1 and 2 are implicit
+//		// Step 3
+//		branchManager.createTask(new ProjectView(unexistent), "A new TASK", newTaskDur, newTaskDev, newTaskDependencies, reqResTask00, t00);
+//		// Step 4
+//		assertEquals(branchManager.getProjects().size(),1);
+//		p0tasks = project0.getTasks();
+//		assertEquals(p0tasks.size(),1);
+//		
+//		//-------------------------------------------------------------------------------------------------
+//		
+//		// Step 1 and 2 are implicit
+//		// Step 3
+//		newTaskDependencies.add(t00);
+//		branchManager.createTask(new ProjectView(unexistent), "A new TASK", newTaskDur, newTaskDev, newTaskDependencies, reqResTask00, null);
+//		// Step 4
+//		assertEquals(branchManager.getProjects().size(),1);
+//		p0tasks = project0.getTasks();
+//		assertEquals(p0tasks.size(),1);
 		
 	}
 
