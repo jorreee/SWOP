@@ -54,7 +54,12 @@ public class DelegatedState implements TaskStatus {
 	@Override
 	public void finish(Task task, LocalDateTime endTime) 
 			throws IllegalArgumentException, IllegalStateException { 
-		throw new IllegalStateException("This task is delegated and you don't have control anymore");
+//		throw new IllegalStateException("This task is delegated and you don't have control anymore");
+		finished = true;
+
+		task.setEndTime(endTime);
+		
+		task.notifyFinished();
 	}
 	
 	@Override
@@ -78,9 +83,10 @@ public class DelegatedState implements TaskStatus {
 		return false;
 	}
 
+	private boolean finished = false;
 	@Override
 	public boolean isFinished() {
-		return false;
+		return finished;
 	}
 
 	@Override

@@ -1,5 +1,7 @@
 package company.taskMan.task;
 
+import java.time.LocalDateTime;
+
 import company.taskMan.util.TimeSpan;
 
 public class TaskDelegationProxy implements Dependant {
@@ -18,8 +20,8 @@ public class TaskDelegationProxy implements Dependant {
 		other.link(this);
 	}
 	
-	private void updateProxyTaskFinished() {
-		task.notifyFinished();
+	private void updateProxyTaskFinished(LocalDateTime endTime) {
+		task.finish(endTime);
 	}
 	
 	private void updateProxyPrereqsFinished() {
@@ -38,7 +40,7 @@ public class TaskDelegationProxy implements Dependant {
 			// delegating task is gefinished. Hij laat aan de proxy in
 			// de originele branch weten dat de originele task moet notifyen
 			// dat hij 'klaar' is
-			other.updateProxyTaskFinished();
+			other.updateProxyTaskFinished(preTask.getEndTime());
 		} else {
 			// geval proxy in originele branch krijg te horen dat een prereq
 			// is gefinished. Als alle prereqs vervuld zijn laat hij aan de
