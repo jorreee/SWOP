@@ -306,7 +306,12 @@ public class BranchManager implements IFacade {
 	 */
 	@Override
 	public void declareConcreteResource(String name, ResourceView fromPrototype) {
+		try {
 		currentBranch.declareConcreteResource(name,fromPrototype);
+		}
+		catch (Exception e) {
+			throw new TaskManException(e);
+		}
 	}
 
 	@Override
