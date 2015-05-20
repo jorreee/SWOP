@@ -427,9 +427,8 @@ public class Branch {
 	 * @return True if and only if the new concrete resource was made and added
 	 *         to its correct pool
 	 */
-	//TODO exception
 	public void declareConcreteResource(String name,
-			ResourceView fromPrototype) {
+			ResourceView fromPrototype) throws IllegalArgumentException, UnexpectedViewContentException{
 		resMan.declareConcreteResource(name, fromPrototype);
 	}
 

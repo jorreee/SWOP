@@ -192,7 +192,11 @@ public class BranchManager implements IFacade {
 		if (endTime.isAfter(currentTime)) {
 			throw new TaskManException(new IllegalArgumentException("The endtime is after the currentTime"));
 		}
-		currentBranch.setTaskFinished(project, task, endTime);
+		try{
+			currentBranch.setTaskFinished(project, task, endTime);
+		} catch (Exception e){
+			throw new TaskManException(e);
+		}
 	}
 
 	@Override
@@ -207,7 +211,11 @@ public class BranchManager implements IFacade {
 		if (endTime.isAfter(currentTime)) {
 			throw new TaskManException(new IllegalArgumentException("The endtime is after the currentTime"));
 		}
-		currentBranch.setTaskFailed(project, task, endTime);
+		try{
+				currentBranch.setTaskFailed(project, task, endTime);
+		} catch(Exception e){
+			throw new TaskManException(e);
+		}
 	}
 	
 	@Override
@@ -222,7 +230,11 @@ public class BranchManager implements IFacade {
 		if (startTime.isAfter(currentTime)) {
 			throw new TaskManException(new IllegalArgumentException("The startTime is after the currentTime"));
 		}
+		try{
 		currentBranch.setTaskExecuting(project,task,startTime);
+		} catch (Exception e){
+			throw new TaskManException(e);
+		}
 	}
 
 	@Override
@@ -294,7 +306,12 @@ public class BranchManager implements IFacade {
 	 */
 	@Override
 	public void declareConcreteResource(String name, ResourceView fromPrototype) {
+		try {
 		currentBranch.declareConcreteResource(name,fromPrototype);
+		}
+		catch (Exception e) {
+			throw new TaskManException(e);
+		}
 	}
 
 	@Override
