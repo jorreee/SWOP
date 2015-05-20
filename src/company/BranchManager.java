@@ -489,8 +489,13 @@ public class BranchManager implements IFacade {
 	}
 
 	@Override
-	public Optional<BranchView> getResponsibleBranch(ProjectView project, TaskView task, BranchView originalBranch) {
-		return originalBranch.unwrap().getResponsibleBranch(project, task);
+	public BranchView getResponsibleBranch(ProjectView project, TaskView task, BranchView originalBranch) {
+		return originalBranch.unwrap().getResponsibleBranch(project, task).orElse(originalBranch);
+	}
+	
+	@Override
+	public TaskView getDelegatingTask(ProjectView project, TaskView task) {
+		return currentBranch.getDelegatingTask(project,task);
 	}
 	
 	public void initializeFromMemento(LocalDateTime systemTime, TaskManInitFileChecker fileChecker) {

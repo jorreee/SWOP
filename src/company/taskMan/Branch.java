@@ -40,7 +40,7 @@ public class Branch {
 	private ArrayList<Project> projectList;
 	private Project delegationProject;
 	private ResourceManager resMan;
-	private BranchRepresentative delegator;
+	private BranchRepresentative branchRep;
 	private final String geographicLocation;
 
 	/**
@@ -56,7 +56,7 @@ public class Branch {
 		projectList = new ArrayList<>();
 		delegationProject = new DelegationProject();
 		resMan = new ResourceManager(prototypes);
-		delegator = new BranchRepresentative();
+		branchRep = new BranchRepresentative();
 		geographicLocation = location;
 	}
 	
@@ -696,17 +696,22 @@ public class Branch {
 	}
 
 	public Optional<BranchView> getResponsibleBranch(ProjectView project, TaskView task) {
-		return project.unwrap().getResponsibleBranch(delegator, task);
+		return project.unwrap().getResponsibleBranch(branchRep, task);
+	}
+	
+	public TaskView getDelegatingTask(ProjectView project, TaskView task) {
+		return project.unwrap().getDelegatingTask(branchRep, task).orElse(task);
 	}
 
 	public void delegateTask(ProjectView project, TaskView task,
 			Branch newTman) {
 		Project p = unwrapProjectView(project);
-		p.delegateTask(delegator, task, this, newTman);
+		p.delegateTask(branchRep, task, this, newTman);
+		
 	}
 	
 	public void delegateTask(Task task, Branch toBranch) {
-		delegator.delegateTask(task, toBranch, this);
+		branchRep.delegateTask(task, toBranch, this);
 	}
 
 	public Task delegateAccept(Task task, Branch fromBranch) throws IllegalArgumentException {
@@ -724,7 +729,7 @@ public class Branch {
 			throw new IllegalArgumentException("Task cannot be accepted for delegation, reason: " + e.getMessage());
 		}
 		Task newTask = delegationProject.getTasks().get(delegationProject.getTasks().size() - 1);
-		delegator.delegateAccept(newTask, this, fromBranch);
+		branchRep.delegateAccept(newTask, this, fromBranch);
 		return newTask;
 	}
 
@@ -733,10 +738,10 @@ public class Branch {
 	}
 
 	public void clearBuffer() {
-		delegator.clearBuffer();
+		branchRep.clearBuffer();
 	}
 
 	public void setBufferMode(boolean bool) {
-		delegator.setBufferMode(bool);
+		branchRep.setBufferMode(bool);
 	}
 }

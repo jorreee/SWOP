@@ -104,6 +104,7 @@ public interface IFacade {
 
 	public void delegateTask(ProjectView project, TaskView task, BranchView newBranch);
 	public void delegateTask(ProjectView project, TaskView task, BranchView oldBranch, BranchView newBranch);
-	public Optional<BranchView> getResponsibleBranch(ProjectView project, TaskView task, BranchView originalBranch);
+	public BranchView getResponsibleBranch(ProjectView project, TaskView task, BranchView originalBranch);
+	public TaskView getDelegatingTask(ProjectView project, TaskView task);
 
 }

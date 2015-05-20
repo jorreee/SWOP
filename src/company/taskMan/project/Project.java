@@ -655,10 +655,18 @@ public class Project implements Dependant {
 		return delegator.getResponsibleBranch(task.unwrap());
 	}
 
-	public void delegateTask(BranchRepresentative delegator, TaskView task,
+	public void delegateTask(BranchRepresentative branchRep, TaskView task,
 			Branch origBranch, Branch newBranch) {
 		Task t = unwrapTaskView(task);
-//		delegator.delegateTask(t, newBranch, origBranch);//TODO gewoon taak een ref naar nieuwe taak geven?
+		branchRep.delegateTask(t, newBranch, origBranch);
+	}
+	
+	public Optional<TaskView> getDelegatingTask(BranchRepresentative branchRep, TaskView task) {
+		Optional<Task> delTask = branchRep.getDelegatingTask(task.unwrap());
+		if(delTask.isPresent()) {
+			return Optional.of(new TaskView(delTask.get()));
+		}
+		return Optional.empty();
 	}
 
 }

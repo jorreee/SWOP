@@ -43,12 +43,6 @@ public class Task implements Dependant {
 	private final Task alternativeFor;
 	private Task replacement;
 	
-//	/**
-//	 * DELEGATION-related variables. The connection goes both ways
-//	 */
-//	private Task originalDelegatedTask;
-//	private Task delegatingTask;
-	
 	/**
 	 * DEPENDENCY-related variables. 
 	 */
@@ -948,6 +942,15 @@ public class Task implements Dependant {
 		}
 		return true;
 	}
+	
+	protected boolean canBePlanned() {
+		for (Task t : prerequisites) {
+			if (t.isFailed() && (t.getReplacement() == null)) {
+				return false;
+			}
+		}
+		return true;
+	}
 
 	/**
 	 * Plan a task in the system from a given start time. Reservations will be
@@ -964,10 +967,8 @@ public class Task implements Dependant {
 	public void plan(LocalDateTime startTime, List<ResourceView> concRes,
 			List<ResourceView> devs) 
 					throws IllegalArgumentException, IllegalStateException, ResourceUnavailableException {
-		for (Task t : prerequisites) {
-			if (t.isFailed() && (t.getReplacement() == null)) {
-				throw new IllegalStateException("There is a failed prerequisite without an alternative");
-			}
+		if(!canBePlanned()) {
+			throw new IllegalStateException("There is a failed prerequisite without an alternative");
 		}
 		if (!isValidPlannedStartTime(startTime)) {
 			throw new IllegalArgumentException("Invalid startTime");

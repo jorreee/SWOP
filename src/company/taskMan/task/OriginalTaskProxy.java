@@ -4,32 +4,23 @@ import java.time.LocalDateTime;
 
 import company.taskMan.util.TimeSpan;
 
-public class TaskDelegationProxy implements Dependant {
+public class OriginalTaskProxy implements Dependant {
 	
-	Task task;
-	TaskDelegationProxy other;
+	private Task task;
+	private DelegatingTaskProxy other;
 	private boolean hasUnfinishedPrereqs;
 	
-	public TaskDelegationProxy(Task t) {
+	public OriginalTaskProxy(Task t) {
 		this.task = t;
 		hasUnfinishedPrereqs = true;
 	}
 	
-	public void link(TaskDelegationProxy other) {
+	public void link(DelegatingTaskProxy other) {
 		this.other = other;
-		other.link(this);
 	}
 	
-	private void updateProxyTaskFinished(LocalDateTime endTime) {
-		task.finish(endTime);
-	}
-	
-	private void updateProxyPrereqsFinished() {
+	public void updateProxyPrereqsFinished() {
 		hasUnfinishedPrereqs = false;
-	}
-	
-	public boolean hasUnfinishedPrereqs() {
-		return hasUnfinishedPrereqs;
 	}
 
 	@Override
