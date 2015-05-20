@@ -106,6 +106,12 @@ public class Reservation {
 		return true;		
 	}
 
+	/**
+	 * Checks whether the reservation has the given resource as the reserved resource.
+	 * @param 	resource
+	 * 			The resource for which to check if the reservation has that resource
+	 * @return	True if the reservation has reserved the given resource, else false.
+	 */
 	public boolean hasAsResource(ConcreteResource resource) {
 		if(reservedResource == resource) {
 			return true;

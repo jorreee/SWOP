@@ -24,7 +24,7 @@ public class TaskManMemento {
 	
 	private final LocalDateTime currentTime;
 
-	// TODO add delegation TO and FROM links for rebuilding
+	// TODO FIXME DELEGATIONS FIXEN
 	
 	/**
 	 * Construct a memento with a specified string (a TMAN)
@@ -39,6 +39,11 @@ public class TaskManMemento {
 		this.currentTime = currentSystemTime;
 	}
 	
+	/**
+	 * Revert the branch to the last memento save.
+	 * @param 	branch
+	 * 			The branch to revert.
+	 */
 	public void revert(BranchManager branch) {
 
 		TaskManInitFileChecker fileChecker = new TaskManInitFileChecker(
@@ -62,7 +67,7 @@ public class TaskManMemento {
 		branch.changeToUser(currentUser);
 		
 		// Reset Delegation links (TO and FROM list)
-		// TODO
+		// TODO AAAAAAAAAAAAAAAAAH
 		
 		// End initialization
 	}

@@ -772,17 +772,18 @@ public class ResourceManager {
 			// These are already chosen
 			List<ConcreteResource> alreadyReserved = new ArrayList<>();
 			for(ResourceView resource : allResources) {
+				try{
 				ConcreteResource cr = unWrapConcreteResourceView(resource);
-				if(cr != null) {
-					alreadyReserved.add(cr);
+				alreadyReserved.add(cr);
+				} catch (UnexpectedViewContentException e) {		
 				}
 			}
 			
 			// For each resource
 			for(ResourceView resource : allResources) {
+				try {
 				ConcreteResource cr = unWrapConcreteResourceView(resource);
 				// if Concrete resource
-				if(cr != null) {
 					// Available from hour until hour + task.getEstimatedDuration()
 					if(!canReserve(cr, hour, TimeSpan.addSpanToLDT(hour,task.getEstimatedDuration(), workDayStart, workDayEnd), new ArrayList<Reservation>())) {
 						validTimeStamp = false;
@@ -790,23 +791,31 @@ public class ResourceManager {
 					}
 					continue;
 				}
+				catch (UnexpectedViewContentException e){
+					
+				}
+				try {
 				ResourcePrototype rp = unWrapResourcePrototypeView(resource);
 				// if Prototype
-				if(rp != null) {
 					// Find concrete resource (not yet present) which is available from ...
-					cr = pickUnreservedResource(rp, hour, TimeSpan.addSpanToLDT(hour,task.getEstimatedDuration(), workDayStart, workDayEnd), new ArrayList<Reservation>(), alreadyReserved);
-					// No cr to be found (Oh nooes)
-					if(cr == null) {
-						validTimeStamp = false;
-						break;
-					}
+				 try {
+					ConcreteResource cr = pickUnreservedResource(rp, hour, TimeSpan.addSpanToLDT(hour,task.getEstimatedDuration(), workDayStart, workDayEnd), new ArrayList<Reservation>(), alreadyReserved);
 					// Add cr to list
 					alreadyReserved.add(cr);
 					continue;
+				 }
+				catch ( UnexpectedViewContentException | ResourceUnavailableException e) {	// No cr to be found (Oh nooes)
+						validTimeStamp = false;
+						break;
+					}
+					
+				}
+				catch (UnexpectedViewContentException e){
+					
 				}
 				// if User
+				try {
 				User us = unWrapUserView(resource);
-				if(us != null) {
 					if(!alreadyReserved.contains(us) && canReserve(us,hour, TimeSpan.addSpanToLDT(hour,task.getEstimatedDuration(), workDayStart, workDayEnd),new ArrayList<Reservation>())) {
 						alreadyReserved.add(us);
 						continue;
@@ -815,7 +824,9 @@ public class ResourceManager {
 						break;
 					}
 				}
+				catch (UnexpectedViewContentException e) {
 				return null; // The resources in allResources must be concrete or prototype
+				}
 			}
 			// If everything checks out, good job!
 			if(validTimeStamp) {

@@ -56,6 +56,13 @@ public class PrototypeManager {
 		}
 	}
 	
+	/**
+	 * Unwraps the given ResourceView of a Prototype.
+	 * @param 	view
+	 * 			The given ResourceView
+	 * @return	The unwrapped ResourcePrototype
+	 * @throws IllegalArgumentException
+	 */
 	private ResourcePrototype unwrap(ResourceView view) 
 			throws IllegalArgumentException {
 		if(view == null) {
@@ -73,6 +80,16 @@ public class PrototypeManager {
 		return r;
 	}
 	
+	/**
+	 * Create a new Resource Prototype
+	 * @param 	name
+	 * 			The name of the resource prototype
+	 * @param 	availabilityStart
+	 * 			The availability start of the prototype. 
+	 * @param 	availabilityEnd
+	 * 			The availability end of the prototype.
+	 * @throws IllegalArgumentException
+	 */
 	public void createResourcePrototype(String name,
 			Optional<LocalTime> availabilityStart,
 			Optional<LocalTime> availabilityEnd) 
