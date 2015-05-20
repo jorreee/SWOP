@@ -33,8 +33,8 @@ import company.taskMan.resource.user.UserPermission;
 import exceptions.ResourceUnavailableException;
 
 public class BranchManager implements IFacade {
-	private List<Branch> taskMen;
-	private Branch currentTaskMan;
+	private List<Branch> branches;
+	private Branch currentBranch;
 	private LocalDateTime currentTime;
 	private User currentUser;
 	private PrototypeManager protMan; //TODO protten laten
@@ -42,7 +42,7 @@ public class BranchManager implements IFacade {
 
 	
 	public BranchManager(LocalDateTime time) {
-		taskMen = new ArrayList<>();
+		branches = new ArrayList<>();
 		caretaker = new TaskManCaretaker(this);
 		currentUser = null;
 		protMan = new PrototypeManager();
@@ -64,11 +64,11 @@ public class BranchManager implements IFacade {
 	 * 			The location of the branch.
 	 * @throws  IllegalArgumentException 
 	 */
-	private void declareTaskMan(String location, List<ResourcePrototype> prototypes) throws IllegalArgumentException{
-		Branch newTaskMan = new Branch(location, prototypes);
-		taskMen.add(newTaskMan);
-		currentTaskMan = newTaskMan;
-		currentUser = newTaskMan.getSuperUser();
+	private void declareBranch(String location, List<ResourcePrototype> prototypes) throws IllegalArgumentException{
+		Branch newBranch = new Branch(location, prototypes);
+		branches.add(newBranch);
+		currentBranch = newBranch;
+		currentUser = newBranch.getSuperUser();
 	}
 	
 	/**
@@ -86,7 +86,7 @@ public class BranchManager implements IFacade {
 		if(!currentUserHasPermission(UserPermission.CREATE_PROJECT)) {
 			throw new TaskManException(new CredentialException("User has no permission to create projects"));
 		}
-		currentTaskMan.createProject(name, description, creationTime, dueTime);
+		currentBranch.createProject(name, description, creationTime, dueTime);
 	}
 	
 	@Override
@@ -95,7 +95,7 @@ public class BranchManager implements IFacade {
 		if(!currentUserHasPermission(UserPermission.CREATE_PROJECT)) {
 			throw new TaskManException(new CredentialException("User has no permission to create projects"));
 		}
-		currentTaskMan.createProject(name, description, this.currentTime, dueTime);
+		currentBranch.createProject(name, description, this.currentTime, dueTime);
 	}
 
 	@Override
@@ -113,7 +113,7 @@ public class BranchManager implements IFacade {
 		}
 		
 		try {
-			currentTaskMan.createTask(project, 
+			currentBranch.createTask(project, 
 					description, 
 					estimatedDuration, 
 					acceptableDeviation, 
@@ -143,7 +143,7 @@ public class BranchManager implements IFacade {
 				throw new TaskManException(new CredentialException("User has no permission to create tasks"));
 			}
 			try {
-			currentTaskMan.createTask(project, 
+			currentBranch.createTask(project, 
 					description, 
 					estimatedDuration, 
 					acceptableDeviation, 
@@ -192,7 +192,7 @@ public class BranchManager implements IFacade {
 		if (endTime.isAfter(currentTime)) {
 			throw new TaskManException(new IllegalArgumentException("The endtime is after the currentTime"));
 		}
-		currentTaskMan.setTaskFinished(project, task, endTime);
+		currentBranch.setTaskFinished(project, task, endTime);
 	}
 
 	@Override
@@ -207,7 +207,7 @@ public class BranchManager implements IFacade {
 		if (endTime.isAfter(currentTime)) {
 			throw new TaskManException(new IllegalArgumentException("The endtime is after the currentTime"));
 		}
-		currentTaskMan.setTaskFailed(project, task, endTime);
+		currentBranch.setTaskFailed(project, task, endTime);
 	}
 	
 	@Override
@@ -222,17 +222,17 @@ public class BranchManager implements IFacade {
 		if (startTime.isAfter(currentTime)) {
 			throw new TaskManException(new IllegalArgumentException("The startTime is after the currentTime"));
 		}
-		currentTaskMan.setTaskExecuting(project,task,startTime);
+		currentBranch.setTaskExecuting(project,task,startTime);
 	}
 
 	@Override
 	public List<ProjectView> getProjects() {
-		return currentTaskMan.getProjects();
+		return currentBranch.getProjects();
 	}
 	
 	@Override
 	public List<ProjectView> getAllProjects() {
-		return currentTaskMan.getAllProjects();
+		return currentBranch.getAllProjects();
 	}
 
 	@Override
@@ -241,21 +241,21 @@ public class BranchManager implements IFacade {
 			return false;
 		}
 		caretaker.storeInMemento();
-		currentTaskMan.setBufferMode(true);
+		currentBranch.setBufferMode(true);
 		return true;
 	}
 
 	@Override
 	public void revertFromMemento() {
 		caretaker.revertFromMemento();
-		currentTaskMan.clearBuffer();
-		currentTaskMan.setBufferMode(false);
+		currentBranch.clearBuffer();
+		currentBranch.setBufferMode(false);
 	}
 
 	@Override
 	public void discardMemento() {
 		caretaker.discardMemento();
-		currentTaskMan.setBufferMode(false);
+		currentBranch.setBufferMode(false);
 	}
 
 	@Override
@@ -265,12 +265,12 @@ public class BranchManager implements IFacade {
 
 	@Override
 	public List<ResourceView> getPossibleUsers() {
-		return currentTaskMan.getPossibleUsernames();
+		return currentBranch.getPossibleUsernames();
 	}
 
 	@Override
 	public void changeToUser(ResourceView user) throws TaskManException{
-		User newUser = currentTaskMan.getUser(user);
+		User newUser = currentBranch.getUser(user);
 		if (user == null) {
 			throw new TaskManException(new IllegalArgumentException("Invalid user"));
 		} else {
@@ -294,18 +294,18 @@ public class BranchManager implements IFacade {
 	 */
 	@Override
 	public void declareConcreteResource(String name, ResourceView fromPrototype) {
-		currentTaskMan.declareConcreteResource(name,fromPrototype);
+		currentBranch.declareConcreteResource(name,fromPrototype);
 	}
 
 	@Override
 	public void createDeveloper(String name) {
-		currentTaskMan.createDeveloper(name);
+		currentBranch.createDeveloper(name);
 	}
 	
 	@Override
 	public void reserveResource(ResourceView resource, ProjectView project, TaskView task, LocalDateTime startTime, LocalDateTime endTime) {
 		try {
-			currentTaskMan.reserveResource(resource, project, task, startTime, endTime);
+			currentBranch.reserveResource(resource, project, task, startTime, endTime);
 		} catch (Exception e) {
 			throw new TaskManException(e);
 		}
@@ -313,12 +313,12 @@ public class BranchManager implements IFacade {
 
 	@Override
 	public List<ResourceView> getDeveloperList() {
-		return currentTaskMan.getDeveloperList();
+		return currentBranch.getDeveloperList();
 	}
 
 	@Override
 	public HashMap<ProjectView, List<TaskView>> findConflictingPlannings(TaskView task) {
-		return currentTaskMan.findConflictingPlannings(task);
+		return currentBranch.findConflictingPlannings(task);
 	}
 
 	@Override
@@ -331,13 +331,13 @@ public class BranchManager implements IFacade {
 	}
 
 	public ResourceView getPrototypeOf(ResourceView resource) {
-		return currentTaskMan.getPrototypeOf(resource);
+		return currentBranch.getPrototypeOf(resource);
 	}
 
 	@Override
 	public List<ResourceView> getConcreteResourcesForPrototype(
 			ResourceView resourcePrototype) {
-		return currentTaskMan.getConcreteResourcesForPrototype(resourcePrototype);
+		return currentBranch.getConcreteResourcesForPrototype(resourcePrototype);
 	}
 
 	@Override
@@ -348,7 +348,7 @@ public class BranchManager implements IFacade {
 			throw new TaskManException(new CredentialException("User has no permission to plan a task"));
 		}
 		try {
-			currentTaskMan.planTask(project, task, plannedStartTime, concRes, devs);
+			currentBranch.planTask(project, task, plannedStartTime, concRes, devs);
 		} catch (ResourceUnavailableException | IllegalArgumentException
 				| IllegalStateException e) {
 			throw new TaskManException(e);
@@ -363,7 +363,7 @@ public class BranchManager implements IFacade {
 			throw new TaskManException(new CredentialException("User has no permission to plan a task"));
 		}
 		try {
-			currentTaskMan.planRawTask(project, task, plannedStartTime, concRes, devs);
+			currentBranch.planRawTask(project, task, plannedStartTime, concRes, devs);
 		} catch (ResourceUnavailableException | IllegalArgumentException
 				| IllegalStateException e) {
 			throw new TaskManException(e);
@@ -383,18 +383,18 @@ public class BranchManager implements IFacade {
 	}
 
 	public List<Reservation> getAllReservations() {
-		return currentTaskMan.getAllReservations();
+		return currentBranch.getAllReservations();
 	}
 
 	@Override
 	public boolean isLoggedIn() {
-		return currentUser != null && currentTaskMan != null;
+		return currentUser != null && currentBranch != null;
 	}
 
 	@Override
 	public List<BranchView> getBranches() {
 		Builder<BranchView> views = ImmutableList.builder();
-		for (Branch taskMan : taskMen)
+		for (Branch taskMan : branches)
 			views.add(new BranchView(taskMan));
 		return views.build();
 	}
@@ -402,30 +402,30 @@ public class BranchManager implements IFacade {
 	@Override
 	public void selectBranch(BranchView branch) {
 		Branch taskMan = unwrapBranchView(branch);
-		currentTaskMan = taskMan;
+		currentBranch = taskMan;
 	}
 	
 	public String getGeographicLocation() {
-		return currentTaskMan.getGeographicLocation();
+		return currentBranch.getGeographicLocation();
 	}
 	
 
 	@Override
 	public void initializeBranch(String geographicLocation) throws IllegalArgumentException {
-		this.declareTaskMan(geographicLocation, protMan.getPrototypes());
+		this.declareBranch(geographicLocation, protMan.getPrototypes());
 	}
 
 	@Override
 	public void logout() {
 		currentUser = null;
-		currentTaskMan = null;
+		currentBranch = null;
 	}
 
 	@Override
 	public void delegateTask(ProjectView project, TaskView task,
 			BranchView newBranch) {
 		Branch taskMan = unwrapBranchView(newBranch);  
-		currentTaskMan.delegateTask(project, task, taskMan);
+		currentBranch.delegateTask(project, task, taskMan);
 	}
 	
 	@Override
@@ -455,7 +455,7 @@ public class BranchManager implements IFacade {
 			throw new TaskManException(new NullPointerException("There was no branch to unwrap!"));
 		}
 		Branch taskMan = view.unwrap();
-		if(!taskMen.contains(taskMan))
+		if(!branches.contains(taskMan))
 			throw new TaskManException(new IllegalArgumentException("Branch does not belong to this BranchManager!"));
 		return taskMan;
 
@@ -469,9 +469,9 @@ public class BranchManager implements IFacade {
 	public void initializeFromMemento(LocalDateTime systemTime, TaskManInitFileChecker fileChecker) {
 		currentTime = systemTime;
 		
-		currentTaskMan = new Branch(fileChecker.getGeographicLocation(), protMan.getPrototypes());
+		currentBranch = new Branch(fileChecker.getGeographicLocation(), protMan.getPrototypes());
 		
-		Main.initializeBranch(this, fileChecker, taskMen.indexOf(currentTaskMan));
+		Main.initializeBranch(this, fileChecker, branches.indexOf(currentBranch));
 	}
 
 	@Override
