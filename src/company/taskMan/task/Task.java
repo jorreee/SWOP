@@ -43,11 +43,11 @@ public class Task implements Dependant {
 	private final Task alternativeFor;
 	private Task replacement;
 	
-	/**
-	 * DELEGATION-related variables. The connection goes both ways
-	 */
-	private Task originalDelegatedTask;
-	private Task delegatingTask;
+//	/**
+//	 * DELEGATION-related variables. The connection goes both ways
+//	 */
+//	private Task originalDelegatedTask;
+//	private Task delegatingTask;
 	
 	/**
 	 * DEPENDENCY-related variables. 
@@ -637,36 +637,36 @@ public class Task implements Dependant {
 		return replacement;
 	}
 	
-	public Task getOriginalDelegatedTask() {
-		return originalDelegatedTask;
-	}
-	
-	protected void setOriginalDelegatedTask(Task original) 
-			throws IllegalArgumentException, IllegalStateException {
-		if(original == null) {
-			throw new IllegalArgumentException("original must not be null");
-		}
-		if(originalDelegatedTask != null) {
-			throw new IllegalStateException("This task is already delegating some task!");
-		}
-		this.originalDelegatedTask = original;
-	}
-	
-	public Task getDelegatingTask() {
-		return delegatingTask;
-	}
-	
-	/**
-	 * Informs this task of which Task is delegating it. If the parameter is 
-	 * null, this task will take matters into its own hands again.
-	 * 
-	 * @param delegating
-	 * 			| the task that is delegating it
-	 */
-	protected void setDelegatingTask(Task delegating) {
-		delegating.register(this);
-		this.delegatingTask = delegating;
-	}
+//	public Task getOriginalDelegatedTask() {
+//		return originalDelegatedTask;
+//	}
+//	
+//	protected void setOriginalDelegatedTask(Task original) 
+//			throws IllegalArgumentException, IllegalStateException {
+//		if(original == null) {
+//			throw new IllegalArgumentException("original must not be null");
+//		}
+//		if(originalDelegatedTask != null) {
+//			throw new IllegalStateException("This task is already delegating some task!");
+//		}
+//		this.originalDelegatedTask = original;
+//	}
+//	
+//	public Task getDelegatingTask() {
+//		return delegatingTask;
+//	}
+//	
+//	/**
+//	 * Informs this task of which Task is delegating it. If the parameter is 
+//	 * null, this task will take matters into its own hands again.
+//	 * 
+//	 * @param delegating
+//	 * 			| the task that is delegating it
+//	 */
+//	protected void setDelegatingTask(Task delegating) {
+//		delegating.register(this);
+//		this.delegatingTask = delegating;
+//	}
 
 	/**
 	 * Get the longest possible duration that a series of tasks (this one and
@@ -774,6 +774,11 @@ public class Task implements Dependant {
 		this.replacement = t;
 	}
 	
+	/**
+	 * Inform this task that it is being delegated by delegatingTask
+	 * @param delegatingTask
+	 * 		| the task that is delegating this task
+	 */
 	public void delegate(Task delegatingTask) {
 		state.delegate(this, delegatingTask);
 	}
