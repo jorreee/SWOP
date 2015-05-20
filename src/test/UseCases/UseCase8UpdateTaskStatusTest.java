@@ -383,8 +383,13 @@ public class UseCase8UpdateTaskStatusTest {
 		task00ConcreteResources.add(branchManager.getResourcePrototypes().get(0));
 		task00ConcreteResources.add(branchManager.getResourcePrototypes().get(1));
 		branchManager.planTask(project0, task00, task00StartDateGood, task00ConcreteResources, devList1);
-		branchManager.setTaskExecuting(project0, task00, task00StartDateVeryBad1);
-		branchManager.setTaskFinished(project0, task00, task00EndDateVeryBad1);		//Start date van task is VOOR project start date
+		boolean error = false;
+		try{
+		branchManager.setTaskExecuting(project0, task00, task00StartDateVeryBad1);	//Start date van task is VOOR project start date
+		}catch (TaskManException e){
+			error = true;
+		}
+		assertTrue(error);
 		// Step 6
 		assertTrue(task00.getStatusAsString().equalsIgnoreCase("available"));
 		assertTrue(task01.getStatusAsString().equalsIgnoreCase("unavailable"));
