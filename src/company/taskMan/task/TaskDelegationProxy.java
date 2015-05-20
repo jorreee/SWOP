@@ -25,7 +25,7 @@ public class TaskDelegationProxy implements Dependant {
 	}
 	
 	private void updateProxyPrereqsFinished() {
-		hasUnfinishedPrereqs = false;;
+		hasUnfinishedPrereqs = false;
 	}
 	
 	public boolean hasUnfinishedPrereqs() {
