@@ -98,16 +98,20 @@ public class ShowProjectsRequest extends Request {
 				int taskAmount = tasks.size();
 				if(taskAmount > 0) {
 					for(int i = 0 ; i < taskAmount ; i++) {
+						TaskView taski = tasks.get(i);
+						if(taski.isDelegated()) {
+							taski = branch.getDelegatedTask(taski);
+						}
 						StringBuilder taskiHead = new StringBuilder();
 						taskiHead.append("  {" + i + "}");
-						if(tasks.get(i).isUnacceptableOverdue(facade.getCurrentTime())) {
+						if(taski.isUnacceptableOverdue(facade.getCurrentTime())) {
 							taskiHead.append("!");
 						}
-						taskiHead.append(" Task \"" + tasks.get(i).getDescription() + "\": " + tasks.get(i).getStatusAsString());
-						if(tasks.get(i).isOnTime(facade.getCurrentTime())) {
+						taskiHead.append(" Task \"" + taski.getDescription() + "\": " + taski.getStatusAsString());
+						if(taski.isOnTime(facade.getCurrentTime())) {
 							taskiHead.append(", on time");
 						} else {
-							taskiHead.append(", over time by " + tasks.get(i).getOverTimePercentage(facade.getCurrentTime()) + "%");
+							taskiHead.append(", over time by " + taski.getOverTimePercentage(facade.getCurrentTime()) + "%");
 						}
 						if(tasks.get(i).isDelegated()) {
 							taskiHead.append(", responsible branch " + facade.getResponsibleBranch(project, tasks.get(i), branch).get().getGeographicLocation());
@@ -131,6 +135,10 @@ public class ShowProjectsRequest extends Request {
 					}
 
 					TaskView task = tasks.get(taskID);
+					
+					if(task.isDelegated()) {
+						task = branch.getDelegatedTask(task);
+					}
 
 					// Show overview of task details
 					StringBuilder taskHeader = new StringBuilder(); // Build task details
@@ -174,8 +182,8 @@ public class ShowProjectsRequest extends Request {
 					else {
 						taskHeader.append(", over time by " + task.getOverTimePercentage(facade.getCurrentTime()) + "%");
 					}
-					if(task.isDelegated()) {
-						taskHeader.append(", responsible branch " + facade.getResponsibleBranch(project, task, branch).get().getGeographicLocation());
+					if(tasks.get(taskID).isDelegated()) {
+						taskHeader.append(", responsible branch " + facade.getResponsibleBranch(project, tasks.get(taskID), branch).get().getGeographicLocation());
 					}
 					if(task.hasPrerequisites()) {
 						List<TaskView> prereqs = task.getPrerequisites();
