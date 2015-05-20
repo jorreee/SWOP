@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 import company.BranchView;
 import company.taskMan.task.Task;
 
-public class Delegator {
+public class BranchRepresentative {
 
 	List<Delegation> delegationsToBranch;
 	List<Delegation> delegationsFromBranch;
@@ -18,7 +18,7 @@ public class Delegator {
 	Stack<Integer> bufferCheckpoints;
 	boolean bufferMode;
 
-	public Delegator(){
+	public BranchRepresentative(){
 		delegationsFromBranch = new ArrayList<Delegation>();
 		delegationsToBranch = new ArrayList<Delegation>();
 		buffer = new LinkedList<Delegation>();
