@@ -131,8 +131,8 @@ public class Task implements Dependant {
 		replacement = null;
 
 		for (Task t : prerequisiteTasks) {
-			t.register(this);
 			this.prerequisites.add(t);
+			t.register(this);
 		}
 
 //		removeAlternativesDependencies();
