@@ -224,23 +224,23 @@ public class TaskTest {
 		assertTrue(defaultTest.hasFinishedEndpoint());
 	}
 	
-	@Test(expected=IllegalStateException.class)
-	public void replaceWithTestNotFailed(){
-		Task temp = new Task("temp",20,3,new ResourceManager(new ArrayList<ResourcePrototype>()),new ArrayList<Task>(),new HashMap<ResourceView,Integer>(),null);
-		assertFalse(defaultTest.isFailed());
-		defaultTest.replaceWith(temp);
-	}
+//	@Test(expected=IllegalStateException.class)
+//	public void replaceWithTestNotFailed(){
+//		Task temp = new Task("temp",20,3,new ResourceManager(new ArrayList<ResourcePrototype>()),new ArrayList<Task>(),new HashMap<ResourceView,Integer>(),null);
+//		assertFalse(defaultTest.isFailed());
+//		defaultTest.replaceWith(temp);
+//	}
 	
-	@Test(expected=IllegalStateException.class)
-	public void replaceWithTestNull() throws ResourceUnavailableException, IllegalArgumentException, IllegalStateException{
-		defaultTest.plan(LocalDateTime.of(2015, 2, 11, 16, 0),concreteResDef,devList);
-		defaultTest.execute(LocalDateTime.of(2015, 2, 11, 16, 0));
-		defaultTest.fail(LocalDateTime.of(2015, 2, 12, 16, 0));
-		Task temp = new Task("temp",20,3,new ResourceManager(new ArrayList<ResourcePrototype>()),new ArrayList<Task>(),new HashMap<ResourceView,Integer>(),null);
-		Task temp2 = new Task("temp",20,3,new ResourceManager(new ArrayList<ResourcePrototype>()),new ArrayList<Task>(),new HashMap<ResourceView,Integer>(),null);
-		defaultTest.replaceWith(temp);
-		defaultTest.replaceWith(temp2);
-	}
+//	@Test(expected=IllegalStateException.class)
+//	public void replaceWithTestNull() throws ResourceUnavailableException, IllegalArgumentException, IllegalStateException{
+//		defaultTest.plan(LocalDateTime.of(2015, 2, 11, 16, 0),concreteResDef,devList);
+//		defaultTest.execute(LocalDateTime.of(2015, 2, 11, 16, 0));
+//		defaultTest.fail(LocalDateTime.of(2015, 2, 12, 16, 0));
+//		Task temp = new Task("temp",20,3,new ResourceManager(new ArrayList<ResourcePrototype>()),new ArrayList<Task>(),new HashMap<ResourceView,Integer>(),null);
+//		Task temp2 = new Task("temp",20,3,new ResourceManager(new ArrayList<ResourcePrototype>()),new ArrayList<Task>(),new HashMap<ResourceView,Integer>(),null);
+//		defaultTest.replaceWith(temp);
+//		defaultTest.replaceWith(temp2);
+//	}
 	
 //	@Test(expected=IllegalArgumentException.class)
 //	public void setBeginTimeTestNull(){

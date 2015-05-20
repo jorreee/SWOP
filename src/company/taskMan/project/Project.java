@@ -10,7 +10,7 @@ import java.util.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import company.BranchView;
-import company.taskMan.Delegator;
+import company.taskMan.BranchRepresentative;
 import company.taskMan.Branch;
 import company.taskMan.resource.ResourceManager;
 import company.taskMan.resource.ResourceView;
@@ -651,11 +651,11 @@ public class Project implements Dependant {
 		return conflictTasks;
 	}
 
-	public Optional<BranchView> getResponsibleBranch(Delegator delegator, TaskView task) {
+	public Optional<BranchView> getResponsibleBranch(BranchRepresentative delegator, TaskView task) {
 		return delegator.getResponsibleBranch(task.unwrap());
 	}
 
-	public void delegateTask(Delegator delegator, TaskView task,
+	public void delegateTask(BranchRepresentative delegator, TaskView task,
 			Branch origBranch, Branch newBranch) {
 		Task t = unwrapTaskView(task);
 		delegator.delegateTask(t, newBranch, origBranch);

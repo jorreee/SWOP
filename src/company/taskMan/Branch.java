@@ -40,7 +40,7 @@ public class Branch {
 	private ArrayList<Project> projectList;
 	private Project delegationProject;
 	private ResourceManager resMan;
-	private Delegator delegator;
+	private BranchRepresentative delegator;
 	private final String geographicLocation;
 
 	/**
@@ -56,7 +56,7 @@ public class Branch {
 		projectList = new ArrayList<>();
 		delegationProject = new DelegationProject();
 		resMan = new ResourceManager(prototypes);
-		delegator = new Delegator();
+		delegator = new BranchRepresentative();
 		geographicLocation = location;
 	}
 	
