@@ -86,7 +86,11 @@ public class BranchManager implements IFacade {
 		if(!currentUserHasPermission(UserPermission.CREATE_PROJECT)) {
 			throw new TaskManException(new CredentialException("User has no permission to create projects"));
 		}
+		try {
 		currentBranch.createProject(name, description, creationTime, dueTime);
+		} catch (Exception e){
+			throw new TaskManException(e);
+		}
 	}
 	
 	@Override
@@ -95,7 +99,11 @@ public class BranchManager implements IFacade {
 		if(!currentUserHasPermission(UserPermission.CREATE_PROJECT)) {
 			throw new TaskManException(new CredentialException("User has no permission to create projects"));
 		}
+		try {
 		currentBranch.createProject(name, description, this.currentTime, dueTime);
+		} catch (Exception e){
+			throw new TaskManException(e);
+		}
 	}
 
 	@Override
