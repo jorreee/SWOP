@@ -27,7 +27,7 @@ import userInterface.IFacade;
 
 public class UseCase4CreateTaskTest {
 
-	private IFacade taskManager;
+	private IFacade branchManager;
 	private final LocalDateTime startDate = LocalDateTime.of(2015, 2, 9, 8, 0),
 			project0DueDate = LocalDateTime.of(2015, 2, 13, 23, 59),
 			task00StartDateGood = startDate,
@@ -62,26 +62,27 @@ public class UseCase4CreateTaskTest {
 	 */
 	@Before
 	public final void initialize() {
-		taskManager = new BranchManager(startDate);
+		branchManager = new BranchManager(startDate);
+		branchManager.initializeBranch("Leuven");
 
-		taskManager.createProject("Test1", "testing 1", project0DueDate);
-		taskManager.createResourcePrototype("car", emptyAvailabilityPeriodStart, emptyAvailabilityPeriodEnd);
+		branchManager.createProject("Test1", "testing 1", project0DueDate);
+		branchManager.createResourcePrototype("car", emptyAvailabilityPeriodStart, emptyAvailabilityPeriodEnd);
 		for(int i = 0;i<=5;i++){
-			taskManager.declareConcreteResource("car" + i, taskManager.getResourcePrototypes().get(0));
+			branchManager.declareConcreteResource("car" + i, branchManager.getResourcePrototypes().get(0));
 		}
-		taskManager.createResourcePrototype("whiteboard", emptyAvailabilityPeriodStart, emptyAvailabilityPeriodEnd);
+		branchManager.createResourcePrototype("whiteboard", emptyAvailabilityPeriodStart, emptyAvailabilityPeriodEnd);
 		for(int i = 0;i<=5;i++){
-			taskManager.declareConcreteResource("whiteboard" + i, taskManager.getResourcePrototypes().get(1));
+			branchManager.declareConcreteResource("whiteboard" + i, branchManager.getResourcePrototypes().get(1));
 		}
-		reqResTask00.put(taskManager.getResourcePrototypes().get(0), 2);
-		reqResTask00.put(taskManager.getResourcePrototypes().get(1), 1);
-		taskManager.createDeveloper("Weer");
-		taskManager.createDeveloper("Blunderbus");
-		weer = taskManager.getDeveloperList().get(0);
-		blunderbus = taskManager.getDeveloperList().get(1);
+		reqResTask00.put(branchManager.getResourcePrototypes().get(0), 2);
+		reqResTask00.put(branchManager.getResourcePrototypes().get(1), 1);
+		branchManager.createDeveloper("Weer");
+		branchManager.createDeveloper("Blunderbus");
+		weer = branchManager.getDeveloperList().get(0);
+		blunderbus = branchManager.getDeveloperList().get(1);
 		devList1.add(weer);
 		devList2.add(blunderbus);
-		taskManager.advanceTimeTo(workDate);
+		branchManager.advanceTimeTo(workDate);
 
 	}
 
@@ -89,10 +90,10 @@ public class UseCase4CreateTaskTest {
 	public void SuccesCaseTest() {
 		// Step 1 and 2 are implicit
 		// Step 3
-		List<ProjectView> projects = taskManager.getProjects();
+		List<ProjectView> projects = branchManager.getProjects();
 		assertTrue(projects.size() == 1);
 		ProjectView project0 = projects.get(0);
-		taskManager.createTask(project0, "A new TASK", newTaskDur, newTaskDev, newTaskDependencies,reqResTask00, null);
+		branchManager.createTask(project0, "A new TASK", newTaskDur, newTaskDev, newTaskDependencies,reqResTask00, null);
 		// Step 4
 		List<TaskView> p0tasks = project0.getTasks();
 		assertTrue(p0tasks.size() == 1);
@@ -109,22 +110,22 @@ public class UseCase4CreateTaskTest {
 	public void SuccesCaseALTTest() {
 
 		// Er is al een FAILED task aanwezig in het project
-		List<ProjectView> projects = taskManager.getProjects();
+		List<ProjectView> projects = branchManager.getProjects();
 		assertTrue(projects.size() == 1);
 		ProjectView project0 = projects.get(0);
-		taskManager.createTask(project0, "Design system", task00EstDur, task00Dev, task00Dependencies,noReq, null);
+		branchManager.createTask(project0, "Design system", task00EstDur, task00Dev, task00Dependencies,noReq, null);
 		
 		List<TaskView> p0tasks = project0.getTasks();
 		assertTrue(p0tasks.size() == 1);
 		TaskView t00 = p0tasks.get(0);
-		taskManager.planTask(project0, t00, startDate,task00ConcreteResources,devList1);
-		taskManager.setTaskExecuting(project0, t00, startDate);
-		taskManager.setTaskFailed(project0, t00, altTaskEndDate);
+		branchManager.planTask(project0, t00, startDate,task00ConcreteResources,devList1);
+		branchManager.setTaskExecuting(project0, t00, startDate);
+		branchManager.setTaskFailed(project0, t00, altTaskEndDate);
 		
 		
 		// Step 1 and 2 are implicit
 		// Step 3
-		taskManager.createTask(project0, "A new TASK", newTaskDur, newTaskDev, newTaskDependencies,reqResTask00, t00);
+		branchManager.createTask(project0, "A new TASK", newTaskDur, newTaskDev, newTaskDependencies,reqResTask00, t00);
 		// Step 4
 		p0tasks = project0.getTasks();
 		assertTrue(p0tasks.size() == 2);
@@ -145,10 +146,10 @@ public class UseCase4CreateTaskTest {
 	public void SuccesCaseDepTest() {
 
 		// Er is al een task aanwezig in het project
-		List<ProjectView> projects = taskManager.getProjects();
+		List<ProjectView> projects = branchManager.getProjects();
 		assertTrue(projects.size() == 1);
 		ProjectView project0 = projects.get(0);
-		taskManager.createTask(project0, "Design system", task00EstDur, task00Dev, task00Dependencies, reqResTask00, null);
+		branchManager.createTask(project0, "Design system", task00EstDur, task00Dev, task00Dependencies, reqResTask00, null);
 		
 		List<TaskView> p0tasks = project0.getTasks();
 		assertTrue(p0tasks.size() == 1);
@@ -158,7 +159,7 @@ public class UseCase4CreateTaskTest {
 		// Step 1 and 2 are implicit
 		// Step 3
 		newTaskDependencies.add(t00);
-		taskManager.createTask(project0, "A new TASK", newTaskDur, newTaskDev, newTaskDependencies,reqResTask00, null);
+		branchManager.createTask(project0, "A new TASK", newTaskDur, newTaskDev, newTaskDependencies,reqResTask00, null);
 		// Step 4
 		p0tasks = project0.getTasks();
 		assertTrue(p0tasks.size() == 2);
@@ -181,26 +182,26 @@ public class UseCase4CreateTaskTest {
 	public void SuccesCaseFailedDepNoAltTest() {
 
 		// Er is al een FAILED task aanwezig in het project
-		List<ProjectView> projects = taskManager.getProjects();
+		List<ProjectView> projects = branchManager.getProjects();
 		assertTrue(projects.size() == 1);
 		ProjectView project0 = projects.get(0);
-		taskManager.createTask(project0, "Design system", task00EstDur, task00Dev, task00Dependencies,noReq, null);
+		branchManager.createTask(project0, "Design system", task00EstDur, task00Dev, task00Dependencies,noReq, null);
 
 		List<TaskView> p0tasks = project0.getTasks();
 		assertTrue(p0tasks.size() == 1);
 		TaskView t00 = p0tasks.get(0);
-		taskManager.planTask(project0, t00, startDate,task00ConcreteResources,devList1);
-		taskManager.setTaskExecuting(project0, t00, startDate);
-		taskManager.setTaskFailed(project0, t00, altTaskEndDate);
+		branchManager.planTask(project0, t00, startDate,task00ConcreteResources,devList1);
+		branchManager.setTaskExecuting(project0, t00, startDate);
+		branchManager.setTaskFailed(project0, t00, altTaskEndDate);
 		assertEquals(t00.getStatusAsString(),"Failed");
 
 		// Step 1 and 2 are implicit
 		// Step 3
 		newTaskDependencies.add(t00);
 		Map<ResourceView, Integer> reqResTask = new HashMap<ResourceView, Integer>();
-		reqResTask.put(taskManager.getResourcePrototypes().get(0), 2);
-		reqResTask.put(taskManager.getResourcePrototypes().get(1), 1);
-		taskManager.createTask(project0, "A new TASK", newTaskDur, newTaskDev, newTaskDependencies,reqResTask, null);
+		reqResTask.put(branchManager.getResourcePrototypes().get(0), 2);
+		reqResTask.put(branchManager.getResourcePrototypes().get(1), 1);
+		branchManager.createTask(project0, "A new TASK", newTaskDur, newTaskDev, newTaskDependencies,reqResTask, null);
 		// Step 4
 		p0tasks = project0.getTasks();
 		assertTrue(p0tasks.size() == 2);
@@ -219,33 +220,33 @@ public class UseCase4CreateTaskTest {
 	public void SuccesCaseFailedDepWithAltTest() {
 
 		// Er is al een FAILED task MET ALT aanwezig in het project
-		List<ProjectView> projects = taskManager.getProjects();
+		List<ProjectView> projects = branchManager.getProjects();
 		assertTrue(projects.size() == 1);
 		ProjectView project0 = projects.get(0);
 		
-		taskManager.createTask(project0, "Design system", task00EstDur, task00Dev, task00Dependencies, noReq, null);
+		branchManager.createTask(project0, "Design system", task00EstDur, task00Dev, task00Dependencies, noReq, null);
 		List<TaskView> p0tasks = project0.getTasks();
 		assertTrue(p0tasks.size() == 1);
 		TaskView t00 = p0tasks.get(0);
 		
-		taskManager.planTask(project0, t00, startDate,task00ConcreteResources,devList1);
-		taskManager.setTaskExecuting(project0, t00, startDate);
-		taskManager.setTaskFailed(project0, t00, task00EndDateGood);
+		branchManager.planTask(project0, t00, startDate,task00ConcreteResources,devList1);
+		branchManager.setTaskExecuting(project0, t00, startDate);
+		branchManager.setTaskFailed(project0, t00, task00EndDateGood);
 		assertEquals(t00.getStatusAsString(),"Failed");
 
-		taskManager.createTask(project0, "Implement native", task01EstDur, task01Dev, task01Dependencies, noReq, t00);
+		branchManager.createTask(project0, "Implement native", task01EstDur, task01Dev, task01Dependencies, noReq, t00);
 		p0tasks = project0.getTasks();
 		assertTrue(p0tasks.size() == 2);
 		TaskView t01 = p0tasks.get(1);
-		taskManager.planTask(project0, t01, task01StartDateGood, task01ConcreteResources,devList1);
+		branchManager.planTask(project0, t01, task01StartDateGood, task01ConcreteResources,devList1);
 		assertEquals(t01.getStatusAsString(),"Available");
 
 		// Step 1 and 2 are implicit
 		// Step 3
 		newTaskDependencies.add(t00);
 		Map<ResourceView,Integer>reqRes = new HashMap<>();
-		reqRes.put(taskManager.getResourcePrototypes().get(0), 1);
-		taskManager.createTask(project0, "A new TASK", newTaskDur, newTaskDev, newTaskDependencies, reqRes,null);
+		reqRes.put(branchManager.getResourcePrototypes().get(0), 1);
+		branchManager.createTask(project0, "A new TASK", newTaskDur, newTaskDev, newTaskDependencies, reqRes,null);
 		// Step 4
 		p0tasks = project0.getTasks();
 		assertTrue(p0tasks.size() == 3);
@@ -255,19 +256,19 @@ public class UseCase4CreateTaskTest {
 		assertTrue(taskViewListContains(nt.getPrerequisites(),t00));
 		assertFalse(nt.getPrerequisites().contains(t01));				// NIET 0 !!!!!
 		assertEquals(nt.getStatusAsString(),"Unavailable");
-		taskManager.setTaskExecuting(project0, t01, task01StartDateGood);
-		taskManager.setTaskFinished(project0, t01, task01EndDateGood);
+		branchManager.setTaskExecuting(project0, t01, task01StartDateGood);
+		branchManager.setTaskFinished(project0, t01, task01EndDateGood);
 		
 		List<ResourceView> ntConcreteResources = new ArrayList<ResourceView>();
-		ntConcreteResources.add(taskManager.getConcreteResourcesForPrototype(taskManager.getResourcePrototypes().get(0)).get(3));
-		taskManager.planTask(project0, nt, task01EndDateGood, ntConcreteResources, devList1);
+		ntConcreteResources.add(branchManager.getConcreteResourcesForPrototype(branchManager.getResourcePrototypes().get(0)).get(3));
+		branchManager.planTask(project0, nt, task01EndDateGood, ntConcreteResources, devList1);
 		assertEquals(nt.getStatusAsString(),"Available");
 	}
 
 	@Test
 	public void flow3aTest() {
 		// De UI zal geen request doorsturen als de user geen volledig formulier invult.
-		List<ProjectView> projects = taskManager.getProjects();
+		List<ProjectView> projects = branchManager.getProjects();
 		assertEquals(projects.size(),1);
 		ProjectView project0 = projects.get(0);
 		List<TaskView> p0tasks = project0.getTasks();
@@ -276,7 +277,7 @@ public class UseCase4CreateTaskTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void flow4aUnknownAltTest() {
-		List<ProjectView> projects = taskManager.getProjects();
+		List<ProjectView> projects = branchManager.getProjects();
 		assertTrue(projects.size() == 1);
 		ProjectView project0 = projects.get(0);
 		
@@ -285,7 +286,7 @@ public class UseCase4CreateTaskTest {
 
 		// Step 1 and 2 are implicit
 		// Step 3
-		taskManager.createTask(project0, "A new TASK", newTaskDur, newTaskDev, newTaskDependencies,new HashMap<ResourceView,Integer>(), new TaskView(unexistent));
+		branchManager.createTask(project0, "A new TASK", newTaskDur, newTaskDev, newTaskDependencies,new HashMap<ResourceView,Integer>(), new TaskView(unexistent));
 		// Step 4
 		List<TaskView> p0tasks = project0.getTasks();
 		assertEquals(p0tasks.size(),0);
@@ -294,19 +295,19 @@ public class UseCase4CreateTaskTest {
 
 	@Test
 	public void flow4aBadAltTest() {
-		List<ProjectView> projects = taskManager.getProjects();
+		List<ProjectView> projects = branchManager.getProjects();
 		assertTrue(projects.size() == 1);
 		ProjectView project0 = projects.get(0);
 		
 		// Er is al een AVAILABLE en UNAVAILABLE task aanwezig in het project
-		taskManager.createTask(project0, "Design system", task00EstDur, task00Dev, task00Dependencies,noReq, null);
+		branchManager.createTask(project0, "Design system", task00EstDur, task00Dev, task00Dependencies,noReq, null);
 		List<TaskView> p0tasks = project0.getTasks();
 		assertTrue(p0tasks.size() == 1);
 		TaskView t00 = p0tasks.get(0);
-		taskManager.planTask(project0, t00, task00StartDateGood, task00ConcreteResources,devList1);
+		branchManager.planTask(project0, t00, task00StartDateGood, task00ConcreteResources,devList1);
 		assertEquals(t00.getStatusAsString(),"Available");
 		task01Dependencies.add(t00);
-		taskManager.createTask(project0, "Implement Native", task01EstDur, task01Dev, task01Dependencies,reqResTask00, null);
+		branchManager.createTask(project0, "Implement Native", task01EstDur, task01Dev, task01Dependencies,reqResTask00, null);
 		p0tasks = project0.getTasks();
 		assertTrue(p0tasks.size() == 2);
 		TaskView t01 = p0tasks.get(1);
@@ -316,7 +317,7 @@ public class UseCase4CreateTaskTest {
 		
 		// Step 1 and 2 are implicit
 		// Step 3
-		taskManager.createTask(project0, "A new TASK", newTaskDur, newTaskDev, newTaskDependencies,new HashMap<ResourceView,Integer>(), t00);
+		branchManager.createTask(project0, "A new TASK", newTaskDur, newTaskDev, newTaskDependencies,new HashMap<ResourceView,Integer>(), t00);
 		// Step 4
 		p0tasks = project0.getTasks();
 		assertTrue(p0tasks.size() == 2);
@@ -326,7 +327,7 @@ public class UseCase4CreateTaskTest {
 		
 		// Step 1 and 2 are implicit
 		// Step 3
-		taskManager.createTask(project0, "A new TASK", newTaskDur, newTaskDev, newTaskDependencies,new HashMap<ResourceView,Integer>(), t01);
+		branchManager.createTask(project0, "A new TASK", newTaskDur, newTaskDev, newTaskDependencies,new HashMap<ResourceView,Integer>(), t01);
 		// Step 4
 		p0tasks = project0.getTasks();
 		assertTrue(p0tasks.size() == 2);
@@ -334,12 +335,12 @@ public class UseCase4CreateTaskTest {
 		//----------------------------------------------------------------------------------------
 		// FINISHED task kan geen ALT krijgen
 		
-		taskManager.setTaskExecuting(project0, t00, task00StartDateGood);
-		taskManager.setTaskFinished(project0, t00,altTaskEndDate);
+		branchManager.setTaskExecuting(project0, t00, task00StartDateGood);
+		branchManager.setTaskFinished(project0, t00,altTaskEndDate);
 		
 		// Step 1 and 2 are implicit
 		// Step 3
-		taskManager.createTask(project0, "A new TASK", newTaskDur, newTaskDev, newTaskDependencies, new HashMap<ResourceView,Integer>(), t00);
+		branchManager.createTask(project0, "A new TASK", newTaskDur, newTaskDev, newTaskDependencies, new HashMap<ResourceView,Integer>(), t00);
 		// Step 4
 		p0tasks = project0.getTasks();
 		assertTrue(p0tasks.size() == 2);
@@ -348,29 +349,29 @@ public class UseCase4CreateTaskTest {
 	
 	@Test
 	public void flow4aDoubleAltTest() {
-		List<ProjectView> projects = taskManager.getProjects();
+		List<ProjectView> projects = branchManager.getProjects();
 		assertTrue(projects.size() == 1);
 		ProjectView project0 = projects.get(0);
 
-		taskManager.createTask(project0, "Design system", task00EstDur, task00Dev, task00Dependencies, noReq, null);
+		branchManager.createTask(project0, "Design system", task00EstDur, task00Dev, task00Dependencies, noReq, null);
 		List<TaskView> p0tasks = project0.getTasks();
 		assertTrue(p0tasks.size() == 1);
 		TaskView t00 = p0tasks.get(0);
-		taskManager.planTask(project0, t00, task00StartDateGood, task00ConcreteResources,devList1);
-		taskManager.setTaskExecuting(project0, t00, task00StartDateGood);
-		taskManager.setTaskFailed(project0, t00, task00EndDateGood);
-		taskManager.createTask(project0, "Implement Native", task01EstDur, task01Dev, task01Dependencies, noReq, t00);
+		branchManager.planTask(project0, t00, task00StartDateGood, task00ConcreteResources,devList1);
+		branchManager.setTaskExecuting(project0, t00, task00StartDateGood);
+		branchManager.setTaskFailed(project0, t00, task00EndDateGood);
+		branchManager.createTask(project0, "Implement Native", task01EstDur, task01Dev, task01Dependencies, noReq, t00);
 		p0tasks = project0.getTasks();
 		assertTrue(p0tasks.size() == 2);
 		TaskView t01 = p0tasks.get(1);
-		taskManager.planTask(project0, t01, task01StartDateGood, task01ConcreteResources,devList1);
+		branchManager.planTask(project0, t01, task01StartDateGood, task01ConcreteResources,devList1);
 		assertEquals(t01.getStatusAsString(),"Available");
 		
 		// Geen twee ALT tasks voor een failed task mogelijk
 		
 		// Step 1 and 2 are implicit
 		// Step 3
-		taskManager.createTask(project0, "A new TASK", newTaskDur, newTaskDev, newTaskDependencies, reqResTask00, t00);
+		branchManager.createTask(project0, "A new TASK", newTaskDur, newTaskDev, newTaskDependencies, reqResTask00, t00);
 		p0tasks = project0.getTasks();
 		// Step 4
 		assertTrue(p0tasks.size() == 2);
@@ -378,7 +379,7 @@ public class UseCase4CreateTaskTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void flow4aUnknownDepTest() {
-		List<ProjectView> projects = taskManager.getProjects();
+		List<ProjectView> projects = branchManager.getProjects();
 		assertTrue(projects.size() == 1);
 		ProjectView project0 = projects.get(0);
 		
@@ -391,7 +392,7 @@ public class UseCase4CreateTaskTest {
 		newTaskDependencies.add(new TaskView(unexistent));
 		// Step 1 and 2 are implicit
 		// Step 3
-		taskManager.createTask(project0, "A new TASK", newTaskDur, newTaskDev, newTaskDependencies, reqResTask00, null);
+		branchManager.createTask(project0, "A new TASK", newTaskDur, newTaskDev, newTaskDependencies, reqResTask00, null);
 		// Step 4
 		p0tasks = project0.getTasks();
 		assertTrue(p0tasks.size() == 0);
@@ -400,19 +401,19 @@ public class UseCase4CreateTaskTest {
 	
 	@Test
 	public void flow4aBadDepTest() {
-		List<ProjectView> projects = taskManager.getProjects();
+		List<ProjectView> projects = branchManager.getProjects();
 		assertTrue(projects.size() == 1);
 		ProjectView project0 = projects.get(0);
 
 		// Er is al een FAILED task aanwezig in het project
-		taskManager.createTask(project0, "Design system", task00EstDur, task00Dev, task00Dependencies, noReq, null);
+		branchManager.createTask(project0, "Design system", task00EstDur, task00Dev, task00Dependencies, noReq, null);
 		List<TaskView> p0tasks = project0.getTasks();
 		assertTrue(p0tasks.size() == 1);
 		TaskView t00 = p0tasks.get(0);
-		taskManager.planTask(project0, t00, startDate,task00ConcreteResources,devList1);
+		branchManager.planTask(project0, t00, startDate,task00ConcreteResources,devList1);
 		assertEquals(t00.getStatusAsString(),"Available");
-		taskManager.setTaskExecuting(project0, t00, startDate);
-		taskManager.setTaskFailed(project0, t00, altTaskEndDate);
+		branchManager.setTaskExecuting(project0, t00, startDate);
+		branchManager.setTaskFailed(project0, t00, altTaskEndDate);
 		assertEquals(t00.getStatusAsString(),"Failed");
 		
 		// Task kan geen PreReq zijn voor zijn ALT
@@ -420,7 +421,7 @@ public class UseCase4CreateTaskTest {
 		// Step 1 and 2 are implicit
 		// Step 3
 		newTaskDependencies.add(t00);
-		taskManager.createTask(project0, "A new TASK", newTaskDur, newTaskDev, newTaskDependencies,reqResTask00, t00);
+		branchManager.createTask(project0, "A new TASK", newTaskDur, newTaskDev, newTaskDependencies,reqResTask00, t00);
 		// Step 4
 		assertTrue(p0tasks.size() == 1);
 	}
@@ -428,22 +429,22 @@ public class UseCase4CreateTaskTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void flow4aUnknownProjectTest() {
 		Project unexistent = new Project("Very bad", "Very bad project", startDate, project0DueDate);
-		List<ProjectView> projects = taskManager.getProjects();
+		List<ProjectView> projects = branchManager.getProjects();
 		assertTrue(projects.size() == 1);
 		ProjectView project0 = projects.get(0);
 
-		taskManager.createTask(project0, "Design system", task00EstDur, task00Dev, task00Dependencies, noReq, null);
+		branchManager.createTask(project0, "Design system", task00EstDur, task00Dev, task00Dependencies, noReq, null);
 		List<TaskView> p0tasks = project0.getTasks();
 		assertTrue(p0tasks.size() == 1);
 		TaskView t00 = p0tasks.get(0);
-		taskManager.planTask(project0, t00, startDate,task00ConcreteResources,devList1);
+		branchManager.planTask(project0, t00, startDate,task00ConcreteResources,devList1);
 		assertEquals(t00.getStatusAsString(),"Available");
 
 		// Step 1 and 2 are implicit
 		// Step 3
-		taskManager.createTask(new ProjectView(unexistent), "A new TASK", newTaskDur, newTaskDev, newTaskDependencies,reqResTask00, null);
+		branchManager.createTask(new ProjectView(unexistent), "A new TASK", newTaskDur, newTaskDev, newTaskDependencies,reqResTask00, null);
 		// Step 4
-		assertEquals(taskManager.getProjects().size(),1);
+		assertEquals(branchManager.getProjects().size(),1);
 		p0tasks = project0.getTasks();
 		assertEquals(p0tasks.size(),1);
 		
@@ -451,9 +452,9 @@ public class UseCase4CreateTaskTest {
 		// TODO eigen testcase
 		// Step 1 and 2 are implicit
 		// Step 3
-		taskManager.createTask(new ProjectView(unexistent), "A new TASK", newTaskDur, newTaskDev, newTaskDependencies, reqResTask00, t00);
+		branchManager.createTask(new ProjectView(unexistent), "A new TASK", newTaskDur, newTaskDev, newTaskDependencies, reqResTask00, t00);
 		// Step 4
-		assertEquals(taskManager.getProjects().size(),1);
+		assertEquals(branchManager.getProjects().size(),1);
 		p0tasks = project0.getTasks();
 		assertEquals(p0tasks.size(),1);
 		
@@ -462,9 +463,9 @@ public class UseCase4CreateTaskTest {
 		// Step 1 and 2 are implicit
 		// Step 3
 		newTaskDependencies.add(t00);
-		taskManager.createTask(new ProjectView(unexistent), "A new TASK", newTaskDur, newTaskDev, newTaskDependencies, reqResTask00, null);
+		branchManager.createTask(new ProjectView(unexistent), "A new TASK", newTaskDur, newTaskDev, newTaskDependencies, reqResTask00, null);
 		// Step 4
-		assertEquals(taskManager.getProjects().size(),1);
+		assertEquals(branchManager.getProjects().size(),1);
 		p0tasks = project0.getTasks();
 		assertEquals(p0tasks.size(),1);
 		
@@ -472,23 +473,23 @@ public class UseCase4CreateTaskTest {
 
 	@Test
 	public void SuccessCaseFinishedProjectTest() {
-		List<ProjectView> projects = taskManager.getProjects();
+		List<ProjectView> projects = branchManager.getProjects();
 		assertTrue(projects.size() == 1);
 		ProjectView project0 = projects.get(0);
 		
-		taskManager.createTask(project0, "Design system", task00EstDur, task00Dev, task00Dependencies, noReq, null);
+		branchManager.createTask(project0, "Design system", task00EstDur, task00Dev, task00Dependencies, noReq, null);
 		List<TaskView> p0tasks = project0.getTasks();
 		assertTrue(p0tasks.size() == 1);
 		TaskView t00 = p0tasks.get(0);
-		taskManager.planTask(project0, t00, task00StartDateGood, task00ConcreteResources,devList1);
+		branchManager.planTask(project0, t00, task00StartDateGood, task00ConcreteResources,devList1);
 		assertEquals(t00.getStatusAsString(),"Available");
-		taskManager.setTaskExecuting(project0, t00, task00StartDateGood);
-		taskManager.setTaskFinished(project0, t00, task00EndDateGood);
+		branchManager.setTaskExecuting(project0, t00, task00StartDateGood);
+		branchManager.setTaskFinished(project0, t00, task00EndDateGood);
 		assertTrue(project0.isFinished());
 		
 		// Step 1 and 2 are implicit
 		// Step 3
-		taskManager.createTask(project0, "A new TASK", newTaskDur, newTaskDev, newTaskDependencies, reqResTask00, null);
+		branchManager.createTask(project0, "A new TASK", newTaskDur, newTaskDev, newTaskDependencies, reqResTask00, null);
 		// Step 4
 		p0tasks = project0.getTasks();
 		assertTrue(p0tasks.size() == 2);
