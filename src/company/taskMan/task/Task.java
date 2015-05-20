@@ -288,7 +288,7 @@ public class Task implements Dependant {
 
 	/**
 	 * Register a new dependant to the current task. If a task registers to this
-	 * task and it this task is Finished, it immediately calls notify(this) on
+	 * task and if this task is Finished, it immediately calls notify(this) on
 	 * the registering task. If this task is failed and has a finished
 	 * alternative, it also immediately calls notify(this) on the registering
 	 * task.

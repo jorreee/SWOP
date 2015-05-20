@@ -5,13 +5,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
 
 
-
-
-
-
-
-
-
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -30,7 +23,7 @@ import userInterface.IFacade;
 
 public class UseCase10RunningASimulationTest {
 
-	private IFacade taskManager;
+	private IFacade branchManager;
 	private final LocalDateTime startDate = LocalDateTime.of(2015, 2, 9, 8, 0),
 			workDate1 = LocalDateTime.of(2015, 2, 9, 12, 0),
 			workDate2 = LocalDateTime.of(2015, 2, 10, 16, 0),
@@ -99,15 +92,20 @@ public class UseCase10RunningASimulationTest {
 	@Before
 	public void initialize(){
 		//INIT system 
-		taskManager = new BranchManager(startDate);
+		branchManager = new BranchManager(startDate);
 		//INIT resources
-		taskManager.createResourcePrototype("car", emptyAvailabilityStart, emptyAvailabilityEnd);
+		
+		branchManager.createResourcePrototype("car", emptyAvailabilityStart, emptyAvailabilityEnd);
+		branchManager.createResourcePrototype("whiteboard", emptyAvailabilityStart, emptyAvailabilityEnd);
+		
+		branchManager.initializeBranch("Leuven");
+		
 		for(int i = 0;i<=5;i++){
-			taskManager.declareConcreteResource("car" + i, taskManager.getResourcePrototypes().get(0));
+			branchManager.declareConcreteResource("car" + i, branchManager.getResourcePrototypes().get(0));
 		}
-		taskManager.createResourcePrototype("whiteboard", emptyAvailabilityStart, emptyAvailabilityEnd);
+		
 		for(int i = 0;i<=5;i++){
-			taskManager.declareConcreteResource("whiteboard" + i, taskManager.getResourcePrototypes().get(1));
+			branchManager.declareConcreteResource("whiteboard" + i, branchManager.getResourcePrototypes().get(1));
 		}
 		//Set up container objects
 		task00Dependencies = new ArrayList<TaskView>();
@@ -131,12 +129,12 @@ public class UseCase10RunningASimulationTest {
 		task20ConcRes = new ArrayList<>();
 		task20Devs = new ArrayList<>();
 		//Create Developers
-		taskManager.createDeveloper("Achilles");
-		dev1 = taskManager.getDeveloperList().get(0);
-		taskManager.createDeveloper("Ajax");
-		dev2 = taskManager.getDeveloperList().get(1);
-		taskManager.createDeveloper("Odysseus");
-		dev3 = taskManager.getDeveloperList().get(2);
+		branchManager.createDeveloper("Achilles");
+		dev1 = branchManager.getDeveloperList().get(0);
+		branchManager.createDeveloper("Ajax");
+		dev2 = branchManager.getDeveloperList().get(1);
+		branchManager.createDeveloper("Odysseus");
+		dev3 = branchManager.getDeveloperList().get(2);
 		//Create Developers lists
 		task00Devs.add(dev1);
 		task00Devs.add(dev2);
@@ -145,112 +143,112 @@ public class UseCase10RunningASimulationTest {
 		task10Devs.add(dev3);
 		task20Devs.add(dev3);
 		//Create first project
-		taskManager.createProject("Project 0", "Describing proj 0", project0DueDate);
-		ProjectView project0 = taskManager.getProjects().get(0);
+		branchManager.createProject("Project 0", "Describing proj 0", project0DueDate);
+		ProjectView project0 = branchManager.getProjects().get(0);
 		// Create task00
-		reqResTask00.put(taskManager.getResourcePrototypes().get(0), 2);
-		reqResTask00.put(taskManager.getResourcePrototypes().get(1), 1);
-		taskManager.createTask(project0, "TASK 00", task00EstDur, task00Dev, task00Dependencies,reqResTask00,null);	
+		reqResTask00.put(branchManager.getResourcePrototypes().get(0), 2);
+		reqResTask00.put(branchManager.getResourcePrototypes().get(1), 1);
+		branchManager.createTask(project0, "TASK 00", task00EstDur, task00Dev, task00Dependencies,reqResTask00,null);	
 		TaskView task00 = project0.getTasks().get(0);
 		//Create task01
 		task01Dependencies.add(task00);
-		reqResTask01.put(taskManager.getResourcePrototypes().get(0), 1);
-		reqResTask01.put(taskManager.getResourcePrototypes().get(1), 1);
-		taskManager.createTask(project0, "TASK 01", task01EstDur, task01Dev, task01Dependencies, reqResTask01, null);
+		reqResTask01.put(branchManager.getResourcePrototypes().get(0), 1);
+		reqResTask01.put(branchManager.getResourcePrototypes().get(1), 1);
+		branchManager.createTask(project0, "TASK 01", task01EstDur, task01Dev, task01Dependencies, reqResTask01, null);
 		//Create task02
-		TaskView task01 = taskManager.getProjects().get(0).getTasks().get(1);
+		TaskView task01 = branchManager.getProjects().get(0).getTasks().get(1);
 		task02Dependencies.add(task01);
-		reqResTask02.put(taskManager.getResourcePrototypes().get(0), 1);
-		taskManager.createTask(project0, "TASK 02", task02EstDur, task02Dev, task02Dependencies, reqResTask02, null);
-		TaskView task02 = taskManager.getProjects().get(0).getTasks().get(2);
+		reqResTask02.put(branchManager.getResourcePrototypes().get(0), 1);
+		branchManager.createTask(project0, "TASK 02", task02EstDur, task02Dev, task02Dependencies, reqResTask02, null);
+		TaskView task02 = branchManager.getProjects().get(0).getTasks().get(2);
 		//Create second project
-		taskManager.createProject("Project1", "Project1", project1DueDate);
-		ProjectView project1 = taskManager.getProjects().get(1);
+		branchManager.createProject("Project1", "Project1", project1DueDate);
+		ProjectView project1 = branchManager.getProjects().get(1);
 		//Create task10
-		reqResTask10.put(taskManager.getResourcePrototypes().get(1), 1);
-		taskManager.createTask(project1, "TASK 10", task10EstDur, task10Dev, task10Dependencies, reqResTask10, null);
-		TaskView task10 = taskManager.getProjects().get(1).getTasks().get(0);
+		reqResTask10.put(branchManager.getResourcePrototypes().get(1), 1);
+		branchManager.createTask(project1, "TASK 10", task10EstDur, task10Dev, task10Dependencies, reqResTask10, null);
+		TaskView task10 = branchManager.getProjects().get(1).getTasks().get(0);
 		//Create third project
-		taskManager.createProject("Project3", "Project3", project2DueDate);
-		ProjectView project2 = taskManager.getProjects().get(2);
+		branchManager.createProject("Project3", "Project3", project2DueDate);
+		ProjectView project2 = branchManager.getProjects().get(2);
 		//Create task20
-		taskManager.createTask(project2, "TASK20", task20EstDur, task20Dev, task20Dependencies, reqResTask20, null);
-		TaskView task20 = taskManager.getProjects().get(2).getTasks().get(0);
+		branchManager.createTask(project2, "TASK20", task20EstDur, task20Dev, task20Dependencies, reqResTask20, null);
+		TaskView task20 = branchManager.getProjects().get(2).getTasks().get(0);
 		//Plan task00
-		task00ConcRes.add(taskManager.getConcreteResourcesForPrototype(taskManager.getResourcePrototypes().get(0)).get(0));
-		task00ConcRes.add(taskManager.getConcreteResourcesForPrototype(taskManager.getResourcePrototypes().get(0)).get(1));
-		task00ConcRes.add(taskManager.getConcreteResourcesForPrototype(taskManager.getResourcePrototypes().get(1)).get(0));
-		taskManager.planTask(project0, task00, task00Start, task00ConcRes, task00Devs);
+		task00ConcRes.add(branchManager.getConcreteResourcesForPrototype(branchManager.getResourcePrototypes().get(0)).get(0));
+		task00ConcRes.add(branchManager.getConcreteResourcesForPrototype(branchManager.getResourcePrototypes().get(0)).get(1));
+		task00ConcRes.add(branchManager.getConcreteResourcesForPrototype(branchManager.getResourcePrototypes().get(1)).get(0));
+		branchManager.planTask(project0, task00, task00Start, task00ConcRes, task00Devs);
 		//Plan task20
-		taskManager.planTask(project2, task20, task20Start, task20ConcRes, task20Devs);
+		branchManager.planTask(project2, task20, task20Start, task20ConcRes, task20Devs);
 		//Execute and finish task00
-		taskManager.advanceTimeTo(workDate1);
-		taskManager.setTaskExecuting(project0, task00, task00Start);
-		taskManager.setTaskFinished(project0, task00, task00End);
+		branchManager.advanceTimeTo(workDate1);
+		branchManager.setTaskExecuting(project0, task00, task00Start);
+		branchManager.setTaskFinished(project0, task00, task00End);
 		//Execute and finish task20
-		taskManager.setTaskExecuting(project2, task20, task20Start);
-		taskManager.setTaskFinished(project2, task20, task20End);
-		assertTrue(taskManager.getProjects().get(2).isFinished());
+		branchManager.setTaskExecuting(project2, task20, task20Start);
+		branchManager.setTaskFinished(project2, task20, task20End);
+		assertTrue(branchManager.getProjects().get(2).isFinished());
 		//plan task01
-		task01ConcRes.add((taskManager.getResourcePrototypes().get(0)));
-		task01ConcRes.add((taskManager.getResourcePrototypes().get(1)));
-		taskManager.planTask(project0, task01, task01Start, task01ConcRes, task01Devs);
+		task01ConcRes.add((branchManager.getResourcePrototypes().get(0)));
+		task01ConcRes.add((branchManager.getResourcePrototypes().get(1)));
+		branchManager.planTask(project0, task01, task01Start, task01ConcRes, task01Devs);
 		//Execute and fail task01
-		taskManager.advanceTimeTo(workDate2);
-		taskManager.setTaskExecuting(project0, task01, task01Start);
-		taskManager.setTaskFailed(project0, task01, task01End);
-		task02ConcRes.add(taskManager.getResourcePrototypes().get(0));	
-		taskManager.planTask(project0, task02, task02Start, task02ConcRes, task02Devs);
+		branchManager.advanceTimeTo(workDate2);
+		branchManager.setTaskExecuting(project0, task01, task01Start);
+		branchManager.setTaskFailed(project0, task01, task01End);
+		task02ConcRes.add(branchManager.getResourcePrototypes().get(0));	
+//		branchManager.planTask(project0, task02, task02Start, task02ConcRes, task02Devs);
 		//Plan task10
-		task10ConcRes.add(taskManager.getResourcePrototypes().get(1));
-		taskManager.planTask(project1, task10, task10Start, task10ConcRes, task10Devs);
+		task10ConcRes.add(branchManager.getResourcePrototypes().get(1));
+		branchManager.planTask(project1, task10, task10Start, task10ConcRes, task10Devs);
 		//create an alternative
-		taskManager.createTask(project0, "Alt", 60, 5, task01Dependencies, reqResTask01, task01);
-		TaskView taskAlt = taskManager.getProjects().get(0).getTasks().get(3);
+		branchManager.createTask(project0, "Alt", 60, 5, task01Dependencies, reqResTask01, task01);
+		TaskView taskAlt = branchManager.getProjects().get(0).getTasks().get(3);
 		//Plan alternative
-		taskManager.planTask(project0, taskAlt, LocalDateTime.of(2015, 2, 11, 8, 0), task01ConcRes, task01Devs);
+		branchManager.planTask(project0, taskAlt, LocalDateTime.of(2015, 2, 11, 8, 0), task01ConcRes, task01Devs);
 		//Succeed Alternative
-		taskManager.advanceTimeTo(workDate3);
-		taskManager.setTaskExecuting(project0, taskAlt, LocalDateTime.of(2015, 2, 11, 8, 0));
-		taskManager.setTaskFinished(project0, taskAlt, LocalDateTime.of(2015, 2, 11, 9, 0));
+		branchManager.advanceTimeTo(workDate3);
+		branchManager.setTaskExecuting(project0, taskAlt, LocalDateTime.of(2015, 2, 11, 8, 0));
+		branchManager.setTaskFinished(project0, taskAlt, LocalDateTime.of(2015, 2, 11, 9, 0));
 		//Plan task02
-		taskManager.planTask(project0, task02, task02Start, task02ConcRes, task02Devs);
+		branchManager.planTask(project0, task02, task02Start, task02ConcRes, task02Devs);
 		// INIT current user
-		taskManager.changeToUser(taskManager.getPossibleUsers().get(0));
+		branchManager.changeToUser(branchManager.getPossibleUsers().get(0));
 	}
 	
 	@Test
 	public void succesCaseSimpleRevertMem(){
 		//Set up memento
-		taskManager.storeInMemento();
+		branchManager.storeInMemento();
 		//Some simulation
-		ProjectView project0 = taskManager.getProjects().get(0);
+		ProjectView project0 = branchManager.getProjects().get(0);
 		HashMap<ResourceView, Integer> reqResTest = new HashMap<>();
-		taskManager.createTask(project0, "test", 50, 5, new ArrayList<TaskView>(), reqResTest, null);
-		ProjectView proj1 = taskManager.getProjects().get(1);
+		branchManager.createTask(project0, "test", 50, 5, new ArrayList<TaskView>(), reqResTest, null);
+		ProjectView proj1 = branchManager.getProjects().get(1);
 		TaskView task10 = proj1.getTasks().get(0);
-		taskManager.changeToUser(taskManager.getPossibleUsers().get(1));
-		taskManager.setTaskExecuting(proj1, task10, task10Start);
-		taskManager.setTaskFinished(proj1, task10, LocalDateTime.of(2015, 2, 10, 14, 0));
+		branchManager.changeToUser(branchManager.getPossibleUsers().get(1));
+		branchManager.setTaskExecuting(proj1, task10, task10Start);
+		branchManager.setTaskFinished(proj1, task10, LocalDateTime.of(2015, 2, 10, 14, 0));
 		assertTrue(proj1.isFinished());
-		assertEquals(3,taskManager.getProjects().size());
-		assertEquals(5,taskManager.getProjects().get(0).getTasks().size());
+		assertEquals(3,branchManager.getProjects().size());
+		assertEquals(5,branchManager.getProjects().get(0).getTasks().size());
 		//Revert the memento
-		taskManager.revertFromMemento();
-		assertEquals(3,taskManager.getProjects().size());
-		project0 = taskManager.getProjects().get(0);
+		branchManager.revertFromMemento();
+		assertEquals(3,branchManager.getProjects().size());
+		project0 = branchManager.getProjects().get(0);
 		//Check the first project
-		assertEquals(4,taskManager.getProjects().get(0).getTasks().size());
+		assertEquals(4,branchManager.getProjects().get(0).getTasks().size());
 		assertEquals("finished",project0.getTasks().get(0).getStatusAsString().toLowerCase());
 		assertEquals("failed",project0.getTasks().get(1).getStatusAsString().toLowerCase());
 		assertTrue(project0.getTasks().get(2).isPlanned());
 		assertEquals("finished",project0.getTasks().get(3).getStatusAsString().toLowerCase());
 		//Check the second project
-		ProjectView project1 = taskManager.getProjects().get(1);
+		ProjectView project1 = branchManager.getProjects().get(1);
 		assertEquals(1, project1.getTasks().size());
 		assertTrue(project1.getTasks().get(0).isPlanned());
 		//Check the third project
-		ProjectView project2 = taskManager.getProjects().get(2);
+		ProjectView project2 = branchManager.getProjects().get(2);
 		assertEquals(1, project2.getTasks().size());
 		assertEquals("finished",project2.getTasks().get(0).getStatusAsString().toLowerCase());
 		assertTrue(project2.isFinished());
@@ -259,35 +257,35 @@ public class UseCase10RunningASimulationTest {
 	@Test
 	public void succesCaseSimpleDiscardMem(){
 		//Memento set up
-		taskManager.storeInMemento();
+		branchManager.storeInMemento();
 		//Some simulations
-		ProjectView project0 = taskManager.getProjects().get(0);
+		ProjectView project0 = branchManager.getProjects().get(0);
 		HashMap<ResourceView, Integer> reqResTest = new HashMap<>();
-		taskManager.createTask(project0, "test", 50, 5, new ArrayList<TaskView>(), reqResTest, null);
-		ProjectView proj1 = taskManager.getProjects().get(1);
+		branchManager.createTask(project0, "test", 50, 5, new ArrayList<TaskView>(), reqResTest, null);
+		ProjectView proj1 = branchManager.getProjects().get(1);
 		TaskView task10 = proj1.getTasks().get(0);
-		taskManager.changeToUser(taskManager.getPossibleUsers().get(1));
-		taskManager.setTaskExecuting(proj1, task10, task10Start);
-		taskManager.setTaskFinished(proj1, task10, LocalDateTime.of(2015, 2, 10, 14, 0));
+		branchManager.changeToUser(branchManager.getPossibleUsers().get(1));
+		branchManager.setTaskExecuting(proj1, task10, task10Start);
+		branchManager.setTaskFinished(proj1, task10, LocalDateTime.of(2015, 2, 10, 14, 0));
 		assertTrue(proj1.isFinished());
-		assertEquals(3,taskManager.getProjects().size());
-		assertEquals(5,taskManager.getProjects().get(0).getTasks().size());
+		assertEquals(3,branchManager.getProjects().size());
+		assertEquals(5,branchManager.getProjects().get(0).getTasks().size());
 		//Discard the memento
-		taskManager.discardMemento();
-		assertEquals(3,taskManager.getProjects().size());
+		branchManager.discardMemento();
+		assertEquals(3,branchManager.getProjects().size());
 		//Check the first project
-		assertEquals(5,taskManager.getProjects().get(0).getTasks().size());
-		project0 = taskManager.getProjects().get(0);
+		assertEquals(5,branchManager.getProjects().get(0).getTasks().size());
+		project0 = branchManager.getProjects().get(0);
 		assertEquals("finished",project0.getTasks().get(0).getStatusAsString().toLowerCase());
 		assertEquals("failed",project0.getTasks().get(1).getStatusAsString().toLowerCase());
 		assertTrue(project0.getTasks().get(2).isPlanned());
 		assertEquals("finished",project0.getTasks().get(3).getStatusAsString().toLowerCase());
 		assertTrue(project0.getTasks().get(4).isUnavailable());
 		//Check the second project
-		assertEquals(1, taskManager.getProjects().get(1).getTasks().size());
-		assertTrue(taskManager.getProjects().get(1).isFinished());
+		assertEquals(1, branchManager.getProjects().get(1).getTasks().size());
+		assertTrue(branchManager.getProjects().get(1).isFinished());
 		//Check the third project
-		ProjectView project2 = taskManager.getProjects().get(2);
+		ProjectView project2 = branchManager.getProjects().get(2);
 		assertEquals(1, project2.getTasks().size());
 		assertEquals("finished",project2.getTasks().get(0).getStatusAsString().toLowerCase());
 		assertTrue(project2.isFinished());
