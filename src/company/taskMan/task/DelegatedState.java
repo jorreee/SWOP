@@ -12,7 +12,9 @@ import java.time.LocalDateTime;
 public class DelegatedState implements TaskStatus {
 
 	@Override
-	public void makeAvailable(Task task) { }
+	public void makeAvailable(Task task) { 
+		
+	}
 
 	@Override
 	public void delegate(Task task, Task newTask)

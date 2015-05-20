@@ -41,7 +41,7 @@ public class ExecutingState implements TaskStatus{
 
 		task.setTaskStatus(new FinishedState());
 
-		task.notifyDependants();
+		task.notifyFinished();
 	}
 
 	@Override

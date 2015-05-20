@@ -328,14 +328,14 @@ public class Task implements Dependant {
 	}
 
 	/**
-	 * Notify the dependants of this task that this task has changed. 
+	 * Notify the dependants of this task that this task has finished. 
 	 * 
 	 * @throws IllegalStateException
 	 * 			| if an update failed
 	 */
-	public void notifyDependants() throws IllegalStateException {
-		for (Dependant t : dependants) {
-			t.updateDependency(this);
+	protected void notifyFinished() throws IllegalStateException {
+		for (Dependant d : dependants) {
+			d.updateDependencyFinished(this);
 		}
 //		if (alternativeFor != null) {
 //			alternativeFor.notifyDependants();
@@ -355,11 +355,11 @@ public class Task implements Dependant {
 	 * 				| if preTask isn't a Dependant on this object
 	 */
 	@Override
-	public void updateDependency(Task preTask) throws IllegalStateException {
+	public void updateDependencyFinished(Task preTask) throws IllegalStateException {
 		int preIndex = prerequisites.indexOf(preTask);
 		if (preIndex < 0) {
 			if(preTask.equals(replacement)) {
-				notifyDependants(); //Dit wil zeggen dat de taak was gereplaced en dat de originele moet zeggen dat hij "finished" is
+				notifyFinished(); //Dit wil zeggen dat de taak was gereplaced en dat de originele moet zeggen dat hij "finished" is
 			} else {
 				throw new IllegalStateException("The supplied task \"" + preTask.getDescription() + "\" didn't occur as a Dependant in this task");
 			}
@@ -367,7 +367,16 @@ public class Task implements Dependant {
 			state.makeAvailable(this);
 		}
 	}
-
+	
+	protected void notifyPlannable() {
+		for(Dependant d : dependants) {
+			d.updateDependencyPlannable(this);
+		}
+	}
+	
+	@Override
+	public void updateDependencyPlannable(Task plannableTask) { }
+	
 	/**
 	 * Checks whether the Task is finished.
 	 * 

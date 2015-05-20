@@ -124,27 +124,27 @@ public class TaskView {
 		return taskPrereqs.build();
 	}
 	
-	/**
-	 * Check whether or not this (failed) task is replaced by another
-	 * 
-	 * @return True when this task has a replacement, false when it has not
-	 */
-	public boolean hasReplacement() {
-		return getReplacement() != null;
-	}
-
-	/**
-	 * A method to retrieve the replacement of this (failed) task
-	 * 
-	 * @return the replacement of this task
-	 */
-	public TaskView getReplacement() {
-		Task rep = task.getReplacement();
-		if (rep == null) {
-			return null;
-		}
-		return new TaskView(rep);
-	}
+//	/**
+//	 * Check whether or not this (failed) task is replaced by another
+//	 * 
+//	 * @return True when this task has a replacement, false when it has not
+//	 */
+//	public boolean hasReplacement() {
+//		return getReplacement() != null;
+//	}
+//
+//	/**
+//	 * A method to retrieve the replacement of this (failed) task
+//	 * 
+//	 * @return the replacement of this task
+//	 */
+//	public TaskView getReplacement() {
+//		Task rep = task.getReplacement();
+//		if (rep == null) {
+//			return null;
+//		}
+//		return new TaskView(rep);
+//	}
 
 	/**
 	 * Check whether or not this task replaces another (failed) task

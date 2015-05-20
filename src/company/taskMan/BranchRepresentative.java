@@ -8,9 +8,11 @@ import java.util.Stack;
 import java.util.stream.Collectors;
 
 import company.BranchView;
+import company.taskMan.task.Dependant;
 import company.taskMan.task.Task;
+import company.taskMan.util.TimeSpan;
 
-public class BranchRepresentative {
+public class BranchRepresentative implements Dependant {
 
 	List<Delegation> delegationsToBranch;
 	List<Delegation> delegationsFromBranch;
@@ -165,5 +167,23 @@ public class BranchRepresentative {
 		public Task getNewTask(){
 			return newTask;
 		}
+	}
+
+	@Override
+	public void updateDependencyPlannable(Task plannableTask) {
+		// TODO stuur een bericht naar delegating task dat hij kan gepland worden
+		
+	}
+
+	@Override
+	public void updateDependencyFinished(Task preTask)
+			throws IllegalStateException {
+		// TODO gross.
+		
+	}
+
+	@Override
+	public TimeSpan getMaxDelayChain() {
+		return new TimeSpan(0); //TODO gross.
 	}
 }

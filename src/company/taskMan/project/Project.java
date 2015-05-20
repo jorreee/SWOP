@@ -319,12 +319,15 @@ public class Project implements Dependant {
 	 * 
 	 */
 	@Override
-	public void updateDependency(Task preTask) throws IllegalStateException {
+	public void updateDependencyFinished(Task preTask) throws IllegalStateException {
 		if (!taskList.contains(preTask)){
 			throw new IllegalStateException("The preTask didn't belong to this project");
 		}
 		state.finish(this, preTask);
 	}
+	
+	@Override
+	public void updateDependencyPlannable(Task plannableTask) { }
 
 	/**
 	 * Sets the end time of the Project.

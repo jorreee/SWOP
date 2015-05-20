@@ -76,7 +76,7 @@ public class FinishedState implements TaskStatus {
 	@Override
 	public void register(Task task, Dependant d) {
 		task.addDependant(d);
-		task.notifyDependants();
+		task.notifyFinished();
 	}
 	
 	@Override
