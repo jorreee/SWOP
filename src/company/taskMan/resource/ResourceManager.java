@@ -804,7 +804,7 @@ public class ResourceManager {
 					alreadyReserved.add(cr);
 					continue;
 				 }
-				catch ( UnexpectedViewContentException e) {	// No cr to be found (Oh nooes)
+				catch ( UnexpectedViewContentException | ResourceUnavailableException e) {	// No cr to be found (Oh nooes)
 						validTimeStamp = false;
 						break;
 					}
