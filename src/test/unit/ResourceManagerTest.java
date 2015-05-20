@@ -47,7 +47,7 @@ public class ResourceManagerTest {
 	@Before
 	public void initialize() {
 		//Prepare the resources and developers
-		resMan = new ResourceManager();
+		resMan = new ResourceManager(new ArrayList<ResourcePrototype>());
 		resMan.createResourcePrototype("car", emptyAvailabilityPeriodStart, emptyAvailabilityPeriodEnd);
 		resMan.createResourcePrototype("whiteboard",  emptyAvailabilityPeriodStart, emptyAvailabilityPeriodEnd);
 		for(int i = 0;i<5;i++){
