@@ -290,13 +290,17 @@ public class BranchManager implements IFacade {
 	}
 
 	@Override
-	public void changeToUser(ResourceView user) throws TaskManException{
-		User newUser = currentBranch.getUser(user);
+	public void changeToUser(ResourceView user) throws TaskManException {
 		if (user == null) {
 			throw new TaskManException(new IllegalArgumentException("Invalid user"));
-		} else {
-			currentUser = newUser;
 		}
+		try {
+		User newUser = currentBranch.getUser(user);
+		currentUser = newUser;
+		} catch (Exception e) {
+			throw new TaskManException(e);
+		}
+		
 	}
 
 	@Override
