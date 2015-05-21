@@ -16,7 +16,6 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 
-import sun.swing.table.DefaultTableCellHeaderRenderer;
 import company.taskMan.Branch;
 import company.taskMan.resource.ResourceManager;
 import company.taskMan.resource.ResourcePrototype;
@@ -26,6 +25,7 @@ import company.taskMan.task.DelegatingTaskProxy;
 import company.taskMan.task.OriginalTaskProxy;
 import company.taskMan.task.Task;
 import company.taskMan.util.TimeSpan;
+
 import exceptions.ResourceUnavailableException;
 
 public class TaskTest {
