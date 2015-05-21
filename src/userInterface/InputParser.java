@@ -11,6 +11,7 @@ import userInterface.requests.DelegateTaskRequest;
 import userInterface.requests.ExitRequest;
 import userInterface.requests.HelpRequest;
 import userInterface.requests.InvalidRequest;
+import userInterface.requests.LogoutRequest;
 import userInterface.requests.PlanTaskRequest;
 import userInterface.requests.Request;
 import userInterface.requests.ShowProjectsRequest;
@@ -105,6 +106,8 @@ public class InputParser {
 				} else {
 					throw new IllegalArgumentException("you can only delegate a task");
 				}
+			case "logout" :
+				return new LogoutRequest(facade, inputReader);
 			default	: 
 				return new InvalidRequest(facade, inputReader, "command does not exist");
 			}

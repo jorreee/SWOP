@@ -2,6 +2,7 @@ TaskMan iteration 3 commands:
 h			Display all commands with a short description
 exit			Closes the application
 change user		Log in as a different system user
+logout			Log out of the current branch office
 show			Overview with additional details
 advance			Advance time to a later date
 create project		Create a new project
