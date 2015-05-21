@@ -386,7 +386,7 @@ public class TaskTest {
 		DelegatingTaskProxy toProxy = new DelegatingTaskProxy(defaultTest, branch1);
 		OriginalTaskProxy other = new OriginalTaskProxy(del, branch2);
 		toProxy.link(other);
-		defaultTest.delegate(toProxy);
+		defaultTest.delegate(true);
 		assertTrue(defaultTest.isDelegated());
 	}
 }
