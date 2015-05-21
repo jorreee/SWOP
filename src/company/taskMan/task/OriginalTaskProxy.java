@@ -1,20 +1,21 @@
 package company.taskMan.task;
 
+import java.util.Optional;
+
 import company.taskMan.Branch;
-import company.taskMan.project.TaskView;
 import company.taskMan.util.TimeSpan;
 
 public class OriginalTaskProxy implements Dependant {
 	
-	private Task task;
+	private DelegatingTask delegatingTask;
 	private DelegatingTaskProxy other;
-	private Branch fromBranch;
+	private Branch delegatingBranch;
 	private boolean hasUnfinishedPrereqs;
 	
-	public OriginalTaskProxy(Task t, Branch fromBranch) {
-		this.task = t;
-		this.fromBranch = fromBranch;
-		task.register(this);
+	public OriginalTaskProxy(DelegatingTask t, Branch delegatingBranch) {
+		this.delegatingTask = t;
+		this.delegatingBranch = delegatingBranch;
+		delegatingTask.register(this);
 		hasUnfinishedPrereqs = true;
 	}
 	
@@ -37,7 +38,7 @@ public class OriginalTaskProxy implements Dependant {
 	@Override
 	public void updateDependencyFinished(Task preTask)
 			throws IllegalStateException {
-		if(preTask == task) {
+		if(preTask == delegatingTask) {
 			// geval proxy in delegating branch krijgt te horen dat de 
 			// delegating task is gefinished. Hij laat aan de proxy in
 			// de originele branch weten dat de originele task moet notifyen
@@ -53,12 +54,17 @@ public class OriginalTaskProxy implements Dependant {
 		return new TimeSpan(0);
 	}
 
-	public TaskView getTask() {
-		return new TaskView(task);
+	public Task getTask() {
+		return delegatingTask;
 	}
 
-	public Branch getFromBranch() {
-		return fromBranch;
+	public Optional<Branch> getOriginalBranch() {
+		if(other == null) {
+			return Optional.empty();
+		}
+		return Optional.of(other.getBranch());
 	}
+	
+	protected Branch getBranch() { return delegatingBranch; }
 
 }

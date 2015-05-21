@@ -10,7 +10,6 @@ import java.util.Optional;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
-
 import company.BranchView;
 import company.taskMan.project.DelegationProject;
 import company.taskMan.project.Project;
@@ -22,8 +21,8 @@ import company.taskMan.resource.ResourceView;
 import company.taskMan.resource.user.User;
 import company.taskMan.task.DelegatingTask;
 import company.taskMan.task.DelegatingTaskProxy;
-import company.taskMan.task.OriginalTaskProxy;
 import company.taskMan.task.Task;
+
 import exceptions.ResourceUnavailableException;
 import exceptions.UnexpectedViewContentException;
 
@@ -750,8 +749,8 @@ public class Branch {
 	 * @return	The newly created delegation task in this branch
 	 * @throws IllegalArgumentException
 	 */
-	public DelegatingTaskProxy delegateAccept(OriginalTaskProxy fromProxy) throws IllegalArgumentException {
-		TaskView task = fromProxy.getTask();
+	public void delegateAccept(DelegatingTaskProxy fromProxy) throws IllegalArgumentException {
+		TaskView task = new TaskView(fromProxy.getTask());
 		Map<ResourceView, Integer> wrappedResources = task.getRequiredResources();
 		
 		try {
@@ -761,8 +760,8 @@ public class Branch {
 			throw new IllegalArgumentException("Task cannot be accepted for delegation, reason: " + e.getMessage());
 		}
 		DelegatingTask newTask = (DelegatingTask) delegationProject.getTasks().get(delegationProject.getTasks().size() - 1);
-		newTask.setProxy(fromProxy);
-		return branchRep.delegateAccept(fromProxy, newTask, this);
+//		newTask.setProxy(fromProxy);
+		branchRep.delegateAccept(fromProxy, newTask, this);
 	}
 
 	public void removeDelegatedTask(Task task) {

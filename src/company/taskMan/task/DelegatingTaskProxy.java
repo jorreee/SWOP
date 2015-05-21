@@ -3,19 +3,24 @@ package company.taskMan.task;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-import company.BranchView;
 import company.taskMan.Branch;
 import company.taskMan.util.TimeSpan;
 
 public class DelegatingTaskProxy implements Dependant {
 	
-	private DelegatingTask originalTask;
+	private Task originalTask;
 	private OriginalTaskProxy other;
-	private Branch toBranch;
+	private Branch originalBranch;
 	
-	public DelegatingTaskProxy(DelegatingTask t, Branch toBranch) {
-		this.originalTask = t;
-		this.toBranch = toBranch;
+	/**
+	 * Creates a new DelegatingTaskProxy for originalTask that resides
+	 * in originalBranch
+	 * @param originalTask
+	 * @param originalBranch
+	 */
+	public DelegatingTaskProxy(Task originalTask, Branch originalBranch) {
+		this.originalTask = originalTask;
+		this.originalBranch = originalBranch;
 	}
 	
 	public void link(OriginalTaskProxy other) {
@@ -49,12 +54,21 @@ public class DelegatingTaskProxy implements Dependant {
 		return new TimeSpan(0);
 	}
 
-	public Optional<BranchView> getToBranch() {
-		return Optional.of(new BranchView(toBranch));
+	public Optional<Branch> getDelegatingBranch() {
+		if(other == null) {
+			return Optional.empty();
+		}
+		return Optional.of(other.getBranch());
 	}
 
 	public Task getTask() {
 		return originalTask;
 	}
+	
+	public Task getDelegatingTask() {
+		return other.getTask();
+	}
+	
+	protected Branch getBranch() { return originalBranch; }
 
 }
