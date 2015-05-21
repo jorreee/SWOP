@@ -76,6 +76,8 @@ public class UseCase10RunningASimulationTest {
 			task20Devs;
 	private final Optional<LocalTime> emptyAvailabilityStart = Optional.empty(),
 			emptyAvailabilityEnd = Optional.empty();
+	private BranchView leuven,
+			aarschot;
 
 	/**
 	 * Project0:			Ongoing
@@ -102,13 +104,16 @@ public class UseCase10RunningASimulationTest {
 		
 		branchManager.initializeBranch("Leuven");
 		branchManager.initializeBranch("Aarschot");
+		leuven = branchManager.getBranches().get(0);
+		aarschot = branchManager.getBranches().get(1);
 		branchManager.selectBranch(branchManager.getBranches().get(0));
 		
-		for(int i = 0;i<=5;i++){
+		
+		for(int i = 0;i<=10;i++){
 			branchManager.declareConcreteResource("car" + i, branchManager.getResourcePrototypes().get(0));
 		}
 		
-		for(int i = 0;i<=5;i++){
+		for(int i = 0;i<=10;i++){
 			branchManager.declareConcreteResource("whiteboard" + i, branchManager.getResourcePrototypes().get(1));
 		}
 		//Set up container objects
@@ -296,9 +301,9 @@ public class UseCase10RunningASimulationTest {
 	}
 	
 	@Test
-	public void succesCaseDelegateRevertMem(){
+	public void succesCaseDelegateRevertMemSimple(){
 		ProjectView project0 = branchManager.getProjects().get(0);
-		//create an task to delegate
+		//create a task to delegate
 		branchManager.createTask(project0, "delegation", 60, 5, new ArrayList<TaskView>(), reqResTask00, null);
 		TaskView newTask = project0.getTasks().get( project0.getTasks().size()-1);
 		assertFalse(newTask.isDelegated());
@@ -313,6 +318,54 @@ public class UseCase10RunningASimulationTest {
 		
 		//revert the memento
 		branchManager.revertFromMemento();
-		assertFalse(newTask.isDelegated());
+		delTask = branchManager.getResponsibleBranch(project0, newTask, branchManager.getBranches().get(0));
+		assertFalse(delTask.isPresent());
 	}
+	
+	@Test
+	public void succesCaseDelegateRevertMemComplex(){
+		//create a task to delegate in branch leuven
+		ProjectView project0 = branchManager.getProjects().get(0);
+		branchManager.createTask(project0, "delegation", 60, 5, new ArrayList<TaskView>(), reqResTask00, null);
+		TaskView taskL = project0.getTasks().get( project0.getTasks().size()-1);
+		
+		//create a task to delegate in branch aarschot
+		branchManager.selectBranch(aarschot);
+		branchManager.createProject("projectA0", "projectA0", project1DueDate);
+		assertEquals(1, branchManager.getProjects().size());
+		ProjectView projectA0 = branchManager.getProjects().get(0);
+		branchManager.createTask(projectA0, "test", 60, 5, new ArrayList<TaskView>(), reqResTask00, null);
+		assertEquals(1, projectA0.getTasks().size());
+		TaskView taskA = projectA0.getTasks().get(0);
+		
+		//delegate the task from aarschot
+		branchManager.delegateTask(projectA0, taskA, leuven);
+		
+		Optional<BranchView> delTask = branchManager.getResponsibleBranch(projectA0, taskA, aarschot);
+		assertTrue(delTask.isPresent());
+		
+		//delegate the task from leuven
+		branchManager.selectBranch(leuven);
+		branchManager.delegateTask(project0, taskL, aarschot);
+		
+		delTask = branchManager.getResponsibleBranch(project0, taskL, leuven);
+		assertTrue(delTask.isPresent());
+		//create memento
+		branchManager.storeInMemento();
+		
+		//some actions
+		
+		//trololo
+		
+		//revert memento
+		branchManager.revertFromMemento();
+		delTask = branchManager.getResponsibleBranch(project0, taskL, leuven);
+		assertTrue(delTask.isPresent());
+		
+		branchManager.selectBranch(aarschot);
+		delTask = branchManager.getResponsibleBranch(projectA0, taskA, aarschot);
+		assertTrue(delTask.isPresent());
+
+	}
+	
 }
