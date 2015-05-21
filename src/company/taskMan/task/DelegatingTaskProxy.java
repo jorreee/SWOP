@@ -20,6 +20,9 @@ public class DelegatingTaskProxy implements Dependant {
 	 */
 	public DelegatingTaskProxy(Task originalTask, Branch originalBranch) {
 		this.originalTask = originalTask;
+		for(Task p : originalTask.getPrerequisites()) {
+			p.register(this);
+		}
 		this.originalBranch = originalBranch;
 	}
 	

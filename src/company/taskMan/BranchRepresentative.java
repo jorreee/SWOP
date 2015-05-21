@@ -106,7 +106,7 @@ public class BranchRepresentative implements Dependant {
 				DelegatingTaskProxy toProxy = new DelegatingTaskProxy(task, fromBranch);
 				toBranch.delegateAccept(toProxy);
 				taskToProxies.put(task, toProxy);
-				task.delegate(toProxy); // TODO hoe moet het registeren tussen T1 en P1 nu precies?
+				task.delegate(toProxy);
 			}
 			// OLD STUFF BELOW
 			//			Task originalTask = task.getOriginalDelegatedTask();	// The original task (this task has been delegated before) or null

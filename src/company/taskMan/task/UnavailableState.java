@@ -37,11 +37,11 @@ public class UnavailableState implements TaskStatus {
 		if(task.getPlannedBeginTime() != null) {
 			throw new IllegalStateException("This task is already planned in its current branch and cannot be delegated");
 		}
-		Task newTask = toProxy.getTask();
-		if(!task.equals(newTask)) {
+		Task delegatingTask = toProxy.getDelegatingTask();
+		if(!task.equals(delegatingTask)) {
 //			Task oldDelegator = task.getDelegatingTask();
 //			if(oldDelegator != null) {
-//				oldDelegator.unregister(task); //TODO hier kan nullpointer komen als de delegating task eerst wordt verwijderd
+//				oldDelegator.unregister(task);
 //			}
 //			task.setDelegatingTask(newTask);
 //			try {
@@ -50,10 +50,7 @@ public class UnavailableState implements TaskStatus {
 //				task.setDelegatingTask(oldDelegator);
 //				throw e;
 //			}
-			newTask.register(task);
-			for(Task t : task.getPrerequisites()) {
-				t.unregister(task);
-			}
+//			delegatingTask.register(task);
 			task.setTaskStatus(new DelegatedState());
 		} //else doe niks alles is okee
 		

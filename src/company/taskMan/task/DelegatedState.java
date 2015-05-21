@@ -28,9 +28,9 @@ public class DelegatedState implements TaskStatus {
 
 //			newTask.unregister(task);
 			task.setTaskStatus(new UnavailableState());
-			for(Task t : task.getPrerequisites()) {
-				t.register(task);
-			}
+//			for(Task t : task.getPrerequisites()) {
+//				t.register(task);
+//			}
 			
 		} else {
 //			Task oldDelegator = task.getDelegatingTask();
@@ -42,8 +42,7 @@ public class DelegatedState implements TaskStatus {
 //				task.setDelegatingTask(oldDelegator);
 //				throw e;
 //			}
-			//TODO unregisteren van oude delegatingTask?
-			newTask.getTask().register(task); 
+//			newTask.getTask().register(task); 
 			
 		}
 	}
