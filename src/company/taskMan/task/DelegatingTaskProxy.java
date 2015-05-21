@@ -74,4 +74,12 @@ public class DelegatingTaskProxy implements Dependant {
 	
 	protected Branch getBranch() { return originalBranch; }
 
+	/**
+	 * Dirty method for the simulation
+	 * @param task
+	 */
+	public void setTask(Task task) {
+		originalTask = task;		
+	}
+
 }
