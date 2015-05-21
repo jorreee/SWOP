@@ -694,7 +694,7 @@ public class Branch {
 	 * 			View to unpack
 	 * @return	The user belonging to the view
 	 */
-	public User getUser(ResourceView user){
+	public User getUser(ResourceView user) throws IllegalArgumentException, UnexpectedViewContentException {
 		return resMan.unWrapUserView(user); //TODO public unwrap
 	}
 
