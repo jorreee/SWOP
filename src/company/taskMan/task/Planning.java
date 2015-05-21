@@ -82,10 +82,6 @@ public class Planning {
 		if(newPlannedBeginTime==null) {
 			throw new IllegalArgumentException("newPlannedBeginTime can not be null");
 		}
-		// TODO: This check is incorrect. Remove.
-//		if(plannedBeginTime != null) {
-//			throw new IllegalStateException("There is already a planned begin time set");
-//		}
 		if(beginTime != null) {
 			throw new IllegalStateException("There is already a begin time set");
 		}

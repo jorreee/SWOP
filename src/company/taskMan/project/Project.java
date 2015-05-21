@@ -185,9 +185,6 @@ public class Project implements Dependant {
 		
 		ArrayList<Task> prereqTasks = new ArrayList<Task>();
 		for(TaskView t : prerequisiteTasks) {
-//			if(!isValidTaskView(t)) {
-//				return false;
-//			}
 			prereqTasks.add(unwrapTaskView(t));
 		}
 		
@@ -233,23 +230,6 @@ public class Project implements Dependant {
 	public void removeTask(TaskView task) {
 		throw new UnsupportedOperationException("Tasks cannot be deleted in a regular project");
 	}
-//	
-//	/**
-//	 * Checks whether the given TaskView is a valid TaskView representing a valid Task.
-//	 * 
-//	 * @param 	view
-//	 * 			The TaskView to check.
-//	 * @return	True if and only if the TaskView is a valid TaskView.
-//	 */
-//	private boolean isValidTaskView(TaskView view) {
-//		if(view == null) {
-//			return false;
-//		}
-//		if(view.unwrap() == null) {
-//			return false;
-//		}
-//		return taskList.contains(unwrapTaskView(view));
-//	}
 	
 	/**
 	 * Checks whether the given TaskView represents a valid Alternative for a certain Task in this Project.
@@ -262,7 +242,6 @@ public class Project implements Dependant {
 		if(view == null) {
 			return true;
 		}
-//		if(isValidTaskView(view)) {
 		try {
 			Task task = unwrapTaskView(view);
 			for(Task t : taskList) {
@@ -274,7 +253,6 @@ public class Project implements Dependant {
 		} catch(Exception e) {
 			return false;
 		}
-//		}
 	}
 	
 	/**
@@ -338,9 +316,6 @@ public class Project implements Dependant {
 		if(endTime==null) {
 			throw new IllegalArgumentException("The new endTime is null");
 		}
-//		if(getEndTime()!=null) {
-//			throw new IllegalArgumentException("The endtime is already set");
-//		}
 		this.endTime = endTime;
 	}
 	

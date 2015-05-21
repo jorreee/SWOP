@@ -35,13 +35,10 @@ public class BranchRepresentative {
 	 */
 	private Map<Task,OriginalTaskProxy> originalProxies;	
 	
-//	private List<Delegation> delegationsFromBranch;
 	private LinkedList<DelegationData> buffer;
 	private boolean bufferMode;
 
-	public BranchRepresentative(){
-//		delegations = new ArrayList<DelegationData>();
-//		delegationsToBranch = new ArrayList<Delegation>();
+	public BranchRepresentative() {
 		
 		delegationProxies = new HashMap<>();
 		originalProxies = new HashMap<>();
@@ -79,16 +76,11 @@ public class BranchRepresentative {
 		}
 		// Delegation came back to the original branch
 		if (toBranch == fromBranch)	{
-//			task.delegate(new DelegatingTaskProxy(null, fromBranch));
-//			taskToProxies.remove(task);
-//			delegations.remove(getToDelegationContainingTask(task).get());
 			delegationProxies.remove(task);
 			task.delegate(false);
-//			throw new IllegalArgumentException("You cannot delegate to yourself, silly!");
 		} else {
 		// Add new delegation to buffer
 			buffer.add(new DelegationData(task, fromBranch, toBranch));
-
 			if (!bufferMode) {
 				executeBuffer();
 			}
@@ -115,7 +107,6 @@ public class BranchRepresentative {
 		delProxy.link(origiProxy);
 		origiProxy.link(delProxy);
 		originalProxies.put(newTask, origiProxy);
-//		delegations.add(new DelegationData(newTask, fromBranch, toBranch));
 	}
 
 	private void executeBuffer(){
@@ -159,7 +150,7 @@ public class BranchRepresentative {
 	}
 
 	/**
-	 * Sets the buffer mode of this representative. If set to active, it will
+	 * Sets the buffer mode of this representative. If set to false, it will
 	 * execute its scheduled delegations.
 	 * @param bool
 	 */
@@ -167,10 +158,7 @@ public class BranchRepresentative {
 		bufferMode = bool;
 		if(!bufferMode) {
 			executeBuffer();
-//			bufferCheckpoints.pop();
-		} else {
-//			bufferCheckpoints.push(buffer.size());
-		}
+		} 
 	}
 
 	/**

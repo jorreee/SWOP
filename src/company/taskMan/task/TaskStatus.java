@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 public interface TaskStatus {
 
 	/**
-	 * Change the status to an available status
+	 * Try to hange the status to an available status
 	 * 
 	 * @param task
 	 *            | The task to make available
