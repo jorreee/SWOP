@@ -28,6 +28,7 @@ public class DelegatingTaskProxy implements Dependant {
 	
 	public void link(OriginalTaskProxy other) {
 		this.other = other;
+		updateDependencyFinished(null);
 	}
 	
 	public void updateProxyTaskFinished(LocalDateTime endTime) {

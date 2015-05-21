@@ -20,6 +20,9 @@ public class OriginalTaskProxy {
 	
 	public void link(DelegatingTaskProxy other) {
 		this.other = other;
+		if(delegatingTask.isFinished()) {
+			other.updateProxyTaskFinished(delegatingTask.getEndTime());
+		}
 	}
 	
 	public void updatePrereqsFinished() {
