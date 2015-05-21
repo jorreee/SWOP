@@ -26,12 +26,15 @@ public class DelegatedState implements TaskStatus {
 //			Task oldDelegator = task.getDelegatingTask();
 //			task.setDelegatingTask(null);
 
-			newTask.unregister(task); //TODO hier kan nullpointer komen als de delegating task eerst wordt verwijderd
+//			newTask.unregister(task);
 			task.setTaskStatus(new UnavailableState());
+			for(Task t : task.getPrerequisites()) {
+				t.register(task);
+			}
 			
 		} else {
 //			Task oldDelegator = task.getDelegatingTask();
-//			oldDelegator.unregister(task); //TODO hier kan nullpointer komen als de delegating task eerst wordt verwijderd
+//			oldDelegator.unregister(task); 
 //			task.setDelegatingTask(newTask);
 //			try {
 //				newTask.setOriginalDelegatedTask(task);

@@ -14,32 +14,30 @@ import company.taskMan.util.TimeSpan;
 
 public class BranchRepresentative implements Dependant {
 
-	private List<Delegation> delegations;
+	private List<DelegationData> delegations;
 //	private List<Delegation> delegationsFromBranch;
-	private LinkedList<Delegation> buffer;
+	private LinkedList<DelegationData> buffer;
 	private Stack<Integer> bufferCheckpoints;
 	boolean bufferMode;
 
 	public BranchRepresentative(){
-		delegations = new ArrayList<Delegation>();
+		delegations = new ArrayList<DelegationData>();
 //		delegationsToBranch = new ArrayList<Delegation>();
-		buffer = new LinkedList<Delegation>();
+		buffer = new LinkedList<DelegationData>();
 		bufferCheckpoints = new Stack<>();
 		bufferMode = false;
 	}
 
 	public void delegateTask(Task task, Branch fromBranch, Branch toBranch) throws IllegalArgumentException { // TODO allow for re-delegation of tasks
 		// Delegation came back to the original branch
-		if (toBranch == fromBranch)
-		{
+		if (toBranch == fromBranch)	{
 			task.delegate(task);
 			delegations.remove(getToDelegationContainingTask(task).get());
-		} else // A new delegation
-		{
-			buffer.add(new Delegation(task, fromBranch, toBranch));
 			
-			if (!bufferMode)
-			{
+		} else {// A new delegation
+			buffer.add(new DelegationData(task, fromBranch, toBranch));
+			
+			if (!bufferMode) {
 				executeBuffer();
 			}
 		}
@@ -47,23 +45,26 @@ public class BranchRepresentative implements Dependant {
 
 	public void delegateAccept(Task newTask, Branch fromBranch,
 			Branch toBranch) {
-		delegations.add(new Delegation(newTask, fromBranch, toBranch));
+		delegations.add(new DelegationData(newTask, fromBranch, toBranch));
 	}
 
 	public void executeBuffer(){
 		// For every delegation ready in the buffer
-		while (!buffer.isEmpty()){
-			Delegation deleg = buffer.poll();						// Next delegation to commit (a TO request)
-			Task task = deleg.getTask();							// Task to delegate
-			Branch fromBranch = deleg.getOriginalBranch();			// Branch to delegate FROM
-			Branch toBranch = deleg.getBranch();					// Branch to delegate TO
+		while (!buffer.isEmpty()) {
+			DelegationData deleg = buffer.poll();						// Next delegation to commit (a TO request)
+			Task task = deleg.delegatedTask;							// Task to delegate
+			Branch fromBranch = deleg.originalBranch;				    // Branch to delegate FROM
+			Branch toBranch = deleg.newBranch;						    // Branch to delegate TO
 
+			//TODO algemeen plan voor delegations (zie figuur facebook): 
+			//		1) maak Delegating Task, TObranch
+			//		2) maak proxies in Reps, juiste interdependencies
+			//		3) link proxies
 			Task originalTask = task.getOriginalDelegatedTask();	// The original task (this task has been delegated before) or null
-			Optional<Delegation> optionalOriginalDelegation = getFromDelegationContainingTask(originalTask);	// Delegation made to this delegator (a FROM request)
+			Optional<DelegationData> optionalOriginalDelegation = getFromDelegationContainingTask(originalTask);	// Delegation made to this delegator (a FROM request)
 			// A. If this task was already a delegated task
-			if (optionalOriginalDelegation.isPresent())
-			{
-				Delegation originalDelegation = optionalOriginalDelegation.get();
+			if (optionalOriginalDelegation.isPresent()) {
+				DelegationData originalDelegation = optionalOriginalDelegation.get();
 				// A.e The previous delegation does not lead here
 				if (originalDelegation.getBranch() != fromBranch){
 					throw new IllegalStateException("The original branch to delegate from is not equal to the one in the delegations sytem.");
@@ -86,33 +87,33 @@ public class BranchRepresentative implements Dependant {
 
 	}
 
-	public Optional<Delegation> getToDelegationContainingTask(Task task){
+	public Optional<DelegationData> getToDelegationContainingTask(Task task){
 		if (task == null){
 			return Optional.empty();
 		}
-		List<Delegation> simDelegationOfTask = buffer.stream().filter(d -> d.getTask() == task).collect(Collectors.toList());
+		List<DelegationData> simDelegationOfTask = buffer.stream().filter(d -> d.getTask() == task).collect(Collectors.toList());
 		switch (simDelegationOfTask.size()) {
 		case 1 : return Optional.of(simDelegationOfTask.get(0));
 		}
-		List<Delegation> delegationOfTask = delegations.stream().filter(d -> d.getTask() == task).collect(Collectors.toList());
+		List<DelegationData> delegationOfTask = delegations.stream().filter(d -> d.getTask() == task).collect(Collectors.toList());
 		switch (delegationOfTask.size()) {
 		case 1 : return Optional.of(delegationOfTask.get(0));
 		default : return Optional.empty();
 		}
 	}
 	
-	public Optional<Delegation> getFromDelegationContainingTask(Task task){
+	public Optional<DelegationData> getFromDelegationContainingTask(Task task){
 		if (task == null){
 			return Optional.empty();
 		}
-		List<Delegation> delegationOfTask = delegations.stream().filter(d -> d.getTask() == task).collect(Collectors.toList());
+		List<DelegationData> delegationOfTask = delegations.stream().filter(d -> d.getTask() == task).collect(Collectors.toList());
 		switch (delegationOfTask.size()) {
 		case 1 : return Optional.of(delegationOfTask.get(0));
 		default : return Optional.empty();
 		}
 	}
 
-	public void setBufferMode (boolean bool){
+	public void setBufferMode(boolean bool){
 		bufferMode = bool;
 		if(!bufferMode) {
 			executeBuffer();
@@ -130,7 +131,7 @@ public class BranchRepresentative implements Dependant {
 	}
 
 	public Optional<BranchView> getResponsibleBranch(Task task) {
-		Optional<Delegation> delegation = getToDelegationContainingTask(task);
+		Optional<DelegationData> delegation = getToDelegationContainingTask(task);
 		if(delegation.isPresent()) {
 			// TODO verify with toBranch (simulation), delegation.get().getBranch().verifyDelegation();
 			return Optional.of(new BranchView(delegation.get().newBranch));
@@ -140,42 +141,12 @@ public class BranchRepresentative implements Dependant {
 	}
 	
 	public Optional<Task> getDelegatingTask(Task t) {
-		for(Delegation d : delegations) {
+		for(DelegationData d : delegations) {
 			if(d.getOriginalTask() == t) {
 				return Optional.of(d.getNewTask());
 			}
 		}
 		return Optional.empty();
-	}
-
-	private class Delegation{
-		private Task delegatedTask;
-		private Branch originalBranch;
-		private Branch newBranch;
-		private Task newTask;
-
-		private Delegation(Task task,Branch origBranch, Branch newBranch, Task newTask){
-			delegatedTask = task;
-			originalBranch = origBranch;
-			this.newBranch = newBranch;
-			this.newTask = newTask;
-		}
-
-		public Task getOriginalTask(){
-			return delegatedTask;
-		}
-
-		public Branch getOriginalBranch(){
-			return originalBranch;
-		}
-		
-		public Branch getBranch(){
-			return newBranch;
-		}
-		
-		public Task getNewTask(){
-			return newTask;
-		}
 	}
 
 	/**
@@ -200,5 +171,16 @@ public class BranchRepresentative implements Dependant {
 	@Override
 	public TimeSpan getMaxDelayChain() {
 		return new TimeSpan(0); //TODO gross.
+	}
+
+	private class DelegationData {
+		private Task delegatedTask;//, newTask;
+		private Branch originalBranch, newBranch;
+
+		private DelegationData(Task task,Branch origBranch, Branch newBranch){
+			delegatedTask = task;
+			originalBranch = origBranch;
+			this.newBranch = newBranch;
+		}
 	}
 }
