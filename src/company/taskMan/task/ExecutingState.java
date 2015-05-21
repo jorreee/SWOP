@@ -21,7 +21,7 @@ public class ExecutingState implements TaskStatus{
 	public void makeAvailable(Task task) { }
 
 	@Override
-	public void delegate(Task task, DelegatingTaskProxy newTask) {
+	public void delegate(Task task, boolean real) {
 		throw new IllegalStateException("An executing task can't be delegated");
 	}
 	

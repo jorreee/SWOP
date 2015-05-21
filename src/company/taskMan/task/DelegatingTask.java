@@ -24,6 +24,11 @@ public class DelegatingTask extends Task {
 	}
 	
 	@Override
+	protected void notifyFinished() throws IllegalStateException {
+		proxy.updateDependencyFinished(this);
+	}
+	
+	@Override
 	public boolean canBePlanned() {
 		return proxy.canBePlanned();
 	}

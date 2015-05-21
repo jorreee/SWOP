@@ -749,8 +749,8 @@ public class Branch {
 	 * @return	The newly created delegation task in this branch
 	 * @throws IllegalArgumentException
 	 */
-	public void delegateAccept(DelegatingTaskProxy fromProxy) throws IllegalArgumentException {
-		TaskView task = new TaskView(fromProxy.getTask());
+	public void delegateAccept(DelegatingTaskProxy delProxy) throws IllegalArgumentException {
+		TaskView task = new TaskView(delProxy.getTask()); //Dit kan vermeden worden door de task Creation date hieronder als parameter mee te geven
 		Map<ResourceView, Integer> wrappedResources = task.getRequiredResources();
 		
 		try {
@@ -759,9 +759,9 @@ public class Branch {
 				| IllegalStateException e) {
 			throw new IllegalArgumentException("Task cannot be accepted for delegation, reason: " + e.getMessage());
 		}
-		DelegatingTask newTask = (DelegatingTask) delegationProject.getTasks().get(delegationProject.getTasks().size() - 1);
+		DelegatingTask delTask = (DelegatingTask) delegationProject.getTasks().get(delegationProject.getTasks().size() - 1);
 //		newTask.setProxy(fromProxy);
-		branchRep.delegateAccept(fromProxy, newTask, this);
+		branchRep.delegateAccept(delProxy, delTask, this);
 	}
 
 	public void removeDelegatedTask(Task task) {

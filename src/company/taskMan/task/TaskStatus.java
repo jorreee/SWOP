@@ -31,7 +31,7 @@ public interface TaskStatus {
 	 * @param   toProxy
 	 * 			| the delegating task's proxy
 	 */
-	public void delegate(Task task, DelegatingTaskProxy toProxy) 
+	public void delegate(Task task, boolean real) 
 			throws IllegalArgumentException, IllegalStateException;
 
 	/**

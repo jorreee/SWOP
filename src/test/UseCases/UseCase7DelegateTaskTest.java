@@ -273,6 +273,7 @@ public class UseCase7DelegateTaskTest {
 	public void succesCaseTest() {
 		branchManager.selectBranch(branchManager.getBranches().get(0));
 		assertEquals(branchManager.getProjects().get(3).getTasks().get(2).getStatusAsString(),"Unavailable");
+		
 		branchManager.delegateTask(branchManager.getProjects().get(3), branchManager.getProjects().get(3).getTasks().get(2), branchManager.getBranches().get(1));
 		assertEquals(branchManager.getProjects().get(3).getTasks().get(2).getStatusAsString(),"Delegated");
 		branchManager.selectBranch(branchManager.getBranches().get(1));
@@ -284,14 +285,14 @@ public class UseCase7DelegateTaskTest {
 	
 	
 	@Test(expected = TaskManException.class)
-	public void availableTaskFailed() {
+	public void availableTaskFail() {
 		branchManager.selectBranch(branchManager.getBranches().get(0));
 		assertEquals(branchManager.getProjects().get(2).getTasks().get(0).getStatusAsString(),"Available");
 		branchManager.delegateTask(branchManager.getProjects().get(2), branchManager.getProjects().get(2).getTasks().get(0), branchManager.getBranches().get(1));
 	}
 	
 	@Test(expected = TaskManException.class)
-	public void availableTaskFinished() {
+	public void finishedTaskFail() {
 		branchManager.selectBranch(branchManager.getBranches().get(0));
 		assertEquals(branchManager.getProjects().get(0).getTasks().get(0).getStatusAsString(),"Finished");
 		branchManager.delegateTask(branchManager.getProjects().get(0), branchManager.getProjects().get(0).getTasks().get(0), branchManager.getBranches().get(1));
@@ -301,12 +302,14 @@ public class UseCase7DelegateTaskTest {
 	public void succesDelegateBackTest() {
 		branchManager.selectBranch(branchManager.getBranches().get(0));
 		assertEquals(branchManager.getProjects().get(3).getTasks().get(2).getStatusAsString(),"Unavailable");
+		
 		branchManager.delegateTask(branchManager.getProjects().get(3), branchManager.getProjects().get(3).getTasks().get(2), branchManager.getBranches().get(1));
 		assertEquals(branchManager.getProjects().get(3).getTasks().get(2).getStatusAsString(),"Delegated");
 		branchManager.selectBranch(branchManager.getBranches().get(1));
 		TaskView delegationTask = branchManager.getAllProjects().get(0).getTasks().get(0);
 		assertEquals(delegationTask.getStatusAsString(),"Unavailable");
 		assertEquals(delegationTask.getDescription(),"TASK 32");
+		
 		branchManager.delegateTask(branchManager.getAllProjects().get(0), branchManager.getAllProjects().get(0).getTasks().get(0), branchManager.getBranches().get(0));
 		assertEquals(branchManager.getAllProjects().get(0).getTasks().size(),0);
 		branchManager.selectBranch(branchManager.getBranches().get(0));
@@ -317,12 +320,14 @@ public class UseCase7DelegateTaskTest {
 	public void succesDelegateFurtherTest() {
 		branchManager.selectBranch(branchManager.getBranches().get(0));
 		assertEquals(branchManager.getProjects().get(3).getTasks().get(2).getStatusAsString(),"Unavailable");
+		
 		branchManager.delegateTask(branchManager.getProjects().get(3), branchManager.getProjects().get(3).getTasks().get(2), branchManager.getBranches().get(1));
 		assertEquals(branchManager.getProjects().get(3).getTasks().get(2).getStatusAsString(),"Delegated");
 		branchManager.selectBranch(branchManager.getBranches().get(1));
 		TaskView delegationTask = branchManager.getAllProjects().get(0).getTasks().get(0);
 		assertEquals(delegationTask.getStatusAsString(),"Unavailable");
 		assertEquals(delegationTask.getDescription(),"TASK 32");
+		
 		branchManager.delegateTask(branchManager.getAllProjects().get(0), delegationTask, branchManager.getBranches().get(2));
 		assertEquals(branchManager.getAllProjects().get(0).getTasks().size(),0);
 		branchManager.selectBranch(branchManager.getBranches().get(2));

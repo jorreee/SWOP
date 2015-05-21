@@ -22,13 +22,13 @@ public class BranchRepresentative implements Dependant {
 	 * <TASK, PROXY>:
 	 * TASK is being delegated remotely. It is updated by PROXY
 	 */
-	private Map<Task,DelegatingTaskProxy> taskToProxies;
+	private Map<Task,DelegatingTaskProxy> delegationProxies;
 	
 	/**
 	 * <TASK, PROXY>
 	 * TASK is delegating a remote task. It updates PROXY
 	 */
-	private Map<Task,OriginalTaskProxy> taskFromProxies;	
+	private Map<Task,OriginalTaskProxy> originalProxies;	
 	
 //	private List<Delegation> delegationsFromBranch;
 	private LinkedList<DelegationData> buffer;
@@ -39,8 +39,8 @@ public class BranchRepresentative implements Dependant {
 //		delegations = new ArrayList<DelegationData>();
 //		delegationsToBranch = new ArrayList<Delegation>();
 		
-		taskToProxies = new HashMap<>();
-		taskFromProxies = new HashMap<>();
+		delegationProxies = new HashMap<>();
+		originalProxies = new HashMap<>();
 		
 		buffer = new LinkedList<DelegationData>();
 		bufferCheckpoints = new Stack<>();
@@ -50,29 +50,27 @@ public class BranchRepresentative implements Dependant {
 	public void delegateTask(Task task, Branch fromBranch, Branch toBranch) throws IllegalArgumentException {
 		// Delegation came back to the original branch
 		if (toBranch == fromBranch)	{
-			task.delegate(new DelegatingTaskProxy(null, fromBranch));
-			taskToProxies.remove(task);
+//			task.delegate(new DelegatingTaskProxy(null, fromBranch));
+//			taskToProxies.remove(task);
 //			delegations.remove(getToDelegationContainingTask(task).get());
-		} else { 
-			if(taskToProxies.containsKey(task)) { // re-delegation
-				// TODO unregister stuff
-				taskToProxies.remove(task);
-			}
-			// Add new delegation to buffer
+			delegationProxies.remove(task);
+			task.delegate(false);
+//			throw new IllegalArgumentException("You cannot delegate to yourself, silly!");
+		} else {
+		// Add new delegation to buffer
 			buffer.add(new DelegationData(task, fromBranch, toBranch));
 
 			if (!bufferMode) {
-				executeBuffer();
+			executeBuffer();
 			}
 		}
 	}
 
-	public OriginalTaskProxy delegateAccept(DelegatingTaskProxy toProxy, DelegatingTask newTask, Branch delegatingBranch) {
-		OriginalTaskProxy fromProxy = new OriginalTaskProxy(newTask, delegatingBranch);
-		toProxy.link(fromProxy);
-		fromProxy.link(toProxy);
-		taskFromProxies.put(newTask, fromProxy);
-		return fromProxy;
+	public void delegateAccept(DelegatingTaskProxy toProxy, DelegatingTask newTask, Branch delegatingBranch) {
+		OriginalTaskProxy origiProxy = new OriginalTaskProxy(newTask, delegatingBranch);
+		toProxy.link(origiProxy);
+		origiProxy.link(toProxy);
+		originalProxies.put(newTask, origiProxy);
 //		delegations.add(new DelegationData(newTask, fromBranch, toBranch));
 	}
 
@@ -90,23 +88,30 @@ public class BranchRepresentative implements Dependant {
 			//		3) link proxies
 			// NEW STUFF BELOW
 			// A. If this task was already a delegated task
-			if (taskFromProxies.containsKey(task)) {
-				OriginalTaskProxy fromProxy = taskFromProxies.get(task); 
+			if (originalProxies.containsKey(task)) {
+				OriginalTaskProxy origiProxy = originalProxies.get(task);
+				Branch origiFromBranch = origiProxy.getOriginalBranch().get();
 
 				// A.1 Remove previous delegation information
+				originalProxies.remove(task);
 				fromBranch.removeDelegatedTask(task);
-				taskFromProxies.remove(task);
-				fromBranch = fromProxy.getOriginalBranch().get();
 
 				// A.2 (re-)delegate the original task in its respective delegator
-				fromBranch.delegateTask(task, toBranch);
+				origiFromBranch.delegateTask(origiProxy.getOriginalTask(), toBranch);
 
-				// B. Else if this task hasn't been delegated before
+				// B. The original task is being re-delegated: remove its previous delegation and schedule a new one
+			} else if(delegationProxies.containsKey(task)) { 
+				DelegatingTaskProxy delProxy = delegationProxies.get(task);
+				Task origiTask = delProxy.getTask();
+				origiTask.delegate(false);
+				delegationProxies.remove(task);
+				buffer.add(new DelegationData(task, fromBranch, toBranch));
+				
 			} else {
-				DelegatingTaskProxy toProxy = new DelegatingTaskProxy(task, fromBranch);
-				toBranch.delegateAccept(toProxy);
-				taskToProxies.put(task, toProxy);
-				task.delegate(toProxy);
+				DelegatingTaskProxy delProxy = new DelegatingTaskProxy(task, fromBranch);
+				toBranch.delegateAccept(delProxy);
+				delegationProxies.put(task, delProxy);
+				task.delegate(true);
 			}
 			// OLD STUFF BELOW
 			//			Task originalTask = task.getOriginalDelegatedTask();	// The original task (this task has been delegated before) or null
@@ -181,7 +186,7 @@ public class BranchRepresentative implements Dependant {
 	}
 
 	public Optional<BranchView> getResponsibleBranch(Task task) {
-		Optional<DelegatingTaskProxy> toProxy = Optional.ofNullable(taskToProxies.get(task));
+		Optional<DelegatingTaskProxy> toProxy = Optional.ofNullable(delegationProxies.get(task));
 
 		if(toProxy.isPresent()) {
 			if(toProxy.get().getDelegatingBranch().isPresent()) {
@@ -195,7 +200,7 @@ public class BranchRepresentative implements Dependant {
 	}
 
 	public Optional<TaskView> getDelegatingTask(Task t) {
-		Optional<DelegatingTaskProxy> toProxy = Optional.ofNullable(taskToProxies.get(t));
+		Optional<DelegatingTaskProxy> toProxy = Optional.ofNullable(delegationProxies.get(t));
 
 		if(toProxy.isPresent()) {
 			return Optional.of(new TaskView(toProxy.get().getDelegatingTask()));

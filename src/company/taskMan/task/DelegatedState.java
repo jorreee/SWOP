@@ -17,33 +17,12 @@ public class DelegatedState implements TaskStatus {
 	}
 
 	@Override
-	public void delegate(Task task, DelegatingTaskProxy newTask)
+	public void delegate(Task task, boolean real)
 			throws IllegalArgumentException, IllegalStateException {
-		if(newTask == null) {
-			throw new IllegalArgumentException("newTask must not be null");
-		}
-		if(newTask.getTask() == null) { // TODO dees moet beter
-//			Task oldDelegator = task.getDelegatingTask();
-//			task.setDelegatingTask(null);
-
-//			newTask.unregister(task);
+		if(!real) {
 			task.setTaskStatus(new UnavailableState());
-//			for(Task t : task.getPrerequisites()) {
-//				t.register(task);
-//			}
-			
 		} else {
-//			Task oldDelegator = task.getDelegatingTask();
-//			oldDelegator.unregister(task); 
-//			task.setDelegatingTask(newTask);
-//			try {
-//				newTask.setOriginalDelegatedTask(task);
-//			} catch(IllegalStateException e) {
-//				task.setDelegatingTask(oldDelegator);
-//				throw e;
-//			}
-//			newTask.getTask().register(task); 
-			
+			throw new IllegalStateException("This task is already delegated!");
 		}
 	}
 

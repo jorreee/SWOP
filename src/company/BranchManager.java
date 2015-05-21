@@ -454,9 +454,9 @@ public class BranchManager implements IFacade {
 	@Override
 	public void delegateTask(ProjectView project, TaskView task,
 			BranchView newBranch) {
-		Branch branch = unwrapBranchView(newBranch);  
+		Branch branch = unwrapBranchView(newBranch);
 		try {
-		currentBranch.delegateTask(project, task, branch);
+			currentBranch.delegateTask(project, task, branch);
 		}
 		catch (Exception e) {
 			throw new TaskManException(e);

@@ -29,31 +29,14 @@ public class UnavailableState implements TaskStatus {
 	}
 
 	@Override
-	public void delegate(Task task, DelegatingTaskProxy toProxy) 
+	public void delegate(Task task, boolean real) 
 			throws IllegalArgumentException, IllegalStateException {
-		if(toProxy == null) {
-			throw new IllegalArgumentException("newTask must not be null");
-		}
 		if(task.getPlannedBeginTime() != null) {
 			throw new IllegalStateException("This task is already planned in its current branch and cannot be delegated");
 		}
-		Task delegatingTask = toProxy.getDelegatingTask();
-		if(!task.equals(delegatingTask)) {
-//			Task oldDelegator = task.getDelegatingTask();
-//			if(oldDelegator != null) {
-//				oldDelegator.unregister(task);
-//			}
-//			task.setDelegatingTask(newTask);
-//			try {
-//				newTask.setOriginalDelegatedTask(task);
-//			} catch(IllegalStateException e) {
-//				task.setDelegatingTask(oldDelegator);
-//				throw e;
-//			}
-//			delegatingTask.register(task);
+		if(real) {
 			task.setTaskStatus(new DelegatedState());
-		} //else doe niks alles is okee
-		
+		}
 	}
 	
 	@Override

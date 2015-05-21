@@ -3,9 +3,8 @@ package company.taskMan.task;
 import java.util.Optional;
 
 import company.taskMan.Branch;
-import company.taskMan.util.TimeSpan;
 
-public class OriginalTaskProxy implements Dependant {
+public class OriginalTaskProxy {
 	
 	private DelegatingTask delegatingTask;
 	private DelegatingTaskProxy other;
@@ -15,7 +14,7 @@ public class OriginalTaskProxy implements Dependant {
 	public OriginalTaskProxy(DelegatingTask t, Branch delegatingBranch) {
 		this.delegatingTask = t;
 		this.delegatingBranch = delegatingBranch;
-		delegatingTask.register(this);
+		delegatingTask.setProxy(this);
 		hasUnfinishedPrereqs = true;
 	}
 	
@@ -35,7 +34,6 @@ public class OriginalTaskProxy implements Dependant {
 		return other.allowsToBePlanned();
 	}
 
-	@Override
 	public void updateDependencyFinished(Task preTask)
 			throws IllegalStateException {
 		if(preTask == delegatingTask) {
@@ -49,13 +47,12 @@ public class OriginalTaskProxy implements Dependant {
 		}
 	}
 
-	@Override
-	public TimeSpan getMaxDelayChain() {
-		return new TimeSpan(0);
-	}
-
-	public Task getTask() {
+	protected Task getTask() {
 		return delegatingTask;
+	}
+	
+	public Task getOriginalTask() {
+		return other.getTask();
 	}
 
 	public Optional<Branch> getOriginalBranch() {

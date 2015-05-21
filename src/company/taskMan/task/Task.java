@@ -778,8 +778,8 @@ public class Task implements Dependant {
 	 * @param toProxy
 	 * 		| the task that is delegating this task
 	 */
-	public void delegate(DelegatingTaskProxy toProxy) {
-		state.delegate(this, toProxy);
+	public void delegate(boolean real) {
+		state.delegate(this, real);
 	}
 
 	/**
