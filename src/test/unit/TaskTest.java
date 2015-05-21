@@ -11,13 +11,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
 
+import sun.swing.table.DefaultTableCellHeaderRenderer;
+import company.taskMan.Branch;
 import company.taskMan.resource.ResourceManager;
 import company.taskMan.resource.ResourcePrototype;
 import company.taskMan.resource.ResourceView;
+import company.taskMan.task.DelegatingTask;
+import company.taskMan.task.DelegatingTaskProxy;
+import company.taskMan.task.OriginalTaskProxy;
 import company.taskMan.task.Task;
 import company.taskMan.util.TimeSpan;
 import exceptions.ResourceUnavailableException;
@@ -33,6 +39,8 @@ public class TaskTest {
 	private ResourceView carDef;	//car0
 	private ResourceView boardDef;	//board0
 	private ResourceView weer, blunderbus;
+	private Branch branch1;
+	private Branch branch2;
 	
 	private final Optional<LocalTime> emptyAvailabilityPeriodStart = Optional.empty(),
 			emptyAvailabilityPeriodEnd = Optional.empty();
@@ -70,6 +78,10 @@ public class TaskTest {
 		TaskAsPrerequisite = new Task("PreTask",30,5,resMan,new ArrayList<Task>(),new HashMap<ResourceView,Integer>(),null);
 		ArrayList<Task> pre = new ArrayList<>();
 		pre.add(TaskAsPrerequisite);
+		
+		List<ResourcePrototype> temp = new ArrayList<>();
+		branch1 = new Branch("leuven", temp);
+		branch2 = new Branch("Aarschot", temp);
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
@@ -360,5 +372,21 @@ public class TaskTest {
 		alt.execute(beginTimeAlt);
 		assertEquals(defaultTest, alt.getAlternativeFor());
 		assertEquals(new TimeSpan(120),alt.getTimeSpent(currentTime));
+	}
+	
+	@Test
+	public void delegateTaskTest(){
+		HashMap<ResourceView, Integer> res = new HashMap<>();
+		Set<ResourcePrototype> t = defaultTest.getRequiredResources().keySet();
+		ResourcePrototype[] prot = new ResourcePrototype[10];
+		prot = t.toArray(prot);
+		res.put(new ResourceView(prot[0]), 1);
+		res.put(new ResourceView(prot[1]), 1);
+		DelegatingTask del = new DelegatingTask("delegator", 60, 5, resMan, res, null);
+		DelegatingTaskProxy toProxy = new DelegatingTaskProxy(defaultTest, branch1);
+		OriginalTaskProxy other = new OriginalTaskProxy(del, branch2);
+		toProxy.link(other);
+		defaultTest.delegate(true);
+		assertTrue(defaultTest.isDelegated());
 	}
 }

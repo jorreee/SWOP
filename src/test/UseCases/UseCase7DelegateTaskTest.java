@@ -336,7 +336,13 @@ public class UseCase7DelegateTaskTest {
 		assertEquals(furtherDelegationTask.getDescription(),"TASK 32");
 	}
 	
-	
+	@Test
+	public void delegateToSelf() {
+		branchManager.selectBranch(branchManager.getBranches().get(0));
+		assertEquals(branchManager.getProjects().get(3).getTasks().get(2).getStatusAsString(),"Unavailable");
+		branchManager.delegateTask(branchManager.getProjects().get(3), branchManager.getProjects().get(3).getTasks().get(2), branchManager.getBranches().get(0));
+		assertEquals(branchManager.getProjects().get(3).getTasks().get(2).getStatusAsString(),"Unavailable");
+	}
 	
 	
 }
