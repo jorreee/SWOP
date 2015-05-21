@@ -327,8 +327,8 @@ public class UseCase7DelegateTaskTest {
 		assertEquals(branchManager.getAllProjects().get(0).getTasks().size(),0);
 		branchManager.selectBranch(branchManager.getBranches().get(2));
 		TaskView furtherDelegationTask = branchManager.getAllProjects().get(0).getTasks().get(0);
-		assertEquals(delegationTask.getStatusAsString(),"Unavailable");
-		assertEquals(delegationTask.getDescription(),"TASK 32");
+		assertEquals(furtherDelegationTask.getStatusAsString(),"Unavailable");
+		assertEquals(furtherDelegationTask.getDescription(),"TASK 32");
 	}
 	
 	
