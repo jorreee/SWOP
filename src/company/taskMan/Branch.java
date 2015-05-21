@@ -776,9 +776,9 @@ public class Branch {
 		delegationProject.removeTask(new TaskView(task));		
 	}
 
-	public void clearBuffer() {
-		branchRep.clearBuffer();
-	}
+//	public void clearBuffer() {
+//		branchRep.clearBuffer();
+//	}
 
 	/**
 	 * Toggles buffer mode to on or off

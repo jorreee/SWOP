@@ -172,18 +172,18 @@ public class BranchRepresentative implements Dependant {
 		bufferMode = bool;
 		if(!bufferMode) {
 			executeBuffer();
-			bufferCheckpoints.pop();
+//			bufferCheckpoints.pop();
 		} else {
-			bufferCheckpoints.push(buffer.size());
+//			bufferCheckpoints.push(buffer.size());
 		}
 	}
 
-	public void clearBuffer() {
-		Integer checkpoint = bufferCheckpoints.pop();
-		while(buffer.size() > checkpoint) {
-			buffer.removeLast();
-		}
-	}
+//	public void clearBuffer() {
+//		Integer checkpoint = bufferCheckpoints.pop();
+//		while(buffer.size() > checkpoint) {
+//			buffer.removeLast();
+//		}
+//	}
 
 	public Optional<BranchView> getResponsibleBranch(Task task) {
 		Optional<DelegatingTaskProxy> toProxy = Optional.ofNullable(delegationProxies.get(task));

@@ -273,7 +273,7 @@ public class BranchManager implements IFacade {
 	@Override
 	public void revertFromMemento() {
 		caretaker.revertFromMemento();
-		currentBranch.clearBuffer();
+//		currentBranch.clearBuffer();
 		currentBranch.setBufferMode(false);
 	}
 
