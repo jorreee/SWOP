@@ -243,4 +243,37 @@ public class BranchRepresentative implements Dependant {
 			this.newBranch = newBranch;
 		}
 	}
+
+	/**
+	 * Dirty method for simulation stuff
+	 * @return
+	 */
+	protected Map<Task, OriginalTaskProxy> getOriginalProxies() {
+		return taskFromProxies;
+	}
+
+	/**
+	 * Dirty method for simulation stuff
+	 * @return
+	 */
+	protected Map<Task, DelegatingTaskProxy> getDelegatingProxies() {
+		return taskToProxies;
+	}
+
+	/**
+	 * Dirty method for simulation
+	 * @param proxies
+	 */
+	protected void offerOriginalTaskProxies(Map<Task, OriginalTaskProxy> proxies) {
+		taskFromProxies = proxies;
+	}
+
+	/**
+	 * Dirty method for simulation
+	 * @param proxies
+	 */
+	protected void offerDelegatingTaskProxies(
+			Map<Task, DelegatingTaskProxy> proxies) {
+		taskToProxies = proxies;
+	}
 }

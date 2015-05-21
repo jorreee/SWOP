@@ -12,6 +12,8 @@ import company.taskMan.resource.Resource;
 import company.taskMan.resource.ResourcePrototype;
 import company.taskMan.resource.ResourceView;
 import company.taskMan.resource.user.User;
+import company.taskMan.task.DelegatingTaskProxy;
+import company.taskMan.task.OriginalTaskProxy;
 import company.taskMan.task.Task;
 import company.taskMan.util.TimeSpan;
 import exceptions.NoSuchResourceException;
@@ -427,5 +429,27 @@ public class TaskView {
 
 	public boolean isDelegated() {
 		return task.isDelegated();
+	}
+
+	/**
+	 * Dirty method for the simulation
+	 * @param newOriginalProxies 
+	 * @param otp
+	 */
+	public void link(Map<Task, OriginalTaskProxy> newOriginalProxies, OriginalTaskProxy otp) {
+		otp.setTask(task);
+		newOriginalProxies.put(task, otp);
+	}
+	
+	/**
+	 * Dirty method for the simulation
+	 * @param newDelegatingProxies
+	 * @param delegatingProxy
+	 */
+	public void link(Map<Task, DelegatingTaskProxy> newDelegatingProxies,
+			DelegatingTaskProxy delegatingProxy) {
+		delegatingProxy.setTask(task);
+		newDelegatingProxies.put(task, delegatingProxy);
+		task.delegate(delegatingProxy);
 	}
 }

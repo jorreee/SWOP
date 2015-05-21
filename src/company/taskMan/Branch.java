@@ -10,6 +10,7 @@ import java.util.Optional;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
+
 import company.BranchView;
 import company.taskMan.project.DelegationProject;
 import company.taskMan.project.Project;
@@ -21,8 +22,8 @@ import company.taskMan.resource.ResourceView;
 import company.taskMan.resource.user.User;
 import company.taskMan.task.DelegatingTask;
 import company.taskMan.task.DelegatingTaskProxy;
+import company.taskMan.task.OriginalTaskProxy;
 import company.taskMan.task.Task;
-
 import exceptions.ResourceUnavailableException;
 import exceptions.UnexpectedViewContentException;
 
@@ -60,6 +61,13 @@ public class Branch {
 		resMan = new ResourceManager(prototypes);
 		branchRep = new BranchRepresentative();
 		geographicLocation = location;
+	}
+	
+	public void flush(List<ResourcePrototype> prototypes) throws IllegalArgumentException {
+		projectList = new ArrayList<>();
+		delegationProject = new DelegationProject();
+		resMan = new ResourceManager(prototypes);
+		branchRep = new BranchRepresentative();
 	}
 	
 	/**
@@ -779,5 +787,39 @@ public class Branch {
 	 */
 	public void setBufferMode(boolean bool) {
 		branchRep.setBufferMode(bool);
+	}
+
+	/**
+	 * Dirty method for simulation
+	 * @return
+	 */
+	public Map<Task, OriginalTaskProxy> getOriginalProxies() {
+		return branchRep.getOriginalProxies();
+	}
+
+	/**
+	 * Dirty method for simulation
+	 * @return
+	 */
+	public Map<Task, DelegatingTaskProxy> getDelegatingProxies() {
+		// TODO Auto-generated method stub
+		return branchRep.getDelegatingProxies();
+	}
+	
+	/**
+	 * Dirty method for simulation
+	 * @param proxies
+	 */
+	public void offerOriginalTaskProxies(Map<Task, OriginalTaskProxy> proxies) {
+		branchRep.offerOriginalTaskProxies(proxies);		
+	}
+
+	/**
+	 * Dirty method for the simulation
+	 * @param proxies
+	 */
+	public void offerDelegatingTaskProxies(
+			Map<Task, DelegatingTaskProxy> proxies) {
+		branchRep.offerDelegatingTaskProxies(proxies);
 	}
 }

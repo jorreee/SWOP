@@ -5,6 +5,7 @@ import initialization.TaskManInitFileChecker;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,8 +21,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 
 import company.caretaker.TaskManCaretaker;
-import company.taskMan.ProjectView;
 import company.taskMan.Branch;
+import company.taskMan.ProjectView;
 import company.taskMan.project.TaskView;
 import company.taskMan.resource.PrototypeManager;
 import company.taskMan.resource.Reservation;
@@ -30,6 +31,9 @@ import company.taskMan.resource.ResourcePrototype;
 import company.taskMan.resource.ResourceView;
 import company.taskMan.resource.user.User;
 import company.taskMan.resource.user.UserPermission;
+import company.taskMan.task.DelegatingTaskProxy;
+import company.taskMan.task.OriginalTaskProxy;
+import company.taskMan.task.Task;
 import exceptions.ResourceUnavailableException;
 import exceptions.UnexpectedViewContentException;
 
@@ -510,7 +514,7 @@ public class BranchManager implements IFacade {
 	public void initializeFromMemento(LocalDateTime systemTime, TaskManInitFileChecker fileChecker) {
 		currentTime = systemTime;
 		
-		currentBranch = new Branch(fileChecker.getGeographicLocation(), protMan.getPrototypes());
+		currentBranch.flush(protMan.getPrototypes());
 		
 		Main.initializeBranch(this, fileChecker, branches.indexOf(currentBranch));
 	}
@@ -537,5 +541,40 @@ public class BranchManager implements IFacade {
 			throw new TaskManException(e);
 		}
 		
+	}
+	
+	/**
+	 * Dirty method for simulation stuff
+	 * @return
+	 */
+	public Map<Task, OriginalTaskProxy> getOriginalProxies() {
+		// TODO Auto-generated method stub
+		return currentBranch.getOriginalProxies();
+	}
+	
+	/**
+	 * Dirty method for simulation stuff
+	 * @return
+	 */
+	public Map<Task, DelegatingTaskProxy> getDelegatingProxies() {
+		// TODO Auto-generated method stub
+		return currentBranch.getDelegatingProxies();
+	}
+
+	/**
+	 * Dirty method for simulation stuff
+	 * @param values
+	 */
+	public void offerOriginalTaskProxies(Map<Task, OriginalTaskProxy> proxies) {
+		currentBranch.offerOriginalTaskProxies(proxies);
+	}
+
+	/**
+	 * Dirty method for the simulation
+	 * @param newDelegatingProxies
+	 */
+	public void offerDelegatingTaskProxies(
+			Map<Task, DelegatingTaskProxy> proxies) {
+		currentBranch.offerDelegatingTaskProxies(proxies);	
 	}
 }

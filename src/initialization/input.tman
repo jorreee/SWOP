@@ -66,7 +66,8 @@ plannings:
 
 tasks:
     # projects and tasks are incrementally numbered starting with the number 0
-  - project            : 0
+    # project 0 represents delegating tasks
+  - project            : 1
     description        : "task description"
     estimatedDuration  : 500
     acceptableDeviation: 50
@@ -83,7 +84,7 @@ tasks:
     startTime          : "2014-01-01 10:00"
     endTime            : "2014-01-02 17:00"
 
-  - project            : 1
+  - project            : 2
     description        : "another task description"
     estimatedDuration  : 50000
     acceptableDeviation: 50
@@ -97,7 +98,7 @@ tasks:
     # An executing task requires an actual start time
     startTime          : "2014-01-02 17:00"
 
-  - project            : 1
+  - project            : 2
     description        : "yet another task description"
     estimatedDuration  : 10000
     acceptableDeviation: 10
@@ -107,7 +108,7 @@ tasks:
     planning           :
     status             :
 
-  - project            : 1
+  - project            : 2
     description        : "task 3's description"
     estimatedDuration  : 5000
     acceptableDeviation: 0
@@ -119,7 +120,7 @@ tasks:
     # original status was failed, impossible to fail unavailable tasks
     status             :
 
-  - project            : 1
+  - project            : 2
     description        : "task 4's description"
     estimatedDuration  : 50000
     acceptableDeviation: 0
@@ -133,7 +134,7 @@ tasks:
     # Original status was executing, yet an unavailable task can't execute
     status             :
 
-  - project            : 2
+  - project            : 3
     description        : "task 5's description"
     estimatedDuration  : 500
     acceptableDeviation: 50
@@ -147,7 +148,7 @@ tasks:
     startTime          : "2014-01-01 10:00"
     endTime            : "2014-01-02 17:00"
 
-  - project            : 2
+  - project            : 3
     description        : "task 6's description"
     estimatedDuration  : 500
     acceptableDeviation: 50

@@ -206,8 +206,9 @@ public class Main {
 				String statusString = null;
 				if(status != null)
 					statusString = status.name();
-
-				ProjectView project = facade.getProjects().get(tcd.getProject());
+				
+				ProjectView project = facade.getAllProjects().get(tcd.getProject());
+				
 				List<TaskView> prerequisiteTasks = new ArrayList<>();
 				for(Integer i : tcd.getPrerequisiteTasks()) {
 					prerequisiteTasks.add(creationList.get(i));
@@ -275,7 +276,7 @@ public class Main {
 			// Init reservations
 			for(ReservationCreationData rcd : reservations) {
 
-				ProjectView project = facade.getProjects().get(taskData.get(rcd.getTask()).getProject());
+				ProjectView project = facade.getAllProjects().get(taskData.get(rcd.getTask()).getProject());
 				TaskView task = creationList.get(rcd.getTask());
 
 				try {

@@ -63,8 +63,8 @@ Objects affected in B2:
 5.		-	DelegatingTaskProxy for T3, containing T3 [needs to be re-linked]
 
 Solution for:
-(1) Write delegation project to TMAN, new method to first read that
-(2) keep proxy and put in again with the new T3, n'th in the list (delegation project) from solution (1)
+OK?(1) Write delegation project to TMAN, new method to first read that
+(2) keep proxy and put in again with the new DT3, n'th in the list (delegation project) from solution (1)
 (3) write T1 as not delegated to file, set status delegated (very bad)
 (4) re-link originalTaskProxy from T1 with new proxy
 (5) if (2) is valid, then this is a non-issue

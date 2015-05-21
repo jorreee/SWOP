@@ -16,6 +16,9 @@ import company.taskMan.ProjectView;
 import company.taskMan.project.TaskView;
 import company.taskMan.resource.Reservation;
 import company.taskMan.resource.ResourceView;
+import company.taskMan.task.DelegatingTaskProxy;
+import company.taskMan.task.OriginalTaskProxy;
+import company.taskMan.task.Task;
 
 /**
  * This class represents the system caretaker. It is responsible for creating
@@ -63,11 +66,11 @@ public class TaskManCaretaker {
 		StringBuilder tman = new StringBuilder();
 		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 		
-		List<ProjectView> existingProjects = branchManager.getProjects();
+		List<ProjectView> existingProjects = branchManager.getAllProjects();
 		List<ResourceView> existingPrototypes = branchManager.getResourcePrototypes();
 		List<ResourceView> existingDevelopers = branchManager.getDeveloperList();
 		
-		// TODO add delegation FROM information
+		List<DelegatedTaskMemento> delegatedTasks = new ArrayList<>(); // Map project to task to delegatingTaskProxy
 		
 		List<TaskView> existingTasks = new ArrayList<>();
 		for(ProjectView project : existingProjects) {
@@ -88,7 +91,7 @@ public class TaskManCaretaker {
 		List<Reservation> existingReservations = branchManager.getAllReservations();
 		
 		// Geographic Location
-		tman.append("geographicLocation: \"" + branchManager.getGeographicLocation() +"\"");
+		tman.append("\ngeographicLocation: \"" + branchManager.getGeographicLocation() +"\"");
 		
 		// resources
 		Map<ResourceView, Integer> existingConcreteResources = new HashMap<>();
@@ -186,6 +189,19 @@ public class TaskManCaretaker {
 				}
 				tman.append("\n    planning           : " + planningIndex); // planning
 				String taskStatus = task.getStatusAsString().toLowerCase();
+				if(taskStatus.equalsIgnoreCase("delegated")) { // Remember some delegating info
+					int projectID = existingProjects.indexOf(project);
+					int taskID = tasks.indexOf(task);
+					Map<Task, DelegatingTaskProxy> delProxyLinks = branchManager.getDelegatingProxies();
+					DelegatingTaskProxy delProxy = null;
+					for(Task t : delProxyLinks.keySet()) {
+						if(task.hasAsTask(t)) {
+							delProxy = delProxyLinks.get(t);
+							break;
+						}
+					}
+					delegatedTasks.add(new DelegatedTaskMemento(projectID,taskID,delProxy));
+				}
 				if(taskStatus.equalsIgnoreCase("unavailable")
 						|| taskStatus.equalsIgnoreCase("available")
 						|| taskStatus.equalsIgnoreCase("delegated")) {
@@ -212,8 +228,29 @@ public class TaskManCaretaker {
 						+ "\n    endTime:    \"" + reservation.getEndTime().format(dateTimeFormatter) + "\"");
 			}
 		}
-			
-		return new TaskManMemento(tman.toString(),branchManager.getCurrentUser(),branchManager.getCurrentTime());
+		
+		
+		// Missing Delegation links
+		ProjectView delegationProject = branchManager.getAllProjects().get(0);
+		// part 1 : Linking Integer (location of DT's in resetting branch) to OriginalTaskProxy		
+		Map<Task, OriginalTaskProxy> originalProxies = branchManager.getOriginalProxies();
+		Map<Integer, OriginalTaskProxy> originalProxyCurrentBranchMemento = new HashMap<>();
+		
+		List<TaskView> delegatingTasks = delegationProject.getTasks();
+		for(int i = 0 ; i < delegationProject.getTasks().size() ; i++) {
+			TaskView delegatingTask = delegatingTasks.get(i);
+			for(Task task : originalProxies.keySet()) {
+				if(delegatingTask.hasAsTask(task)) {
+					originalProxyCurrentBranchMemento.put(i, originalProxies.get(task));
+					break;
+				}
+			}
+		}
+
+		// Part 2 : Remember delegatedTasks
+				
+		return new TaskManMemento(tman.toString(),branchManager.getCurrentUser(),branchManager.getCurrentTime(),
+				originalProxyCurrentBranchMemento, delegatedTasks);
 	}
 
 	/**
