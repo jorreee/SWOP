@@ -662,7 +662,7 @@ public class Project implements Dependant {
 	}
 	
 	public Optional<TaskView> getDelegatingTask(BranchRepresentative branchRep, TaskView task) {
-		Optional<Task> delTask = branchRep.getDelegatingTask(task.unwrap());
+		Optional<Task> delTask = branchRep.getDelegatingTask(unwrapTaskView(task));
 		if(delTask.isPresent()) {
 			return Optional.of(new TaskView(delTask.get()));
 		}

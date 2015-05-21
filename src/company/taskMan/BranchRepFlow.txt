@@ -48,3 +48,16 @@ R2 -> B1.delegateTask(P2.getTask(),B1,B3)
 R2 -> remove P2
 ->
 B1 -> delegateTask(...
+
+state T1 was delegated to B2, T3 was delegated to B1
+B1 must be restored, what needs to be rebuild?
+
+Objects affected in B1:
+	*	T3' in delegation project
+	*	proxies
+		-	OriginalTaskProxy of T3
+		-	DelegatingTaskProxy of T1
+Objects affected in B2:
+	*	proxy
+		-	OriginalTaskProxy
+
