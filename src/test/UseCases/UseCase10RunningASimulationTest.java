@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
 
 
+
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import company.BranchManager;
+import company.BranchView;
 import company.taskMan.ProjectView;
 import company.taskMan.project.TaskView;
 import company.taskMan.resource.ResourceView;
@@ -306,7 +308,7 @@ public class UseCase10RunningASimulationTest {
 		
 		//delegate the task to the other branch
 		branchManager.delegateTask(project0, newTask, branchManager.getBranches().get(1));
-		Optional<TaskView> delTask = branchManager.getDelegatingTask(project0, newTask);
+		Optional<BranchView> delTask = branchManager.getResponsibleBranch(project0, newTask, branchManager.getBranches().get(0));
 		assertTrue(delTask.isPresent());
 		
 		//revert the memento
