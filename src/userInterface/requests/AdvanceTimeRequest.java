@@ -42,4 +42,9 @@ public class AdvanceTimeRequest extends Request {
 			}
 		}
 	}
+
+	@Override
+	public boolean isSimulationSupported() {
+		return true;
+	}
 }

@@ -18,4 +18,9 @@ public class InvalidRequest extends Request {
 		return "Invalid command! (" + message + ")";
 	}
 
+	@Override
+	public boolean isSimulationSupported() {
+		return true;
+	}
+
 }

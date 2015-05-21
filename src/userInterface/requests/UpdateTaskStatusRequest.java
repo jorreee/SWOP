@@ -113,4 +113,9 @@ public class UpdateTaskStatusRequest extends Request {
 	private String quit() {
 		return "Tasks remain unaltered";
 	}
+
+	@Override
+	public boolean isSimulationSupported() {
+		return true;
+	}
 }

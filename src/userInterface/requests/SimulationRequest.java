@@ -30,9 +30,17 @@ public class SimulationRequest extends Request {
 				System.out.println("~~~ TASKMAN SIMULATION ~~~");
 				System.out.println("Simulation started at: " + simulationStart.format(dateTimeFormatter));
 				// Display possible requests
-				System.out.println(new HelpRequest(facade, inputReader).execute());
-				System.out.println("commit				to commit changes made in the simulation");
-				System.out.println("revert				to revert changes made in the simulation");
+				System.out.println("TaskMan iteration 3 simulation commands:");
+				System.out.println("h			Display all commands with a short description");
+				System.out.println("show			Overview with additional details");
+				System.out.println("advance			Advance time to a later date");
+				System.out.println("create project		Create a new project");
+				System.out.println("create task		Create a new task assigned to an existing project");
+				System.out.println("update task		Update an available task to an end state");
+				System.out.println("plan task		Plan a specific task and reserve required resources");
+				System.out.println("delegate task		Delegate a task to a different branch");
+				System.out.println("commit			to commit changes made in the simulation");
+				System.out.println("revert			to revert changes made in the simulation");
 				
 				// Parse user input for escape commands
 				String input = inputReader.readLine();
@@ -48,8 +56,16 @@ public class SimulationRequest extends Request {
 				// Parse user input
 				Request request = inParser.parse(input);
 				
+				String response;
+				
+				if(!request.isSimulationSupported()) {
+					response = "This operation is not supported during the simulation, type h for help on supported commands during a simulation";
+				} else if(request instanceof HelpRequest) {
+					response = "";
+				} else {
 				// Execute Request
-				String response = request.execute();
+					response = request.execute();
+				}
 				
 				// Display the response of the previous request
 				System.out.println(response);
@@ -57,6 +73,11 @@ public class SimulationRequest extends Request {
 				System.out.println("Invalid input!");
 			}
 		} // REPEAT
+	}
+
+	@Override
+	public boolean isSimulationSupported() {
+		return false;
 	}
 
 }

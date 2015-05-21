@@ -16,4 +16,9 @@ public class ExitRequest extends Request {
 		return null;
 	}
 
+	@Override
+	public boolean isSimulationSupported() {
+		return false;
+	}
+
 }

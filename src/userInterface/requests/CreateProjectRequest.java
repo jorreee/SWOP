@@ -47,4 +47,9 @@ public class CreateProjectRequest extends Request {
 		return "No project created";
 	}
 
+	@Override
+	public boolean isSimulationSupported() {
+		return true;
+	}
+
 }

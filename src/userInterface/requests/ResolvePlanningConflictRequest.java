@@ -106,4 +106,9 @@ public class ResolvePlanningConflictRequest extends Request {
 		return movePlanningTask;
 	}
 
+	@Override
+	public boolean isSimulationSupported() {
+		return false;
+	}
+
 }

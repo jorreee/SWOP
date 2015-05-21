@@ -81,4 +81,9 @@ public class DelegateTaskRequest extends Request {
 	private String quit() {
 		return "No tasks were delegated";
 	}
+
+	@Override
+	public boolean isSimulationSupported() {
+		return true;
+	}
 }
