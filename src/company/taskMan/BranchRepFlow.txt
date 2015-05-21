@@ -53,11 +53,18 @@ state T1 was delegated to B2, T3 was delegated to B1
 B1 must be restored, what needs to be rebuild?
 
 Objects affected in B1:
-	*	T3' in delegation project
+1.	*	DT3 in delegation project [needs to be remade]
 	*	proxies
-		-	OriginalTaskProxy of T3
-		-	DelegatingTaskProxy of T1
+2.		-	OriginalTaskProxy from T3, containing DT3 [needs to be remade]
+3.		-	DelegatingTaskProxy for T1, containing T1 [needs to be remade]
 Objects affected in B2:
-	*	proxy
-		-	OriginalTaskProxy
+	*	proxies
+4.		-	OriginalTaskProxy from T1, containing DT1 [needs to be re-linked]
+5.		-	DelegatingTaskProxy for T3, containing T3 [needs to be re-linked]
 
+Solution for:
+(1) Write delegation project to TMAN, new method to first read that
+(2) keep proxy and put in again with the new T3, n'th in the list (delegation project) from solution (1)
+(3) write T1 as not delegated to file, set status delegated (very bad)
+(4) re-link originalTaskProxy from T1 with new proxy
+(5) if (2) is valid, then this is a non-issue
