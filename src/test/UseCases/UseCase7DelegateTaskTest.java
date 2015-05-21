@@ -1,7 +1,7 @@
 package test.UseCases;
 
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -15,12 +15,12 @@ import org.junit.Before;
 import org.junit.Test;
 
 import userInterface.IFacade;
+import userInterface.TaskManException;
+
 import company.BranchManager;
 import company.taskMan.ProjectView;
 import company.taskMan.project.TaskView;
 import company.taskMan.resource.ResourceView;
-import company.taskMan.task.Task;
-import userInterface.TaskManException;
 
 public class UseCase7DelegateTaskTest {
 	private IFacade branchManager;
@@ -30,7 +30,6 @@ public class UseCase7DelegateTaskTest {
 			workdate3 = LocalDateTime.of(2015, 2, 13, 16, 0),
 			workdate4 = LocalDateTime.of(2015, 2, 15, 16, 0),
 			workdate5 = LocalDateTime.of(2015, 2, 18, 8, 0),
-			workdate6 = LocalDateTime.of(2015, 2, 20, 8, 0),
 			project0DueDate = LocalDateTime.of(2015, 2, 13, 23, 59),
 			project1DueDate = LocalDateTime.of(2015, 2, 22, 23, 59),
 			project2DueDate = LocalDateTime.of(2015, 2, 16, 23, 59),
