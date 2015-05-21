@@ -117,13 +117,10 @@ public class TaskManCaretaker {
 			tman.append("\n  - name : \"" + dev.getName() + "\""); // Name
 		}
 		
-		// currentUser
-		tman.append("\ncurrentUser:");
-		tman.append("\n  - name: \"" + branchManager.getCurrentUser().getName() + "\""); // Current logged in person (admin or dev)
-		
 		// projects
 		tman.append("\nprojects:");
-		for(ProjectView project : existingProjects) {
+		List<ProjectView> tmanablepPojects = branchManager.getProjects();
+		for(ProjectView project : tmanablepPojects) {
 			tman.append("\n  - name         : \"" + project.getName() + "\"" // name
 					+ "\n    description  : \"" + project.getDescription() + "\"" // description
 					+ "\n    creationTime : \"" + project.getCreationTime().format(dateTimeFormatter) + "\"" // creationTime

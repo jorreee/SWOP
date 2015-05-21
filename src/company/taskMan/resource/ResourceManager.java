@@ -278,7 +278,9 @@ public class ResourceManager {
 					crList.removeAll(invalidCrs);
 					if(!crList.isEmpty()) {
 						toReserve = unWrapConcreteResourceView(crList.remove(0));//FIXME hier worden nog exceptions gegooid
-					} //FIXME anders wat?
+					} else {
+						
+					}
 				}
 
 			} catch(UnexpectedViewContentException e1) {

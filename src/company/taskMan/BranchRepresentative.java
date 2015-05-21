@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Stack;
 
 import company.BranchView;
 import company.taskMan.project.TaskView;
@@ -37,7 +36,6 @@ public class BranchRepresentative {
 	
 //	private List<Delegation> delegationsFromBranch;
 	private LinkedList<DelegationData> buffer;
-	private Stack<Integer> bufferCheckpoints;
 	private boolean bufferMode;
 
 	public BranchRepresentative(){
@@ -48,7 +46,6 @@ public class BranchRepresentative {
 		originalProxies = new HashMap<>();
 		
 		buffer = new LinkedList<DelegationData>();
-		bufferCheckpoints = new Stack<>();
 		bufferMode = false;
 	}
 
@@ -169,19 +166,9 @@ public class BranchRepresentative {
 		bufferMode = bool;
 		if(!bufferMode) {
 			executeBuffer();
-			bufferCheckpoints.pop();
+//			bufferCheckpoints.pop();
 		} else {
-			bufferCheckpoints.push(buffer.size());
-		}
-	}
-
-	/**
-	 * Clears all scheduled delegations
-	 */
-	public void clearBuffer() {
-		Integer checkpoint = bufferCheckpoints.pop();
-		while(buffer.size() > checkpoint) {
-			buffer.removeLast();
+//			bufferCheckpoints.push(buffer.size());
 		}
 	}
 

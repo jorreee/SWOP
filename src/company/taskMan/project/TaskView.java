@@ -450,6 +450,6 @@ public class TaskView {
 			DelegatingTaskProxy delegatingProxy) {
 		delegatingProxy.setTask(task);
 		newDelegatingProxies.put(task, delegatingProxy);
-		task.delegate(delegatingProxy);
+		task.delegate(true);
 	}
 }

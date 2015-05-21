@@ -79,7 +79,13 @@ public class DelegatingTaskProxy implements Dependant {
 	 * @param task
 	 */
 	public void setTask(Task task) {
-		originalTask = task;		
+		for(Task t : originalTask.getPrerequisites()) {
+			t.unregister(this);
+		}
+		originalTask = task;
+		for(Task t : task.getPrerequisites()) {
+			t.register(this);
+		}
 	}
 
 }
