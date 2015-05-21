@@ -506,7 +506,7 @@ public class BranchManager implements IFacade {
 	}
 	
 	@Override
-	public Optional<TaskView> getDelegatingTask(ProjectView project, TaskView task) {
+	public TaskView getDelegatingTask(ProjectView project, TaskView task) {
 		return currentBranch.getDelegatingTask(project,task);
 	}
 	

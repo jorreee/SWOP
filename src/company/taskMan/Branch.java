@@ -550,8 +550,8 @@ public class Branch {
 		return project.unwrap().getResponsibleBranch(branchRep, task);
 	}
 	
-	public Optional<TaskView> getDelegatingTask(ProjectView project, TaskView task) {
-		return project.unwrap().getDelegatingTask(branchRep, task);
+	public TaskView getDelegatingTask(ProjectView project, TaskView task) {
+		return project.unwrap().getDelegatingTask(branchRep, task).orElse(task);
 	}
 
 	/**
