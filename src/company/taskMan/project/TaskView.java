@@ -450,6 +450,7 @@ public class TaskView {
 			DelegatingTaskProxy delegatingProxy) {
 		delegatingProxy.setTask(task);
 		newDelegatingProxies.put(task, delegatingProxy);
+		//task.delegate(delegatingProxy); //TODO klopt dit?
 		task.delegate(true);
 	}
 }

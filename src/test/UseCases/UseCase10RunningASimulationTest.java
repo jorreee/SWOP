@@ -99,6 +99,8 @@ public class UseCase10RunningASimulationTest {
 		branchManager.createResourcePrototype("whiteboard", emptyAvailabilityStart, emptyAvailabilityEnd);
 		
 		branchManager.initializeBranch("Leuven");
+		branchManager.initializeBranch("Aarschot");
+		branchManager.selectBranch(branchManager.getBranches().get(0));
 		
 		for(int i = 0;i<=5;i++){
 			branchManager.declareConcreteResource("car" + i, branchManager.getResourcePrototypes().get(0));
@@ -289,5 +291,26 @@ public class UseCase10RunningASimulationTest {
 		assertEquals(1, project2.getTasks().size());
 		assertEquals("finished",project2.getTasks().get(0).getStatusAsString().toLowerCase());
 		assertTrue(project2.isFinished());
+	}
+	
+	@Test
+	public void succesCaseDelegateRevertMem(){
+		ProjectView project0 = branchManager.getProjects().get(0);
+		//create an task to delegate
+		branchManager.createTask(project0, "delegation", 60, 5, new ArrayList<TaskView>(), reqResTask00, null);
+		TaskView newTask = project0.getTasks().get( project0.getTasks().size()-1);
+		assertFalse(newTask.isDelegated());
+		
+		//Memento set up
+		branchManager.storeInMemento();
+		
+		//delegate the task to the other branch
+		branchManager.delegateTask(project0, newTask, branchManager.getBranches().get(1));
+		Optional<TaskView> delTask = branchManager.getDelegatingTask(project0, newTask);
+		assertTrue(delTask.isPresent());
+		
+		//revert the memento
+		branchManager.revertFromMemento();
+		assertFalse(newTask.isDelegated());
 	}
 }
