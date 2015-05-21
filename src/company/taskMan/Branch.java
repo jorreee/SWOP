@@ -745,7 +745,7 @@ public class Branch {
 	 * 			The branch to delegate the task to
 	 */
 	public void delegateTask(Task task, Branch toBranch) {
-		branchRep.delegateTask(task, toBranch, this);
+		branchRep.delegateTask(task, this, toBranch);
 	}
 
 	/**

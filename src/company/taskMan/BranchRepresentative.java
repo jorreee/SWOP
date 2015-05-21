@@ -87,7 +87,7 @@ public class BranchRepresentative implements Dependant {
 			//		2) maak proxies in Reps, juiste interdependencies
 			//		3) link proxies
 			// NEW STUFF BELOW
-			// A. If this task was already a delegated task
+			// A. this task is already delegating another task
 			if (originalProxies.containsKey(task)) {
 				OriginalTaskProxy origiProxy = originalProxies.get(task);
 				Branch origiFromBranch = origiProxy.getOriginalBranch().get();
@@ -249,7 +249,7 @@ public class BranchRepresentative implements Dependant {
 	 * @return
 	 */
 	protected Map<Task, OriginalTaskProxy> getOriginalProxies() {
-		return taskFromProxies;
+		return originalProxies;
 	}
 
 	/**
@@ -257,7 +257,7 @@ public class BranchRepresentative implements Dependant {
 	 * @return
 	 */
 	protected Map<Task, DelegatingTaskProxy> getDelegatingProxies() {
-		return taskToProxies;
+		return delegationProxies;
 	}
 
 	/**
@@ -265,7 +265,7 @@ public class BranchRepresentative implements Dependant {
 	 * @param proxies
 	 */
 	protected void offerOriginalTaskProxies(Map<Task, OriginalTaskProxy> proxies) {
-		taskFromProxies = proxies;
+		originalProxies = proxies;
 	}
 
 	/**
@@ -274,6 +274,6 @@ public class BranchRepresentative implements Dependant {
 	 */
 	protected void offerDelegatingTaskProxies(
 			Map<Task, DelegatingTaskProxy> proxies) {
-		taskToProxies = proxies;
+		delegationProxies = proxies;
 	}
 }
