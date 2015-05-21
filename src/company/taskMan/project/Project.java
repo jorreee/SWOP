@@ -658,7 +658,7 @@ public class Project implements Dependant {
 	public void delegateTask(BranchRepresentative branchRep, TaskView task,
 			Branch origBranch, Branch newBranch) {
 		Task t = unwrapTaskView(task);
-		branchRep.delegateTask(t, newBranch, origBranch);
+		branchRep.delegateTask(t, origBranch, newBranch);
 	}
 	
 	public Optional<TaskView> getDelegatingTask(BranchRepresentative branchRep, TaskView task) {

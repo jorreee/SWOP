@@ -7,15 +7,15 @@ B1 -> R1.delegateTask(T1,B1,B2)
 ->
 R1 -> buffer add entry (T1,B1,B2)
 R1 -> execute buffer
-R1 -> P2 = new OriginalTaskProxy(T1)
-R1 -> B2.delegateAccept(P2,B1,B2)
+R1 -> P2 = new OriginalTaskProxy(T1,B1)
+R1 -> B2.delegateAccept(P2)
 ->
 B2 -> T2 = new delegatingTask
 B2 -> register T2 <-> P2
-B2 -> R2.delegateAccept(P2,T2,B1,B2)
+B2 -> R2.delegateAccept(P2,T2,B2)
 ->
 R2 -> original task proxy add entry <T2,P2>
-R2 -> P1 = new DelegatingTaskProxy(T2)
+R2 -> P1 = new DelegatingTaskProxy(T2,B2)
 R2 -> P2.link(P1)
 R2 -> return P1
 ->

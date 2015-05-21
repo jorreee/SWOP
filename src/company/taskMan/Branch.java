@@ -20,6 +20,9 @@ import company.taskMan.resource.ResourceManager;
 import company.taskMan.resource.ResourcePrototype;
 import company.taskMan.resource.ResourceView;
 import company.taskMan.resource.user.User;
+import company.taskMan.task.DelegatingTask;
+import company.taskMan.task.DelegatingTaskProxy;
+import company.taskMan.task.OriginalTaskProxy;
 import company.taskMan.task.Task;
 import exceptions.ResourceUnavailableException;
 import exceptions.UnexpectedViewContentException;
@@ -747,23 +750,19 @@ public class Branch {
 	 * @return	The newly created delegation task in this branch
 	 * @throws IllegalArgumentException
 	 */
-	public Task delegateAccept(Task task, Branch fromBranch) throws IllegalArgumentException {
-		Map<ResourcePrototype, Integer> requiredResources= task.getRequiredResources();
-		Map<ResourceView, Integer> wrappedResources = new HashMap<>();
-		
-		for(ResourcePrototype res : requiredResources.keySet()) {
-			wrappedResources.put(new ResourceView(res), requiredResources.get(res));
-		}
+	public DelegatingTaskProxy delegateAccept(OriginalTaskProxy fromProxy) throws IllegalArgumentException {
+		TaskView task = fromProxy.getTask();
+		Map<ResourceView, Integer> wrappedResources = task.getRequiredResources();
 		
 		try {
-			delegationProject.createTask(task.getDescription(), task.getEstimatedDuration().getSpanMinutes(), task.getAcceptableDeviation(), resMan, new ArrayList<TaskView>(), wrappedResources, null, null, null, null, null, null);
+			delegationProject.createTask(task.getDescription(), task.getEstimatedDuration(), task.getAcceptableDeviation(), resMan, new ArrayList<TaskView>(), wrappedResources, null, null, null, null, null, null);
 		} catch (ResourceUnavailableException | IllegalArgumentException
 				| IllegalStateException e) {
 			throw new IllegalArgumentException("Task cannot be accepted for delegation, reason: " + e.getMessage());
 		}
-		Task newTask = delegationProject.getTasks().get(delegationProject.getTasks().size() - 1);
-		branchRep.delegateAccept(newTask, this, fromBranch);
-		return newTask;
+		DelegatingTask newTask = (DelegatingTask) delegationProject.getTasks().get(delegationProject.getTasks().size() - 1);
+		newTask.setProxy(fromProxy);
+		return branchRep.delegateAccept(fromProxy, newTask, this);
 	}
 
 	public void removeDelegatedTask(Task task) {

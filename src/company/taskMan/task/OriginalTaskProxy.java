@@ -1,15 +1,19 @@
 package company.taskMan.task;
 
+import company.taskMan.Branch;
+import company.taskMan.project.TaskView;
 import company.taskMan.util.TimeSpan;
 
 public class OriginalTaskProxy implements Dependant {
 	
-	private DelegatingTask task;
+	private Task task;
 	private DelegatingTaskProxy other;
+	private Branch fromBranch;
 	private boolean hasUnfinishedPrereqs;
 	
-	public OriginalTaskProxy(DelegatingTask t) {
+	public OriginalTaskProxy(Task t, Branch fromBranch) {
 		this.task = t;
+		this.fromBranch = fromBranch;
 		task.register(this);
 		hasUnfinishedPrereqs = true;
 	}
@@ -47,6 +51,10 @@ public class OriginalTaskProxy implements Dependant {
 	@Override
 	public TimeSpan getMaxDelayChain() {
 		return new TimeSpan(0);
+	}
+
+	public TaskView getTask() {
+		return new TaskView(task);
 	}
 
 }

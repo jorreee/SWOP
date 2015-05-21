@@ -21,7 +21,7 @@ public class FailedState implements TaskStatus {
 	public void makeAvailable(Task task) { }
 
 	@Override
-	public void delegate(Task task, Task newTask) { 
+	public void delegate(Task task, DelegatingTaskProxy newTask) { 
 		throw new IllegalStateException("This task has already failed and no one can help you anymore");
 	}
 	

@@ -1,16 +1,21 @@
 package company.taskMan.task;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
+import company.BranchView;
+import company.taskMan.Branch;
 import company.taskMan.util.TimeSpan;
 
 public class DelegatingTaskProxy implements Dependant {
 	
-	private Task originalTask;
+	private DelegatingTask originalTask;
 	private OriginalTaskProxy other;
+	private Branch toBranch;
 	
-	public DelegatingTaskProxy(Task t) {
+	public DelegatingTaskProxy(DelegatingTask t, Branch toBranch) {
 		this.originalTask = t;
+		this.toBranch = toBranch;
 	}
 	
 	public void link(OriginalTaskProxy other) {
@@ -42,6 +47,14 @@ public class DelegatingTaskProxy implements Dependant {
 	@Override
 	public TimeSpan getMaxDelayChain() {
 		return new TimeSpan(0);
+	}
+
+	public Optional<BranchView> getToBranch() {
+		return Optional.of(new BranchView(toBranch));
+	}
+
+	public Task getTask() {
+		return originalTask;
 	}
 
 }

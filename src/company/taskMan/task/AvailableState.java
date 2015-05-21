@@ -21,7 +21,7 @@ public class AvailableState implements TaskStatus {
 	public void makeAvailable(Task task) { }
 
 	@Override
-	public void delegate(Task task, Task preTask) { 
+	public void delegate(Task task, DelegatingTaskProxy preTask) { 
 		throw new IllegalStateException("An available task can't be delegated");
 	}
 	

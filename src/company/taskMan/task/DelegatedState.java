@@ -17,12 +17,12 @@ public class DelegatedState implements TaskStatus {
 	}
 
 	@Override
-	public void delegate(Task task, Task newTask)
+	public void delegate(Task task, DelegatingTaskProxy newTask)
 			throws IllegalArgumentException, IllegalStateException {
 		if(newTask == null) {
 			throw new IllegalArgumentException("newTask must not be null");
 		}
-		if(newTask.equals(task)) {
+		if(newTask.getTask() == null) { // TODO dees moet beter
 //			Task oldDelegator = task.getDelegatingTask();
 //			task.setDelegatingTask(null);
 
@@ -43,7 +43,7 @@ public class DelegatedState implements TaskStatus {
 //				throw e;
 //			}
 			//TODO unregisteren van oude delegatingTask?
-			newTask.register(task); 
+			newTask.getTask().register(task); 
 			
 		}
 	}

@@ -9,15 +9,18 @@ import company.taskMan.resource.ResourceView;
 
 public class DelegatingTask extends Task {
 	
-	private final OriginalTaskProxy proxy;
+	private OriginalTaskProxy proxy;
 
 	public DelegatingTask(String taskDescription, int estimatedDuration,
 			int acceptableDeviation, ResourceManager resMan,
-			Map<ResourceView, Integer> requiredResources, Task alternativeFor, OriginalTaskProxy proxy)
+			Map<ResourceView, Integer> requiredResources, Task alternativeFor)
 			throws IllegalArgumentException {
 		super(taskDescription, estimatedDuration, acceptableDeviation, resMan,
 				new ArrayList<Task>(), requiredResources, alternativeFor);
-		this.proxy = proxy;
+	}
+	
+	public void setProxy(OriginalTaskProxy newProxy) {
+		this.proxy = newProxy;
 	}
 	
 	@Override
