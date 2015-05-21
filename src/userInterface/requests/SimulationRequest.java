@@ -37,7 +37,6 @@ public class SimulationRequest extends Request {
 				System.out.println("advance			Advance time to a later date");
 				System.out.println("create project		Create a new project");
 				System.out.println("create task		Create a new task assigned to an existing project");
-				System.out.println("update task		Update an available task to an end state");
 				System.out.println("plan task		Plan a specific task and reserve required resources");
 				System.out.println("delegate task		Delegate a task to a different branch");
 				System.out.println("commit			to commit changes made in the simulation");

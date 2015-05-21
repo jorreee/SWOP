@@ -116,6 +116,6 @@ public class UpdateTaskStatusRequest extends Request {
 
 	@Override
 	public boolean isSimulationSupported() {
-		return true;
+		return false;
 	}
 }
