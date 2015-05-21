@@ -234,6 +234,11 @@ public class PlanTaskRequest extends Request {
 		}
 	}
 
+	@Override
+	public boolean isSimulationSupported() {
+		return true;
+	}
+
 }
 
 class PlanningScheme {

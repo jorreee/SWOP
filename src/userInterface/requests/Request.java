@@ -20,5 +20,7 @@ public abstract class Request {
 	}
 	
 	public abstract String execute();
+
+	public abstract boolean isSimulationSupported();
 	
 }

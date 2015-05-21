@@ -107,4 +107,9 @@ public class CreateTaskRequest extends Request {
 		return "No task created";
 	}
 
+	@Override
+	public boolean isSimulationSupported() {
+		return true;
+	}
+
 }

@@ -82,4 +82,9 @@ public class ChangeUserRequest extends Request{
 		return "User unaltered";
 	}
 
+	@Override
+	public boolean isSimulationSupported() {
+		return false;
+	}
+
 }

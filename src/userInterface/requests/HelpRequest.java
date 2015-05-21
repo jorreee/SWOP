@@ -30,4 +30,9 @@ public class HelpRequest extends Request {
 		return "Should not happen";
 	}
 
+	@Override
+	public boolean isSimulationSupported() {
+		return true;
+	}
+
 }

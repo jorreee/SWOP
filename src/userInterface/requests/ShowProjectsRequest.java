@@ -220,4 +220,9 @@ public class ShowProjectsRequest extends Request {
 		return "Left overview";
 	}
 
+	@Override
+	public boolean isSimulationSupported() {
+		return true;
+	}
+
 }
