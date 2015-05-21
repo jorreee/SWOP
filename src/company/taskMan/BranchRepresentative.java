@@ -10,10 +10,8 @@ import company.BranchView;
 import company.taskMan.project.TaskView;
 import company.taskMan.task.DelegatingTask;
 import company.taskMan.task.DelegatingTaskProxy;
-import company.taskMan.task.Dependant;
 import company.taskMan.task.OriginalTaskProxy;
 import company.taskMan.task.Task;
-import company.taskMan.util.TimeSpan;
 
 /**
  * The Branch Representative is responsible for communication between branches. When a branch
@@ -227,10 +225,21 @@ public class BranchRepresentative {
 		}
 	}
 
+	private class DelegationData {
+		private Task delegatedTask;//, newTask;
+		private Branch originalBranch, newBranch;
+
+		private DelegationData(Task task,Branch origBranch, Branch newBranch){
+			delegatedTask = task;
+			originalBranch = origBranch;
+			this.newBranch = newBranch;
+		}
+	}
+
 	/**
 	 * Dirty method for simulation stuff
 	 * @return
-	 */
+	 *///TODO simulation documentation
 	protected Map<Task, OriginalTaskProxy> getOriginalProxies() {
 		return originalProxies;
 	}
