@@ -6,11 +6,11 @@ import java.util.List;
 import userInterface.IFacade;
 import userInterface.TaskManException;
 
-import company.taskMan.resource.ResourceView;
+import company.BranchView;
 
-public class ChangeUserRequest extends Request{
+public class ChangeBranchRequest extends Request{
 
-	public ChangeUserRequest(IFacade facade, BufferedReader inputReader) {
+	public ChangeBranchRequest(IFacade facade, BufferedReader inputReader) {
 		super(facade, inputReader);
 	}
 
@@ -24,33 +24,33 @@ public class ChangeUserRequest extends Request{
 				System.out.println("Currently not logged in");
 			}
 
-			// SELECT USER
-			// Display different options
-			List<ResourceView> possibleUsers = facade.getPossibleUsers();
+			// SELECT BRANCH
+			List<BranchView> branches = facade.getBranches();
 
-			int i = 0;
-			for(ResourceView user : possibleUsers) {
-				System.out.println("(" + i + ") Possible user: " + user.getName());
-				i++;
+			System.out.println("Please select your branch (type quit to exit)");
+			for(int i = 0 ; i < branches.size() ; i++) {
+				System.out.println("<" + i + "> The " + branches.get(i).getGeographicLocation() + " Branch");
 			}
 
-			// Ask user for username to log in as
-			System.out.println("Select a user (type quit to exit)");
-			try{
-				// Read User Input
+			try {
 				String userInput = inputReader.readLine();
 				// Escape
 				if(userInput.equalsIgnoreCase("quit"))
+				{
 					return quit();
+				}
 
-				facade.changeToUser(possibleUsers.get(Integer.valueOf(userInput))); // Valid User
-				return "Now logged in as " + facade.getCurrentUser().getName();
+				facade.selectBranch(branches.get(Integer.parseInt(userInput)));
 			} catch(TaskManException e) {
 				System.out.println(e.getMessage());
 			} catch(Exception e) {
 				e.printStackTrace();
-				System.out.println("Invalid username, try again");
+				System.out.println("Invalid branch, try again");
 			}
+
+			// SELECT USER
+			ChangeUserRequest chr = new ChangeUserRequest(facade, inputReader);
+			return chr.execute();		
 		}
 	}
 
@@ -60,7 +60,7 @@ public class ChangeUserRequest extends Request{
 
 	@Override
 	public boolean isSimulationSupported() {
-		return true;
+		return false;
 	}
 
 }

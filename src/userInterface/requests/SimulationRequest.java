@@ -32,6 +32,7 @@ public class SimulationRequest extends Request {
 				// Display possible requests
 				System.out.println("TaskMan iteration 3 simulation commands:");
 				System.out.println("h			Display all commands with a short description");
+				System.out.println("change user		Log in as a different system user");
 				System.out.println("show			Overview with additional details");
 				System.out.println("advance			Advance time to a later date");
 				System.out.println("create project		Create a new project");

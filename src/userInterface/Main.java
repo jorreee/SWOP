@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 
-import userInterface.requests.ChangeUserRequest;
+import userInterface.requests.ChangeBranchRequest;
 import userInterface.requests.Request;
 
 import company.BranchManager;
@@ -69,7 +69,7 @@ public class Main {
 				// Parse user input
 				request = inParser.parse(input.readLine());
 			} else {
-				request = new ChangeUserRequest(facade,input);
+				request = new ChangeBranchRequest(facade,input);
 			}
 			// Execute request
 			String response = request.execute();
