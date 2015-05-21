@@ -1,6 +1,7 @@
 package company.taskMan;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Optional;
@@ -190,6 +191,15 @@ public class BranchRepresentative {
 				return Optional.empty();
 			}
 		} else {
+			//kijk eens in de buffer
+			Iterator<DelegationData> i = buffer.iterator();
+			DelegationData d;
+			while(i.hasNext()) {
+				d = i.next();
+				if(d.delegatedTask == task) {
+					return Optional.of(new BranchView(d.newBranch));
+				}
+			}
 			return Optional.empty();
 		}
 	}
@@ -204,7 +214,7 @@ public class BranchRepresentative {
 	 */
 	public Optional<TaskView> getDelegatingTask(Task t) {
 		Optional<DelegatingTaskProxy> delProxy = Optional.ofNullable(delegationProxies.get(t));
-
+		
 		if(delProxy.isPresent()) {
 			return Optional.of(new TaskView(delProxy.get().getDelegatingTask()));
 		} else {
@@ -213,7 +223,7 @@ public class BranchRepresentative {
 	}
 
 	private class DelegationData {
-		private Task delegatedTask;//, newTask;
+		private Task delegatedTask;
 		private Branch originalBranch, newBranch;
 
 		private DelegationData(Task task,Branch origBranch, Branch newBranch){

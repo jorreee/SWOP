@@ -5,7 +5,6 @@ import initialization.TaskManInitFileChecker;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +18,6 @@ import userInterface.TaskManException;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
-
 import company.caretaker.TaskManCaretaker;
 import company.taskMan.Branch;
 import company.taskMan.ProjectView;
@@ -34,6 +32,7 @@ import company.taskMan.resource.user.UserPermission;
 import company.taskMan.task.DelegatingTaskProxy;
 import company.taskMan.task.OriginalTaskProxy;
 import company.taskMan.task.Task;
+
 import exceptions.ResourceUnavailableException;
 import exceptions.UnexpectedViewContentException;
 
@@ -42,7 +41,7 @@ public class BranchManager implements IFacade {
 	private Branch currentBranch;
 	private LocalDateTime currentTime;
 	private User currentUser;
-	private PrototypeManager protMan; //TODO protten laten
+	private PrototypeManager protMan;
 	private final TaskManCaretaker caretaker;
 
 	
@@ -502,12 +501,12 @@ public class BranchManager implements IFacade {
 	}
 
 	@Override
-	public BranchView getResponsibleBranch(ProjectView project, TaskView task, BranchView originalBranch) {
-		return originalBranch.unwrap().getResponsibleBranch(project, task).orElse(originalBranch);
+	public Optional<BranchView> getResponsibleBranch(ProjectView project, TaskView task, BranchView originalBranch) {
+		return originalBranch.unwrap().getResponsibleBranch(project, task);
 	}
 	
 	@Override
-	public TaskView getDelegatingTask(ProjectView project, TaskView task) {
+	public Optional<TaskView> getDelegatingTask(ProjectView project, TaskView task) {
 		return currentBranch.getDelegatingTask(project,task);
 	}
 	
@@ -548,7 +547,6 @@ public class BranchManager implements IFacade {
 	 * @return
 	 */
 	public Map<Task, OriginalTaskProxy> getOriginalProxies() {
-		// TODO Auto-generated method stub
 		return currentBranch.getOriginalProxies();
 	}
 	
@@ -557,7 +555,6 @@ public class BranchManager implements IFacade {
 	 * @return
 	 */
 	public Map<Task, DelegatingTaskProxy> getDelegatingProxies() {
-		// TODO Auto-generated method stub
 		return currentBranch.getDelegatingProxies();
 	}
 

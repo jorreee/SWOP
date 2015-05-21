@@ -520,12 +520,12 @@ public class Project implements Dependant {
 	 *            | the developers to plan for the task
 	 * @throws IllegalArgumentException, IllegalStateException, ResourceUnavailableException 
 	 */
-	public boolean planRawTask(TaskView task, LocalDateTime plannedStartTime,
+	public void planRawTask(TaskView task, LocalDateTime plannedStartTime,
 			List<ResourceView> concRes, List<ResourceView> devs) 
 					throws IllegalArgumentException, 
 					IllegalStateException, 
 					ResourceUnavailableException {
-		return unwrapTaskView(task).rawPlan(plannedStartTime, concRes, devs);
+		unwrapTaskView(task).rawPlan(plannedStartTime, concRes, devs);
 	}
 
 	/**

@@ -5,7 +5,6 @@ import static org.junit.Assert.assertEquals;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -15,10 +14,10 @@ import company.taskMan.project.TaskView;
 import company.taskMan.resource.ResourceManager;
 import company.taskMan.resource.ResourcePrototype;
 import company.taskMan.resource.ResourceView;
+
 import exceptions.ResourceUnavailableException;
 
 public class ProjectTest {
-//TODO
 	
 	private ResourceManager resMan;
 	private Project defaultProject;

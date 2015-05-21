@@ -28,7 +28,6 @@ import exceptions.ResourceUnavailableException;
 import exceptions.UnexpectedViewContentException;
 
 //TODO Still not done
-//TODO remove outcommented methods and other stuff 
 /**
  * The Main System that keeps track of the list of projects and the current
  * Time. The Branch is also responsible of maintaining a resource manager
@@ -101,36 +100,7 @@ public class Branch {
 		}
 		return project;
 	}
-
-//	/**
-//	 * Advances the current time to the given time.
-//	 * 
-//	 * @param time
-//	 *            The time to which the system should advance
-//	 * @return True if the advance time was successful. False if the time
-//	 *         parameter is earlier than the current time.
-//	 */
-//	public boolean advanceTimeTo(LocalDateTime time) {
-//		if(!currentUserHasPermission(UserPermission.ADVANCE_TIME));
-//		if (time == null)
-//			return false;
-//		if (time.isAfter(currentTime)) {
-//			currentTime = time;
-//			return true;
-//		} else
-//			return false;
-//
-//	}
-
-//	/**
-//	 * Gets the current time
-//	 * 
-//	 * @return the current time
-//	 */
-//	public LocalDateTime getCurrentTime() {
-//		return currentTime;
-//	}
-
+	
 	/**
 	 * Creates a new Project with a creation time
 	 * 
@@ -150,26 +120,6 @@ public class Branch {
 		Project project = new Project(name, description, creationTime, dueTime);
 		projectList.add(project);
 	}
-
-//	/**
-//	 * Creates a new Project with the current time as the creation time.
-//	 * 
-//	 * @param name
-//	 *            The name of the project
-//	 * @param description
-//	 *            The description of the project
-//	 * @param dueTime
-//	 *            The due time of the project
-//	 * @return true if the project creation was successful false if the creation
-//	 *         was unsuccessful
-//	 */
-//	public boolean createProject(String name, String description,
-//			LocalDateTime dueTime) {
-////		if(!currentUserHasPermission(UserPermission.CREATE_PROJECT)) {
-////			return false;
-////		}
-//		return createProject(name, description, getCurrentTime(), dueTime);
-//	}
 
 	/**
 	 * Creates a new Task without a set status.
@@ -242,13 +192,6 @@ public class Branch {
 			LocalDateTime startTime, LocalDateTime endTime,
 			LocalDateTime plannedStartTime, List<ResourceView> plannedDevelopers) 
 				throws IllegalArgumentException, IllegalStateException, ResourceUnavailableException {
-//		if(!currentUserHasPermission(UserPermission.CREATE_TASK)) {
-//			return false;
-//		}
-//		Project project = unwrapProjectView(projectView);
-//		if (project == null) {
-//			return false;
-//		}
 		unwrapProjectView(projectView).createTask(description, estimatedDuration,
 				acceptableDeviation, resMan, prerequisiteTasks,
 				requiredResources, alternativeFor, taskStatus, startTime,
@@ -270,19 +213,6 @@ public class Branch {
 	public void setTaskFinished(ProjectView project, TaskView taskID,
 			LocalDateTime endTime) 
 					throws IllegalArgumentException, IllegalStateException {
-//		if(!currentUserHasPermission(UserPermission.UPDATE_TASK)) {
-//			return false;
-//		}
-//		if (endTime == null) { // || startTime == null) {
-//			return false;
-//		}
-//		if (endTime.isAfter(currentTime)) {
-//			return false;
-//		}
-//		Project p = unwrapProjectView(project);
-//		if (p == null) {
-//			return false;
-//		}
 		unwrapProjectView(project).setTaskFinished(taskID, endTime);
 	}
 
@@ -301,15 +231,6 @@ public class Branch {
 	public void setTaskFailed(ProjectView project, TaskView taskID,
 			LocalDateTime endTime) 
 				throws IllegalArgumentException, IllegalStateException{
-//		if(!currentUserHasPermission(UserPermission.UPDATE_TASK)) {
-//			return false;
-//		}
-//		if (endTime == null) { // || startTime == null) {
-//			return false;
-//		}
-//		if (endTime.isAfter(currentTime)) {
-//			return false;
-//		}
 		unwrapProjectView(project).setTaskFailed(taskID, endTime);
 	}
 
@@ -326,20 +247,7 @@ public class Branch {
 	 */
 	public void setTaskExecuting(ProjectView project, TaskView task,
 			LocalDateTime startTime) 
-				throws IllegalArgumentException, IllegalStateException{
-//		if(!currentUserHasPermission(UserPermission.UPDATE_TASK)) {
-//			return false;
-//		}
-//		if (startTime == null) {
-//			return false;
-//		}
-//		if (startTime.isAfter(currentTime)) {
-//			return false;
-//		}
-//		Project p = unwrapProjectView(project);
-//		if (p == null) {
-//			return false;
-//		}
+				throws IllegalArgumentException, IllegalStateException {
 		unwrapProjectView(project).setTaskExecuting(task, startTime);
 	}
 
@@ -371,32 +279,7 @@ public class Branch {
 			views.add(new ProjectView(project));
 		return views.build();
 	}
-
-//	/**
-//	 * Return a view on the current user in the system
-//	 * @return The current (logged in) user
-//	 */
-//	public ResourceView getCurrentUserName() {
-//		return new ResourceView(currentUser);
-//	}
-
-//	/**
-//	 * Change the current logged in user to another one
-//	 * 
-//	 * @param newUser
-//	 *            | The new user to log in
-//	 * @return True if the new user was successfully logged in
-//	 */
-//	public boolean changeToUser(ResourceView newUser) {
-//		User user = resMan.getUser(newUser);
-//		if (user == null) {
-//			return false;
-//		} else {
-//			currentUser = user;
-//			return true;
-//		}
-//	}
-
+	
 	/**
 	 * Retrieve all possible users. This will be a list of every user in the
 	 * system.
@@ -416,13 +299,11 @@ public class Branch {
 	 *            | the optional start time of the availability period
 	 * @param availabilityEnd
 	 *            | the optional end time of the availability period
-	 * @return True when the prototype has been successfully initiated, false
-	 *         otherwise
+	 * @throws IllegalArgumentException
 	 */
-	//TODO exception
 	public void createResourcePrototype(String resourceName,
 			Optional<LocalTime> availabilityStart,
-			Optional<LocalTime> availabilityEnd) {
+			Optional<LocalTime> availabilityEnd) throws IllegalArgumentException {
 		resMan.createResourcePrototype(resourceName, availabilityStart,
 				availabilityEnd);
 	}
@@ -447,9 +328,7 @@ public class Branch {
 	 * 
 	 * @param name
 	 *            | The name of the new developer
-	 * @return true if the new developer was added to the system
 	 */
-	//TODO exception
 	public boolean createDeveloper(String name) {
 		return resMan.createDeveloper(name);
 	}
@@ -471,7 +350,6 @@ public class Branch {
 	 *         otherwise
 	 * @throws IllegalStateException, IllegalArgumentException, ResourceUnavailableException 
 	 */
-	//TODO exception
 	public void reserveResource(ResourceView resource, ProjectView project,
 			TaskView task, LocalDateTime startTime, LocalDateTime endTime) 
 					throws ResourceUnavailableException, 
@@ -509,13 +387,6 @@ public class Branch {
 	public void planTask(ProjectView project, TaskView task,
 			LocalDateTime plannedStartTime, List<ResourceView> concRes, List<ResourceView> devs) 
 				throws IllegalArgumentException, IllegalStateException, ResourceUnavailableException{
-//		if(!currentUserHasPermission(UserPermission.PLAN_TASK)) {
-//			return false;
-//		}
-//		Project p = unwrapProjectView(project);
-//		if(p == null) {
-//			return false;
-//		}
 		unwrapProjectView(project).planTask(task, plannedStartTime, concRes, devs);
 	}
 	
@@ -544,13 +415,6 @@ public class Branch {
 	public void planRawTask(ProjectView project, TaskView task,
 			LocalDateTime plannedStartTime, List<ResourceView> concRes, List<ResourceView> devs) 
 				throws IllegalArgumentException, IllegalStateException, ResourceUnavailableException {
-//		if(!currentUserHasPermission(UserPermission.PLAN_TASK)) {
-//			return false;
-//		}
-//		Project p = unwrapProjectView(project);
-//		if(p == null) {
-//			return false;
-//		}
 		unwrapProjectView(project).planRawTask(task, plannedStartTime, concRes, devs);
 	}
 
@@ -606,9 +470,8 @@ public class Branch {
 	 *            | The prototype that the new requirements should be added to
 	 * @throws IllegalArgumentException
 	 */
-	//TODO exceptions
 	public void addRequirementsToResource(List<ResourceView> resourcesToAdd,
-			ResourceView prototype) {
+			ResourceView prototype) throws IllegalArgumentException {
 		resMan.addRequirementsToResource(resourcesToAdd, prototype);
 	}
 
@@ -621,41 +484,11 @@ public class Branch {
 	 *            | The prototype that the new conflicts should be added to
 	 * @throws IllegalArgumentException
 	 */
-	//TODO exceptions
 	public void addConflictsToResource(List<ResourceView> resourcesToAdd,
-			ResourceView prototype) {
+			ResourceView prototype) throws IllegalArgumentException {
 		resMan.addConflictsToResource(resourcesToAdd, prototype);
 	}
-
-//	/**
-//	 * Check whether or not this user has a specific credential
-//	 * 
-//	 * @param permission
-//	 *            | The permission to check
-//	 * @return True if the user has the credential, false otherwise
-//	 */
-//	public boolean currentUserHasPermission(UserPermission permission) {
-//		return currentUser.getPermissions().contains(permission);
-//	}
-//
-//	/**
-//	 * Retrieve a list of all tasks that can be updated by the current user for
-//	 * a given project
-//	 * 
-//	 * @param project
-//	 *            | project the current user wants to check
-//	 * @return an immutable list of tasks that can be updated by a given user
-//	 */
-//	public List<TaskView> getUpdatableTasksForUser(ProjectView project, User user) {
-//		Project p = unwrapProjectView(project);
-//		if(p == null) {
-//			Builder<TaskView> bob = ImmutableList.builder();
-//			return bob.build();
-//		}
-//		return p.getUpdatableTasksForUser(
-//				new ResourceView(user));
-//	}
-
+	
 	/**
 	 * Return an immutable list of all the reservations present in the resource
 	 * manager
@@ -702,7 +535,7 @@ public class Branch {
 	 * @return	The user belonging to the view
 	 */
 	public User getUser(ResourceView user) throws IllegalArgumentException, UnexpectedViewContentException {
-		return resMan.unWrapUserView(user); //TODO public unwrap
+		return resMan.unWrapUserView(user); //TODO throw new VeryGayException("Wow. Public unwrappers?");
 	}
 
 	/**
@@ -717,8 +550,8 @@ public class Branch {
 		return project.unwrap().getResponsibleBranch(branchRep, task);
 	}
 	
-	public TaskView getDelegatingTask(ProjectView project, TaskView task) {
-		return project.unwrap().getDelegatingTask(branchRep, task).orElse(task);
+	public Optional<TaskView> getDelegatingTask(ProjectView project, TaskView task) {
+		return project.unwrap().getDelegatingTask(branchRep, task);
 	}
 
 	/**
@@ -768,17 +601,12 @@ public class Branch {
 			throw new IllegalArgumentException("Task cannot be accepted for delegation, reason: " + e.getMessage());
 		}
 		DelegatingTask delTask = (DelegatingTask) delegationProject.getTasks().get(delegationProject.getTasks().size() - 1);
-//		newTask.setProxy(fromProxy);
 		branchRep.delegateAccept(delProxy, delTask, this);
 	}
 
 	public void removeDelegatedTask(Task task) {
 		delegationProject.removeTask(new TaskView(task));		
 	}
-
-//	public void clearBuffer() {
-//		branchRep.clearBuffer();
-//	}
 
 	/**
 	 * Toggles buffer mode to on or off
@@ -802,7 +630,6 @@ public class Branch {
 	 * @return
 	 */
 	public Map<Task, DelegatingTaskProxy> getDelegatingProxies() {
-		// TODO Auto-generated method stub
 		return branchRep.getDelegatingProxies();
 	}
 	

@@ -2,7 +2,6 @@ package test.unit;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.time.LocalDateTime;
@@ -17,13 +16,13 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.google.common.collect.Lists;
-
 import company.taskMan.resource.ResourceManager;
 import company.taskMan.resource.ResourcePrototype;
 import company.taskMan.resource.ResourceView;
 import company.taskMan.resource.user.User;
 import company.taskMan.resource.user.UserPrototype;
 import company.taskMan.task.Task;
+
 import exceptions.NoSuchResourceException;
 import exceptions.ResourceUnavailableException;
 import exceptions.UnexpectedViewContentException;
@@ -40,8 +39,6 @@ public class ResourceManagerTest {
 	
 	private final Optional<LocalTime> emptyAvailabilityPeriodStart = Optional.empty(),
 			emptyAvailabilityPeriodEnd = Optional.empty();
-//			availabilityPeriod14 = Optional.of(LocalTime.of(14,0)),
-//			availabilityPeriod17 = Optional.of(LocalTime.of(17,0));
 	
 	//TODO aanpassen aan nieuwe resourcemanager structuur
 	@Before

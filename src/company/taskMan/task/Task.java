@@ -975,16 +975,12 @@ public class Task implements Dependant {
 			throw new IllegalArgumentException("Invalid startTime");
 		}
 		plan.setPlannedBeginTime(startTime);
-		// TODO refactor this (below) to resMan (iteration 3?)
 		if (resMan.hasActiveReservations(this)) {
 			if (!resMan.releaseResources(this, startTime)) {
 				throw new IllegalStateException("Failed to release resources");
 			}
 		}
 		resMan.reserve(concRes, this, startTime, getPlannedEndTime(), true);
-//			if (!resMan.reserve(concRes, this, startTime, getPlannedEndTime(), true)) {
-//			throw new IllegalStateException("Failed to move resource reservations");
-//		}
 		List<User> developers = resMan.pickDevs(devs, this, startTime,
 				getPlannedEndTime(), true);
 		if (developers == null) {
@@ -1019,21 +1015,19 @@ public class Task implements Dependant {
 	 * @return True if the task was planned and all reservations made
 	 * @throws IllegalArgumentException, ResourceUnavailableException 
 	 */
-	//TODO moet naar void met exceptions
-	public boolean rawPlan(LocalDateTime startTime, List<ResourceView> concRes,
-			List<ResourceView> devs) throws ResourceUnavailableException, IllegalArgumentException {
-		for (Task t : prerequisites) {
-			if (t.isFailed() && (t.getReplacement() == null)) {
-				return false;
-			}
+	public void rawPlan(LocalDateTime startTime, List<ResourceView> concRes,
+			List<ResourceView> devs) 
+					throws IllegalArgumentException, IllegalStateException, ResourceUnavailableException {
+		if(!canBePlanned()) {
+			throw new IllegalStateException("There is a failed prerequisite without an alternative");
 		}
 		if (!isValidPlannedStartTime(startTime)) {
-			return false;
+			throw new IllegalArgumentException("Invalid startTime");
 		}
 		plan.setPlannedBeginTime(startTime);
 		if (resMan.hasActiveReservations(this)) {
 			if (!resMan.releaseResources(this, startTime)) {
-				return false;
+				throw new IllegalStateException("Failed to release Resources");
 			}
 		}
 		resMan.reserve(concRes, this, startTime, getPlannedEndTime(),false);
@@ -1042,17 +1036,15 @@ public class Task implements Dependant {
 //		}
 		if (!resMan.hasActiveReservations(this)) {
 			resMan.releaseResources(this, startTime);
-			return false; // verkeerde hoeveelheid reservaties enzo
+			throw new IllegalStateException("Invalid resources selected");
 		}
 		List<User> developers = resMan.pickDevs(devs, this, startTime,
 				getPlannedEndTime(), false);
 		if (developers == null) {
-			resMan.releaseResources(this, startTime);
-			return false;
+			throw new IllegalArgumentException("Invalid developers");
 		}
 		plan.setDevelopers(developers);
 		state.makeAvailable(this);
-		return true;
 
 	}
 

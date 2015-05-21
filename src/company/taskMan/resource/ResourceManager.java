@@ -155,27 +155,6 @@ public class ResourceManager {
 		}
 	}
 	
-//	/**
-//	 * Get the user who corresponds to the given user
-//	 * 
-//	 * @param newUser
-//	 *            | The user
-//	 * @return the user who corresponds to the given user
-//	 * @throws IllegalArgumentException
-//	 */
-//	public User getUser(ResourceView newUser)
-//			throws IllegalArgumentException {
-//		if(newUser == null) {
-//			throw new IllegalArgumentException("newUser must not be null");
-//		}
-//		for(User user : userList) {
-//			if(newUser.hasAsResource(user)) {
-//				return user;
-//			}
-//		}
-//		return null;
-//	}
-	
 	/**
 	 * Find the project manager
 	 * 
@@ -279,7 +258,7 @@ public class ResourceManager {
 					if(!crList.isEmpty()) {
 						toReserve = unWrapConcreteResourceView(crList.remove(0));//FIXME hier worden nog exceptions gegooid
 					} else {
-						
+						throw new ResourceUnavailableException("Failed to reserve resource: " + r.getName());
 					}
 				}
 
@@ -330,15 +309,14 @@ public class ResourceManager {
 	 *            resource is actually available to reserve from the given start
 	 *            to end time
 	 * @return The list of users for whom the reservation was made
-	 * @throws IllegalArgumentException, UnexpectedViewContentException, ResourceUnavailableException 
+	 * @throws IllegalArgumentException, ResourceUnavailableException 
 	 */
-	//TODO hier moet niks gecatched worden, right?
 	public List<User> pickDevs(List<ResourceView> devs, 
 			Task reservingTask, 
 			LocalDateTime start,
 			LocalDateTime end, 
 			boolean checkCanReserve) 
-				throws IllegalArgumentException, UnexpectedViewContentException, ResourceUnavailableException{
+				throws IllegalArgumentException, ResourceUnavailableException{
 		List<User> users = new ArrayList<>();
 		for(ResourceView dev : devs) {
 			User user = unWrapUserView(dev);
@@ -880,12 +858,6 @@ public class ResourceManager {
 			allReservations.removeAll(toChange);
 			return false;
 		}
-//		if(!task.releaseDevelopers()) {
-//			activeReservations.addAll(toRemoveActive);
-//			allReservations.addAll(toRemoveAll);
-//			allReservations.removeAll(toChange);
-//			return false;
-//		}
 		task.releaseDevelopers();
 		return true;
 	}

@@ -24,7 +24,6 @@ public class DelegationProject extends Project {
 		taskList.remove(task.unwrap());
 	}
 	
-	// TODO overwrite createTask to create a DelegatingTask
 	/**
 	 * Creates a new Task, delegated from another branch.
 	 * 
@@ -73,7 +72,7 @@ public class DelegationProject extends Project {
 					acceptableDeviation, 
 					resMan, 
 					requiredResources,
-					null); // TODO alternatives zijn altijd null?
+					null);
 		taskList.add(newTask);
 		setProjectStatus(new OngoingState());
 		newTask.register(this);
