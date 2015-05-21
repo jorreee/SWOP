@@ -14,6 +14,8 @@ import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.google.common.collect.Lists;
+
 import userInterface.IFacade;
 import userInterface.TaskManException;
 
@@ -99,6 +101,7 @@ public class UseCase7DelegateTaskTest {
 	 * 		task 1
 	 * 		task 2 UNAVAILABLE 
 	 * 
+	 * 
 	 */
 	
 	@Before
@@ -118,13 +121,13 @@ public class UseCase7DelegateTaskTest {
 		}
 		branchManager.createDeveloper("Weer");
 		branchManager.createDeveloper("Blunderbus");
-		branchManager.createDeveloper("De Nick");
+		
 		weer = branchManager.getDeveloperList().get(0);
 		blunderbus = branchManager.getDeveloperList().get(1);
-		deNick = branchManager.getDeveloperList().get(2);
+		
 		devList1.add(weer);
 		devList2.add(blunderbus);
-		devList3.add(deNick);
+
 		
 		//Create first project
 		branchManager.createProject("Project 0", "Describing proj 0", project0DueDate);
@@ -214,38 +217,24 @@ public class UseCase7DelegateTaskTest {
 		branchManager.advanceTimeTo(workdate4);
 		branchManager.createProject("Project 3", "Describing proj 3", project3DueDate);
 		ProjectView project3 = branchManager.getProjects().get(3);
-		// 30 AVAILABLE
-		Map<ResourceView, Integer> reqResTask30 = new HashMap<>();
-		reqResTask30.put(branchManager.getResourcePrototypes().get(0), 2);
-		reqResTask30.put(branchManager.getResourcePrototypes().get(1), 3);
-		branchManager.createTask(project3, "TASK 30", task30EstDur, task30Dev, task30Dependencies,reqResTask30, null);
-		task30ConcreteResources.add(branchManager.getResourcePrototypes().get(0));
-		task30ConcreteResources.add(branchManager.getResourcePrototypes().get(0));
-		task30ConcreteResources.add(branchManager.getResourcePrototypes().get(1));
-		task30ConcreteResources.add(branchManager.getResourcePrototypes().get(1));
-		task30ConcreteResources.add(branchManager.getResourcePrototypes().get(1));
 		// 31 AVAILABLE
 		Map<ResourceView, Integer> reqResTask31 = new HashMap<>();
 		reqResTask31.put(branchManager.getResourcePrototypes().get(0), 1);
-		branchManager.createTask(project3, "TASK 31", task31EstDur, task31Dev, task31Dependencies,reqResTask31, null);
-		TaskView task31 = project3.getTasks().get(1);
+		branchManager.createTask(project3, "TASK 30", task31EstDur, task31Dev, Lists.newArrayList(),reqResTask31, null);
+//		TaskView task31 = project3.getTasks().get(1);
 		task31ConcreteResources.add(branchManager.getResourcePrototypes().get(0));
-		branchManager.planTask(project3, task31, task30Start, task31ConcreteResources,devList3);
+//		branchManager.planTask(project3, task31, task30Start, task31ConcreteResources,devList3);
 		
 		//32 UNAVAILABLE
-		branchManager.createTask(project3, "TASK 32", task31EstDur, task31Dev, task31Dependencies,reqResTask31, null);
+//		branchManager.createTask(project3, "TASK 31", task31EstDur, task31Dev, task31Dependencies,reqResTask31, null);
 				
-		// Stap verder:
-		// maak task 3,0 FAILED
-		branchManager.advanceTimeTo(workdate5);
-		TaskView task30 = project3.getTasks().get(0);
-		// 30 FAILED DELAYED
-		branchManager.planTask(project3, task30, task30Start,task30ConcreteResources,devList2);
-		branchManager.setTaskExecuting(project3, task30, task30Start);
-		branchManager.setTaskFailed(project3, task30, task30End);	
 		
 		//Nieuw branch office zonder projecten
 		branchManager.initializeBranch("Aarschot");
+		
+		branchManager.createDeveloper("De Nick");
+		deNick = branchManager.getDeveloperList().get(0);
+		devList3.add(deNick);
 		
 		//INIT resources
 				for(int i = 0;i<=5;i++){
@@ -271,14 +260,14 @@ public class UseCase7DelegateTaskTest {
 	@Test
 	public void succesCaseTest() {
 		branchManager.selectBranch(branchManager.getBranches().get(0));
-		assertEquals(branchManager.getProjects().get(3).getTasks().get(2).getStatusAsString(),"Unavailable");
+		assertEquals(branchManager.getProjects().get(3).getTasks().get(0).getStatusAsString(),"Unavailable");
 		
-		branchManager.delegateTask(branchManager.getProjects().get(3), branchManager.getProjects().get(3).getTasks().get(2), branchManager.getBranches().get(1));
-		assertEquals(branchManager.getProjects().get(3).getTasks().get(2).getStatusAsString(),"Delegated");
+		branchManager.delegateTask(branchManager.getProjects().get(3), branchManager.getProjects().get(3).getTasks().get(0), branchManager.getBranches().get(1));
+		assertEquals(branchManager.getProjects().get(3).getTasks().get(0).getStatusAsString(),"Delegated");
 		branchManager.selectBranch(branchManager.getBranches().get(1));
 		TaskView delegationTask = branchManager.getAllProjects().get(0).getTasks().get(0);
 		assertEquals(delegationTask.getStatusAsString(),"Unavailable");
-		assertEquals(delegationTask.getDescription(),"TASK 32");
+		assertEquals(delegationTask.getDescription(),"TASK 30");
 		
 	}
 	
@@ -300,47 +289,65 @@ public class UseCase7DelegateTaskTest {
 	@Test
 	public void succesDelegateBackTest() {
 		branchManager.selectBranch(branchManager.getBranches().get(0));
-		assertEquals(branchManager.getProjects().get(3).getTasks().get(2).getStatusAsString(),"Unavailable");
+		assertEquals(branchManager.getProjects().get(3).getTasks().get(0).getStatusAsString(),"Unavailable");
 		
-		branchManager.delegateTask(branchManager.getProjects().get(3), branchManager.getProjects().get(3).getTasks().get(2), branchManager.getBranches().get(1));
-		assertEquals(branchManager.getProjects().get(3).getTasks().get(2).getStatusAsString(),"Delegated");
+		branchManager.delegateTask(branchManager.getProjects().get(3), branchManager.getProjects().get(3).getTasks().get(0), branchManager.getBranches().get(1));
+		assertEquals(branchManager.getProjects().get(3).getTasks().get(0).getStatusAsString(),"Delegated");
 		branchManager.selectBranch(branchManager.getBranches().get(1));
 		TaskView delegationTask = branchManager.getAllProjects().get(0).getTasks().get(0);
 		assertEquals(delegationTask.getStatusAsString(),"Unavailable");
-		assertEquals(delegationTask.getDescription(),"TASK 32");
+		assertEquals(delegationTask.getDescription(),"TASK 30");
 		
 		branchManager.delegateTask(branchManager.getAllProjects().get(0), branchManager.getAllProjects().get(0).getTasks().get(0), branchManager.getBranches().get(0));
 		assertEquals(branchManager.getAllProjects().get(0).getTasks().size(),0);
 		branchManager.selectBranch(branchManager.getBranches().get(0));
-		assertEquals(branchManager.getProjects().get(3).getTasks().get(2).getStatusAsString(),"Unavailable");
+		assertEquals(branchManager.getProjects().get(3).getTasks().get(0).getStatusAsString(),"Unavailable");
 	}
+	
+
 	
 	@Test
 	public void succesDelegateFurtherTest() {
 		branchManager.selectBranch(branchManager.getBranches().get(0));
-		assertEquals(branchManager.getProjects().get(3).getTasks().get(2).getStatusAsString(),"Unavailable");
+		assertEquals(branchManager.getProjects().get(3).getTasks().get(0).getStatusAsString(),"Unavailable");
 		
-		branchManager.delegateTask(branchManager.getProjects().get(3), branchManager.getProjects().get(3).getTasks().get(2), branchManager.getBranches().get(1));
-		assertEquals(branchManager.getProjects().get(3).getTasks().get(2).getStatusAsString(),"Delegated");
+		branchManager.delegateTask(branchManager.getProjects().get(3), branchManager.getProjects().get(3).getTasks().get(0), branchManager.getBranches().get(1));
+		assertEquals(branchManager.getProjects().get(3).getTasks().get(0).getStatusAsString(),"Delegated");
 		branchManager.selectBranch(branchManager.getBranches().get(1));
 		TaskView delegationTask = branchManager.getAllProjects().get(0).getTasks().get(0);
 		assertEquals(delegationTask.getStatusAsString(),"Unavailable");
-		assertEquals(delegationTask.getDescription(),"TASK 32");
+		assertEquals(delegationTask.getDescription(),"TASK 30");
 		
 		branchManager.delegateTask(branchManager.getAllProjects().get(0), delegationTask, branchManager.getBranches().get(2));
 		assertEquals(branchManager.getAllProjects().get(0).getTasks().size(),0);
 		branchManager.selectBranch(branchManager.getBranches().get(2));
 		TaskView furtherDelegationTask = branchManager.getAllProjects().get(0).getTasks().get(0);
 		assertEquals(furtherDelegationTask.getStatusAsString(),"Unavailable");
-		assertEquals(furtherDelegationTask.getDescription(),"TASK 32");
+		assertEquals(furtherDelegationTask.getDescription(),"TASK 30");
+	}
+	
+	@Test
+	public void delegateAndFinishTest(){
+		branchManager.selectBranch(branchManager.getBranches().get(0));
+		assertEquals(branchManager.getProjects().get(3).getTasks().get(0).getStatusAsString(),"Unavailable");
+		
+		branchManager.delegateTask(branchManager.getProjects().get(3), branchManager.getProjects().get(3).getTasks().get(0), branchManager.getBranches().get(1));
+		assertEquals(branchManager.getProjects().get(3).getTasks().get(0).getStatusAsString(),"Delegated");
+		branchManager.selectBranch(branchManager.getBranches().get(1));
+		TaskView delegationTask = branchManager.getAllProjects().get(0).getTasks().get(0);
+		assertEquals(delegationTask.getStatusAsString(),"Unavailable");
+		assertEquals(delegationTask.getDescription(),"TASK 30");
+		branchManager.planTask(branchManager.getAllProjects().get(0), branchManager.getAllProjects().get(0).getTasks().get(0), task30Start, task31ConcreteResources,devList3);
+		delegationTask = branchManager.getAllProjects().get(0).getTasks().get(0);
+		assertEquals(delegationTask.getStatusAsString(),"Available");
 	}
 	
 	@Test
 	public void delegateToSelf() {
 		branchManager.selectBranch(branchManager.getBranches().get(0));
-		assertEquals(branchManager.getProjects().get(3).getTasks().get(2).getStatusAsString(),"Unavailable");
-		branchManager.delegateTask(branchManager.getProjects().get(3), branchManager.getProjects().get(3).getTasks().get(2), branchManager.getBranches().get(0));
-		assertEquals(branchManager.getProjects().get(3).getTasks().get(2).getStatusAsString(),"Unavailable");
+		assertEquals(branchManager.getProjects().get(3).getTasks().get(0).getStatusAsString(),"Unavailable");
+		branchManager.delegateTask(branchManager.getProjects().get(3), branchManager.getProjects().get(3).getTasks().get(0), branchManager.getBranches().get(0));
+		assertEquals(branchManager.getProjects().get(3).getTasks().get(0).getStatusAsString(),"Unavailable");
 	}
 	
 	
