@@ -1,0 +1,50 @@
+
+Basic setup (B1,R1,T1,P1/B2,R2,T2,P2/B3,R3,T3,P3) met B branch, R rep, T task, P proxy in branch i
+
+USER : Delegate T1 naar B2
+->
+B1 -> R1.delegateTask(T1,B1,B2)
+->
+R1 -> buffer add entry (T1,B1,B2)
+R1 -> execute buffer
+R1 -> P2 = new OriginalTaskProxy(T1)
+R1 -> B2.delegateAccept(P2,B1,B2)
+->
+B2 -> T2 = new delegatingTask
+B2 -> register T2 <-> P2
+B2 -> R2.delegateAccept(P2,T2,B1,B2)
+->
+R2 -> original task proxy add entry <T2,P2>
+R2 -> P1 = new DelegatingTaskProxy(T2)
+R2 -> P2.link(P1)
+R2 -> return P1
+->
+R1 -> delegating task proxy add entry <T1,P1>
+R1 -> register T1 <-> P1
+
+USER : show projects
+->
+B1 -> getResponsibleBranch(T1)
+B1 -> R1.getResponsibleBranch(T1)
+R1 -> P1 SHOULD KNOW OF B2
+-------
+B1 -> getDelegatingTask(T1)
+B1 -> R1.getDelegatingTask(T1)
+->
+R1 -> delegating task proxies get T1
+R1 -> return P1.getTask()
+
+USER : Delegate T2 naar B3
+->
+B2 -> R2.delegateTask(T2,B2,B3)
+->
+R2 -> buffer add entry (T2,B2,B3)
+R2 -> execute buffer
+R2 -> check original task proxy get T2
+R2 -> P2 found!
+R2 -> remove T2
+R2 -> P2.getOriginalBranch()
+R2 -> B1.delegateTask(P2.getTask(),B1,B3)
+R2 -> remove P2
+->
+B1 -> delegateTask(...

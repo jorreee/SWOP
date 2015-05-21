@@ -1,28 +1,35 @@
 package company.taskMan;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Stack;
 import java.util.stream.Collectors;
 
 import company.BranchView;
+import company.taskMan.task.DelegatingTaskProxy;
 import company.taskMan.task.Dependant;
+import company.taskMan.task.OriginalTaskProxy;
 import company.taskMan.task.Task;
 import company.taskMan.util.TimeSpan;
 
 public class BranchRepresentative implements Dependant {
 
-	private List<DelegationData> delegations;
+//	private List<DelegationData> delegations;
+	private Map<Task,DelegatingTaskProxy> proxiesToBranch;
+	private Map<Task,OriginalTaskProxy> proxiesFromBranch;	
 //	private List<Delegation> delegationsFromBranch;
 	private LinkedList<DelegationData> buffer;
 	private Stack<Integer> bufferCheckpoints;
-	boolean bufferMode;
+	private boolean bufferMode;
 
 	public BranchRepresentative(){
-		delegations = new ArrayList<DelegationData>();
+//		delegations = new ArrayList<DelegationData>();
 //		delegationsToBranch = new ArrayList<Delegation>();
+		proxiesToBranch = new HashMap<>();
+		proxiesFromBranch = new HashMap<>();
 		buffer = new LinkedList<DelegationData>();
 		bufferCheckpoints = new Stack<>();
 		bufferMode = false;
@@ -32,7 +39,8 @@ public class BranchRepresentative implements Dependant {
 		// Delegation came back to the original branch
 		if (toBranch == fromBranch)	{
 			task.delegate(task);
-			delegations.remove(getToDelegationContainingTask(task).get());
+			proxiesToBranch.remove(task);
+//			delegations.remove(getToDelegationContainingTask(task).get());
 			
 		} else {// A new delegation
 			buffer.add(new DelegationData(task, fromBranch, toBranch));
@@ -60,29 +68,36 @@ public class BranchRepresentative implements Dependant {
 			//		1) maak Delegating Task, TObranch
 			//		2) maak proxies in Reps, juiste interdependencies
 			//		3) link proxies
-			Task originalTask = task.getOriginalDelegatedTask();	// The original task (this task has been delegated before) or null
-			Optional<DelegationData> optionalOriginalDelegation = getFromDelegationContainingTask(originalTask);	// Delegation made to this delegator (a FROM request)
+			// NEW STUFF BELOW
 			// A. If this task was already a delegated task
-			if (optionalOriginalDelegation.isPresent()) {
-				DelegationData originalDelegation = optionalOriginalDelegation.get();
-				// A.e The previous delegation does not lead here
-				if (originalDelegation.getBranch() != fromBranch){
-					throw new IllegalStateException("The original branch to delegate from is not equal to the one in the delegations sytem.");
-				}
-				
-				// A.1 Remove previous delegation information
-				delegations.remove(originalDelegation);
-				fromBranch.removeDelegatedTask(task);
-				
-				// A.2 (re-)delegate the original task in its respective delegator
-				originalDelegation.getOriginalBranch().delegateTask(task, toBranch);
-			}
-			// B. If this task hasn't been delegated before
-			else {
-				delegations.add(deleg);
-				Task newTask = toBranch.delegateAccept(task, fromBranch);
-				task.delegate(newTask);
-			}
+			
+			// B. Else if this task hasn't been delegated before
+			
+			
+// OLD STUFF BELOW
+//			Task originalTask = task.getOriginalDelegatedTask();	// The original task (this task has been delegated before) or null
+//			Optional<DelegationData> optionalOriginalDelegation = getFromDelegationContainingTask(originalTask);	// Delegation made to this delegator (a FROM request)
+//			// A. If this task was already a delegated task
+//			if (optionalOriginalDelegation.isPresent()) {
+//				DelegationData originalDelegation = optionalOriginalDelegation.get();
+//				// A.e The previous delegation does not lead here
+//				if (originalDelegation.getBranch() != fromBranch){
+//					throw new IllegalStateException("The original branch to delegate from is not equal to the one in the delegations sytem.");
+//				}
+//				
+//				// A.1 Remove previous delegation information
+//				delegations.remove(originalDelegation);
+//				fromBranch.removeDelegatedTask(task);
+//				
+//				// A.2 (re-)delegate the original task in its respective delegator
+//				originalDelegation.getOriginalBranch().delegateTask(task, toBranch);
+//			}
+//			// B. If this task hasn't been delegated before
+//			else {
+//				delegations.add(deleg);
+//				Task newTask = toBranch.delegateAccept(task, fromBranch);
+//				task.delegate(newTask);
+//			}
 		}
 
 	}
