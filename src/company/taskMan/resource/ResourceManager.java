@@ -591,9 +591,6 @@ public class ResourceManager {
 				if(i <= 0) {
 					throw new IllegalArgumentException("Entries must be strictly positive");
 				}
-				if(i > getPoolOf(rp).size()) {
-					throw new IllegalArgumentException("Entry for \"" + rp.getName() + "\" must be <= " + getPoolOf(rp).size());
-				}
 				resProtList.put(rp, i);
 			}
 			for(ResourcePrototype prot : resProtList.keySet()){
