@@ -57,4 +57,8 @@ public class OriginalTaskProxy implements Dependant {
 		return new TaskView(task);
 	}
 
+	public Branch getFromBranch() {
+		return fromBranch;
+	}
+
 }
