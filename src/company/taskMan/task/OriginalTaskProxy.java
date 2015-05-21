@@ -1,17 +1,16 @@
 package company.taskMan.task;
 
-import java.time.LocalDateTime;
-
 import company.taskMan.util.TimeSpan;
 
 public class OriginalTaskProxy implements Dependant {
 	
-	private Task task;
+	private DelegatingTask task;
 	private DelegatingTaskProxy other;
 	private boolean hasUnfinishedPrereqs;
 	
-	public OriginalTaskProxy(Task t) {
+	public OriginalTaskProxy(DelegatingTask t) {
 		this.task = t;
+		task.register(this);
 		hasUnfinishedPrereqs = true;
 	}
 	
@@ -19,8 +18,16 @@ public class OriginalTaskProxy implements Dependant {
 		this.other = other;
 	}
 	
-	public void updateProxyPrereqsFinished() {
+	public void updatePrereqsFinished() {
 		hasUnfinishedPrereqs = false;
+	}
+	
+	public boolean hasUnfinishedPrerequisites() {
+		return hasUnfinishedPrereqs;
+	}
+	
+	public boolean canBePlanned() {
+		return other.allowsToBePlanned();
 	}
 
 	@Override
@@ -33,16 +40,7 @@ public class OriginalTaskProxy implements Dependant {
 			// dat hij 'klaar' is
 			other.updateProxyTaskFinished(preTask.getEndTime());
 		} else {
-			// geval proxy in originele branch krijg te horen dat een prereq
-			// is gefinished. Als alle prereqs vervuld zijn laat hij aan de
-			// andere proxy weten dat hij kan gepland worden.
-			for(Task t : task.getPrerequisites()) {
-				if(!t.hasFinishedEndpoint()) {
-					return;
-				}
-			}
-			hasUnfinishedPrereqs = false;
-			other.updateProxyPrereqsFinished();
+			throw new IllegalStateException("An error occured");
 		}
 	}
 

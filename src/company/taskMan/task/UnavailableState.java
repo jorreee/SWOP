@@ -50,6 +50,9 @@ public class UnavailableState implements TaskStatus {
 //				throw e;
 //			}
 			newTask.register(task);
+			for(Task t : task.getPrerequisites()) {
+				t.unregister(task);
+			}
 			task.setTaskStatus(new DelegatedState());
 		} //else doe niks alles is okee
 		

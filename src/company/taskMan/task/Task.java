@@ -717,7 +717,8 @@ public class Task implements Dependant {
 	}
 
 	/**
-	 * End the task in a Finished state
+	 * End the task in a Finished state. If the task was Delegated, it 
+	 * will now return TRUE when isFinished() is called.
 	 * 
 	 * @param endTime
 	 *            The new end time of the Task.
