@@ -62,7 +62,7 @@ public class BranchRepresentative {
 	 * 					  will be informed that it is no longer being delegated
 	 * 		2) The remote branch creates a Delegating Task and links it to
 	 * 				a local OriginalTaskProxy
-	 * 		3) The two proxies are linked to eachother
+	 * 		3) The two proxies are linked to each other
 	 * @param task
 	 * @param fromBranch
 	 * @param toBranch
@@ -139,7 +139,7 @@ public class BranchRepresentative {
 				buffer.add(new DelegationData(task, fromBranch, toBranch));
 				
 			} else {
-				// C. The task is delegated to its original branch
+				// C. The task is delegated for the first time
 				DelegatingTaskProxy delProxy = new DelegatingTaskProxy(task, fromBranch);
 				toBranch.delegateAccept(delProxy);
 				delegationProxies.put(task, delProxy);

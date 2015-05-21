@@ -560,13 +560,13 @@ public class Branch {
 	 * 			The project containing the task to delegate.
 	 * @param 	task
 	 * 			The task to delegate.
-	 * @param 	newTman
+	 * @param 	newBranch
 	 * 			The new branch to delegate the task to.
 	 */
 	public void delegateTask(ProjectView project, TaskView task,
-			Branch newTman) {
+			Branch newBranch) {
 		Project p = unwrapProjectView(project);
-		p.delegateTask(branchRep, task, this, newTman);
+		p.delegateTask(branchRep, task, this, newBranch);
 		
 	}
 	
