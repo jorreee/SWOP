@@ -515,7 +515,9 @@ public class BranchManager implements IFacade {
 		
 		currentBranch.flush(protMan.getPrototypes());
 		
-		Main.initializeBranch(this, fileChecker, branches.indexOf(currentBranch));
+		currentUser = currentBranch.getSuperUser();
+		
+		Main.setupBranch(this, fileChecker, branches.indexOf(currentBranch));
 	}
 
 	@Override

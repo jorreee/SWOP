@@ -161,10 +161,13 @@ public class Main {
 	}
 
 	public static boolean initializeBranch(IFacade facade, TaskManInitFileChecker fileChecker, int branchID) {
-		try {
 			String geographicLocation = fileChecker.getGeographicLocation();
 			facade.initializeBranch(geographicLocation);
-			
+			return setupBranch(facade, fileChecker, branchID);
+	}
+	
+	public static boolean setupBranch(IFacade facade, TaskManInitFileChecker fileChecker, int branchID) {
+		try {
 			List<ProjectCreationData> projectData = fileChecker.getProjectDataList();
 			List<TaskCreationData> taskData = fileChecker.getTaskDataList();
 			List<ConcreteResourceCreationData> concreteResources = fileChecker.getConcreteResourceDataList();
