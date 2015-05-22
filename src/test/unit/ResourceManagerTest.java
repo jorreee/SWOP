@@ -40,7 +40,6 @@ public class ResourceManagerTest {
 	private final Optional<LocalTime> emptyAvailabilityPeriodStart = Optional.empty(),
 			emptyAvailabilityPeriodEnd = Optional.empty();
 	
-	//TODO aanpassen aan nieuwe resourcemanager structuur
 	@Before
 	public void initialize() {
 		//Prepare the resources and developers

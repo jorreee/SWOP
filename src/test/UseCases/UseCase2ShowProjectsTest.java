@@ -273,7 +273,7 @@ public class UseCase2ShowProjectsTest {
 		assertEquals(project1.getAvailableTasks().size(),1);
 		assertEquals(project1.getCreationTime(),workdate1);
 		assertTrue(project1.isEstimatedOnTime(branchManager.getCurrentTime()));
-		assertEquals(LocalDateTime.of(2015, 2, 19, 8, 50),project1.getEstimatedEndTime(branchManager.getCurrentTime())); //TODO gaat eig nog een uur verloren
+		assertEquals(LocalDateTime.of(2015, 2, 19, 8, 50),project1.getEstimatedEndTime(branchManager.getCurrentTime())); 
 
 		//Check project2 details
 		ProjectView project2 = branchManager.getProjects().get(2);

@@ -27,7 +27,6 @@ import company.taskMan.task.Task;
 import exceptions.ResourceUnavailableException;
 import exceptions.UnexpectedViewContentException;
 
-//TODO Still not done
 /**
  * The Main System that keeps track of the list of projects and the current
  * Time. The Branch is also responsible of maintaining a resource manager (which
@@ -587,7 +586,7 @@ public class Branch {
 	 * @return	The user belonging to the view
 	 */
 	public User getUser(ResourceView user) throws IllegalArgumentException, UnexpectedViewContentException {
-		return resMan.unWrapUserView(user); //TODO throw new VeryGayException("Wow. Public unwrappers?");
+		return resMan.unWrapUserView(user);
 	}
 
 	/**

@@ -482,6 +482,14 @@ public class ResourceManager {
 					return new ResourceView(pool.getPrototype());
 				}
 			}
+			if(view.hasAsResource(pool.getPrototype())) {
+				return view;
+			}
+		}
+		for(User u : userList) {
+			if(view.hasAsResource(u)) {
+				return new ResourceView(userProt);
+			}
 		}
 		throw new NoSuchResourceException("Invalid resourceView");
 	}
@@ -740,6 +748,26 @@ public class ResourceManager {
 	 * 			| If the resource wasn't available for reservation
 	 */
 	public List<LocalDateTime> getPossibleStartingTimes(Task task, List<ResourceView> allResources, LocalDateTime currentTime, int amount) throws ResourceUnavailableException, NoSuchResourceException, IllegalArgumentException {
+		Map<ResourcePrototype,Integer> counter = new HashMap<ResourcePrototype, Integer>();
+		for(ResourceView rv : allResources) {
+			try {
+				unWrapUserView(rv);
+			} catch(UnexpectedViewContentException e) {
+				ResourceView rpv = getPrototypeOf(rv);
+				ResourcePrototype rp = unWrapResourcePrototypeView(rpv);
+				int currentCount = 0;
+				if(counter.containsKey(rp)) {
+					currentCount = counter.get(rp);
+				}
+				counter.put(rp, currentCount + 1);
+			}
+		}
+		for(ResourcePrototype rp : counter.keySet()) {
+			if(getPoolOf(rp).size() < counter.get(rp)) {
+				throw new ResourceUnavailableException("Not enough resources in this branch");
+			}
+		}
+		
 		List<LocalDateTime> posTimes = new ArrayList<LocalDateTime>();
 		// Workday timings
 		LocalTime workDayStart = LocalTime.of(8,0);

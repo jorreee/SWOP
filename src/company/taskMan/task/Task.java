@@ -997,7 +997,7 @@ public class Task implements Dependant {
 		if(!canBePlanned()) {
 			throw new IllegalStateException("There is a failed prerequisite without an alternative");
 		}
-		if (!isValidPlannedStartTime(startTime)) {
+		if(!isValidPlannedStartTime(startTime)) {
 			throw new IllegalArgumentException("Invalid startTime");
 		}
 		plan.setPlannedBeginTime(startTime);
