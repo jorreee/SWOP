@@ -30,8 +30,10 @@ import exceptions.UnexpectedViewContentException;
 //TODO Still not done
 /**
  * The Main System that keeps track of the list of projects and the current
- * Time. The Branch is also responsible of maintaining a resource manager
- * (which in turn is responsible for managing the resources of the system).
+ * Time. The Branch is also responsible of maintaining a resource manager (which
+ * in turn is responsible for managing the resources of the system). A Branch is
+ * located in a specific geographical location. For inter-branch communication,
+ * a specialized branch representative is appointed.
  * 
  * @author Tim Van den Broecke, Joran Van de Woestijne, Vincent Van Gestel and
  *         Eli Vangrieken
@@ -46,10 +48,13 @@ public class Branch {
 	private final String geographicLocation;
 
 	/**
-	 * Creates a Branch system instance with a given time.
+	 * Creates a Branch system instance with a given time. and the agreed upon
+	 * system resource types
 	 * 
 	 * @param time
 	 *            The current Branch time.
+	 * @param prototypes
+	 *            | The system-wide resource types
 	 */
 	public Branch(String location, List<ResourcePrototype> prototypes) 
 			throws IllegalArgumentException {
@@ -61,7 +66,16 @@ public class Branch {
 		branchRep = new BranchRepresentative();
 		geographicLocation = location;
 	}
-	
+
+	/**
+	 * Clean out the Branch by resetting its projects, resource manager and
+	 * branch representative
+	 * 
+	 * @param prototypes
+	 *            | The system-wide resource types
+	 * @throws IllegalArgumentException
+	 *             | in the case of invalid prototypes
+	 */
 	public void flush(List<ResourcePrototype> prototypes) throws IllegalArgumentException {
 		projectList = new ArrayList<>();
 		delegationProject = new DelegationProject();

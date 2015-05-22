@@ -14,15 +14,17 @@ import company.taskMan.task.OriginalTaskProxy;
 import company.taskMan.task.Task;
 
 /**
- * The Branch Representative is responsible for communication between branches. When a branch
- * tries to do something that would impact the consistency of another branch, their 
- * representatives will negotiate the terms and synchronize the necessary information. 
- * @author Tim Van Den Broecke, Vincent Van Gestel, Eli Vangrieken, Joran Van de Woestijne
+ * The Branch Representative is responsible for communication between branches.
+ * When a branch tries to do something that would impact the consistency of
+ * another branch, their representatives will negotiate the terms and
+ * synchronize the necessary information.
+ * 
+ * @author Tim Van Den Broecke, Joran Van de Woestijne, Vincent Van Gestel and
+ *         Eli Vangrieken
  *
  */
 public class BranchRepresentative {
 
-//	private List<DelegationData> delegations;
 	/**
 	 * <TASK, PROXY>:
 	 * TASK is being delegated remotely. It thinks PROXY is delegating him

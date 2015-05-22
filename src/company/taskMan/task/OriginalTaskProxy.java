@@ -68,8 +68,10 @@ public class OriginalTaskProxy {
 	protected Branch getBranch() { return delegatingBranch; }
 
 	/**
-	 * Dirty method for the simulation
+	 * Reset the task of this proxy
+	 * 
 	 * @param task
+	 *            | The new task
 	 */
 	public void setTask(Task task) {
 		delegatingTask = (DelegatingTask) task;		

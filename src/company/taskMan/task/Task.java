@@ -452,6 +452,11 @@ public class Task implements Dependant {
 		return (isFinished() || isFailed());
 	}
 	
+	/**
+	 * Checks whether the Task is in a delegated state
+	 * 
+	 * @return True if the state is delegated
+	 */
 	public boolean isDelegated() {
 		return state.isDelegated();
 	}
@@ -906,6 +911,15 @@ public class Task implements Dependant {
 		return true;
 	}
 
+	/**
+	 * Return true if the given planned start time is valid. A task cannot be
+	 * planned if it has prerequisites still executing or planned to finish at a
+	 * later time
+	 * 
+	 * @param start
+	 *            | The given planned start time
+	 * @return True if the planned start time is valid, false otherwise
+	 */
 	private boolean isValidPlannedStartTime(LocalDateTime start) {
 		if (prerequisites.isEmpty()) {
 			return true;
@@ -944,6 +958,11 @@ public class Task implements Dependant {
 		return true;
 	}
 	
+	/**
+	 * A method to (force-) check if this task is capable of being planned
+	 * 
+	 * @return True if this task can be planned
+	 */
 	protected boolean canBePlanned() {
 		for (Task t : prerequisites) {
 			if (t.isFailed() && (t.getReplacement() == null)) {

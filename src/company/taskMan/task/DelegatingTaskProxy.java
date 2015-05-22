@@ -76,8 +76,10 @@ public class DelegatingTaskProxy implements Dependant {
 	protected Branch getBranch() { return originalBranch; }
 
 	/**
-	 * Dirty method for the simulation
+	 * Reset the task of this proxy
+	 * 
 	 * @param task
+	 *            | The new task
 	 */
 	public void setTask(Task task) {
 		for(Task t : originalTask.getPrerequisites()) {
