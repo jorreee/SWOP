@@ -139,9 +139,9 @@ public class Planning {
 		if(endTime == null) {
 			throw new IllegalArgumentException("endTime can not be null."); 
 		}
-		if(getBeginTime() == null) {
-			throw new IllegalStateException("There isn't even a begin time yet!");
-		}
+//		if(getBeginTime() == null) {
+//			throw new IllegalStateException("There isn't even a begin time yet!");
+//		}
 		if(getEndTime() != null) {
 			throw new IllegalStateException("There is already an endTime set.");
 		}

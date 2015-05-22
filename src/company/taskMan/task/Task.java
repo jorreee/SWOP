@@ -389,9 +389,6 @@ public class Task implements Dependant {
 				return replacement.hasFinishedEndpoint();
 			}
 		}
-		if (isDelegated()) {
-// TODO Aanpassen voor delegation			
-		}
 		return false;
 	}
 

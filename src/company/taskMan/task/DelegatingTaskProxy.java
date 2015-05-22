@@ -32,7 +32,7 @@ public class DelegatingTaskProxy implements Dependant {
 	}
 	
 	public void updateProxyTaskFinished(LocalDateTime endTime) {
-		originalTask.notifyFinished();
+		originalTask.finish(endTime);
 	}
 	
 	public boolean allowsToBePlanned() {
