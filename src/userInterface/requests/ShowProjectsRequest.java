@@ -151,21 +151,10 @@ public class ShowProjectsRequest extends Request {
 							+ task.getEstimatedDuration() + " minutes, "
 							+ task.getAcceptableDeviation() + "% margin");
 					if(task.isPlanned()) {
-						taskHeader.append(", planned to start " + task.getPlannedBeginTime());
-						Iterator<ResourceView> devs = task.getPlannedDevelopers().iterator();
-						if(devs.hasNext()) {
-							taskHeader.append("assigned developers: ");
-						}
-						while(devs.hasNext()) {
-							ResourceView dev = devs.next();
-							taskHeader.append(dev.getName());
-							if(devs.hasNext()) {
-								taskHeader.append(", ");
-							}
-						}
+						taskHeader.append("\n    planned to start " + task.getPlannedBeginTime().format(dateTimeFormatter));
 						Iterator<ResourceView> reservedResources = task.getReservedResources().iterator();
 						if(reservedResources.hasNext()) {
-							taskHeader.append("reserved resources: ");
+							taskHeader.append("\n    assigned developers and reserved resources: ");
 						}
 						while(reservedResources.hasNext()) {
 							ResourceView reservedResource = reservedResources.next();
@@ -176,17 +165,17 @@ public class ShowProjectsRequest extends Request {
 						}
 					}
 					if(task.isOnTime(facade.getCurrentTime())) {
-						taskHeader.append(", on time");
+						taskHeader.append("\n    on time");
 					}
 					else {
-						taskHeader.append(", over time by " + task.getOverTimePercentage(facade.getCurrentTime()) + "%");
+						taskHeader.append("\n    over time by " + task.getOverTimePercentage(facade.getCurrentTime()) + "%");
 					}
 					if(facade.getResponsibleBranch(project, tasks.get(taskID), branch).isPresent()) {
-						taskHeader.append(", responsible branch " + facade.getResponsibleBranch(project, tasks.get(taskID), branch).get().getGeographicLocation());
+						taskHeader.append("\n    responsible branch " + facade.getResponsibleBranch(project, tasks.get(taskID), branch).get().getGeographicLocation());
 					}
 					if(task.hasPrerequisites()) {
 						List<TaskView> prereqs = task.getPrerequisites();
-						taskHeader.append(", depends on");
+						taskHeader.append("\n    depends on");
 						for(int i = 0 ; i < prereqs.size() ; i++) {
 							if(i == 0)
 								taskHeader.append(" task \"" + prereqs.get(i).getDescription() + "\"");
@@ -197,10 +186,10 @@ public class ShowProjectsRequest extends Request {
 						}
 					}
 					if(task.isAlternative()) {
-						taskHeader.append(", alternative to task \"" + task.getAlternativeTo().getDescription() + "\"");
+						taskHeader.append("\n    alternative to task \"" + task.getAlternativeTo().getDescription() + "\"");
 					}
 					if(task.hasEnded()){
-						taskHeader.append(", started " + task.getStartTime().format(dateTimeFormatter) + " , finished " + task.getEndTime().format(dateTimeFormatter));
+						taskHeader.append("\n    started " + task.getStartTime().format(dateTimeFormatter) + " , finished " + task.getEndTime().format(dateTimeFormatter));
 					}
 					System.out.println(taskHeader.toString()); // PRINT SELECTED TASK HEADER
 
