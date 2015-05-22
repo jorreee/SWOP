@@ -265,7 +265,7 @@ public class Project implements Dependant {
 	 * @return 	the unwrapped Task if it belonged to this project
 	 * @throws IllegalArgumentException, UnexpectedViewContentException 
 	 */
-	private Task unwrapTaskView(TaskView view) 
+	protected Task unwrapTaskView(TaskView view) 
 			throws IllegalArgumentException, UnexpectedViewContentException {
 		if(view == null) {
 			throw new IllegalArgumentException("There was no task to unwrap!");

@@ -334,12 +334,23 @@ public class UseCase7DelegateTaskTest {
 		branchManager.delegateTask(branchManager.getProjects().get(3), branchManager.getProjects().get(3).getTasks().get(0), branchManager.getBranches().get(1));
 		assertEquals(branchManager.getProjects().get(3).getTasks().get(0).getStatusAsString(),"Delegated");
 		branchManager.selectBranch(branchManager.getBranches().get(1));
-		TaskView delegationTask = branchManager.getAllProjects().get(0).getTasks().get(0);
+		ProjectView delegationProject = branchManager.getAllProjects().get(0);
+		TaskView delegationTask = delegationProject.getTasks().get(0);
 		assertEquals(delegationTask.getStatusAsString(),"Unavailable");
 		assertEquals(delegationTask.getDescription(),"TASK 30");
-		branchManager.planTask(branchManager.getAllProjects().get(0), branchManager.getAllProjects().get(0).getTasks().get(0), task30Start, task31ConcreteResources,devList3);
-		delegationTask = branchManager.getAllProjects().get(0).getTasks().get(0);
+		
+		branchManager.planTask(delegationProject, delegationTask, task30Start, task31ConcreteResources,devList3);
 		assertEquals(delegationTask.getStatusAsString(),"Available");
+		
+		branchManager.advanceTimeTo(workdate5);
+		
+		branchManager.setTaskExecuting(delegationProject, delegationTask, task30Start);
+		assertEquals(delegationTask.getStatusAsString(),"Executing");	
+		
+//		branchManager.advanceTimeTo(workdate5);
+		
+		branchManager.setTaskFinished(delegationProject, delegationTask, task30End);
+		
 	}
 	
 	@Test
