@@ -2,14 +2,14 @@ package test.UseCases;
 
 import static org.junit.Assert.assertEquals;
 
+import java.time.LocalDateTime;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import java.time.LocalDateTime;
-
 import userInterface.IFacade;
 import userInterface.TaskManException;
+
 import company.BranchManager;
 import company.taskMan.resource.ResourceView;
 

@@ -9,10 +9,11 @@ import java.time.LocalDateTime;
 import org.junit.Before;
 import org.junit.Test;
 
-import company.BranchManager;
-import company.taskMan.ProjectView;
 import userInterface.IFacade;
 import userInterface.TaskManException;
+
+import company.BranchManager;
+import company.taskMan.ProjectView;
 
 public class UseCase3CreateProjectTest {
 

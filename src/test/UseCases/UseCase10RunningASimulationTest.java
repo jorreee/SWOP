@@ -1,11 +1,8 @@
 package test.UseCases;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
-
-
-
+import static org.junit.Assert.assertTrue;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -18,12 +15,13 @@ import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
 
+import userInterface.IFacade;
+
 import company.BranchManager;
 import company.BranchView;
 import company.taskMan.ProjectView;
 import company.taskMan.project.TaskView;
 import company.taskMan.resource.ResourceView;
-import userInterface.IFacade;
 
 public class UseCase10RunningASimulationTest {
 

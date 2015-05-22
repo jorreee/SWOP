@@ -8,13 +8,13 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Lists;
-
 import company.taskMan.resource.Resource;
 import company.taskMan.resource.ResourceManager;
 import company.taskMan.resource.ResourcePrototype;
 import company.taskMan.resource.ResourceView;
 import company.taskMan.resource.user.User;
 import company.taskMan.util.TimeSpan;
+
 import exceptions.NoSuchResourceException;
 import exceptions.ResourceUnavailableException;
 

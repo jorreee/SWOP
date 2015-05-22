@@ -9,11 +9,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import userInterface.IFacade;
+import userInterface.TaskManException;
+
 import company.taskMan.ProjectView;
 import company.taskMan.project.TaskView;
 import company.taskMan.resource.ResourceView;
-import userInterface.IFacade;
-import userInterface.TaskManException;
 
 public class PlanTaskRequest extends Request {
 

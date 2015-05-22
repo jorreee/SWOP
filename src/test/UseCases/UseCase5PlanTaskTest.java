@@ -1,6 +1,7 @@
 package test.UseCases;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -13,6 +14,9 @@ import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
 
+import userInterface.IFacade;
+import userInterface.TaskManException;
+
 import company.BranchManager;
 import company.taskMan.ProjectView;
 import company.taskMan.project.TaskView;
@@ -20,8 +24,6 @@ import company.taskMan.resource.AvailabilityPeriod;
 import company.taskMan.resource.ResourcePrototype;
 import company.taskMan.resource.ResourceView;
 import company.taskMan.resource.user.UserPrototype;
-import userInterface.IFacade;
-import userInterface.TaskManException;
 
 public class UseCase5PlanTaskTest {
 	private IFacade branchManager;

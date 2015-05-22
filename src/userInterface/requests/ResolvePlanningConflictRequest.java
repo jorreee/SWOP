@@ -4,10 +4,11 @@ import java.io.BufferedReader;
 import java.util.List;
 import java.util.Map;
 
-import company.taskMan.ProjectView;
-import company.taskMan.project.TaskView;
 import userInterface.IFacade;
 import userInterface.TaskManException;
+
+import company.taskMan.ProjectView;
+import company.taskMan.project.TaskView;
 
 public class ResolvePlanningConflictRequest extends Request {
 

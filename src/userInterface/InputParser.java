@@ -2,7 +2,6 @@ package userInterface;
 
 import java.io.BufferedReader;
 
-import company.taskMan.resource.user.UserPermission;
 import userInterface.requests.AdvanceTimeRequest;
 import userInterface.requests.ChangeUserRequest;
 import userInterface.requests.CreateProjectRequest;
@@ -17,6 +16,8 @@ import userInterface.requests.Request;
 import userInterface.requests.ShowProjectsRequest;
 import userInterface.requests.SimulationRequest;
 import userInterface.requests.UpdateTaskStatusRequest;
+
+import company.taskMan.resource.user.UserPermission;
 
 public class InputParser {
 

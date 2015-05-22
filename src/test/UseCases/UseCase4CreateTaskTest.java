@@ -15,6 +15,9 @@ import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
 
+import userInterface.IFacade;
+import userInterface.TaskManException;
+
 import company.BranchManager;
 import company.taskMan.ProjectView;
 import company.taskMan.project.Project;
@@ -23,8 +26,6 @@ import company.taskMan.resource.ResourceManager;
 import company.taskMan.resource.ResourcePrototype;
 import company.taskMan.resource.ResourceView;
 import company.taskMan.task.Task;
-import userInterface.IFacade;
-import userInterface.TaskManException;
 
 public class UseCase4CreateTaskTest {
 

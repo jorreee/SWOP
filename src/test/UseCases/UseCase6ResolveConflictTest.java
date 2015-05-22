@@ -1,6 +1,7 @@
 package test.UseCases;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -10,22 +11,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-
-
-
-
-
-
-
-
 import org.junit.Before;
 import org.junit.Test;
+
+import userInterface.IFacade;
 
 import company.BranchManager;
 import company.taskMan.ProjectView;
 import company.taskMan.project.TaskView;
 import company.taskMan.resource.ResourceView;
-import userInterface.IFacade;
 
 public class UseCase6ResolveConflictTest {
 

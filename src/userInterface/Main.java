@@ -27,6 +27,7 @@ import java.util.Queue;
 
 import userInterface.requests.ChangeBranchRequest;
 import userInterface.requests.Request;
+
 import company.BranchManager;
 import company.BranchView;
 import company.taskMan.ProjectView;
@@ -42,16 +43,15 @@ public class Main {
 	private static List<Delegation> delegations = new ArrayList<>();
 
 
-	public static void main(String[] args) throws IOException {	
-
+	public static void main(String[] args) throws IOException {
+		System.out.println("~~~~~~~~~~~~~~~ TASKMAN ~~~~~~~~~~~~~~~");	
 		IFacade facade;
 		if(args.length < 1) {
-			System.out.println("Error: You need to type the path to an initialisation file");
-			System.exit(0);
+			System.out.println("Loading default initialization file from input folder (has to be in the same path as system.jar!");
+			facade = initializeFromFile(new File("input" + File.separator + "init.tman"));
+		} else {		
+			facade = initializeFromFile(new File(args[0]));
 		}
-		
-		System.out.println("~~~~~~~~~~~~~~~ TASKMAN ~~~~~~~~~~~~~~~");	
-		facade = initializeFromFile(new File(args[0]));
 		
 		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 

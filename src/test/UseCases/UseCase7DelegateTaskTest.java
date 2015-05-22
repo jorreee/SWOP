@@ -14,11 +14,10 @@ import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.google.common.collect.Lists;
-
 import userInterface.IFacade;
 import userInterface.TaskManException;
 
+import com.google.common.collect.Lists;
 import company.BranchManager;
 import company.taskMan.ProjectView;
 import company.taskMan.project.TaskView;

@@ -7,11 +7,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import userInterface.IFacade;
+import userInterface.TaskManException;
+
 import company.taskMan.ProjectView;
 import company.taskMan.project.TaskView;
 import company.taskMan.resource.ResourceView;
-import userInterface.IFacade;
-import userInterface.TaskManException;
 
 public class CreateTaskRequest extends Request {
 

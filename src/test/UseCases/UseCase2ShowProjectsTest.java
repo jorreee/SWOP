@@ -15,11 +15,12 @@ import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
 
+import userInterface.IFacade;
+
 import company.BranchManager;
 import company.taskMan.ProjectView;
 import company.taskMan.project.TaskView;
 import company.taskMan.resource.ResourceView;
-import userInterface.IFacade;
 
 public class UseCase2ShowProjectsTest {
 

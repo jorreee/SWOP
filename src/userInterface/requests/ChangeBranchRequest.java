@@ -41,16 +41,17 @@ public class ChangeBranchRequest extends Request{
 				}
 
 				facade.selectBranch(branches.get(Integer.parseInt(userInput)));
+
+				// SELECT USER
+				ChangeUserRequest chr = new ChangeUserRequest(facade, inputReader);
+				return chr.execute();	
+				
 			} catch(TaskManException e) {
 				System.out.println(e.getMessage());
 			} catch(Exception e) {
 				e.printStackTrace();
 				System.out.println("Invalid branch, try again");
-			}
-
-			// SELECT USER
-			ChangeUserRequest chr = new ChangeUserRequest(facade, inputReader);
-			return chr.execute();		
+			}	
 		}
 	}
 

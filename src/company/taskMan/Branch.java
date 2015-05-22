@@ -10,7 +10,6 @@ import java.util.Optional;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
-
 import company.BranchView;
 import company.taskMan.project.DelegationProject;
 import company.taskMan.project.Project;
@@ -24,6 +23,7 @@ import company.taskMan.task.DelegatingTask;
 import company.taskMan.task.DelegatingTaskProxy;
 import company.taskMan.task.OriginalTaskProxy;
 import company.taskMan.task.Task;
+
 import exceptions.ResourceUnavailableException;
 import exceptions.UnexpectedViewContentException;
 

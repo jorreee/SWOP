@@ -5,6 +5,8 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 
+import userInterface.TaskManException;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import company.taskMan.resource.Resource;
@@ -17,7 +19,6 @@ import company.taskMan.task.OriginalTaskProxy;
 import company.taskMan.task.Task;
 import company.taskMan.util.TimeSpan;
 
-import exceptions.NoSuchResourceException;
 import exceptions.ResourceUnavailableException;
 
 /**
@@ -128,28 +129,6 @@ public class TaskView {
 		}
 		return taskPrereqs.build();
 	}
-	
-//	/**
-//	 * Check whether or not this (failed) task is replaced by another
-//	 * 
-//	 * @return True when this task has a replacement, false when it has not
-//	 */
-//	public boolean hasReplacement() {
-//		return getReplacement() != null;
-//	}
-//
-//	/**
-//	 * A method to retrieve the replacement of this (failed) task
-//	 * 
-//	 * @return the replacement of this task
-//	 */
-//	public TaskView getReplacement() {
-//		Task rep = task.getReplacement();
-//		if (rep == null) {
-//			return null;
-//		}
-//		return new TaskView(rep);
-//	}
 
 	/**
 	 * Check whether or not this task replaces another (failed) task
@@ -338,18 +317,18 @@ public class TaskView {
 	 *            | The amount of suggestions that should be returned
 	 * @return a given amount of suggested starting times for the task to be
 	 *         planned at
-	 * @throws IllegalArgumentException
-	 * 			| If the supplied arguments are invalid
-	 * @throws NoSuchResourceException
-	 * 			| If the resourceView didn't contain a valid resource
-	 * @throws ResourceUnavailableException 
-	 * 			| If the supplied resources aren't available for reservation
+	 * @throws TaskManException
+	 * 			| if the supplied arguments are invalid 
 	 */
 	public List<LocalDateTime> getPossibleStartingTimes(
 			List<ResourceView> concRes, LocalDateTime currentTime, int amount) 
-				throws ResourceUnavailableException, NoSuchResourceException, IllegalArgumentException {
+				throws TaskManException {
 		ImmutableList.Builder<LocalDateTime> times = ImmutableList.builder();
-		times.addAll(task.getPossibleTaskStartingTimes(concRes, currentTime, amount));
+		try{
+			times.addAll(task.getPossibleTaskStartingTimes(concRes, currentTime, amount));
+		} catch (IllegalArgumentException | ResourceUnavailableException e) {
+			throw new TaskManException(e);
+		}
 		return times.build();
 	}
 

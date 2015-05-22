@@ -2,8 +2,8 @@ package company;
 
 import java.util.List;
 
-import company.taskMan.ProjectView;
 import company.taskMan.Branch;
+import company.taskMan.ProjectView;
 
 /**
  * A BranchView is a wrapper for Branches. The BranchView only has limited
