@@ -1,4 +1,4 @@
-systemTime: "2014-04-01 09:00"
+systemTime: "2015-02-03 08:00"
 
 dailyAvailability :
   - startTime : "12:00"
@@ -10,21 +10,17 @@ resourceTypes:
     requires          : []
     conflictsWith     : []
     dailyAvailability :
-  - name              : "white board"
+  - name              : "marker"
     requires          : []
     conflictsWith     : []
     dailyAvailability :
-  - name              : "demo kit"
-    requires          : []
-    conflictsWith     : [1]
+  - name              : "white board"
+    requires          : [1]
+    conflictsWith     : []
     dailyAvailability :
   - name              : "conference room"
-    requires          : [2]
-    conflictsWith     : [3]
-    dailyAvailability :
-  - name              : "distributed testing setup"
     requires          : []
-    conflictsWith     : []
+    conflictsWith     : [3]
     dailyAvailability :
   - name              : "data center"
     requires          : []
@@ -32,6 +28,6 @@ resourceTypes:
     dailyAvailability : 0
   
   branches:
-    - file            : "input.tman"
-    - file            : "input2.tman"
-    - file            : "input3.tman"
+    - file            : "sparta.tman"
+    - file            : "maaskantje.tman"
+    - file            : "skyrim.tman"

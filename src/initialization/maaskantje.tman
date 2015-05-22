@@ -1,0 +1,69 @@
+# The file format is a simple subset of YAML.
+# Everything after '#' is ignored (i.e. single line comment)
+
+geographicLocation: "Maaskantje"
+
+resources:
+  - name: "Car 1"
+    type: 0
+  - name: "marker 1"
+    type: 1
+  - name: "White Board 1"
+    type: 2
+  - name: "Data Center X"
+    type: 4
+  - name: "Data Center Y"
+    type: 4
+
+developers:
+  - name : "Dave"
+  - name : "Richard"
+  - name : "Gerrie"
+  - name : "Barry"
+
+projects:
+  - name         : "project x"
+    description  : "a project description"
+    creationTime : "2015-01-28 10:00" # YYYY-MM-DD HH:MM
+    dueTime      : "2015-02-10 12:00"
+
+plannings:
+  - plannedStartTime : "2015-01-28 12:00"
+    developers       : [0, 1, 2, 3]
+
+tasks:
+    # projects and tasks are incrementally numbered starting with the number 0
+  - project            : 1
+    description        : "task description"
+    estimatedDuration  : 5
+    acceptableDeviation: 0
+    alternativeFor     :
+    prerequisiteTasks  :
+    ### TMAN UPDATE ###
+    # during task creation, required resources and their quantity should be specified
+    requiredResources  : [{type: 4,  quantity: 1}]
+    planning           : 0
+    # a task can be finished, failed, delegated, executing or unspecified (i.e. ongoing)
+    status             : failed
+    # The branch responsible for the task : index of tman file corresponding to the branch or nothing (this branch is responsible)
+    # These time stamps are only required if a task is finished of failed
+    startTime          : "2015-01-28 12:00"
+    endTime            : "2015-01-28 17:00"
+
+  - project            : 1
+    description        : "another task description"
+    estimatedDuration  : 480
+    acceptableDeviation: 10
+    alternativeFor     : 0
+    prerequisiteTasks  :
+    requiredResources  : [{type:4, quantity: 1}]
+    planning           :
+    ### TMAN UPDATE ###
+    # Original status was available, but no executing in system yet, so for completion
+    status             :
+
+reservations:
+  - resource:   3
+    task:       0
+    startTime:  "2015-01-28 12:00"
+    endTime:    "2015-01-28 12:05"

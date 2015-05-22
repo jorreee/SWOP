@@ -1,0 +1,74 @@
+# The file format is a simple subset of YAML.
+# Everything after '#' is ignored (i.e. single line comment)
+
+geographicLocation: "Skyrim"
+
+resources:
+  - name: "Marker 1"
+    type: 1
+  - name: "Marker 2"
+    type: 1
+  - name: "White Board 1"
+    type: 2
+  - name: "White Board 2"
+    type: 2
+  - name: "The Big Conference Room"
+    type: 3
+  - name: "The Small Conference Room"
+    type: 3
+
+developers:
+  - name : "Balgruf"
+  - name : "Ulfric"
+  - name : "Tullius"
+  - name : "Dovahkiin"
+
+projects:
+  - name         : "project 1"
+    description  : "a project description"
+    creationTime : "2014-05-01 09:00" # YYYY-MM-DD HH:MM
+    dueTime      : "2014-05-10 13:00"
+
+  - name         : "project 2"
+    description  : "Finish Skyrim"
+    creationTime : "2014-12-20 08:00"
+    dueTime      : "2015-02-05 10:00"
+
+plannings:
+  - plannedStartTime : "2014-05-05 13:00"
+    developers       : [0]
+  - plannedStartTime : "2014-12-20 08:00"
+    developers       : [3]
+
+tasks:
+    # projects and tasks are incrementally numbered starting with the number 0
+  - project            : 1
+    description        : "task description"
+    estimatedDuration  : 2880
+    acceptableDeviation: 0
+    alternativeFor     :
+    prerequisiteTasks  :
+    requiredResources  : 
+    planning           : 0
+    # a task can be finished, failed, delegated, executing or unspecified (i.e. ongoing)
+    status             : finished
+    # The branch responsible for the task : index of tman file corresponding to the branch or nothing (this branch is responsible)
+    # These time stamps are only required if a task is finished of failed
+    startTime          : "2014-05-05 13:00"
+    endTime            : "2014-05-15 08:00"
+
+  - project            : 2
+    description        : "Finish skyrim"
+    estimatedDuration  : 18000
+    acceptableDeviation: 50
+    alternativeFor     :
+    prerequisiteTasks  :
+    requiredResources  :
+    planning           : 1
+    ### TMAN UPDATE ###
+    # Original status was available, but no executing in system yet, so for completion
+    status             : executing
+    # An executing task requires an actual start time
+    startTime          : "2014-12-20 08:00"
+
+reservations:

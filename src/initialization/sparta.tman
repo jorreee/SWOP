@@ -1,0 +1,159 @@
+# The file format is a simple subset of YAML.
+# Everything after '#' is ignored (i.e. single line comment)
+
+geographicLocation: "Sparta"
+
+resources:
+  - name: "Car 1"
+    type: 0
+  - name: "Car 2"
+    type: 0
+  - name: "Car 3"
+    type: 0
+  - name: "Car 4"
+    type: 0
+  - name: "Car 5"
+    type: 0
+  - name: "Car 6"
+    type: 0
+  - name: "Car 7"
+    type: 0
+  - name: "Car 8"
+    type: 0
+  - name: "Car 9"
+    type: 0
+  - name: "Car 10"
+    type: 0
+  - name: "Car 11"
+    type: 0
+  - name: "Car 12"
+    type: 0
+  - name: "White Board 1"
+    type: 2
+  - name: "White Board 2"
+    type: 2
+  - name: "White Board 3"
+    type: 2
+  - name: "White Board 4"
+    type: 2
+  - name: "White Board 5"
+    type: 2
+  - name: "Marker 1"
+    type: 1
+  - name: "Marker 2"
+    type: 1
+  - name: "Marker 3"
+    type: 1
+  - name: "Marker 4"
+    type: 1
+  - name: "Marker 5"
+    type: 1
+  - name: "Marker 6"
+    type: 1
+  - name: "Marker 7"
+    type: 1
+  - name: "Marker 8"
+    type: 1
+  - name: "Marker 9"
+    type: 1
+  - name: "Marker 10"
+    type: 1
+
+developers:
+  - name : "Achilles"
+  - name : "Weer"
+  - name : "Jan"
+  - name : "Rikkert"
+
+projects:
+  - name         : "project x"
+    description  : "a project description"
+    creationTime : "2015-01-26 09:00" # YYYY-MM-DD HH:MM
+    dueTime      : "2015-02-06 14:00"
+
+  - name         : "project y"
+    description  : "another project description"
+    creationTime : "2015-02-02 16:00"
+    dueTime      : "2015-02-10 12:00"
+    
+  - name         : "project z"
+    description  : "yet another project description"
+    creationTime : "2015-02-02 16:00"
+    dueTime      : "2015-02-12 12:00"
+
+plannings:
+  - plannedStartTime : "2015-01-26 10:00"
+    developers       : [0, 3]
+  - plannedStartTime : "2015-02-03 08:00"
+    developers       : [1, 2]
+
+tasks:
+    # projects and tasks are incrementally numbered starting with the number 0
+    # project 0 represents delegating tasks
+  - project            : 1
+    description        : "task description"
+    estimatedDuration  : 480
+    acceptableDeviation: 5
+    alternativeFor     :
+    prerequisiteTasks  :
+    ### TMAN UPDATE ###
+    # during task creation, required resources and their quantity should be specified
+    requiredResources  : [{type: 0,  quantity: 1}]
+    planning           : 0
+    # a task can be finished, failed, delegated, executing or unspecified (i.e. ongoing)
+    status             : finished
+    # The branch responsible for the task : index of tman file corresponding to the branch or nothing (this branch is responsible)
+    # These time stamps are only required if a task is finished of failed
+    startTime          : "2015-01-26 10:00"
+    endTime            : "2015-01-27 10:00"
+
+  - project            : 1
+    description        : "another task description"
+    estimatedDuration  : 960
+    acceptableDeviation: 5
+    alternativeFor     :
+    prerequisiteTasks  :
+    requiredResources  : [{type: 1, quantity: 2},{type: 2, quantity: 2},{type: 3, quantity: 1}]
+    planning           :
+    status             : delegated
+    responsibleBranch  : 1
+
+  - project            : 2
+    description        : "yet another task description"
+    estimatedDuration  : 300
+    acceptableDeviation: 20
+    alternativeFor     :
+    prerequisiteTasks  :
+    requiredResources  : [{type: 1, quantity: 1}]
+    planning           : 1
+    status             :
+
+  - project            : 3
+    description        : "this task is a prereq"
+    estimatedDuration  : 1200
+    acceptableDeviation: 10
+    alternativeFor     :
+    prerequisiteTasks  :
+    requiredResources  :
+    planning           :
+    status             :
+
+  - project            : 3
+    description        : "this task has a prereq"
+    estimatedDuration  : 600
+    acceptableDeviation: 20
+    alternativeFor     :
+    prerequisiteTasks  : [ 3 ]
+    requiredResources  :
+    planning           :
+    status             :
+
+reservations:
+  - resource:   0
+    task:       0
+    startTime:  "2015-01-26 10:00"
+    endTime:    "2015-01-27 10:00"
+  - resource:   18
+    task:       2
+    startTime:  "2015-02-03 08:00"
+    endTime:    "2015-02-03 13:00"
