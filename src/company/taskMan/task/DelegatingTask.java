@@ -7,6 +7,12 @@ import java.util.Map;
 import company.taskMan.resource.ResourceManager;
 import company.taskMan.resource.ResourceView;
 
+/**
+ * This task is a specialized task for delegating tasks
+ * 
+ * @author Tim Van Den Broecke, Joran Van de Woestijne, Vincent Van Gestel and
+ *         Eli Vangrieken
+ */
 public class DelegatingTask extends Task {
 	
 	private OriginalTaskProxy proxy;
@@ -19,6 +25,12 @@ public class DelegatingTask extends Task {
 				new ArrayList<Task>(), requiredResources, alternativeFor);
 	}
 	
+	/**
+	 * Set the proxy this task should notify
+	 * 
+	 * @param newProxy
+	 *            | The new proxy linked to this task
+	 */
 	public void setProxy(OriginalTaskProxy newProxy) {
 		this.proxy = newProxy;
 	}
@@ -40,14 +52,15 @@ public class DelegatingTask extends Task {
 	}
 	
 	/**
-	 * Returns prerequisites based on the remote proxy ONLY for the 
-	 * purpose of making this task available. 
-	 * If the proxy has unfinished prerequisites the returned list 
-	 * will contain THIS, and THIS will always return false for 
-	 * hasFinishedEndpoint().
-	 * If the proxy has no more unfinished prerequisites this method
-	 * will return an empty list, thus giving the idea that there are 
-	 * 'no unfinished prerequisites'. 
+	 * Returns prerequisites based on the remote proxy ONLY for the purpose of
+	 * making this task available. If the proxy has unfinished prerequisites the
+	 * returned list will contain THIS, and THIS will always return false for
+	 * hasFinishedEndpoint(). If the proxy has no more unfinished prerequisites
+	 * this method will return an empty list, thus giving the idea that there
+	 * are 'no unfinished prerequisites'.
+	 * 
+	 * @return a reference to this task in a list if the proxy has unfinished
+	 *         prerequisites reported from the linked branch
 	 */
 	@Override
 	public List<Task> getPrerequisites() {

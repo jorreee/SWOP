@@ -17,8 +17,9 @@ import company.taskMan.task.Task;
 
 /**
  * This class represents a system memento. These mementos contain data
- * representing the system at a specific moment in time. The TaskManCaretaker is
- * capable of using these mementos in order to save and restore the system
+ * representing the system at a specific moment in time. The TaskManCaretaker
+ * can choose to discard these mementos if no longer needed, or order them to
+ * revert the system to the state stored in the specific memento.
  * 
  * @author Tim Van Den Broecke, Joran Van de Woestijne, Vincent Van Gestel and
  *         Eli Vangrieken
@@ -36,13 +37,22 @@ public class TaskManMemento {
 	private final List<DelegatedTaskMemento> delegatedTasks;
 	
 	/**
-	 * Construct a memento with a specified string (a TMAN)
+	 * Construct a memento with a string representation of the system, a user
+	 * (the current user), the time and maps and mementos containing data for
+	 * re-linking proxies
 	 * 
 	 * @param taskmanToSave
-	 *            | A string in the format of a TMAN file, the files used for
-	 *            initialization at system startup
-	 * @param delegatedTasks 
-	 * @param originalProxyCurrentBranchMemento 
+	 *            | The string representation of the system, comparable to the
+	 *            TMAN files used at initialization
+	 * @param currentUserLoggedIn
+	 *            | The user logged in the system when the memento was saved
+	 * @param currentSystemTime
+	 *            | The time when the memento was saved
+	 * @param originalTaskProxy
+	 *            | A map linking delegating tasks to their respective proxies
+	 * @param delegatedTasks
+	 *            | A data structure linking delegated tasks with their
+	 *            respective proxies
 	 */
 	public TaskManMemento(String taskmanToSave, ResourceView currentUserLoggedIn, LocalDateTime currentSystemTime, Map<Integer, OriginalTaskProxy> originalTaskProxy, List<DelegatedTaskMemento> delegatedTasks) {
 		this.taskman = taskmanToSave;

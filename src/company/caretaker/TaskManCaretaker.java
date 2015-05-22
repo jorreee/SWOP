@@ -36,7 +36,7 @@ public class TaskManCaretaker {
 	 * Constructs a caretaker linked to a specific facade
 	 * 
 	 * @param branchManager
-	 *            | the facade with which the caretaker will talk (its taskman
+	 *            | the facade with which the caretaker will talk (its elements
 	 *            can be saved and restored)
 	 */
 	public TaskManCaretaker(BranchManager branchManager) {
@@ -55,13 +55,12 @@ public class TaskManCaretaker {
 	/**
 	 * The Build Memento method will ask the system for specific details about
 	 * its current state. This happens through the facade. The method will
-	 * return a string in the format of a TMAN file. These TMAN files can be
-	 * considered snapshots of a system and are also used for initialization at
-	 * startup.
+	 * return a memento containing a string representation of most elements in
+	 * the system and several containers linking specific tasks with proxies.
+	 * The name of the current user is also saved.
 	 * 
-	 * @return The TMAN string based upon the current state of the system
+	 * @return The memento of the system
 	 */
-	// TODO bring docu up to date
 	private TaskManMemento buildMemento() {
 		StringBuilder tman = new StringBuilder();
 		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
@@ -253,8 +252,7 @@ public class TaskManCaretaker {
 	/**
 	 * This method will ask the facade to recreate its current TaskMan. This
 	 * TaskMan will be initialized with values stored in the memento on the top
-	 * of the stack. In the case of a simulation, the last simulation started
-	 * will be reverted first.
+	 * of the stack.
 	 */
 	public void revertFromMemento() {
 		TaskManMemento memento = mementos.pop();

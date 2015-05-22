@@ -9,8 +9,19 @@ import company.taskMan.resource.ResourceView;
 import company.taskMan.task.DelegatingTask;
 import company.taskMan.task.Task;
 
+/**
+ * This project is a special kind of project, designed to maintain delegating
+ * tasks
+ * 
+ * @author Tim Van Den Broecke, Joran Van de Woestijne, Vincent Van Gestel and
+ *         Eli Vangrieken
+ */
 public class DelegationProject extends Project {
 	
+	/**
+	 * Default constructor to create a new delegation project, branches only
+	 * require one of these
+	 */
 	public DelegationProject() {
 		super("Delegation Project", "A hidden project to collect delegated tasks", LocalDateTime.now(), LocalDateTime.now().plusMinutes(1));
 	}
@@ -18,6 +29,9 @@ public class DelegationProject extends Project {
 	/**
 	 * When a task is delegated again, the reference will be removed from this
 	 * project
+	 * 
+	 * @param task
+	 *            | The task to remove
 	 */
 	@Override
 	public void removeTask(TaskView task) {

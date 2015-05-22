@@ -626,16 +626,53 @@ public class Project implements Dependant {
 		return conflictTasks;
 	}
 
-	public Optional<BranchView> getResponsibleBranch(BranchRepresentative delegator, TaskView task) {
-		return delegator.getResponsibleBranch(task.unwrap());
+	/**
+	 * Determine whether or not the taskview contains a task belonging to this
+	 * project, if so, the branch representative will be queried for the
+	 * possible presence of a responsible branch for the given task.
+	 * 
+	 * @param branchRep
+	 *            | The representative of the branch this project belongs to
+	 * @param task
+	 *            | A task to get the responsible branch for
+	 * @return The branch responsible for the given task if present
+	 */
+	public Optional<BranchView> getResponsibleBranch(BranchRepresentative branchRep, TaskView task) {
+		Task t = unwrapTaskView(task);
+		return branchRep.getResponsibleBranch(t);
 	}
 
+	/**
+	 * Delegate a task belonging to this project from the branch this project
+	 * belongs to, to another branch
+	 * 
+	 * @param branchRep
+	 *            | The representative responsible for inter-branch
+	 *            communication
+	 * @param task
+	 *            | The delegated task
+	 * @param origBranch
+	 *            | The branch the task originates from
+	 * @param newBranch
+	 *            | The branch the task is delegated to
+	 */
 	public void delegateTask(BranchRepresentative branchRep, TaskView task,
 			Branch origBranch, Branch newBranch) {
 		Task t = unwrapTaskView(task);
 		branchRep.delegateTask(t, origBranch, newBranch);
 	}
 	
+	/**
+	 * A method to retrieve a reference to the delegating task of a delegated
+	 * task
+	 * 
+	 * @param branchRep
+	 *            | The representative responsible for inter-branch
+	 *            communication
+	 * @param task
+	 *            | The delegated task
+	 * @return The delegating task delegating the delegated task
+	 */
 	public Optional<TaskView> getDelegatingTask(BranchRepresentative branchRep, TaskView task) {
 		Optional<TaskView> delTask = branchRep.getDelegatingTask(unwrapTaskView(task));
 		if(delTask.isPresent()) {
@@ -643,5 +680,4 @@ public class Project implements Dependant {
 		}
 		return Optional.empty();
 	}
-
 }

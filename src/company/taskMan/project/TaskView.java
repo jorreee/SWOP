@@ -7,15 +7,16 @@ import java.util.Map;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-
 import company.taskMan.resource.Resource;
 import company.taskMan.resource.ResourcePrototype;
 import company.taskMan.resource.ResourceView;
 import company.taskMan.resource.user.User;
+import company.taskMan.task.DelegatingTask;
 import company.taskMan.task.DelegatingTaskProxy;
 import company.taskMan.task.OriginalTaskProxy;
 import company.taskMan.task.Task;
 import company.taskMan.util.TimeSpan;
+
 import exceptions.NoSuchResourceException;
 import exceptions.ResourceUnavailableException;
 
@@ -427,24 +428,38 @@ public class TaskView {
 		return resRes.build();
 	}
 
+	/**
+	 * Check whether the task is in a delegated state
+	 * 
+	 * @return True if the task is delegated
+	 */
 	public boolean isDelegated() {
 		return task.isDelegated();
 	}
 
 	/**
-	 * Dirty method for the simulation
-	 * @param newOriginalProxies 
+	 * Link the task belonging to this view with an originalTaskProxy
+	 * 
+	 * @param newOriginalProxies
+	 *            | The mapping between tasks and proxies, this should be
+	 *            updated
 	 * @param otp
+	 *            | The proxy that should be linked with this task
 	 */
 	public void link(Map<Task, OriginalTaskProxy> newOriginalProxies, OriginalTaskProxy otp) {
 		otp.setTask(task);
+		((DelegatingTask) task).setProxy(otp);
 		newOriginalProxies.put(task, otp);
 	}
 	
 	/**
-	 * Dirty method for the simulation
+	 * Link the task belonging to this view with a delegatingTaskProxy
+	 * 
 	 * @param newDelegatingProxies
+	 *            | The mapping between tasks and proxies, this should be
+	 *            updated
 	 * @param delegatingProxy
+	 *            | The proxy that should be linked with this task
 	 */
 	public void link(Map<Task, DelegatingTaskProxy> newDelegatingProxies,
 			DelegatingTaskProxy delegatingProxy) {
