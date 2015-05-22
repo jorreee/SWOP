@@ -6,10 +6,12 @@ import static org.junit.Assert.assertFalse;
 
 
 
+
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -326,7 +328,7 @@ public class UseCase10RunningASimulationTest {
 	public void succesCaseDelegateRevertMemComplex(){
 		//create a task to delegate in branch leuven
 		ProjectView project0 = branchManager.getProjects().get(0);
-		branchManager.createTask(project0, "delegation", 60, 5, new ArrayList<TaskView>(), reqResTask00, null);
+		branchManager.createTask(project0, "delegationL", 60, 5, new ArrayList<TaskView>(), reqResTask00, null);
 		TaskView taskL = project0.getTasks().get( project0.getTasks().size()-1);
 		
 		//create a task to delegate in branch aarschot
@@ -334,7 +336,7 @@ public class UseCase10RunningASimulationTest {
 		branchManager.createProject("projectA0", "projectA0", project1DueDate);
 		assertEquals(1, branchManager.getProjects().size());
 		ProjectView projectA0 = branchManager.getProjects().get(0);
-		branchManager.createTask(projectA0, "test", 60, 5, new ArrayList<TaskView>(), reqResTask00, null);
+		branchManager.createTask(projectA0, "delegationA", 60, 5, new ArrayList<TaskView>(), reqResTask00, null);
 		assertEquals(1, projectA0.getTasks().size());
 		TaskView taskA = projectA0.getTasks().get(0);
 		
@@ -355,18 +357,61 @@ public class UseCase10RunningASimulationTest {
 		
 		//some actions
 		
-		//trololo
+		branchManager.advanceTimeTo(LocalDateTime.of(2015, 	2, 13, 15, 0));
 		
 		//revert memento
 		branchManager.revertFromMemento();
+		assertEquals(workDate3, branchManager.getCurrentTime());
+		
+		//test leuven branch
 		taskL = branchManager.getProjects().get(0).getTasks().get( project0.getTasks().size()-1);
 		delTask = branchManager.getResponsibleBranch(branchManager.getProjects().get(0), taskL, leuven);
 		assertTrue(delTask.isPresent());
+		assertEquals(4,branchManager.getAllProjects().size());
+		ProjectView delProj = branchManager.getAllProjects().get(0);
+		List<TaskView> delTasks = delProj.getTasks();
+		assertEquals(1, delTasks.size());
+		assertEquals("delegationA", delTasks.get(0).getDescription());
 		
+		//Test aarschot branch
 		branchManager.selectBranch(aarschot);
 		delTask = branchManager.getResponsibleBranch(projectA0, taskA, aarschot);
 		assertTrue(delTask.isPresent());
-
+		assertEquals(2,branchManager.getAllProjects().size());
+		delProj = branchManager.getAllProjects().get(0);
+		delTasks = delProj.getTasks();
+		assertEquals(1, delTasks.size());
+		assertEquals("delegationL", delTasks.get(0).getDescription());
+		assertFalse(projectA0.isFinished());
+		
+		//finish delegated task in leuven
+		branchManager.selectBranch(leuven);
+		delProj = branchManager.getAllProjects().get(0);
+		TaskView delegatedTask = delProj.getTasks().get(0);
+		
+		//reset resourceViews
+		task00Devs.clear();
+		dev1 = branchManager.getDeveloperList().get(0);
+		task00Devs.add(dev1);
+		dev2 = branchManager.getDeveloperList().get(1);
+		task00Devs.add(dev2);
+		task00ConcRes.clear();
+		task00ConcRes.add(branchManager.getConcreteResourcesForPrototype(branchManager.getResourcePrototypes().get(0)).get(0));
+		task00ConcRes.add(branchManager.getConcreteResourcesForPrototype(branchManager.getResourcePrototypes().get(0)).get(1));
+		task00ConcRes.add(branchManager.getConcreteResourcesForPrototype(branchManager.getResourcePrototypes().get(1)).get(0));
+		
+		//plan task
+		branchManager.planTask(delProj, delegatedTask, LocalDateTime.of(2015, 2, 13, 15, 0), task00ConcRes, task00Devs);
+		branchManager.advanceTimeTo(LocalDateTime.of(2015, 2, 14, 15, 0));
+		branchManager.changeToUser(dev1);
+		branchManager.setTaskExecuting(delProj, delegatedTask, LocalDateTime.of(2015, 2, 13, 15, 0));
+		branchManager.setTaskFinished(delProj, delegatedTask, LocalDateTime.of(2015, 2, 13, 16, 0));
+		
+		//check aarschot
+		branchManager.logout();
+		branchManager.selectBranch(aarschot);
+		assertEquals(1, branchManager.getProjects().size());
+		assertTrue(branchManager.getProjects().get(0).isFinished());
 	}
 	
 }
