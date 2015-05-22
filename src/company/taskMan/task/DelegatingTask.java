@@ -26,7 +26,7 @@ public class DelegatingTask extends Task {
 	}
 	
 	/**
-	 * Set the proxy this task should notify
+	 * Set the proxy this task should notify when it finished
 	 * 
 	 * @param newProxy
 	 *            | The new proxy linked to this task
@@ -35,17 +35,30 @@ public class DelegatingTask extends Task {
 		this.proxy = newProxy;
 	}
 	
+	/**
+	 * Notifies the OriginalTaskProxy that this delegating task has finished
+	 * @throws IllegalStateException
+	 * 			| if this task isn't linked to the correct OriginalTaskProxy
+	 */
 	@Override
 	protected void notifyFinished() throws IllegalStateException {
 		proxy.updateDependencyFinished(this);
 	}
 	
+	/**
+	 * Returns whether this task can be planned. This method will ask proxy
+	 * for this information.
+	 */
 	@Override
 	public boolean canBePlanned() {
 		return proxy.canBePlanned();
 	}
 
-	
+	/**
+	 * Return whether this task has a finished endpoint. This method will always
+	 * return false.
+	 * @return false
+	 */
 	@Override 
 	public boolean hasFinishedEndpoint() {
 		return false;
