@@ -632,32 +632,34 @@ public class Branch {
 	}
 
 	/**
-	 * Dirty method for simulation
-	 * @return
+	 * @return the original proxies of this branch representative
 	 */
 	public Map<Task, OriginalTaskProxy> getOriginalProxies() {
 		return branchRep.getOriginalProxies();
 	}
 
 	/**
-	 * Dirty method for simulation
-	 * @return
+	 * @return the delegating proxies of this branch representative
 	 */
 	public Map<Task, DelegatingTaskProxy> getDelegatingProxies() {
 		return branchRep.getDelegatingProxies();
 	}
 	
 	/**
-	 * Dirty method for simulation
+	 * Offer new task and (original) proxy pairings to the representative
+	 * 
 	 * @param proxies
+	 *            | The new task-proxy pairings present in the system
 	 */
 	public void offerOriginalTaskProxies(Map<Task, OriginalTaskProxy> proxies) {
 		branchRep.offerOriginalTaskProxies(proxies);		
 	}
 
 	/**
-	 * Dirty method for the simulation
+	 * Offer new task and (delegating) proxy pairings to the representative
+	 * 
 	 * @param proxies
+	 *            | The new task-proxy pairings present in the system
 	 */
 	public void offerDelegatingTaskProxies(
 			Map<Task, DelegatingTaskProxy> proxies) {

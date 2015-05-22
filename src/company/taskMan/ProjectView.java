@@ -98,7 +98,6 @@ public class ProjectView {
 	 */
 	public List<TaskView> getTasks() {
 		ImmutableList.Builder<TaskView> tasks = ImmutableList.builder();
-//		tasks.addAll(project.getTasks());
 		for(Task t : project.getTasks()) {
 			tasks.add(new TaskView(t));
 		}
@@ -113,12 +112,6 @@ public class ProjectView {
 	 */
 	public List<TaskView> getAvailableTasks() {
 		ImmutableList.Builder<TaskView> availableTasks = ImmutableList.builder();
-//		for (TaskView task : project.getTasks()) {
-//			if (task.isAvailable()) {
-//				availableTasks.add(task);
-//			}
-//		}
-//		return availableTasks.build();
 		for(Task t : project.getTasks()) {
 			if (t.isAvailable()) {
 				availableTasks.add(new TaskView(t));

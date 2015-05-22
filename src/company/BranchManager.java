@@ -36,6 +36,24 @@ import company.taskMan.task.Task;
 import exceptions.ResourceUnavailableException;
 import exceptions.UnexpectedViewContentException;
 
+/**
+ * The Branch manager is the independent organ linking to the outside world (the
+ * UI). The BranchManger is responsible for implementing all methods required by
+ * the User Interface. Additionally, the BranchManager will have links to all
+ * branches in the system, making it possible for the user to navigate to the
+ * correct branch. A User will be able to log into any branch using his
+ * credentials. The current system time will also be kept in the BranchManager,
+ * but this is rather for testing purposes than functionality. If the system
+ * would be published, it would probably use the actual time. The
+ * TaskManCaretaker will be responsible for a save and restore functionality as
+ * required by the simulation Use-Case. Finally the PrototypeManager will keep
+ * all data concerning resource types. All Branches in the system are forced to
+ * use the same prototypes, in order to remove any inconsistencies that could
+ * arise concerning resource types.
+ * 
+ * @author Tim Van Den Broecke, Joran Van de Woestijne, Vincent Van Gestel and
+ *         Eli Vangrieken
+ */
 public class BranchManager implements IFacade {
 	private List<Branch> branches;
 	private Branch currentBranch;
@@ -44,7 +62,12 @@ public class BranchManager implements IFacade {
 	private PrototypeManager protMan;
 	private final TaskManCaretaker caretaker;
 
-	
+	/**
+	 * Construct a new BranchManager at a certain time
+	 * 
+	 * @param time
+	 *            | The system time
+	 */
 	public BranchManager(LocalDateTime time) {
 		branches = new ArrayList<>();
 		caretaker = new TaskManCaretaker(this);
@@ -53,16 +76,8 @@ public class BranchManager implements IFacade {
 		currentTime = time;
 	}
 	
-//	public void declareBranch(LocalDateTime branchTime, String geographicLocation) {
-//		taskMen.add(new Branch(branchTime, geographicLocation));
-//	}
-//	
-//	public void initializeFromMemento() {
-//		this.taskMan = new TaskMan();
-//	}
-	
 	/**
-	 * declares a TaskMan
+	 * declares a Branch
 	 * 
 	 * @param	location
 	 * 			The location of the branch.
@@ -510,6 +525,16 @@ public class BranchManager implements IFacade {
 		return currentBranch.getDelegatingTask(project,task);
 	}
 	
+	/**
+	 * Reset the current Branch to an empty state, then reinitialize it using
+	 * the data stored in the fileChecker
+	 * 
+	 * @param systemTime
+	 *            | The system time to restore to
+	 * @param fileChecker
+	 *            | The fileChecker containing the data required for
+	 *            reinitialization
+	 */
 	public void initializeFromMemento(LocalDateTime systemTime, TaskManInitFileChecker fileChecker) {
 		currentTime = systemTime;
 		
@@ -545,32 +570,34 @@ public class BranchManager implements IFacade {
 	}
 	
 	/**
-	 * Dirty method for simulation stuff
-	 * @return
+	 * @return the original proxies of this branch representative
 	 */
 	public Map<Task, OriginalTaskProxy> getOriginalProxies() {
 		return currentBranch.getOriginalProxies();
 	}
 	
 	/**
-	 * Dirty method for simulation stuff
-	 * @return
+	 * @return the delegating proxies of this branch representative
 	 */
 	public Map<Task, DelegatingTaskProxy> getDelegatingProxies() {
 		return currentBranch.getDelegatingProxies();
 	}
 
 	/**
-	 * Dirty method for simulation stuff
-	 * @param values
+	 * Offer new task and (original) proxy pairings to the representative
+	 * 
+	 * @param proxies
+	 *            | The new task-proxy pairings present in the system
 	 */
 	public void offerOriginalTaskProxies(Map<Task, OriginalTaskProxy> proxies) {
 		currentBranch.offerOriginalTaskProxies(proxies);
 	}
 
 	/**
-	 * Dirty method for the simulation
-	 * @param newDelegatingProxies
+	 * Offer new task and (delegating) proxy pairings to the representative
+	 * 
+	 * @param proxies
+	 *            | The new task-proxy pairings present in the system
 	 */
 	public void offerDelegatingTaskProxies(
 			Map<Task, DelegatingTaskProxy> proxies) {

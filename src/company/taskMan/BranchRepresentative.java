@@ -224,32 +224,36 @@ public class BranchRepresentative {
 	}
 
 	/**
-	 * Dirty method for simulation stuff
-	 * @return
-	 *///TODO simulation documentation
+	 * @return the current Task-Proxy pairings (original)
+	 */
 	protected Map<Task, OriginalTaskProxy> getOriginalProxies() {
 		return originalProxies;
 	}
 
 	/**
-	 * Dirty method for simulation stuff
-	 * @return
+	 * @return the current Task-Proxy pairings (delegating)
 	 */
 	protected Map<Task, DelegatingTaskProxy> getDelegatingProxies() {
 		return delegationProxies;
 	}
 
 	/**
-	 * Dirty method for simulation
+	 * A method to allow the Branch to offer new task and (original) proxy
+	 * pairings to the representative
+	 * 
 	 * @param proxies
+	 *            | The new task-proxy pairings present in the system
 	 */
 	protected void offerOriginalTaskProxies(Map<Task, OriginalTaskProxy> proxies) {
 		originalProxies = proxies;
 	}
 
 	/**
-	 * Dirty method for simulation
+	 * A method to allow the Branch to offer new task and (delegating) proxy
+	 * pairings to the representative
+	 * 
 	 * @param proxies
+	 *            | The new task-proxy pairings present in the system
 	 */
 	protected void offerDelegatingTaskProxies(
 			Map<Task, DelegatingTaskProxy> proxies) {

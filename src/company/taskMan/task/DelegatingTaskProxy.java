@@ -73,6 +73,9 @@ public class DelegatingTaskProxy implements Dependant {
 		return other.getTask();
 	}
 	
+	/**
+	 * @return the original branch of the Proxy
+	 */
 	protected Branch getBranch() { return originalBranch; }
 
 	/**

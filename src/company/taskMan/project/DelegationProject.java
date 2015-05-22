@@ -92,4 +92,10 @@ public class DelegationProject extends Project {
 		newTask.register(this);
 	}
 	
+	@Override
+	public void setTaskExecuting(TaskView task, LocalDateTime startTime) throws IllegalArgumentException, IllegalStateException {
+		Task t = unwrapTaskView(task);
+		t.execute(startTime);
+	}
+	
 }
