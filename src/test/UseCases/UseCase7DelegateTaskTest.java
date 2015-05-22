@@ -347,9 +347,12 @@ public class UseCase7DelegateTaskTest {
 		branchManager.setTaskExecuting(delegationProject, delegationTask, task30Start);
 		assertEquals(delegationTask.getStatusAsString(),"Executing");	
 		
-//		branchManager.advanceTimeTo(workdate5);
 		
 		branchManager.setTaskFinished(delegationProject, delegationTask, task30End);
+		
+		branchManager.selectBranch(branchManager.getBranches().get(0));
+		assertEquals(branchManager.getProjects().get(3).getTasks().get(0).getStatusAsString(),"Delegated");
+		assertEquals(branchManager.getProjects().get(3).getStatusAsString(),"Finished");
 		
 	}
 	
