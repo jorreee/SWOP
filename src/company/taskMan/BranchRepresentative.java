@@ -25,16 +25,7 @@ import company.taskMan.task.Task;
  */
 public class BranchRepresentative {
 
-	/**
-	 * <TASK, PROXY>:
-	 * TASK is being delegated remotely. It thinks PROXY is delegating him
-	 */
 	private Map<Task,DelegatingTaskProxy> delegationProxies;
-	
-	/**
-	 * <TASK, PROXY>
-	 * TASK is delegating a remote task. It thinks PROXY is the original task
-	 */
 	private Map<Task,OriginalTaskProxy> originalProxies;	
 	
 	private LinkedList<DelegationData> buffer;
@@ -209,7 +200,7 @@ public class BranchRepresentative {
 	/**
 	 * Returns the TaskView of the Task that is delegating task, 
 	 * IF it is being delegated
-	 * @param task the task of which to get the delegating task
+	 * @param t the task of which to get the delegating task
 	 * @return 
 	 * 			| BranchView of the task's responsible branch
 	 * 			| empty Optional otherwise

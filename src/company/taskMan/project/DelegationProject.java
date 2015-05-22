@@ -65,7 +65,8 @@ public class DelegationProject extends Project {
 	 *            | The planned start time of the Task, should be null
 	 * @param plannedDevelopers
 	 *            | The assigned developers of the Task, should be null
-	 * @throws IllegalArgumentException, IllegalStateException, ResourceUnavailableException 
+	 * @throws IllegalArgumentException
+	 * 			| If the supplied arguments are invalid
 	 */
 	@Override
 	public void createTask(String description, 

@@ -17,12 +17,8 @@ public interface ProjectStatus {
 	 * 
 	 * @param project
 	 *            | The project to finish
-	 * @param tasks
-	 *            | A list of tasks belonging to the project
 	 * @param lastTask
 	 *            | The last task to end
-	 * @throws IllegalStateException
-	 *			  | 
 	 */
 	public void finish(Project project, Task lastTask);
 

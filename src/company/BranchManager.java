@@ -81,7 +81,10 @@ public class BranchManager implements IFacade {
 	 * 
 	 * @param	location
 	 * 			The location of the branch.
+	 * @param   prototypes
+	 * 			The resource prototypes that should exist within this branch
 	 * @throws  IllegalArgumentException 
+	 * 			| If the supplied arguments are invalid
 	 */
 	private void declareBranch(String location, List<ResourcePrototype> prototypes) throws IllegalArgumentException{
 		Branch newBranch = new Branch(location, prototypes);
@@ -190,8 +193,6 @@ public class BranchManager implements IFacade {
 	 * 
 	 * @param time
 	 *            The time to which the system should advance
-	 * @return True if the advance time was successful. False if the time
-	 *         parameter is earlier than the current time.
 	 */
 	@Override
 	public void advanceTimeTo(LocalDateTime time) 

@@ -26,8 +26,8 @@ public class OriginalTaskProxy {
 	 * in delegatingBranch. This constructor will call setProxy(this)
 	 * on delegatingTask.
 	 * 
-	 * @param originalTask the task that is being delegating remotely
-	 * @param originalBranch the branch that holds the original task
+	 * @param delegatingTask the task that is being delegating remotely
+	 * @param delegatingBranch the branch that holds the original task
 	 */
 	public OriginalTaskProxy(DelegatingTask delegatingTask, Branch delegatingBranch) {
 		this.delegatingTask = delegatingTask;
@@ -54,6 +54,8 @@ public class OriginalTaskProxy {
 	 * are fulfilled. When this method is called, all following calls of
 	 * hasUnfinishedPrerequisites will return false.
 	 * 
+	 * @param sender
+	 * 			| the sender of this update
 	 * @throws IllegalStateException
 	 * 			| if sender isn't the linked DelegatingTaskProxy
 	 */

@@ -48,6 +48,8 @@ public class ResourceManager {
 	 * Instantiate a new ResourceManager. This manager will have no resources
 	 * nor reservations. One user will be present in the system, the project
 	 * manager (admin).
+	 * @param prototypes
+	 * 			| The prototypes that should exist within this ResourceManager
 	 */
 	public ResourceManager(List<ResourcePrototype> prototypes) {
 		this.resPools = new ArrayList<>();
@@ -76,6 +78,7 @@ public class ResourceManager {
 	 * @param availabilityEnd
 	 *            | the optional end time of the availability period
 	 * @throws IllegalArgumentException
+	 * 			| If the supplied arguments are invalid
 	 */
 	public void createResourcePrototype(String resourceName,
 			Optional<LocalTime> availabilityStart, Optional<LocalTime> availabilityEnd) 
@@ -127,8 +130,6 @@ public class ResourceManager {
 	 * @param resProt
 	 *            | The resource prototype for which a resource pool should be
 	 *            defined
-	 * @return true if the new resource pool was successfully added to the
-	 *         system
 	 */
 	private void addResourceType(ResourcePrototype resProt) {
 		resPools.add(new ResourcePool(resProt));
@@ -141,10 +142,11 @@ public class ResourceManager {
 	 *            | The name for the new concrete resource
 	 * @param ptype
 	 *            | The prototype for which a new resource should be made
-	 * @throws IllegalArgumentException, UnexpectedViewContentException
+	 * @throws IllegalArgumentException
+	 * 			| If the supplied arguments are invalid
 	 */
 	public void declareConcreteResource(String resName, ResourceView ptype) 
-			throws IllegalArgumentException, UnexpectedViewContentException {
+			throws IllegalArgumentException {
 		ResourcePrototype prototype = unWrapResourcePrototypeView(ptype);
 		ResourcePool resPool;
 		try {
@@ -213,10 +215,13 @@ public class ResourceManager {
 	 *            | This parameter will define if the method should check if the
 	 *            resource is actually available to reserve from the given start
 	 *            to end time
-	 * @throws IllegalArgumentException, UnexpectedViewContentException, 
-	 * 		   ResourceUnavailableException, NoSuchResourceException 
+	 * @throws IllegalArgumentException
+	 * 			| If the supplied arguments are invalid
+	 * @throws ResourceUnavailableException
+	 * 			| if the resource isn't available
+	 * @throws NoSuchResourceException 
+	 * 			| If the views refer to nonexistent resources
 	 */
-	// TODO make a new reservation for every day (only within working hours and taking availability period into account)
 	public void reserve(
 			List<ResourceView> resources, 
 			Task reservingTask, 
@@ -224,8 +229,8 @@ public class ResourceManager {
 			LocalDateTime endTime,
 			boolean checkCanReserve) 
 				throws IllegalArgumentException, 
-					UnexpectedViewContentException, 
-					ResourceUnavailableException {
+					ResourceUnavailableException,
+					NoSuchResourceException {
 		
 		if(resources == null || reservingTask == null ||
 				startTime == null || endTime == null) {
@@ -249,14 +254,14 @@ public class ResourceManager {
 					List<ResourceView> invalidCrs = new ArrayList<>();
 					for(ResourceView cr : crList) {
 						for(Reservation res : newReservations) {
-							if(res.hasAsResource(unWrapConcreteResourceView(cr))) { //FIXME hier worden nog exceptions gegooid
+							if(res.hasAsResource(unWrapConcreteResourceView(cr))) {
 								invalidCrs.add(cr);
 							}
 						}
 					}
 					crList.removeAll(invalidCrs);
 					if(!crList.isEmpty()) {
-						toReserve = unWrapConcreteResourceView(crList.remove(0));//FIXME hier worden nog exceptions gegooid
+						toReserve = unWrapConcreteResourceView(crList.remove(0));
 					} else {
 						throw new ResourceUnavailableException("Failed to reserve resource: " + r.getName());
 					}
@@ -309,7 +314,10 @@ public class ResourceManager {
 	 *            resource is actually available to reserve from the given start
 	 *            to end time
 	 * @return The list of users for whom the reservation was made
-	 * @throws IllegalArgumentException, ResourceUnavailableException 
+	 * @throws IllegalArgumentException
+	 * 			| If the supplied arguments are invalid
+	 * @throws ResourceUnavailableException 
+	 * 			| If the requested resource isn't available
 	 */
 	public List<User> pickDevs(List<ResourceView> devs, 
 			Task reservingTask, 
@@ -374,7 +382,12 @@ public class ResourceManager {
 	 * @param dontReserve
 	 *            Concrete resources to ignore
 	 * @return A list of Unreserved Concrete Resources of the Prototype. 
-	 * @throws IllegalArgumentException, ResourceUnavailableException, NoSuchResourceException 
+	 * @throws IllegalArgumentException
+	 * 			| If the supplied arguments are invalid
+	 * @throws ResourceUnavailableException
+	 * 			| If the resource isn't available
+	 * @throws NoSuchResourceException 
+	 * 			| If rp isn't a known RsourcePrototype
 	 */
 	private ConcreteResource pickUnreservedResource(ResourcePrototype rp, 
 			LocalDateTime start, 
@@ -399,7 +412,10 @@ public class ResourceManager {
 	 * @param 	rp
 	 * 			The resource prototype
 	 * @return	If the pool exists, return the pool. 
-	 * @throws IllegalArgumentException, NoSuchResourceException
+	 * @throws IllegalArgumentException
+	 * 			| If the supplied arguments are invalid
+	 * @throws NoSuchResourceException
+	 * 			| If rp isn't a known ResourcePrototype
 	 */
 	private ResourcePool getPoolOf(ResourcePrototype rp) 
 			throws IllegalArgumentException, NoSuchResourceException {
@@ -457,6 +473,7 @@ public class ResourceManager {
 	 * @return a resourceView of the prototype associated with the given
 	 *         resource or null if no corresponding prototype was found
 	 * @throws NoSuchResourceException 
+	 * 			| if the view didn't contain a valid resource reference
 	 */
 	public ResourceView getPrototypeOf(ResourceView view) throws NoSuchResourceException{
 		for(ResourcePool pool : resPools) {
@@ -479,11 +496,19 @@ public class ResourceManager {
 	 * @return an immutable list of resourceView linked with the concrete
 	 *         resources based on the given resource prototype, an empty list
 	 *         if the prototype is not associated with any pool
-	 * @throws UnexpectedViewContentException, IllegalArgumentException, NoSuchResourceException 
+	 * @throws IllegalArgumentException 
+	 * 			| If the supplied arguments are invalid
+	 * @throws NoSuchResourceException 
+	 * 			| If the view didn't contain a valid resourcePrototype
 	 */
 	public List<ResourceView> getConcreteResourcesForPrototype(ResourceView resourcePrototype) 
-			throws UnexpectedViewContentException, NoSuchResourceException, IllegalArgumentException {
-		ResourcePrototype rprot = unWrapResourcePrototypeView(resourcePrototype);
+			throws NoSuchResourceException, IllegalArgumentException {
+		ResourcePrototype rprot = null;
+		try { 
+			rprot = unWrapResourcePrototypeView(resourcePrototype);
+		} catch (UnexpectedViewContentException e) {
+			throw new NoSuchResourceException(e.getMessage());
+		}
 		if(rprot == null) {
 			Builder<ResourceView> conResList = ImmutableList.builder();
 			return conResList.build();
@@ -504,7 +529,10 @@ public class ResourceManager {
 	 *            | The given concrete resource
 	 * @return the concrete resource found in the resourceView, null if it
 	 *         cannot be found in the resource manager's resource pools
-	 * @throws UnexpectedViewContentException, IllegalArgumentException
+	 * @throws UnexpectedViewContentException
+	 * 			| If the view didn't contain a valid ConcreteResource
+	 * @throws IllegalArgumentException
+	 * 			| If the supplied arguments are invalid
 	 */
 	private ConcreteResource unWrapConcreteResourceView(ResourceView view) 
 			throws IllegalArgumentException, UnexpectedViewContentException{
@@ -528,7 +556,10 @@ public class ResourceManager {
 	 * @param view
 	 *            | The given resource prototype
 	 * @return the resource prototype found in the resourceView
-	 * @throws UnexpectedViewContentException, IllegalArgumentException
+	 * @throws UnexpectedViewContentException
+	 * 			| If the view didn't contain a valid ReourcePrototype
+	 * @throws IllegalArgumentException
+	 * 			| If the supplied arguments are invalid
 	 */
 	private ResourcePrototype unWrapResourcePrototypeView(ResourceView view) 
 			throws UnexpectedViewContentException {
@@ -550,7 +581,10 @@ public class ResourceManager {
 	 * @param view
 	 *            | The given user
 	 * @return the user found in the resourceView
-	 * @throws IllegalArgumentException, UnexpectedViewContentException
+	 * @throws IllegalArgumentException
+	 * 			| If the supplied arguments are invalid
+	 * @throws UnexpectedViewContentException
+	 * 			| If the view didn't contain a valid User
 	 * 
 	 */
 	public User unWrapUserView(ResourceView view) 
@@ -575,7 +609,10 @@ public class ResourceManager {
 	 * @param reqRes
 	 *            | A map linking resourcePrototypes with a specified amount
 	 * @return The list of prototype if the resources are valid
-	 * @throws NoSuchResourceException, IllegalArgumentException
+	 * @throws NoSuchResourceException
+	 * 			| If there is a reference to a nonexistent resource
+	 * @throws IllegalArgumentException
+	 * 			| If the supplied arguments are invalid
 	 */
 
 	public Map<ResourcePrototype, Integer> isValidRequiredResources(Map<ResourceView,Integer> reqRes) 
@@ -650,6 +687,7 @@ public class ResourceManager {
 	 * @param prototype
 	 *            | The prototype that the new requirements should be added to
 	 * @throws IllegalArgumentException
+	 * 			| If the supplied arguments are invalid
 	 */
 	public void addRequirementsToResource(List<ResourceView> reqToAdd, ResourceView prototype) 
 			throws IllegalArgumentException {
@@ -668,6 +706,7 @@ public class ResourceManager {
 	 * @param prototype
 	 *            | The prototype that the new conflicts should be added to
 	 * @throws IllegalArgumentException
+	 * 			  | If the supplied arguments are invalid
 	 */
 	public void addConflictsToResource(List<ResourceView> conToAdd, ResourceView prototype) 
 			throws IllegalArgumentException {
@@ -692,9 +731,13 @@ public class ResourceManager {
 	 *            time
 	 * @param amount
 	 *            | The amount of suggestions that should be calculated
-	 * @return a list of timestamps when a planning could be made without
-	 *         conflicts
-	 * @throws IllegalArgumentException, NoSuchResourceException, ResourceUnavailableException 
+	 * @return a list of timestamps when a planning could be made without conflicts
+	 * @throws IllegalArgumentException 
+	 * 			| If the supplied arguments are invalid
+	 * @throws NoSuchResourceException 
+	 * 			| if the ResourceView didn't refer to an existing resource
+	 * @throws ResourceUnavailableException 
+	 * 			| If the resource wasn't available for reservation
 	 */
 	public List<LocalDateTime> getPossibleStartingTimes(Task task, List<ResourceView> allResources, LocalDateTime currentTime, int amount) throws ResourceUnavailableException, NoSuchResourceException, IllegalArgumentException {
 		List<LocalDateTime> posTimes = new ArrayList<LocalDateTime>();
