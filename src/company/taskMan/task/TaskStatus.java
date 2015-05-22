@@ -17,8 +17,6 @@ public interface TaskStatus {
 	 * 
 	 * @param task
 	 *            | The task to make available
-	 * @return True if the new status is available, False if it remained
-	 *         unchanged
 	 */
 	public void makeAvailable(Task task) 
 			throws IllegalStateException;
@@ -26,10 +24,9 @@ public interface TaskStatus {
 	/**
 	 * Change the status to a delegated status
 	 * 
-	 * @param 	task
-	 * 			   | The task to delegate
-	 * @param   toProxy
-	 * 			| the delegating task's proxy
+	 * @param task the task to delegate
+	 * @param 	real
+	 * 			| whether it is actually being delegated or not
 	 */
 	public void delegate(Task task, boolean real) 
 			throws IllegalArgumentException, IllegalStateException;

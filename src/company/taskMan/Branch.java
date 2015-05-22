@@ -51,8 +51,8 @@ public class Branch {
 	 * Creates a Branch system instance with a given time. and the agreed upon
 	 * system resource types
 	 * 
-	 * @param time
-	 *            The current Branch time.
+	 * @param location
+	 *            | the geographical location of the branch
 	 * @param prototypes
 	 *            | The system-wide resource types
 	 */
@@ -101,7 +101,10 @@ public class Branch {
 	 *            | the ProjectView to unwrap
 	 * @return | the unwrapped Project if it belonged to this Branch | NULL
 	 *         otherwise
-	 * @throws IllegalArgumentException, UnexpectedViewContentException
+	 * @throws IllegalArgumentException
+	 * 			| If the supplied arguments are invalid
+	 * @throws UnexpectedViewContentException
+	 * 			| If the view didn't contain a valid Project
 	 */
 	private Project unwrapProjectView(ProjectView view) 
 			throws IllegalArgumentException, UnexpectedViewContentException {
@@ -127,6 +130,7 @@ public class Branch {
 	 * @param dueTime
 	 *            The due time of the project
 	 * @throws IllegalArgumentException
+	 * 			| If the supplied arguments are invalid
 	 */
 	public void createProject(String name, String description,
 			LocalDateTime creationTime, LocalDateTime dueTime) 
@@ -154,7 +158,12 @@ public class Branch {
 	 * @param requiredResources
 	 *            | The resource prototypes and their respective quantities that
 	 *            are required by for this task
-	 * @throws IllegalArgumentException, IllegalStateException, ResourceUnavailableException 
+	 * @throws IllegalArgumentException
+	 * 			| If the supplied arguments are invalid
+	 * @throws IllegalStateException
+	 * 			| If this method would result in an inconsistent system state
+	 * @throws ResourceUnavailableException 
+	 * 			| if the requested resource isn't available for reservation
 	 */
 	public void createTask(ProjectView project, String description,
 			int estimatedDuration, int acceptableDeviation,
@@ -197,7 +206,12 @@ public class Branch {
 	 *            | The due time of the planning of the Task.
 	 * @param plannedDevelopers
 	 *            | The planned developers of the Task.
-	 * @throws IllegalArgumentException, IllegalStateException, ResourceUnavailableException 
+	 * @throws IllegalArgumentException
+	 * 			| If the supplied arguments are invalid
+	 * @throws IllegalStateException
+	 * 			| If this method would result in an inconsistent system state
+	 * @throws ResourceUnavailableException 
+	 * 			| if the requested resource isn't available for reservation
 	 */
 	public void createTask(ProjectView projectView, String description,
 			int estimatedDuration, int acceptableDeviation,
@@ -222,7 +236,10 @@ public class Branch {
 	 *            the id of the given task
 	 * @param endTime
 	 *            the end time of the given task
-	 * @throws IllegalArgumentException, IllegalStateException
+	 * @throws IllegalArgumentException
+	 * 			| If the supplied arguments are invalid
+	 * @throws IllegalStateException
+	 * 			| If this method would result in an inconsistent system state
 	 */
 	public void setTaskFinished(ProjectView project, TaskView taskID,
 			LocalDateTime endTime) 
@@ -240,7 +257,10 @@ public class Branch {
 	 *            the id of the given task
 	 * @param endTime
 	 *            the end time of the given task
-	 * @throws IllegalArgumentException, IllegalStateException
+	 * @throws IllegalArgumentException
+	 * 			| If the supplied arguments are invalid
+	 * @throws IllegalStateException
+	 * 			| If this method would result in an inconsistent system state
 	 */
 	public void setTaskFailed(ProjectView project, TaskView taskID,
 			LocalDateTime endTime) 
@@ -257,7 +277,10 @@ public class Branch {
 	 *            | The task that should be executing
 	 * @param startTime
 	 *            | The actual begin time of the task
-	 * @throws IllegalArgumentException, IllegalStateException
+	 * @throws IllegalArgumentException
+	 * 			| If the supplied arguments are invalid
+	 * @throws IllegalStateException
+	 * 			| if this method would result in an inconsistent system state
 	 */
 	public void setTaskExecuting(ProjectView project, TaskView task,
 			LocalDateTime startTime) 
@@ -314,6 +337,7 @@ public class Branch {
 	 * @param availabilityEnd
 	 *            | the optional end time of the availability period
 	 * @throws IllegalArgumentException
+	 * 			| If the supplied arguments are invalid
 	 */
 	public void createResourcePrototype(String resourceName,
 			Optional<LocalTime> availabilityStart,
@@ -329,8 +353,6 @@ public class Branch {
 	 *            | The name for the new concrete resource
 	 * @param fromPrototype
 	 *            | The prototype for which a new resource should be made
-	 * @return True if and only if the new concrete resource was made and added
-	 *         to its correct pool
 	 */
 	public void declareConcreteResource(String name,
 			ResourceView fromPrototype) throws IllegalArgumentException, UnexpectedViewContentException{
@@ -342,6 +364,7 @@ public class Branch {
 	 * 
 	 * @param name
 	 *            | The name of the new developer
+	 * @return true if the creation succeeded, false otherwise
 	 */
 	public boolean createDeveloper(String name) {
 		return resMan.createDeveloper(name);
@@ -360,9 +383,12 @@ public class Branch {
 	 *            | The start time of the new reservation
 	 * @param endTime
 	 *            | The end time of the new reservation
-	 * @return True if the resource was reserved by the given task, false
-	 *         otherwise
-	 * @throws IllegalStateException, IllegalArgumentException, ResourceUnavailableException 
+	 * @throws IllegalStateException
+	 * 			| If the reservation would create an inconsistent system state
+	 * @throws IllegalArgumentException
+	 * 			| If the supplied arguments are invalid
+	 * @throws ResourceUnavailableException 
+	 * 			| if the requested resource isn't available for reservation
 	 */
 	public void reserveResource(ResourceView resource, ProjectView project,
 			TaskView task, LocalDateTime startTime, LocalDateTime endTime) 
@@ -396,7 +422,12 @@ public class Branch {
 	 *            | The resources to plan
 	 * @param devs
 	 *            | The developers to assign
-	 * @throws IllegalArgumentException, IllegalStateException, ResourceUnavailableException 
+	 * @throws IllegalArgumentException
+	 * 			| If the supplied arguments are invalid
+	 * @throws IllegalStateException
+	 * 			| if this method would create an inconsistent system state
+	 * @throws ResourceUnavailableException 
+	 * 			| If the requested resoruces aren't available for reservation
 	 */
 	public void planTask(ProjectView project, TaskView task,
 			LocalDateTime plannedStartTime, List<ResourceView> concRes, List<ResourceView> devs) 
@@ -424,7 +455,12 @@ public class Branch {
 	 *            | The resources to plan
 	 * @param devs
 	 *            | The developers to assign
-	 * @throws IllegalArgumentException, IllegalStateException, ResourceUnavailableException 
+	 * @throws IllegalArgumentException
+	 * 			| If the supplied arguments are invalid
+	 * @throws IllegalStateException
+	 * 			| If the planning would create an inconsistent system state
+	 * @throws ResourceUnavailableException
+	 * 			| If a required resource is unavailable for reservation 
 	 */
 	public void planRawTask(ProjectView project, TaskView task,
 			LocalDateTime plannedStartTime, List<ResourceView> concRes, List<ResourceView> devs) 
@@ -483,6 +519,7 @@ public class Branch {
 	 * @param prototype
 	 *            | The prototype that the new requirements should be added to
 	 * @throws IllegalArgumentException
+	 * 			| If the supplied arguments are invalid
 	 */
 	public void addRequirementsToResource(List<ResourceView> resourcesToAdd,
 			ResourceView prototype) throws IllegalArgumentException {
@@ -497,6 +534,7 @@ public class Branch {
 	 * @param prototype
 	 *            | The prototype that the new conflicts should be added to
 	 * @throws IllegalArgumentException
+	 * 			| If the supplied arguments are invalid
 	 */
 	public void addConflictsToResource(List<ResourceView> resourcesToAdd,
 			ResourceView prototype) throws IllegalArgumentException {
@@ -596,13 +634,11 @@ public class Branch {
 	}
 
 	/**
-	 * Accept the incoming delegation of the task from the given branch and make a new task in the current branch.
-	 * @param 	task
-	 * 			The task to delegate into this branch.
-	 * @param 	fromBranch
-	 * 			The branch to delegate from
-	 * @return	The newly created delegation task in this branch
+	 * Accept a delegation throuw a DelegatingTaskProxy
+	 * 
+	 * @param delProxy the DelegatingTaskProxy in the remote (original) branch
 	 * @throws IllegalArgumentException
+	 * 			| If the supplied arguments are invalid
 	 */
 	public void delegateAccept(DelegatingTaskProxy delProxy) throws IllegalArgumentException {
 		TaskView task = new TaskView(delProxy.getTask()); //Dit kan vermeden worden door de task Creation date hieronder als parameter mee te geven

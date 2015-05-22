@@ -157,7 +157,12 @@ public class Project implements Dependant {
 	 *            | The planned start time of the Task
 	 * @param plannedDevelopers
 	 *            | The assigned developers of the Task
-	 * @throws IllegalArgumentException, IllegalStateException, ResourceUnavailableException 
+	 * @throws IllegalArgumentException
+	 * 			| If the supplied arguments are invalid
+	 * @throws IllegalStateException
+	 * 			| If this method would result in an inconsistent system state
+	 * @throws ResourceUnavailableException 
+	 * 			| If this method would result in an inconsistent system state
 	 */
 	public void createTask(String description, 
 						int estimatedDuration, 
@@ -263,7 +268,10 @@ public class Project implements Dependant {
 	 * @param 	view
 	 * 			the TaskView to unwrap
 	 * @return 	the unwrapped Task if it belonged to this project
-	 * @throws IllegalArgumentException, UnexpectedViewContentException 
+	 * @throws IllegalArgumentException
+	 * 			| If the supplied arguments are invalid
+	 * @throws UnexpectedViewContentException
+	 * 			| If the view didn't contain a valid task
 	 */
 	protected Task unwrapTaskView(TaskView view) 
 			throws IllegalArgumentException, UnexpectedViewContentException {
@@ -282,7 +290,6 @@ public class Project implements Dependant {
 	 * 
 	 * @param 	newStatus
 	 * 			The Status to change to.
-	 * @return	True if and only if the Status change was successful.
 	 */
 	protected void setProjectStatus(ProjectStatus newStatus) {
 		this.state = newStatus;
@@ -292,8 +299,6 @@ public class Project implements Dependant {
 	 * Updates the Dependency of the Project by providing a finished Task.
 	 * The finished Task will be removed from the unfinished Task list and it's chain of alternatives as well.
 	 * The Project will also check if it can set it's status to finished.
-	 * 
-	 * @return 	True if and only if the removal of the Task and it's alternatives was successful.
 	 * 
 	 */
 	@Override
@@ -411,7 +416,10 @@ public class Project implements Dependant {
 	 *            | The task to finish
 	 * @param endTime
 	 *            | The given end time of the task
-	 * @throws IllegalArgumentException, IllegalStateException 
+	 * @throws IllegalArgumentException
+	 * 			| If the supplied arguments are invalid
+	 * @throws IllegalStateException
+	 * 			| If this method would result in an inconsistent system state
 	 */
 	public void setTaskFinished(TaskView t, LocalDateTime endTime) 
 			throws IllegalArgumentException, IllegalStateException {
@@ -425,7 +433,10 @@ public class Project implements Dependant {
 	 * 			the id of the given task
 	 * @param 	endTime
 	 * 			the end time of the given task
-	 * @throws  IllegalArgumentException, IllegalStateException 
+	 * @throws IllegalArgumentException
+	 * 			| If the supplied arguments are invalid
+	 * @throws IllegalStateException
+	 * 			| If this method would result in an inconsistent system state
 	 */
 	public void setTaskFailed(TaskView t, LocalDateTime endTime) 
 			throws IllegalArgumentException, IllegalStateException {
@@ -439,7 +450,10 @@ public class Project implements Dependant {
 	 *            | The task to execute
 	 * @param startTime
 	 *            | The actual begin time of the task
-	 * @throws IllegalArgumentException, IllegalStateException 
+	 * @throws IllegalArgumentException
+	 * 			| If the supplied arguments are invalid
+	 * @throws IllegalStateException
+	 * 			| If this method would result in an inconsistent system state
 	 */
 	public void setTaskExecuting(TaskView task, LocalDateTime startTime) 
 			throws IllegalArgumentException, IllegalStateException {
@@ -465,7 +479,12 @@ public class Project implements Dependant {
 	 * 			| the concrete resources to plan for the task
 	 * @param devs
 	 * 			| the developers to plan for the task
-	 * @throws IllegalArgumentException, IllegalStateException, ResourceUnavailableException 
+	 * @throws IllegalArgumentException
+	 * 			| If the supplied arguments are invalid
+	 * @throws IllegalStateException
+	 * 			| If this method would result in an inconsistent system state
+	 * @throws ResourceUnavailableException 
+	 * 			| If the requested resource is unavailable for reservation
 	 */
 	public void planTask(TaskView task, LocalDateTime plannedStartTime,
 			List<ResourceView> concRes, List<ResourceView> devs) 
@@ -493,7 +512,12 @@ public class Project implements Dependant {
 	 *            | the concrete resources to plan for the task
 	 * @param devs
 	 *            | the developers to plan for the task
-	 * @throws IllegalArgumentException, IllegalStateException, ResourceUnavailableException 
+	 * @throws IllegalArgumentException
+	 * 			| If the supplied arguments are invalid
+	 * @throws IllegalStateException
+	 * 			| If this method would result in an inconsistent system state
+	 * @throws ResourceUnavailableException 
+	 * 			| If the requested resoruce isn't available for reservation
 	 */
 	public void planRawTask(TaskView task, LocalDateTime plannedStartTime,
 			List<ResourceView> concRes, List<ResourceView> devs) 
@@ -561,7 +585,12 @@ public class Project implements Dependant {
 	 *            | The end time of the new reservation
 	 * @return True if the resource was reserved by the given task, false
 	 *         otherwise
-	 * @throws IllegalArgumentException, ResourceUnavailableException 
+	 * @throws IllegalArgumentException
+	 * 			| If the supplied arguments are invalid
+	 * @throws ResourceUnavailableException 
+	 * 			| If the requested resource isn't available for reservation
+	 * @throws IllegalStateException
+	 * 			| If this method would result in an inconsistent system state
 	 */
 	public boolean reserve(ResourceView resource, TaskView task,
 			LocalDateTime startTime, LocalDateTime endTime) 

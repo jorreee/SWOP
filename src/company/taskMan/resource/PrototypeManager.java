@@ -28,6 +28,7 @@ public class PrototypeManager {
 	 * @param prototype
 	 *            | The prototype that the new requirements should be added to
 	 * @throws IllegalArgumentException
+	 * 			| If the supplied arguments are invalid
 	 */
 	public void addRequirementsToResource(List<ResourceView> reqToAdd, ResourceView prototype) 
 			throws IllegalArgumentException {
@@ -46,6 +47,7 @@ public class PrototypeManager {
 	 * @param prototype
 	 *            | The prototype that the new conflicts should be added to
 	 * @throws IllegalArgumentException
+	 * 			| If the supplied arguments are invalid
 	 */
 	public void addConflictsToResource(List<ResourceView> conToAdd, ResourceView prototype) 
 			throws IllegalArgumentException {
@@ -62,6 +64,7 @@ public class PrototypeManager {
 	 * 			The given ResourceView
 	 * @return	The unwrapped ResourcePrototype
 	 * @throws IllegalArgumentException
+	 * 			| If the supplied arguments are invalid
 	 */
 	private ResourcePrototype unwrap(ResourceView view) 
 			throws IllegalArgumentException {
@@ -89,6 +92,7 @@ public class PrototypeManager {
 	 * @param 	availabilityEnd
 	 * 			The availability end of the prototype.
 	 * @throws IllegalArgumentException
+	 * 			| If the supplied arguments are invalid
 	 */
 	public void createResourcePrototype(String name,
 			Optional<LocalTime> availabilityStart,

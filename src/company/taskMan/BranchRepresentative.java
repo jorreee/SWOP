@@ -25,16 +25,7 @@ import company.taskMan.task.Task;
  */
 public class BranchRepresentative {
 
-	/**
-	 * <TASK, PROXY>:
-	 * TASK is being delegated remotely. It thinks PROXY is delegating him
-	 */
 	private Map<Task,DelegatingTaskProxy> delegationProxies;
-	
-	/**
-	 * <TASK, PROXY>
-	 * TASK is delegating a remote task. It thinks PROXY is the original task
-	 */
 	private Map<Task,OriginalTaskProxy> originalProxies;	
 	
 	private LinkedList<DelegationData> buffer;
@@ -65,9 +56,9 @@ public class BranchRepresentative {
 	 * 		2) The remote branch creates a Delegating Task and links it to
 	 * 				a local OriginalTaskProxy
 	 * 		3) The two proxies are linked to each other
-	 * @param task
-	 * @param fromBranch
-	 * @param toBranch
+	 * @param task the task to be delegated
+	 * @param fromBranch the branch from where the task is delegated
+	 * @param toBranch the branch where the task is delegated to
 	 * @throws IllegalArgumentException
 	 * 			| If null arguments are supplied
 	 */
@@ -94,9 +85,9 @@ public class BranchRepresentative {
 	 * use newTask as a delegator that has delProxy as a remote proxy (in the
 	 * original branch). It will create a local Original Task Proxy that is linked
 	 * with delProxy so that communication is synchronized and ready for use.
-	 * @param delProxy
-	 * @param newTask
-	 * @param delegatingBranch
+	 * @param delProxy the delegatingTaskProxy for the original task
+	 * @param newTask the task that is actually delegating for the original task
+	 * @param delegatingBranch the branch that is delegating the original task
 	 * @throws IllegalArgumentException
 	 * 			| If the supplied parameters are null
 	 */
@@ -107,10 +98,22 @@ public class BranchRepresentative {
 		}
 		OriginalTaskProxy origiProxy = new OriginalTaskProxy(newTask, delegatingBranch);
 		delProxy.link(origiProxy);
-		origiProxy.link(delProxy);
+//		origiProxy.link(delProxy);
 		originalProxies.put(newTask, origiProxy);
 	}
 
+	/**
+	 * Executes the delegations that were scheduled for executuion in the buffer.
+	 * 1) If a delegating task is being delegated, this method will release the delegation
+	 * 		form this branch and give the delegation to the branch of the original task. That
+	 * 		branch will then schedule the delegation that will result in case 2)
+	 * 2) If an already-delegated task is being delegated, this method will reset the 
+	 * 		Task to a non-delegated state and its delegatingTaskProxy is removed. The 
+	 * 		delegation is then rescheduled and will result in case 3)
+	 * 3) If A task hasn't been delegated before, this method will create a new delegatingTaskProxy
+	 * 		for the task and tell the toBranch to accept the delegation.
+	 * 
+	 */
 	private void executeBuffer(){
 		// For every delegation ready in the buffer
 		while (!buffer.isEmpty()) {
@@ -154,10 +157,10 @@ public class BranchRepresentative {
 	/**
 	 * Sets the buffer mode of this representative. If set to false, it will
 	 * execute its scheduled delegations.
-	 * @param bool
+	 * @param active whether the buffer should be set to active (true) or inactive (false)
 	 */
-	public void setBufferMode(boolean bool) {
-		bufferMode = bool;
+	public void setBufferMode(boolean active) {
+		bufferMode = active;
 		if(!bufferMode) {
 			executeBuffer();
 		} 
@@ -166,7 +169,7 @@ public class BranchRepresentative {
 	/**
 	 * Returns the BranchView of the Branch that is repsonsible for task, 
 	 * IF it is being delegated
-	 * @param task
+	 * @param task the task of which to get the responsible branch
 	 * @return 
 	 * 			| BranchView of the task's responsible branch
 	 * 			| empty Optional otherwise
@@ -197,7 +200,7 @@ public class BranchRepresentative {
 	/**
 	 * Returns the TaskView of the Task that is delegating task, 
 	 * IF it is being delegated
-	 * @param task
+	 * @param t the task of which to get the delegating task
 	 * @return 
 	 * 			| BranchView of the task's responsible branch
 	 * 			| empty Optional otherwise

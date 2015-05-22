@@ -75,7 +75,10 @@ public class Planning {
 	 * @param newPlannedBeginTime
 	 *            | The timestamp when the task is meant (planned) to actually
 	 *            begin
-	 * @throws IllegalArgumentException, IllegalStateException 
+	 * @throws IllegalArgumentException
+	 * 			| If the supplied arguments are invalid
+	 * @throws IllegalStateException
+	 * 			| If there is already a BEGIN time set 
 	 */
 	public void setPlannedBeginTime(LocalDateTime newPlannedBeginTime) 
 			throws IllegalArgumentException, IllegalStateException {

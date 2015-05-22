@@ -30,6 +30,7 @@ public class ResourceView {
 	
 	/**
 	 * Returns the containing resource
+	 * @return the contained resource
 	 */
 	public Resource unwrap(){
 		return resource;

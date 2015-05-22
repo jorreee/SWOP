@@ -45,6 +45,8 @@ public class TaskView {
 	
 	/**
 	 * Returns the contained task 
+	 * 
+	 * @return The contained Task
 	 */
 	protected Task unwrap() {
 		return task;
@@ -336,7 +338,12 @@ public class TaskView {
 	 *            | The amount of suggestions that should be returned
 	 * @return a given amount of suggested starting times for the task to be
 	 *         planned at
-	 * @throws IllegalArgumentException, NoSuchResourceException, ResourceUnavailableException 
+	 * @throws IllegalArgumentException
+	 * 			| If the supplied arguments are invalid
+	 * @throws NoSuchResourceException
+	 * 			| If the resourceView didn't contain a valid resource
+	 * @throws ResourceUnavailableException 
+	 * 			| If the supplied resources aren't available for reservation
 	 */
 	public List<LocalDateTime> getPossibleStartingTimes(
 			List<ResourceView> concRes, LocalDateTime currentTime, int amount) 

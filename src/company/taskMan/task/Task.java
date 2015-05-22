@@ -234,6 +234,7 @@ public class Task implements Dependant {
 	 * @throws IllegalArgumentException
 	 *             | When invalid data was supplied
 	 * @throws ResourceUnavailableException
+	 * 			| If the requested resource isn't available for reservation
 	 */
 	public Task(String taskDescription, int estimatedDuration,
 			int acceptableDeviation, ResourceManager resMan,
@@ -287,7 +288,7 @@ public class Task implements Dependant {
 	 * alternative, it also immediately calls notify(this) on the registering
 	 * task.
 	 * 
-	 * @param t
+	 * @param dep
 	 *            | The new dependant
 	 * @throws IllegalArgumentException
 	 * 			| if the argument is null
@@ -575,7 +576,6 @@ public class Task implements Dependant {
 	 * 
 	 * @param beginTime
 	 *            The new begin time of the Task.
-	 * @return True if the new begin time was set
 	 */
 	protected void setBeginTime(LocalDateTime beginTime) {
 		plan.setBeginTime(beginTime);
@@ -586,9 +586,8 @@ public class Task implements Dependant {
 	 * 
 	 * @param endTime
 	 *            The new end time of the Task.
-	 * @return True if the end time was set
 	 * @throws IllegalArgumentException
-	 *             If the new end time is null or the old end time is already
+	 *           | If the new end time is null or the old end time is already
 	 *             set.
 	 */
 	protected void setEndTime(LocalDateTime endTime) {
@@ -727,7 +726,6 @@ public class Task implements Dependant {
 	 * 
 	 * @param endTime
 	 *            The new end time of the Task.
-	 * @return True if and only if the updates succeeds.
 	 */
 	public void finish(LocalDateTime endTime) 
 			throws IllegalArgumentException, IllegalStateException {
@@ -742,7 +740,6 @@ public class Task implements Dependant {
 	 * 
 	 * @param endTime
 	 *            The new end time of the Task.
-	 * @return True if and only if the updates succeeds.
 	 */
 	public void fail(LocalDateTime endTime) 
 			throws IllegalArgumentException, IllegalStateException {
@@ -757,7 +754,10 @@ public class Task implements Dependant {
 	 * 
 	 * @param startTime
 	 *            | The actual start time of the task
-	 * @throws IllegalArgumentException, IllegalStateException 
+	 * @throws IllegalArgumentException
+	 * 			| If the supplied arguments are invalid
+	 * @throws IllegalStateException 
+	 * 			| If this method would result in an inconsistent system state
 	 */
 	public void execute(LocalDateTime startTime) 
 			throws IllegalArgumentException, IllegalStateException {
@@ -770,6 +770,7 @@ public class Task implements Dependant {
 	 * @param t
 	 *            | The alternative for this task
 	 * @throws IllegalStateException 
+	 * 			| If this task cannot be replaced
 	 */
 	private void replaceWith(Task t) throws IllegalStateException {
 		if (!canBeReplaced()) {
@@ -780,8 +781,9 @@ public class Task implements Dependant {
 	
 	/**
 	 * Inform this task that it is being delegated by delegatingTask
-	 * @param toProxy
-	 * 		| the task that is delegating this task
+	 * 
+	 * @param real
+	 * 		| whether it is being delegated or not
 	 */
 	public void delegate(boolean real) {
 		state.delegate(this, real);
@@ -982,7 +984,12 @@ public class Task implements Dependant {
 	 *            | The resources to plan
 	 * @param devs
 	 *            | The developers to assign
-	 * @throws IllegalArgumentException, IllegalStateException, ResourceUnavailableException
+	 * @throws IllegalArgumentException
+	 * 			| If the supplied arguments are invalid
+	 * @throws IllegalStateException
+	 * 			| If this method would result in an inconsistent system state
+	 * @throws ResourceUnavailableException
+	 * 			| If the requested resource isn't available for reservation
 	 */
 	public void plan(LocalDateTime startTime, List<ResourceView> concRes,
 			List<ResourceView> devs) 
@@ -1031,8 +1038,10 @@ public class Task implements Dependant {
 	 *            | The resources to plan
 	 * @param devs
 	 *            | The developers to assign
-	 * @return True if the task was planned and all reservations made
-	 * @throws IllegalArgumentException, ResourceUnavailableException 
+	 * @throws IllegalArgumentException
+	 * 			| If the supplied arguments are invalid
+	 * @throws ResourceUnavailableException
+	 * 			| If the requested resource isn't available for reservation
 	 */
 	public void rawPlan(LocalDateTime startTime, List<ResourceView> concRes,
 			List<ResourceView> devs) 
@@ -1077,7 +1086,12 @@ public class Task implements Dependant {
 	 * @param amount
 	 *            | The amount of possible starting times wanted.
 	 * @return The possible starting times of the Task
-	 * @throws IllegalArgumentException, NoSuchResourceException, ResourceUnavailableException 
+	 * @throws IllegalArgumentException
+	 * 			| If the supplied arguments are invalid
+	 * @throws NoSuchResourceException
+	 * 			| If a resourceView didn't contain a valid resource
+	 * @throws ResourceUnavailableException 
+	 * 			| If the requested resource isn't available for reservation
 	 */
 	public List<LocalDateTime> getPossibleTaskStartingTimes(
 			List<ResourceView> concRes, LocalDateTime currentTime, int amount) throws ResourceUnavailableException, NoSuchResourceException, IllegalArgumentException {
@@ -1099,7 +1113,7 @@ public class Task implements Dependant {
 	}
 
 	/**
-	 * Reserve a resource at init
+	 * Reserve a resource at initialisation
 	 * 
 	 * @param resource
 	 *            | Resource to reserve
@@ -1107,11 +1121,14 @@ public class Task implements Dependant {
 	 *            | The start time of the reservation
 	 * @param endTime
 	 *            | The end time of the reservation
-	 * @throws IllegalArgumentException, IllegalStateException, ResourceUnavailableException 
+	 * @throws IllegalArgumentException
+	 * 			| If the supplied arguments are invalid
+	 * @throws ResourceUnavailableException
+	 * 			| if the requested resource isn't available for reservation 
 	 */
 	public void reserve(ResourceView resource, LocalDateTime startTime,
 			LocalDateTime endTime) 
-					throws IllegalArgumentException, IllegalStateException, ResourceUnavailableException {
+					throws IllegalArgumentException, ResourceUnavailableException {
 		if(resource == null || startTime == null || endTime == null) {
 			throw new IllegalArgumentException("Invalid null argument");
 		}
@@ -1196,7 +1213,6 @@ public class Task implements Dependant {
 	/**
 	 * Unassigns the developers assigned to this task
 	 * 
-	 * @return True if the developers were cleared
 	 */
 	public void releaseDevelopers() {
 		plan.setDevelopers(new ArrayList<User>());
@@ -1206,7 +1222,6 @@ public class Task implements Dependant {
 	 * Adds a dependant to the list of dependants.
 	 * @param 	dependant
 	 * 			The dependant to add to the list
-	 * @return	True if the addition was succesful, else false
 	 */
 	public void addDependant(Dependant dependant) throws IllegalArgumentException{
 		if (!isValidDependant(dependant)) {
