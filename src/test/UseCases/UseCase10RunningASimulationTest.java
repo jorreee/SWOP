@@ -359,7 +359,8 @@ public class UseCase10RunningASimulationTest {
 		
 		//revert memento
 		branchManager.revertFromMemento();
-		delTask = branchManager.getResponsibleBranch(project0, taskL, leuven);
+		taskL = branchManager.getProjects().get(0).getTasks().get( project0.getTasks().size()-1);
+		delTask = branchManager.getResponsibleBranch(branchManager.getProjects().get(0), taskL, leuven);
 		assertTrue(delTask.isPresent());
 		
 		branchManager.selectBranch(aarschot);

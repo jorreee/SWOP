@@ -152,7 +152,7 @@ public class TaskManCaretaker {
 				TaskView alternative = task.getAlternativeTo();
 				String altIndex = new String();
 				if(alternative != null) {
-					altIndex = String.valueOf(tasks.indexOf(alternative));
+					altIndex = String.valueOf(existingTasks.indexOf(alternative));
 				}
 				tman.append("\n    alternativeFor     : " + altIndex); // alternativeFor
 				Iterator<TaskView> prereqs = task.getPrerequisites().iterator();
