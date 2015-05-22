@@ -52,7 +52,6 @@ public class UseCase7DelegateTaskTest {
 			task12EstDur = 1*8*60,
 			task13EstDur = 110,
 			task20EstDur = 35*60,
-			task30EstDur = 60,
 			task31EstDur = 3*8*60;
 	private final int task00Dev = 5,
 			task10Dev = 30,
@@ -60,21 +59,17 @@ public class UseCase7DelegateTaskTest {
 			task12Dev = 15,
 			task13Dev = 20,
 			task20Dev = 50,	// Moet nog steeds delayed project geven!
-			task30Dev = 0,
 			task31Dev = 15;
 	private final ArrayList<TaskView> task00Dependencies = new ArrayList<TaskView>(),
 			task10Dependencies = new ArrayList<TaskView>(),
 			task11Dependencies = new ArrayList<TaskView>(),
 			task12Dependencies = new ArrayList<TaskView>(),
 			task13Dependencies = new ArrayList<TaskView>(),
-			task20Dependencies = new ArrayList<TaskView>(),
-			task30Dependencies = new ArrayList<TaskView>(),
-			task31Dependencies = new ArrayList<TaskView>();
+			task20Dependencies = new ArrayList<TaskView>();
 	private final ArrayList<ResourceView> task00ConcreteResources = new ArrayList<ResourceView>(),
 			task10ConcreteResources = new ArrayList<ResourceView>(), 
 			task11ConcreteResources = new ArrayList<ResourceView>(),
 			task20ConcreteResources = new ArrayList<ResourceView>(),
-			task30ConcreteResources = new ArrayList<ResourceView>(),
 			task31ConcreteResources = new ArrayList<ResourceView>();
 	private final List<ResourceView> devList1 = new ArrayList<ResourceView>(),
 			devList2 = new ArrayList<ResourceView>(),
@@ -97,9 +92,7 @@ public class UseCase7DelegateTaskTest {
 	 * 		task 0 AVAILABLE
 	 * 
 	 * - project 3 START 15 feb 16u DUE 
-	 * 		task 0 FAILED
-	 * 		task 1
-	 * 		task 2 UNAVAILABLE 
+	 * 		task 0 UNAVAILABLE
 	 * 
 	 * 
 	 */
