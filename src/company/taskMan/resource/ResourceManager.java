@@ -32,18 +32,18 @@ import exceptions.UnexpectedViewContentException;
  *         Eli Vangrieken
  */
 public class ResourceManager {
-	
+
 	// The resource manager has a list of resource pools (and users)
 	private List<ResourcePool> resPools;
 	private List<User> userList;
 	private final User superUser;
 	//The prototype for Users
 	private UserPrototype userProt;
-	
+
 	// A list of (active) reservations
 	private List<Reservation> activeReservations;
 	private List<Reservation> allReservations;
-	
+
 	/**
 	 * Instantiate a new ResourceManager. This manager will have no resources
 	 * nor reservations. One user will be present in the system, the project
@@ -51,15 +51,15 @@ public class ResourceManager {
 	 */
 	public ResourceManager(List<ResourcePrototype> prototypes) {
 		this.resPools = new ArrayList<>();
-		
+
 		userProt = new UserPrototype();
 		userList = new ArrayList<User>();
 		userList.add(userProt.instantiateProjectManager("admin"));
 		superUser = userProt.instantiateSuperUser("Initializer");
-		
+
 		activeReservations = new ArrayList<>();
 		allReservations = new ArrayList<>();
-		
+
 		for(ResourcePrototype prot: prototypes){
 			addResourceType(prot);
 		}
@@ -79,15 +79,15 @@ public class ResourceManager {
 	 */
 	public void createResourcePrototype(String resourceName,
 			Optional<LocalTime> availabilityStart, Optional<LocalTime> availabilityEnd) 
-				throws IllegalArgumentException{
-		
+					throws IllegalArgumentException{
+
 		if(!isValidPeriod(availabilityStart, availabilityEnd)) {
 			throw new IllegalArgumentException("Invalid timestamps");
 		}
 		if(resourceName == null) {
 			throw new IllegalArgumentException("Invalid resource name");
 		}
-		
+
 		// Create resourcePrototype (should happen before applying conflicting resources,
 		// since a resource can conflict with itself)
 		ResourcePrototype resprot = null;
@@ -98,7 +98,7 @@ public class ResourceManager {
 		}
 		addResourceType(resprot);
 	}
-	
+
 	/**
 	 * Check whether the given availability period start and end times are valid
 	 * 
@@ -120,7 +120,7 @@ public class ResourceManager {
 		}
 		return !end.get().isBefore(start.get());
 	}
-	
+
 	/**
 	 * Create a new resourcePool based on a resource prototype
 	 * 
@@ -133,7 +133,7 @@ public class ResourceManager {
 	private void addResourceType(ResourcePrototype resProt) {
 		resPools.add(new ResourcePool(resProt));
 	}
-	
+
 	/**
 	 * Construct a new concrete resource based on a resource prototype
 	 * 
@@ -154,7 +154,7 @@ public class ResourceManager {
 			throw new UnexpectedViewContentException(e.getMessage());
 		}
 	}
-	
+
 	/**
 	 * Find the project manager
 	 * 
@@ -163,7 +163,7 @@ public class ResourceManager {
 	public User getSuperUser() {
 		return superUser;
 	}
-	
+
 	/**
 	 * Retrieve all possible users. This will be a list of every user in the
 	 * system.
@@ -177,7 +177,7 @@ public class ResourceManager {
 		}
 		return usernames.build();
 	}
-	
+
 	/**
 	 * Define a new developer with a given name in the system.
 	 * 
@@ -196,7 +196,7 @@ public class ResourceManager {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Reserve a list of resources from a specific start to a specific end time.
 	 * A reservation will always be made by a task.
@@ -223,10 +223,10 @@ public class ResourceManager {
 			LocalDateTime startTime, 
 			LocalDateTime endTime,
 			boolean checkCanReserve) 
-				throws IllegalArgumentException, 
+					throws IllegalArgumentException, 
 					UnexpectedViewContentException, 
 					ResourceUnavailableException {
-		
+
 		if(resources == null || reservingTask == null ||
 				startTime == null || endTime == null) {
 			throw new IllegalArgumentException("Invalid parameters");
@@ -234,9 +234,9 @@ public class ResourceManager {
 		if(endTime.isBefore(startTime)) {
 			throw new IllegalArgumentException("Invalid timestamps");
 		}
-		
+
 		List<Reservation> newReservations = new ArrayList<Reservation>();
-		
+
 		for(ResourceView resource : resources) {
 			ConcreteResource toReserve = null;
 			try {
@@ -316,7 +316,7 @@ public class ResourceManager {
 			LocalDateTime start,
 			LocalDateTime end, 
 			boolean checkCanReserve) 
-				throws IllegalArgumentException, ResourceUnavailableException{
+					throws IllegalArgumentException, ResourceUnavailableException{
 		List<User> users = new ArrayList<>();
 		for(ResourceView dev : devs) {
 			User user = unWrapUserView(dev);
@@ -358,7 +358,7 @@ public class ResourceManager {
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Picks the Unreserved Resource instances of a given Resource Prototype for
 	 * the given time period.
@@ -393,7 +393,7 @@ public class ResourceManager {
 		}
 		throw new ResourceUnavailableException("There are no \"" + rp.getName() + "\"s available");
 	}
-	
+
 	/**
 	 * Gets the Resource Pool of a given Prototype.
 	 * @param 	rp
@@ -413,7 +413,7 @@ public class ResourceManager {
 		}
 		throw new NoSuchResourceException("Invalid resource prototype");
 	}
-	
+
 	/**
 	 * This method will return a list of all prototypes present in the resource
 	 * pools in this resource manager.
@@ -429,7 +429,7 @@ public class ResourceManager {
 		}
 		return prototypes.build();
 	}
-	
+
 	/**
 	 * This method will return an immutable list of every user managed by the
 	 * resource manager that has the DEVELOPER credential
@@ -445,7 +445,7 @@ public class ResourceManager {
 		}
 		return usernames.build();
 	}
-	
+
 	/**
 	 * This method will find the prototype corresponding to the given
 	 * resourceView and return a resourceView of that prototype. If there is no
@@ -468,7 +468,7 @@ public class ResourceManager {
 		}
 		throw new NoSuchResourceException("Invalid resourceView");
 	}
-	
+
 	/**
 	 * This method will locate the resource pool responsible for the given
 	 * prototype and return an immutable list of all its concrete resource
@@ -495,7 +495,7 @@ public class ResourceManager {
 		}
 		return conResList.build();
 	}
-	
+
 	/**
 	 * Unwrap a resourceView to its concrete resource contents. This method will
 	 * return null if the resource cannot be found
@@ -512,15 +512,15 @@ public class ResourceManager {
 			throw new IllegalArgumentException("view must not be null");
 		}
 		for(ResourcePool pool : resPools) {
-				for (ConcreteResource res : pool.getConcreteResourceList()){
-					if (view.hasAsResource(res)){
-						return res;
-					}
+			for (ConcreteResource res : pool.getConcreteResourceList()){
+				if (view.hasAsResource(res)){
+					return res;
 				}
+			}
 		}
 		throw new UnexpectedViewContentException("View didn't contain a valid concrete resource");
 	}
-	
+
 	/**
 	 * Unwrap a resourceView to its resource prototype contents. This method
 	 * will return null if the resource cannot be found
@@ -542,7 +542,7 @@ public class ResourceManager {
 		}
 		throw new UnexpectedViewContentException("View didn't contain a valid resource Prototype");
 	}
-	
+
 	/**
 	 * Unwrap a resourceView to its user contents. This method
 	 * will return null if the resource cannot be found
@@ -601,7 +601,9 @@ public class ResourceManager {
 				}
 				for (ResourcePrototype confl : prot.getConflictingResources()){
 					if (resProtList.containsKey(confl)){
-						throw new IllegalArgumentException("\"" + confl.getName() + "\" conflicts with \"" + prot.getName() + "\"");
+						if(prot != confl || resProtList.get(confl) > 1) {
+							throw new IllegalArgumentException("\"" + confl.getName() + "\" conflicts with \"" + prot.getName() + "\"");
+						}
 					}
 				}
 			}
@@ -629,7 +631,7 @@ public class ResourceManager {
 					if(res.getReservedResource().getPrototype().equals(resource)) {
 						checkList.put(resource, checkList.get(resource) - 1);
 					}
-						
+
 				}
 			}
 		}
@@ -641,7 +643,7 @@ public class ResourceManager {
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Add resource requirements to a prototype
 	 * 
@@ -659,7 +661,7 @@ public class ResourceManager {
 			rprot.addRequiredResource(unwrapReq);
 		}
 	}
-	
+
 	/**
 	 * Add resource conflicts to a prototype
 	 * 
@@ -677,7 +679,7 @@ public class ResourceManager {
 			rprot.addConflictingResource(unwrapReq);
 		}
 	}
-	
+
 	/**
 	 * Return a specific amount of possible starting times for a task. A task
 	 * can be planned to start when enough resources are available for the
@@ -701,14 +703,14 @@ public class ResourceManager {
 		// Workday timings
 		LocalTime workDayStart = LocalTime.of(8,0);
 		LocalTime workDayEnd = LocalTime.of(17, 0);
-		
+
 		// AvailabilityPeriod
 		LocalTime[] availabilityPeriod = task.getAvailabilityPeriodBoundWorkingTimes();
 		if(availabilityPeriod[0] != null) {
 			workDayStart = availabilityPeriod[0];
 			workDayEnd = availabilityPeriod[1];
 		}
-		
+
 		// Initial time to check (last planned end time of prerequisite task)
 		LocalDateTime hour = currentTime;
 		if(!task.getPrerequisites().isEmpty()) {
@@ -718,7 +720,7 @@ public class ResourceManager {
 			}
 			hour = latest;
 		}
-		
+
 		// Shift hour to inside workday
 		if(hour.toLocalTime().isAfter(workDayEnd)) {
 			hour = hour.withHour(8);
@@ -741,26 +743,26 @@ public class ResourceManager {
 			hour = hour.plusHours(1);
 			hour = hour.withMinute(0);
 		}
-		
+
 		// Until amount (Check hour)
 		while(amount > 0) {
 			boolean validTimeStamp = true;
-			
+
 			// These are already chosen
 			List<ConcreteResource> alreadyReserved = new ArrayList<>();
 			for(ResourceView resource : allResources) {
 				try{
-				ConcreteResource cr = unWrapConcreteResourceView(resource);
-				alreadyReserved.add(cr);
+					ConcreteResource cr = unWrapConcreteResourceView(resource);
+					alreadyReserved.add(cr);
 				} catch (UnexpectedViewContentException e) {		
 				}
 			}
-			
+
 			// For each resource
 			for(ResourceView resource : allResources) {
 				try {
-				ConcreteResource cr = unWrapConcreteResourceView(resource);
-				// if Concrete resource
+					ConcreteResource cr = unWrapConcreteResourceView(resource);
+					// if Concrete resource
 					// Available from hour until hour + task.getEstimatedDuration()
 					if(!canReserve(cr, hour, TimeSpan.addSpanToLDT(hour,task.getEstimatedDuration(), workDayStart, workDayEnd), new ArrayList<Reservation>())) {
 						validTimeStamp = false;
@@ -769,30 +771,30 @@ public class ResourceManager {
 					continue;
 				}
 				catch (UnexpectedViewContentException e){
-					
+
 				}
 				try {
-				ResourcePrototype rp = unWrapResourcePrototypeView(resource);
-				// if Prototype
+					ResourcePrototype rp = unWrapResourcePrototypeView(resource);
+					// if Prototype
 					// Find concrete resource (not yet present) which is available from ...
-				 try {
-					ConcreteResource cr = pickUnreservedResource(rp, hour, TimeSpan.addSpanToLDT(hour,task.getEstimatedDuration(), workDayStart, workDayEnd), new ArrayList<Reservation>(), alreadyReserved);
-					// Add cr to list
-					alreadyReserved.add(cr);
-					continue;
-				 }
-				catch ( UnexpectedViewContentException | ResourceUnavailableException e) {	// No cr to be found (Oh nooes)
+					try {
+						ConcreteResource cr = pickUnreservedResource(rp, hour, TimeSpan.addSpanToLDT(hour,task.getEstimatedDuration(), workDayStart, workDayEnd), new ArrayList<Reservation>(), alreadyReserved);
+						// Add cr to list
+						alreadyReserved.add(cr);
+						continue;
+					}
+					catch ( UnexpectedViewContentException | ResourceUnavailableException e) {	// No cr to be found (Oh nooes)
 						validTimeStamp = false;
 						break;
 					}
-					
+
 				}
 				catch (UnexpectedViewContentException e){
-					
+
 				}
 				// if User
 				try {
-				User us = unWrapUserView(resource);
+					User us = unWrapUserView(resource);
 					if(!alreadyReserved.contains(us) && canReserve(us,hour, TimeSpan.addSpanToLDT(hour,task.getEstimatedDuration(), workDayStart, workDayEnd),new ArrayList<Reservation>())) {
 						alreadyReserved.add(us);
 						continue;
@@ -802,7 +804,7 @@ public class ResourceManager {
 					}
 				}
 				catch (UnexpectedViewContentException e) {
-				return null; // The resources in allResources must be concrete or prototype
+					return null; // The resources in allResources must be concrete or prototype
 				}
 			}
 			// If everything checks out, good job!
@@ -815,7 +817,7 @@ public class ResourceManager {
 		} // Repeat
 		return posTimes;
 	}
-	
+
 	/**
 	 * Any task can call this method to release all active reservations made by
 	 * this task.
@@ -871,7 +873,7 @@ public class ResourceManager {
 		reservations.addAll(allReservations);
 		return reservations.build();
 	}
-	
+
 	/**
 	 * Returns the reserved resources for a given task.
 	 * 
